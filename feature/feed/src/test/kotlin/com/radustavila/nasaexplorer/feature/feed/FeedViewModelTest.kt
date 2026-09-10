@@ -103,6 +103,23 @@ class FeedViewModelTest {
     }
 
     @Test
+    fun `a sync blocked by the connectivity constraint is not shown as progress`() = runTest {
+        // WorkManager keeps the request enqueued until the network returns; spinning forever would
+        // be a lie.
+        networkMonitor.setOnline(false)
+        syncScheduler.setState(SyncState.Enqueued)
+        repository.setEntries(TestApods.feed(size = 2))
+
+        createViewModel().uiState.test {
+            var state = awaitItem()
+            while (state.items.isEmpty() || !state.isOffline) state = awaitItem()
+
+            assertFalse(state.isRefreshing)
+            assertFalse(state.isLoading)
+        }
+    }
+
+    @Test
     fun `a failed sync surfaces a presentable error`() = runTest {
         syncScheduler.setState(SyncState.Failed(AppError.RateLimited()))
 

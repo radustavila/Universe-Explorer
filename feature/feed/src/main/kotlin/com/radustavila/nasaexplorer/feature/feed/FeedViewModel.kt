@@ -48,10 +48,16 @@ class FeedViewModel @Inject constructor(
         observeSyncState(),
         localState,
     ) { items, isOnline, syncState, local ->
+        // A sync that is enqueued while offline cannot run: WorkManager holds it until the
+        // connectivity constraint is met. Reporting it as "refreshing" would spin forever, so
+        // progress is only shown for work that can actually make progress.
+        val isSyncMakingProgress = syncState == SyncState.Syncing ||
+            (syncState == SyncState.Enqueued && isOnline)
+
         FeedUiState(
             items = items,
-            isLoading = items.isEmpty() && (syncState.isRunning || local.isLoadingMore),
-            isRefreshing = items.isNotEmpty() && syncState.isRunning,
+            isLoading = items.isEmpty() && (isSyncMakingProgress || local.isLoadingMore),
+            isRefreshing = items.isNotEmpty() && isSyncMakingProgress,
             isLoadingMore = local.isLoadingMore,
             isOffline = !isOnline,
             hasReachedArchiveStart = local.hasReachedArchiveStart,

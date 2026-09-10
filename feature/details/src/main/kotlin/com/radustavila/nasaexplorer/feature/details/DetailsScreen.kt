@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.feature.details
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,6 +41,7 @@ import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.MediaTypeBadge
 import com.radustavila.nasaexplorer.core.designsystem.component.NasaAsyncImage
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
+import com.radustavila.nasaexplorer.core.designsystem.component.VideoPlaceholder
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
@@ -149,14 +151,22 @@ private fun ApodDetails(apod: Apod, modifier: Modifier = Modifier) {
             .testTag(DETAILS_CONTENT_TEST_TAG),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        NasaAsyncImage(
-            url = apod.fullImageUrl,
-            contentDescription = apod.title,
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 4.dp),
-        )
+        if (apod.fullImageUrl == null && apod.isPlayable) {
+            VideoPlaceholder(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16f / 9f),
+            )
+        } else {
+            NasaAsyncImage(
+                url = apod.fullImageUrl,
+                contentDescription = apod.title,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp),
+            )
+        }
 
         Column(
             modifier = Modifier.padding(horizontal = 16.dp),

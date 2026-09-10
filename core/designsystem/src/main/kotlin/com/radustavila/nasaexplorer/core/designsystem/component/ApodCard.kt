@@ -27,13 +27,25 @@ fun ApodCard(
 ) {
     Card(onClick = onClick, modifier = modifier.fillMaxWidth()) {
         Box {
-            NasaAsyncImage(
-                url = apod.previewImageUrl,
-                contentDescription = apod.title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(16f / 9f),
-            )
+            val mediaModifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(16f / 9f)
+
+            when {
+                apod.previewImageUrl != null -> NasaAsyncImage(
+                    url = apod.previewImageUrl,
+                    contentDescription = apod.title,
+                    modifier = mediaModifier,
+                )
+
+                apod.isPlayable -> VideoPlaceholder(modifier = mediaModifier)
+
+                else -> NasaAsyncImage(
+                    url = null,
+                    contentDescription = apod.title,
+                    modifier = mediaModifier,
+                )
+            }
             MediaTypeBadge(
                 mediaType = apod.mediaType,
                 modifier = Modifier

@@ -26,7 +26,9 @@ fun ApodDto.toEntityOrNull(cachedAt: Instant): ApodEntity? {
         }
     } ?: return null
 
-    val mediaUrl = url ?: hdUrl ?: thumbnailUrl ?: return null
+    // NASA sends "" rather than omitting the field for videos it has no still frame for.
+    val mediaUrl = url.orNullIfBlank() ?: hdUrl.orNullIfBlank() ?: thumbnailUrl.orNullIfBlank()
+        ?: return null
 
     return ApodEntity(
         date = parsedDate.toString(),
@@ -34,9 +36,10 @@ fun ApodDto.toEntityOrNull(cachedAt: Instant): ApodEntity? {
         explanation = explanation?.takeIf(String::isNotBlank).orEmpty(),
         mediaType = MediaType.toApiValue(MediaType.fromApiValue(mediaType)),
         url = mediaUrl,
-        hdUrl = hdUrl,
-        thumbnailUrl = thumbnailUrl,
-        copyright = copyright?.trim()?.takeIf(String::isNotBlank),
+        hdUrl = hdUrl.orNullIfBlank(),
+        thumbnailUrl = thumbnailUrl.orNullIfBlank(),
+        // NASA embeds newlines in credits; collapse them so the UI can lay the text out.
+        copyright = copyright.orNullIfBlank()?.replace(WHITESPACE_RUN, " "),
         cachedAtEpochMillis = cachedAt.toEpochMilli(),
     )
 }
@@ -63,5 +66,9 @@ fun ApodEntity.toDomain(): Apod = Apod(
 )
 
 fun List<ApodEntity>.toDomain(): List<Apod> = map(ApodEntity::toDomain)
+
+private val WHITESPACE_RUN = Regex("\\s+")
+
+private fun String?.orNullIfBlank(): String? = this?.trim()?.takeIf(String::isNotBlank)
 
 private const val UNTITLED = "Untitled"

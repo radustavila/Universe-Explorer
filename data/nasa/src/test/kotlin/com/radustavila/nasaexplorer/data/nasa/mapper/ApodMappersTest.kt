@@ -62,10 +62,25 @@ class ApodMappersTest {
     }
 
     @Test
-    fun `entries without any media url are dropped`() {
-        val dto = imageDto().copy(url = null, hdUrl = null, thumbnailUrl = null)
+    fun `an empty thumbnail url is treated as absent, not as a broken link`() {
+        // NASA publishes some videos with "thumbnail_url": "" rather than omitting the field.
+        val entity = ApodDto(
+            date = "2026-09-09",
+            title = "Witness XZ Andromedae Wink",
+            explanation = "A native video.",
+            mediaType = "video",
+            url = "https://apod.nasa.gov/apod/image/2609/xz_and.mp4",
+            thumbnailUrl = "",
+        ).toEntityOrNull(CACHED_AT)
 
-        assertNull(dto.toEntityOrNull(CACHED_AT))
+        assertNull(entity?.thumbnailUrl)
+        assertEquals("https://apod.nasa.gov/apod/image/2609/xz_and.mp4", entity?.url)
+    }
+
+    @Test
+    fun `entries without any media url are dropped`() {
+        assertNull(imageDto().copy(url = null, hdUrl = null, thumbnailUrl = null).toEntityOrNull(CACHED_AT))
+        assertNull(imageDto().copy(url = "", hdUrl = "", thumbnailUrl = " ").toEntityOrNull(CACHED_AT))
     }
 
     @Test
@@ -74,6 +89,15 @@ class ApodMappersTest {
 
         assertEquals("Untitled", entity?.title)
         assertEquals("Jane Doe", entity?.copyright)
+    }
+
+    @Test
+    fun `multi-line credits are collapsed into a single line`() {
+        val entity = imageDto()
+            .copy(copyright = "Alessandro Merga\n Text:\nCecilia Chirenti\n(NASA)")
+            .toEntityOrNull(CACHED_AT)
+
+        assertEquals("Alessandro Merga Text: Cecilia Chirenti (NASA)", entity?.copyright)
     }
 
     @Test

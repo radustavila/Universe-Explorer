@@ -14,7 +14,7 @@ suite that runs the whole stack on a JVM with no emulator.
 | **Min / Target / Compile SDK** | 26 / 37 / 37 |
 | **Build** | AGP 9.4.0 (built-in Kotlin), Gradle 9.7.1, convention plugins |
 | **Modules** | 15 Gradle modules + an included `build-logic` build |
-| **Tests** | 96 unit/Robolectric/Compose tests, no device required |
+| **Tests** | 99 unit/Robolectric/Compose tests, no device required |
 
 ---
 
@@ -375,7 +375,7 @@ Hilt, constructor injection everywhere, KSP (no kapt).
 
 ## Testing strategy
 
-96 tests, all runnable with `./gradlew test testDebugUnitTest` — **no emulator required**. Robolectric
+99 tests, all runnable with `./gradlew test testDebugUnitTest` — **no emulator required**. Robolectric
 provides the Android runtime, including for Compose UI tests.
 
 | Area | Module | What is verified |
@@ -464,7 +464,7 @@ SDK levels, JVM targets, Compose setup, Hilt/KSP, Room schema export, lint polic
 are defined once.
 
 **7. The whole test pyramid runs on the JVM.**
-Room against real SQLite, HTTP against MockWebServer, Compose against Robolectric — 96 tests, no
+Room against real SQLite, HTTP against MockWebServer, Compose against Robolectric — 99 tests, no
 emulator, suitable for any CI runner. Production bytecode targets Java 17 while the test JVM is
 pinned to 21, because Robolectric's Android runtime requires it.
 
@@ -489,6 +489,25 @@ WorkManager state — turning "offline-first" from a claim into something observ
 | `:core:designsystem` depends on `:core:model` | Lets shared components such as `ApodCard` speak the domain language instead of each feature re-implementing them. | The design system is not domain-agnostic; a separate `:core:ui` would be the alternative at this size. |
 
 ---
+
+## Verified behaviour
+
+The build was exercised on an API 37 emulator against the live NASA API, and three defects found
+that way are fixed in the code:
+
+* NASA returns `"thumbnail_url": ""` (not `null`) for videos it hosts itself as MP4 — blank URLs are
+  now normalised away and such entries render a video placeholder instead of a broken-image icon.
+* WorkManager runs a periodic request the moment it is registered, which duplicated the launch sync
+  on every cold start — the periodic request now carries an initial delay of one interval.
+* A sync enqueued while offline stays enqueued until connectivity returns; the feed used to show a
+  refresh spinner for as long as that lasted. Progress is now shown only for work that can actually
+  run.
+
+Observed end to end: cold start renders from Room before any request completes; a favourite survives
+a re-sync of the same window; scrolling issued exactly one additional request
+(`start_date=2026-08-28&end_date=2026-09-03`) and grew the cache from 7 to 14 rows with no
+duplicates; with the radios disabled the feed still renders cached entries and images from Coil's
+disk cache under an offline banner.
 
 ## Known limitations
 

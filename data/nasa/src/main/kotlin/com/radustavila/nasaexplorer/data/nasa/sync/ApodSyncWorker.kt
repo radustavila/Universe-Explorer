@@ -57,7 +57,12 @@ class ApodSyncWorker @AssistedInject constructor(
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, BACKOFF_SECONDS, TimeUnit.SECONDS)
             .build()
 
+        /**
+         * The initial delay matters: WorkManager runs a periodic request as soon as it is
+         * registered, which would duplicate the sync every app start performs anyway.
+         */
         fun periodicRequest() = PeriodicWorkRequestBuilder<ApodSyncWorker>(PERIODIC_INTERVAL)
+            .setInitialDelay(PERIODIC_INTERVAL)
             .setConstraints(constraints)
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, BACKOFF_SECONDS, TimeUnit.SECONDS)
             .build()
