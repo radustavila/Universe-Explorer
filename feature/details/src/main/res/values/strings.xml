@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="details_title">Picture of the day</string>
+    <string name="details_back">Back</string>
+    <string name="details_copyright">© %1$s</string>
+    <string name="details_watch_video">Watch video</string>
+    <string name="details_missing_title">Not cached yet</string>
+    <string name="details_missing_description">This entry is not in the local cache. Refresh the feed while online to download it.</string>
+</resources>

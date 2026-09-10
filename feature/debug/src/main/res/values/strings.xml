@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="debug_title">Architecture</string>
+    <string name="debug_section_connectivity">Connectivity</string>
+    <string name="debug_section_cache">Local cache (source of truth)</string>
+    <string name="debug_section_sync">Synchronization</string>
+    <string name="debug_network">Network availability</string>
+    <string name="debug_online">Online</string>
+    <string name="debug_offline">Offline</string>
+    <string name="debug_cached_count">Cached APODs</string>
+    <string name="debug_favorites_count">Favorites</string>
+    <string name="debug_oldest_cached">Oldest cached entry</string>
+    <string name="debug_oldest_requested">Oldest requested window</string>
+    <string name="debug_last_sync">Last successful sync</string>
+    <string name="debug_worker_state">WorkManager state</string>
+    <string name="debug_never">Never</string>
+    <string name="debug_none">—</string>
+    <string name="debug_sync_now">Sync now</string>
+    <string name="debug_schedule_periodic">Ensure periodic sync</string>
+    <string name="debug_state_idle">Idle</string>
+    <string name="debug_state_enqueued">Enqueued (waiting for constraints)</string>
+    <string name="debug_state_syncing">Running</string>
+    <string name="debug_state_succeeded">Succeeded</string>
+    <string name="debug_state_failed">Failed: %1$s</string>
+</resources>

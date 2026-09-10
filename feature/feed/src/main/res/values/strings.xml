@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feed_title">NASA Explorer</string>
+    <string name="feed_empty_title">Nothing cached yet</string>
+    <string name="feed_empty_description">Pull to refresh to download the latest pictures of the day.</string>
+    <string name="feed_offline_title">You are offline</string>
+    <string name="feed_offline_description">Connect to the internet to download the astronomy picture of the day archive.</string>
+    <string name="feed_archive_start">You have reached the first Astronomy Picture of the Day (16 June 1995).</string>
+    <string name="feed_loading_more">Loading older entries…</string>
+</resources>

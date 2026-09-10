@@ -1,0 +1,251 @@
+package com.radustavila.nasaexplorer.feature.feed
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.radustavila.nasaexplorer.core.designsystem.component.ApodCard
+import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
+import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
+import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
+import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
+import com.radustavila.nasaexplorer.core.designsystem.error.asText
+import com.radustavila.nasaexplorer.core.designsystem.theme.NasaTheme
+import com.radustavila.nasaexplorer.core.model.Apod
+import com.radustavila.nasaexplorer.core.model.MediaType
+import java.time.LocalDate
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+
+const val FEED_LIST_TEST_TAG = "feed-list"
+
+@Composable
+fun FeedScreen(
+    onApodClick: (LocalDate) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: FeedViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    FeedContent(
+        uiState = uiState,
+        onApodClick = onApodClick,
+        onToggleFavorite = viewModel::onToggleFavorite,
+        onRefresh = viewModel::onRefresh,
+        onRetry = viewModel::onRetry,
+        onLoadMore = viewModel::onLoadMore,
+        onErrorDismissed = viewModel::onErrorDismissed,
+        modifier = modifier,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun FeedContent(
+    uiState: FeedUiState,
+    onApodClick: (LocalDate) -> Unit,
+    onToggleFavorite: (Apod) -> Unit,
+    onRefresh: () -> Unit,
+    onRetry: () -> Unit,
+    onLoadMore: () -> Unit,
+    onErrorDismissed: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val listState = rememberLazyListState()
+    val errorMessage = uiState.error?.asText()
+
+    LaunchedEffect(errorMessage) {
+        if (errorMessage != null && uiState.hasContent) {
+            snackbarHostState.showSnackbar(errorMessage)
+            onErrorDismissed()
+        }
+    }
+
+    NotifyWhenNearEnd(listState = listState, itemCount = uiState.items.size, onLoadMore = onLoadMore)
+
+    Scaffold(
+        modifier = modifier,
+        topBar = { TopAppBar(title = { Text(stringResource(R.string.feed_title)) }) },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    ) { padding ->
+        PullToRefreshBox(
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = onRefresh,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                if (uiState.isOffline && uiState.hasContent) {
+                    OfflineBanner()
+                }
+
+                when {
+                    uiState.isLoading && !uiState.hasContent -> LoadingState()
+
+                    uiState.isOfflineEmpty -> OfflineState(
+                        title = stringResource(R.string.feed_offline_title),
+                        description = stringResource(R.string.feed_offline_description),
+                        onRetry = onRetry,
+                    )
+
+                    uiState.isEmpty -> EmptyState(
+                        title = errorMessage ?: stringResource(R.string.feed_empty_title),
+                        description = stringResource(R.string.feed_empty_description),
+                        onRetry = onRetry,
+                    )
+
+                    else -> FeedList(
+                        uiState = uiState,
+                        listState = listState,
+                        onApodClick = onApodClick,
+                        onToggleFavorite = onToggleFavorite,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FeedList(
+    uiState: FeedUiState,
+    listState: LazyListState,
+    onApodClick: (LocalDate) -> Unit,
+    onToggleFavorite: (Apod) -> Unit,
+) {
+    LazyColumn(
+        state = listState,
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag(FEED_LIST_TEST_TAG),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        items(items = uiState.items, key = { apod -> apod.date.toString() }) { apod ->
+            ApodCard(
+                apod = apod,
+                onClick = { onApodClick(apod.date) },
+                onToggleFavorite = { onToggleFavorite(apod) },
+            )
+        }
+
+        if (uiState.isLoadingMore) {
+            item(key = "loading-more") {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = stringResource(R.string.feed_loading_more),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
+
+        if (uiState.hasReachedArchiveStart) {
+            item(key = "archive-start") {
+                Text(
+                    text = stringResource(R.string.feed_archive_start),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Date-range pagination trigger: when the user gets within [LOAD_MORE_THRESHOLD] items of the end,
+ * ask for the next (older) window. Driven by `snapshotFlow` so scrolling itself stays allocation
+ * free.
+ */
+@Composable
+private fun NotifyWhenNearEnd(
+    listState: LazyListState,
+    itemCount: Int,
+    onLoadMore: () -> Unit,
+) {
+    val shouldLoadMore by remember(itemCount) {
+        derivedStateOf {
+            if (itemCount == 0) return@derivedStateOf false
+            val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            lastVisibleIndex >= itemCount - LOAD_MORE_THRESHOLD
+        }
+    }
+
+    LaunchedEffect(listState, itemCount) {
+        snapshotFlow { shouldLoadMore }
+            .distinctUntilChanged()
+            .filter { it }
+            .collect { onLoadMore() }
+    }
+}
+
+private const val LOAD_MORE_THRESHOLD = 3
+
+@Preview
+@Composable
+private fun FeedScreenPreview() {
+    NasaTheme {
+        FeedContent(
+            uiState = FeedUiState(
+                items = listOf(
+                    Apod(
+                        date = LocalDate.of(2026, 9, 10),
+                        title = "Spiral Galaxy NGC 1300",
+                        explanation = "A barred spiral galaxy.",
+                        mediaType = MediaType.IMAGE,
+                        url = "https://apod.nasa.gov/apod/image/ngc1300.jpg",
+                        isFavorite = true,
+                    ),
+                ),
+            ),
+            onApodClick = {},
+            onToggleFavorite = {},
+            onRefresh = {},
+            onRetry = {},
+            onLoadMore = {},
+            onErrorDismissed = {},
+        )
+    }
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_no_connection">You are offline. Showing cached content.</string>
+    <string name="error_timeout">The request took too long. Try again.</string>
+    <string name="error_http">NASA returned an error (%1$d). Try again later.</string>
+    <string name="error_rate_limited">Too many requests for this API key. Add your own NASA key or wait a while.</string>
+    <string name="error_serialization">Received an unexpected response from NASA.</string>
+    <string name="error_database">Could not read the local cache.</string>
+    <string name="error_empty">NASA returned no entries for this period.</string>
+    <string name="error_unknown">Something went wrong.</string>
+
+    <string name="action_retry">Retry</string>
+    <string name="content_description_favorite_add">Add to favorites</string>
+    <string name="content_description_favorite_remove">Remove from favorites</string>
+    <string name="media_type_image">Image</string>
+    <string name="media_type_video">Video</string>
+    <string name="media_type_other">Other</string>
+</resources>
