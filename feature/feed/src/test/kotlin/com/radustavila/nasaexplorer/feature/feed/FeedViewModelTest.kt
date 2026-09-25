@@ -16,6 +16,7 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
+import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -33,6 +34,7 @@ class FeedViewModelTest {
     private val repository = FakeApodRepository()
     private val networkMonitor = FakeNetworkMonitor()
     private val syncScheduler = FakeSyncScheduler()
+    private val timeProvider = FakeTimeProvider()
     private val syncMetadata = FakeSyncMetadataRepository()
 
     @Test
@@ -232,6 +234,7 @@ class FeedViewModelTest {
         refreshFeed = RefreshFeedUseCase(syncScheduler),
         loadOlderApods = LoadOlderApodsUseCase(repository, syncMetadata, networkMonitor),
         toggleFavorite = ToggleFavoriteUseCase(repository),
+        timeProvider = timeProvider,
     )
 
     private suspend fun FeedUiState.awaitContent(

@@ -52,6 +52,26 @@ class SyncStateMappingTest {
         assertEquals(SyncState.Failed(AppError.RateLimited()), state)
     }
 
+    @Test
+    fun `a periodic request resting between runs is not reported as progress`() {
+        val state = combineSyncStates(
+            onDemand = listOf(workInfo(WorkInfo.State.SUCCEEDED)),
+            periodic = listOf(workInfo(WorkInfo.State.ENQUEUED)),
+        )
+
+        assertEquals(SyncState.Succeeded, state)
+    }
+
+    @Test
+    fun `a periodic request that is actually running is reported as syncing`() {
+        val state = combineSyncStates(
+            onDemand = emptyList(),
+            periodic = listOf(workInfo(WorkInfo.State.RUNNING)),
+        )
+
+        assertEquals(SyncState.Syncing, state)
+    }
+
     private fun workInfo(
         state: WorkInfo.State,
         runAttemptCount: Int = 0,

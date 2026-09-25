@@ -2,6 +2,7 @@ package com.radustavila.nasaexplorer.feature.feed
 
 import com.radustavila.nasaexplorer.core.designsystem.error.UiError
 import com.radustavila.nasaexplorer.core.model.Apod
+import java.time.LocalDate
 
 /**
  * Complete, immutable description of what the feed screen shows. The screen renders this and
@@ -15,6 +16,8 @@ data class FeedUiState(
     val isOffline: Boolean = false,
     val hasReachedArchiveStart: Boolean = false,
     val error: UiError? = null,
+    /** Newest date the archive can hold; the date picker refuses anything after it. */
+    val latestSelectableDate: LocalDate = Apod.FIRST_PUBLICATION_DATE,
 ) {
     val hasContent: Boolean get() = items.isNotEmpty()
 

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.radustavila.nasaexplorer.core.database.NasaDatabase
 import com.radustavila.nasaexplorer.core.database.dao.ApodDao
+import com.radustavila.nasaexplorer.core.database.migration.NasaDatabaseMigrations
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +19,11 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideNasaDatabase(@ApplicationContext context: Context): NasaDatabase =
-        Room.databaseBuilder(context, NasaDatabase::class.java, NasaDatabase.NAME).build()
+        Room.databaseBuilder(context, NasaDatabase::class.java, NasaDatabase.NAME)
+            // No destructive fallback: the cache is the offline experience, and favourites only
+            // exist here.
+            .addMigrations(*NasaDatabaseMigrations.ALL)
+            .build()
 
     @Provides
     fun provideApodDao(database: NasaDatabase): ApodDao = database.apodDao()

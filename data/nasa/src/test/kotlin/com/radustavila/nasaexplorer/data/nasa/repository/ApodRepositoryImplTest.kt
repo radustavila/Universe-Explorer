@@ -162,6 +162,70 @@ class ApodRepositoryImplTest {
     }
 
     @Test
+    fun `fetching one day caches just that day`() = runTest {
+        val archiveDate = LocalDate.of(2001, 3, 5)
+        remoteDataSource.singleResult = DataResult.Success(dtosFor(archiveDate, archiveDate).first())
+
+        val result = repository.fetchApod(archiveDate)
+
+        assertEquals(DataResult.Success(Unit), result)
+        assertEquals(archiveDate, remoteDataSource.lastRequestedDate)
+        assertEquals(1, repository.observeCachedCount().first())
+        assertEquals("Apod $archiveDate", repository.observeApod(archiveDate).first()?.title)
+    }
+
+    @Test
+    fun `a day fetched on its own is readable but absent from the feed`() = runTest {
+        remoteDataSource.rangeResult = DataResult.Success(dtosFor(TODAY.minusDays(6), TODAY))
+        repository.refreshRecent()
+
+        val archiveDate = LocalDate.of(2001, 3, 5)
+        remoteDataSource.singleResult = DataResult.Success(dtosFor(archiveDate, archiveDate).first())
+        repository.fetchApod(archiveDate)
+
+        // Otherwise a lone 2001 entry would sit directly under this week's window.
+        assertEquals(7, repository.observeFeed().first().size)
+        assertEquals(archiveDate, repository.observeApod(archiveDate).first()?.date)
+    }
+
+    @Test
+    fun `paging past a day fetched on its own pulls it into the feed`() = runTest {
+        val archiveDate = LocalDate.of(2001, 3, 5)
+        remoteDataSource.singleResult = DataResult.Success(dtosFor(archiveDate, archiveDate).first())
+        repository.fetchApod(archiveDate)
+
+        syncMetadata.setOldestRequestedDate(archiveDate.plusDays(1))
+        remoteDataSource.rangeResult =
+            DataResult.Success(dtosFor(archiveDate.minusDays(6), archiveDate))
+        repository.loadOlderWindow()
+
+        assertEquals(7, repository.observeFeed().first().size)
+    }
+
+    @Test
+    fun `fetching one day does not move the paging cursor`() = runTest {
+        remoteDataSource.rangeResult = DataResult.Success(dtosFor(TODAY.minusDays(6), TODAY))
+        repository.refreshRecent()
+
+        val archiveDate = LocalDate.of(2001, 3, 5)
+        remoteDataSource.singleResult = DataResult.Success(dtosFor(archiveDate, archiveDate).first())
+        repository.fetchApod(archiveDate)
+
+        // Paging still continues from the newest window; the one-off day is a hole, not a frontier.
+        assertEquals(TODAY.minusDays(6), syncMetadata.currentOldestRequested)
+    }
+
+    @Test
+    fun `a failing single-day fetch leaves the cache untouched`() = runTest {
+        remoteDataSource.singleResult = DataResult.Failure(AppError.Http(code = 404))
+
+        val result = repository.fetchApod(LocalDate.of(2001, 3, 5))
+
+        assertEquals(DataResult.Failure(AppError.Http(code = 404)), result)
+        assertEquals(0, repository.observeCachedCount().first())
+    }
+
+    @Test
     fun `favorites are observable and require no network`() = runTest {
         remoteDataSource.rangeResult = DataResult.Success(dtosFor(TODAY.minusDays(1), TODAY))
         repository.refreshRecent()
@@ -216,8 +280,14 @@ class ApodRepositoryImplTest {
             return if (callCount > 1) rangeResultOnSecondCall ?: rangeResult else rangeResult
         }
 
-        override suspend fun fetchSingle(date: LocalDate): DataResult<ApodDto> =
-            DataResult.Failure(AppError.Unknown("not used"))
+        var singleResult: DataResult<ApodDto> = DataResult.Failure(AppError.Unknown("not scripted"))
+        var lastRequestedDate: LocalDate? = null
+            private set
+
+        override suspend fun fetchSingle(date: LocalDate): DataResult<ApodDto> {
+            lastRequestedDate = date
+            return singleResult
+        }
     }
 
     private companion object {

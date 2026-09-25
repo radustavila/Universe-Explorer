@@ -14,6 +14,7 @@ class JvmLibraryConventionPlugin : Plugin<Project> {
         // Lets Android Lint analyse the pure-Kotlin modules too, instead of treating them as
         // opaque external dependencies.
         pluginManager.apply("com.android.lint")
+        pluginManager.apply("nasaexplorer.detekt")
 
         configureKotlinCompiler()
 

@@ -64,6 +64,13 @@ class ApodRepositoryImpl @Inject constructor(
             }
     }
 
+    override suspend fun fetchApod(date: LocalDate): DataResult<Unit> =
+        remoteDataSource.fetchSingle(date)
+            // Kept out of the feed: an isolated day from the far side of the archive would otherwise
+            // appear directly below the current window. Paging absorbs it when it reaches that date.
+            .flatMap { dto -> persist(listOf(dto), isInFeed = false) }
+            .map { }
+
     override suspend fun loadOlderWindow(): DataResult<Int> {
         val oldestRequested = syncMetadataRepository.oldestRequestedDate.first()
             ?: timeProvider.today().minusDays((WINDOW_SIZE_DAYS - 1).toLong())
@@ -109,8 +116,9 @@ class ApodRepositoryImpl @Inject constructor(
 
     private suspend fun persist(
         dtos: List<com.radustavila.nasaexplorer.data.nasa.remote.dto.ApodDto>,
+        isInFeed: Boolean = true,
     ): DataResult<Int> {
-        val entities = dtos.toEntities(cachedAt = timeProvider.now())
+        val entities = dtos.toEntities(cachedAt = timeProvider.now(), isInFeed = isInFeed)
         if (entities.isEmpty()) return DataResult.Failure(AppError.EmptyResponse)
 
         return localDataSource.upsertPreservingLocalState(entities).map { entities.size }

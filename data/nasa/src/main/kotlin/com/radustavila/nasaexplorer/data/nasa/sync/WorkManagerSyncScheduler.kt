@@ -27,7 +27,7 @@ class WorkManagerSyncScheduler @Inject constructor(
     override val syncState: Flow<SyncState> = combine(
         workManager.getWorkInfosForUniqueWorkFlow(ON_DEMAND_SYNC_WORK),
         workManager.getWorkInfosForUniqueWorkFlow(PERIODIC_SYNC_WORK),
-    ) { onDemand, periodic -> (onDemand + periodic).toSyncState() }
+    ) { onDemand, periodic -> combineSyncStates(onDemand, periodic) }
         .distinctUntilChanged()
 
     override fun requestSync() {
@@ -52,6 +52,17 @@ class WorkManagerSyncScheduler @Inject constructor(
         const val PERIODIC_SYNC_WORK = "apod-sync-periodic"
     }
 }
+
+/**
+ * Folds the on-demand and periodic work requests into the single state the UI observes.
+ *
+ * A periodic request is *permanently* ENQUEUED: between two runs it sits waiting for its next
+ * interval, which is its resting state and not progress. Reporting that as "enqueued" left the feed
+ * showing a refresh indicator that never stopped, so the periodic request only contributes while it
+ * is actually running or when it has failed.
+ */
+internal fun combineSyncStates(onDemand: List<WorkInfo>, periodic: List<WorkInfo>): SyncState =
+    (onDemand + periodic.filterNot { it.state == WorkInfo.State.ENQUEUED }).toSyncState()
 
 /**
  * Collapses the states of every sync work request into one observable state, favouring "something

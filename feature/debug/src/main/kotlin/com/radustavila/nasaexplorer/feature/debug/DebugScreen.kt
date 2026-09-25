@@ -13,6 +13,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -58,6 +59,8 @@ internal fun DebugContent(
 ) {
     Scaffold(
         modifier = modifier,
+        // See FeedScreen: insets belong to the top bar and to the app scaffold's navigation bar.
+        contentWindowInsets = WindowInsets(0),
         topBar = { TopAppBar(title = { Text(stringResource(R.string.debug_title)) }) },
     ) { padding ->
         val info = uiState.info

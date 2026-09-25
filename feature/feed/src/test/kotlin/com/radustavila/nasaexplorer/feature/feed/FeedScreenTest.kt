@@ -52,6 +52,29 @@ class FeedScreenTest {
     }
 
     @Test
+    fun `the calendar action opens the date picker`() {
+        val today = LocalDate.of(2026, 9, 10)
+        composeTestRule.setContent {
+            FeedContent(
+                uiState = FeedUiState(
+                    items = TestApods.feed(size = 1),
+                    latestSelectableDate = today,
+                ),
+                onApodClick = {},
+                onToggleFavorite = {},
+                onRefresh = {},
+                onRetry = {},
+                onLoadMore = {},
+                onErrorDismissed = {},
+            )
+        }
+
+        composeTestRule.onNodeWithTag(FEED_CALENDAR_BUTTON_TEST_TAG).performClick()
+
+        composeTestRule.onNodeWithText("Jump to a day").assertIsDisplayed()
+    }
+
+    @Test
     fun `an empty cache while loading shows the loading indicator`() {
         composeTestRule.setContent {
             FeedContent(

@@ -104,13 +104,60 @@ class ApodDaoTest {
     }
 
     @Test
+    fun `a day cached on its own is readable but stays out of the feed`() = runTest {
+        apodDao.upsertPreservingLocalState(listOf(entity("2026-09-10")))
+
+        apodDao.upsertPreservingLocalState(listOf(entity("2001-03-05", isInFeed = false)))
+
+        assertEquals(listOf("2026-09-10"), apodDao.observeFeed().first().map(ApodEntity::date))
+        assertEquals("Title 2001-03-05", apodDao.findByDate("2001-03-05")?.title)
+        assertEquals(2, apodDao.observeCount().first())
+    }
+
+    @Test
+    fun `paging past a day cached on its own pulls it into the feed`() = runTest {
+        apodDao.upsertPreservingLocalState(listOf(entity("2001-03-05", isInFeed = false)))
+
+        apodDao.upsertPreservingLocalState(
+            listOf(entity("2001-03-05", title = "Windowed"), entity("2001-03-06")),
+        )
+
+        val feed = apodDao.observeFeed().first()
+        assertEquals(listOf("2001-03-06", "2001-03-05"), feed.map(ApodEntity::date))
+        assertEquals("Windowed", apodDao.findByDate("2001-03-05")?.title)
+    }
+
+    @Test
+    fun `a one-off fetch never drops a day back out of the feed`() = runTest {
+        apodDao.upsertPreservingLocalState(listOf(entity("2026-09-10")))
+
+        apodDao.upsertPreservingLocalState(listOf(entity("2026-09-10", isInFeed = false)))
+
+        assertEquals(listOf("2026-09-10"), apodDao.observeFeed().first().map(ApodEntity::date))
+    }
+
+    @Test
+    fun `a day cached on its own can still be favorited`() = runTest {
+        apodDao.upsertPreservingLocalState(listOf(entity("2001-03-05", isInFeed = false)))
+
+        apodDao.setFavorite(date = "2001-03-05", isFavorite = true)
+
+        assertEquals(listOf("2001-03-05"), apodDao.observeFavorites().first().map(ApodEntity::date))
+        assertTrue(apodDao.observeFeed().first().isEmpty())
+    }
+
+    @Test
     fun `updating an unknown date changes nothing`() = runTest {
         val updatedRows = apodDao.setFavorite(date = "1999-01-01", isFavorite = true)
 
         assertEquals(0, updatedRows)
     }
 
-    private fun entity(date: String, title: String = "Title $date") = ApodEntity(
+    private fun entity(
+        date: String,
+        title: String = "Title $date",
+        isInFeed: Boolean = true,
+    ) = ApodEntity(
         date = date,
         title = title,
         explanation = "Explanation",
@@ -120,5 +167,7 @@ class ApodDaoTest {
         thumbnailUrl = null,
         copyright = null,
         cachedAtEpochMillis = 1_757_500_000_000,
+        lastSyncedAtEpochMillis = 1_757_500_000_000,
+        isInFeed = isInFeed,
     )
 }

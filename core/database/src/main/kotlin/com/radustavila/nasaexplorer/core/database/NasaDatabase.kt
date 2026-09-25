@@ -7,7 +7,7 @@ import com.radustavila.nasaexplorer.core.database.entity.ApodEntity
 
 @Database(
     entities = [ApodEntity::class],
-    version = 1,
+    version = 3,
     exportSchema = true,
 )
 abstract class NasaDatabase : RoomDatabase() {

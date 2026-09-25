@@ -7,4 +7,8 @@
     <string name="feed_offline_description">Connect to the internet to download the astronomy picture of the day archive.</string>
     <string name="feed_archive_start">You have reached the first Astronomy Picture of the Day (16 June 1995).</string>
     <string name="feed_loading_more">Loading older entries…</string>
+    <string name="feed_pick_date">Pick a date</string>
+    <string name="feed_date_picker_title">Jump to a day</string>
+    <string name="feed_date_picker_confirm">Open</string>
+    <string name="feed_date_picker_dismiss">Cancel</string>
 </resources>

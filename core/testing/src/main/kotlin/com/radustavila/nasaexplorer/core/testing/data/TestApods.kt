@@ -8,6 +8,7 @@ import java.time.LocalDate
 object TestApods {
 
     val CACHED_AT: Instant = Instant.parse("2026-09-10T12:00:00Z")
+    val SYNCED_AT: Instant = Instant.parse("2026-09-11T09:30:00Z")
 
     fun image(
         date: LocalDate = LocalDate.of(2026, 9, 10),
@@ -24,8 +25,10 @@ object TestApods {
         copyright = "NASA",
         isFavorite = isFavorite,
         cachedAt = CACHED_AT,
+        lastSyncedAt = SYNCED_AT,
     )
 
+    /** A video published as a YouTube embed: nothing an in-app player can decode. */
     fun video(
         date: LocalDate = LocalDate.of(2026, 9, 9),
         isFavorite: Boolean = false,
@@ -40,6 +43,25 @@ object TestApods {
         copyright = null,
         isFavorite = isFavorite,
         cachedAt = CACHED_AT,
+        lastSyncedAt = SYNCED_AT,
+    )
+
+    /** A video published as a plain MP4, which the in-app player can stream. */
+    fun streamableVideo(
+        date: LocalDate = LocalDate.of(2026, 9, 8),
+        isFavorite: Boolean = false,
+    ): Apod = Apod(
+        date = date,
+        title = "Perseverance Lands on Mars",
+        explanation = "Descent footage from the rover.",
+        mediaType = MediaType.VIDEO,
+        url = "https://apod.nasa.gov/apod/video/perseverance.mp4",
+        hdUrl = null,
+        thumbnailUrl = "https://apod.nasa.gov/apod/video/perseverance_thumb.jpg",
+        copyright = null,
+        isFavorite = isFavorite,
+        cachedAt = CACHED_AT,
+        lastSyncedAt = SYNCED_AT,
     )
 
     fun feed(size: Int, startDate: LocalDate = LocalDate.of(2026, 9, 10)): List<Apod> =

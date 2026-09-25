@@ -7,6 +7,7 @@ import com.radustavila.nasaexplorer.core.model.Apod
 import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
@@ -18,22 +19,36 @@ class FakeApodRepository : ApodRepository {
 
     private val entries = MutableStateFlow<List<Apod>>(emptyList())
 
+    /** Dates cached on their own by [fetchApod]; like the real cache, they stay out of the feed. */
+    private val outsideFeed = MutableStateFlow<Set<LocalDate>>(emptySet())
+
     var refreshResult: DataResult<Int> = DataResult.Success(0)
     var loadOlderResult: DataResult<Int> = DataResult.Success(0)
     var setFavoriteResult: DataResult<Unit>? = null
+    var fetchApodResult: DataResult<Unit> = DataResult.Success(Unit)
+
+    /** Entry handed back by [fetchApod] on success, as a download would populate the cache. */
+    var fetchApodEntry: Apod? = null
 
     var refreshCallCount: Int = 0
         private set
     var loadOlderCallCount: Int = 0
         private set
+    var fetchedDates: List<LocalDate> = emptyList()
+        private set
 
     fun setEntries(apods: List<Apod>) {
         entries.value = apods.sortedByDescending(Apod::date)
+        // Anything the test seeds directly stands in for a synced window.
+        outsideFeed.update { excluded -> excluded - apods.map(Apod::date).toSet() }
     }
 
     fun emit(apods: List<Apod>) = setEntries(apods)
 
-    override fun observeFeed(): Flow<List<Apod>> = entries
+    override fun observeFeed(): Flow<List<Apod>> =
+        combine(entries, outsideFeed) { list, excluded ->
+            list.filterNot { apod -> apod.date in excluded }
+        }
 
     override fun observeApod(date: LocalDate): Flow<Apod?> =
         entries.map { list -> list.firstOrNull { it.date == date } }
@@ -63,6 +78,17 @@ class FakeApodRepository : ApodRepository {
     override suspend fun refreshRecent(): DataResult<Int> {
         refreshCallCount++
         return refreshResult
+    }
+
+    override suspend fun fetchApod(date: LocalDate): DataResult<Unit> {
+        fetchedDates = fetchedDates + date
+        if (fetchApodResult is DataResult.Success) {
+            fetchApodEntry?.let { entry ->
+                setEntries(entries.value + entry)
+                outsideFeed.update { it + entry.date }
+            }
+        }
+        return fetchApodResult
     }
 
     override suspend fun loadOlderWindow(): DataResult<Int> {

@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.feature.feed
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.common.time.TimeProvider
 import com.radustavila.nasaexplorer.core.designsystem.error.UiError
 import com.radustavila.nasaexplorer.core.designsystem.error.toUiError
 import com.radustavila.nasaexplorer.core.domain.usecase.LoadOlderApodsUseCase
@@ -38,7 +39,10 @@ class FeedViewModel @Inject constructor(
     private val refreshFeed: RefreshFeedUseCase,
     private val loadOlderApods: LoadOlderApodsUseCase,
     private val toggleFavorite: ToggleFavoriteUseCase,
+    timeProvider: TimeProvider,
 ) : ViewModel() {
+
+    private val today = timeProvider.today()
 
     private val localState = MutableStateFlow(LocalState())
 
@@ -62,11 +66,12 @@ class FeedViewModel @Inject constructor(
             isOffline = !isOnline,
             hasReachedArchiveStart = local.hasReachedArchiveStart,
             error = local.error ?: (syncState as? SyncState.Failed)?.error?.toUiError(),
+            latestSelectableDate = today,
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(STATE_TIMEOUT_MILLIS),
-        initialValue = FeedUiState(isLoading = true),
+        initialValue = FeedUiState(isLoading = true, latestSelectableDate = today),
     )
 
     init {

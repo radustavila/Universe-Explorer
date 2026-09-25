@@ -14,10 +14,12 @@ import java.time.format.DateTimeParseException
  */
 
 /**
+ * @param isInFeed whether the entry belongs to the contiguous window the feed pages through; a day
+ * fetched on its own for the details screen does not.
  * @return `null` when the entry cannot be identified (no parsable date) or has no media URL, i.e.
  * when it could not be rendered or de-duplicated anyway.
  */
-fun ApodDto.toEntityOrNull(cachedAt: Instant): ApodEntity? {
+fun ApodDto.toEntityOrNull(cachedAt: Instant, isInFeed: Boolean = true): ApodEntity? {
     val parsedDate = date?.let { raw ->
         try {
             LocalDate.parse(raw)
@@ -41,11 +43,13 @@ fun ApodDto.toEntityOrNull(cachedAt: Instant): ApodEntity? {
         // NASA embeds newlines in credits; collapse them so the UI can lay the text out.
         copyright = copyright.orNullIfBlank()?.replace(WHITESPACE_RUN, " "),
         cachedAtEpochMillis = cachedAt.toEpochMilli(),
+        lastSyncedAtEpochMillis = cachedAt.toEpochMilli(),
+        isInFeed = isInFeed,
     )
 }
 
-fun List<ApodDto>.toEntities(cachedAt: Instant): List<ApodEntity> =
-    mapNotNull { dto -> dto.toEntityOrNull(cachedAt) }
+fun List<ApodDto>.toEntities(cachedAt: Instant, isInFeed: Boolean = true): List<ApodEntity> =
+    mapNotNull { dto -> dto.toEntityOrNull(cachedAt = cachedAt, isInFeed = isInFeed) }
         // NASA occasionally repeats a date inside a window; keep the last occurrence so the
         // transactional upsert never receives conflicting rows.
         .associateBy(ApodEntity::date)
@@ -63,6 +67,7 @@ fun ApodEntity.toDomain(): Apod = Apod(
     copyright = copyright,
     isFavorite = isFavorite,
     cachedAt = Instant.ofEpochMilli(cachedAtEpochMillis),
+    lastSyncedAt = Instant.ofEpochMilli(lastSyncedAtEpochMillis),
 )
 
 fun List<ApodEntity>.toDomain(): List<Apod> = map(ApodEntity::toDomain)

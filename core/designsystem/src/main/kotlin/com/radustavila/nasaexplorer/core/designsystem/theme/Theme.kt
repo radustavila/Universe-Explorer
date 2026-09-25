@@ -1,52 +1,49 @@
 package com.radustavila.nasaexplorer.core.designsystem.theme
 
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 
-private val LightColors = lightColorScheme(
-    primary = NebulaBlue,
-    secondary = StardustCyan,
-    tertiary = SolarAmber,
-    error = MeteorRed,
-)
-
-private val DarkColors = darkColorScheme(
-    primary = StardustCyan,
+/**
+ * The single colour scheme of the application.
+ *
+ * Material You is intentionally not used: the wallpaper-derived palette tinted the photography and
+ * varied per device, which made the one thing the app exists to show look different everywhere.
+ */
+private val SpaceColors = darkColorScheme(
+    primary = Lavender,
     onPrimary = DeepSpace,
-    secondary = NebulaBlue,
+    primaryContainer = LavenderContainer,
+    onPrimaryContainer = Lavender,
+    secondary = StardustCyan,
+    onSecondary = DeepSpace,
+    secondaryContainer = LavenderContainer,
+    onSecondaryContainer = Lavender,
     tertiary = SolarAmber,
+    onTertiary = DeepSpace,
+    tertiaryContainer = SolarAmberContainer,
+    onTertiaryContainer = SolarAmber,
     error = MeteorRed,
+    onError = DeepSpace,
     background = DeepSpace,
-    surface = NebulaBlueDark,
+    onBackground = MoonGrey,
+    surface = DeepSpace,
     onSurface = MoonGrey,
+    surfaceVariant = DeepSpaceCard,
+    onSurfaceVariant = MoonGreyDim,
+    surfaceContainer = DeepSpaceElevated,
+    surfaceContainerHigh = DeepSpaceCard,
+    surfaceContainerHighest = DeepSpaceCard,
+    surfaceContainerLow = DeepSpaceElevated,
+    surfaceContainerLowest = DeepSpace,
+    outline = DeepSpaceOutline,
+    outlineVariant = DeepSpaceOutline,
 )
 
 @Composable
-fun NasaTheme(
-    useDarkTheme: Boolean = isSystemInDarkTheme(),
-    useDynamicColor: Boolean = true,
-    content: @Composable () -> Unit,
-) {
-    val supportsDynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-    val colorScheme = when {
-        useDynamicColor && supportsDynamicColor -> {
-            val context = LocalContext.current
-            if (useDarkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        useDarkTheme -> DarkColors
-        else -> LightColors
-    }
-
+fun NasaTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = SpaceColors,
         typography = NasaTypography,
         content = content,
     )

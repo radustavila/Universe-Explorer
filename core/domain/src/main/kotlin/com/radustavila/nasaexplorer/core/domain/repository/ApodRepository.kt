@@ -40,6 +40,15 @@ interface ApodRepository {
     suspend fun refreshRecent(): DataResult<Int>
 
     /**
+     * Fetches one specific day and merges it into the cache.
+     *
+     * The feed only caches contiguous windows walking back from today, so an arbitrary archive date
+     * picked from the calendar is usually absent; this fills that single gap without paging through
+     * everything in between.
+     */
+    suspend fun fetchApod(date: LocalDate): DataResult<Unit>
+
+    /**
      * Fetches the next window of *older* entries (date-range pagination) and merges it into the
      * cache.
      *

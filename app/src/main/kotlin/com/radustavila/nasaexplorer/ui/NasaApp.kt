@@ -1,5 +1,6 @@
 package com.radustavila.nasaexplorer.ui
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -40,6 +41,9 @@ fun NasaApp(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        // Insets are consumed by the screens themselves (their top bars) and by the navigation
+        // bar below; applying them here as well padded every screen twice.
+        contentWindowInsets = WindowInsets(0),
         bottomBar = {
             // The bottom bar belongs to the top-level destinations only; details is a detail screen.
             if (currentTopLevelDestination != null) {

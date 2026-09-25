@@ -14,6 +14,7 @@ dependencies {
     compileOnly(libs.compose.gradlePlugin)
     compileOnly(libs.ksp.gradlePlugin)
     compileOnly(libs.room.gradlePlugin)
+    compileOnly(libs.detekt.gradlePlugin)
 }
 
 gradlePlugin {
@@ -41,6 +42,10 @@ gradlePlugin {
         register("androidRoom") {
             id = "nasaexplorer.android.room"
             implementationClass = "com.radustavila.nasaexplorer.buildlogic.AndroidRoomConventionPlugin"
+        }
+        register("detekt") {
+            id = "nasaexplorer.detekt"
+            implementationClass = "com.radustavila.nasaexplorer.buildlogic.DetektConventionPlugin"
         }
         register("jvmLibrary") {
             id = "nasaexplorer.jvm.library"

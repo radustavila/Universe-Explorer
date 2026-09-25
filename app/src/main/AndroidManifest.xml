@@ -11,8 +11,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NasaExplorer">
 
+        <!--
+          Compose handles these configuration changes itself. Declaring them keeps the activity -
+          and with it a playing video - alive when the full-screen player asks for landscape.
+        -->
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
             android:exported="true"
             android:theme="@style/Theme.NasaExplorer">
             <intent-filter>

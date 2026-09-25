@@ -2,8 +2,19 @@
 <resources>
     <string name="details_title">Picture of the day</string>
     <string name="details_back">Back</string>
+    <string name="details_share">Share</string>
     <string name="details_copyright">© %1$s</string>
+    <string name="details_view_full_size">View full size</string>
+    <string name="details_close_full_size">Close full size view</string>
+    <string name="details_about_image">About this image</string>
+    <string name="details_about_video">About this video</string>
+    <string name="details_read_more">Read more</string>
+    <string name="details_read_less">Show less</string>
+    <string name="details_view_on_nasa">View on NASA</string>
+    <string name="details_see_other_days">See other days</string>
     <string name="details_watch_video">Watch video</string>
+    <string name="details_video_error">This video could not be played.</string>
+    <string name="details_video_retry">Try again</string>
     <string name="details_missing_title">Not cached yet</string>
     <string name="details_missing_description">This entry is not in the local cache. Refresh the feed while online to download it.</string>
 </resources>

@@ -1,0 +1,2 @@
+# Project overrides on top of Detekt's default rule set (buildUponDefaultConfig = true).
+# Only list rules whose settings differ from the defaults.

@@ -16,4 +16,5 @@ plugins {
     alias(libs.plugins.room) apply false
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.android.lint) apply false
+    alias(libs.plugins.detekt) apply false
 }

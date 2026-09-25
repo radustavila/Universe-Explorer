@@ -10,6 +10,8 @@ android {
 
     defaultConfig {
         applicationId = "com.radustavila.nasaexplorer"
+        // Instrumentation tests run against HiltTestApplication, not NasaExplorerApplication.
+        testInstrumentationRunner = "com.radustavila.nasaexplorer.NasaTestRunner"
     }
 
     buildFeatures {
@@ -47,8 +49,18 @@ dependencies {
     implementation(libs.coil.network.okhttp)
 
     testImplementation(projects.core.testing)
+
+    androidTestImplementation(projects.core.testing)
+    androidTestImplementation(projects.core.designsystem)
+    androidTestImplementation(projects.core.network)
+    androidTestImplementation(projects.data.nasa)
+    androidTestImplementation(projects.feature.feed)
+    androidTestImplementation(projects.feature.details)
+    androidTestImplementation(projects.feature.favorites)
     androidTestImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.coil.compose)
     androidTestImplementation(libs.hilt.android.testing)
     kspAndroidTest(libs.hilt.compiler)
 }

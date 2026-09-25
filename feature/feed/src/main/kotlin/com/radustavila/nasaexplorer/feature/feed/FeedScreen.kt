@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,19 +12,31 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,11 +56,14 @@ import com.radustavila.nasaexplorer.core.designsystem.error.asText
 import com.radustavila.nasaexplorer.core.designsystem.theme.NasaTheme
 import com.radustavila.nasaexplorer.core.model.Apod
 import com.radustavila.nasaexplorer.core.model.MediaType
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneOffset
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 
 const val FEED_LIST_TEST_TAG = "feed-list"
+const val FEED_CALENDAR_BUTTON_TEST_TAG = "feed-calendar-button"
 
 @Composable
 fun FeedScreen(
@@ -84,6 +100,7 @@ internal fun FeedContent(
     val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
     val errorMessage = uiState.error?.asText()
+    var isDatePickerOpen by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(errorMessage) {
         if (errorMessage != null && uiState.hasContent) {
@@ -96,7 +113,25 @@ internal fun FeedContent(
 
     Scaffold(
         modifier = modifier,
-        topBar = { TopAppBar(title = { Text(stringResource(R.string.feed_title)) }) },
+        // The top bar already insets itself below the status bar, and the navigation bar is padded
+        // by the app scaffold; taking the insets again here left a gap at both ends of the list.
+        contentWindowInsets = WindowInsets(0),
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.feed_title)) },
+                actions = {
+                    IconButton(
+                        onClick = { isDatePickerOpen = true },
+                        modifier = Modifier.testTag(FEED_CALENDAR_BUTTON_TEST_TAG),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.CalendarMonth,
+                            contentDescription = stringResource(R.string.feed_pick_date),
+                        )
+                    }
+                },
+            )
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { padding ->
         PullToRefreshBox(
@@ -136,7 +171,88 @@ internal fun FeedContent(
             }
         }
     }
+
+    if (isDatePickerOpen) {
+        ArchiveDatePickerDialog(
+            latestSelectableDate = uiState.latestSelectableDate,
+            onDateSelected = { date ->
+                isDatePickerOpen = false
+                onApodClick(date)
+            },
+            onDismiss = { isDatePickerOpen = false },
+        )
+    }
 }
+
+/**
+ * Jumps straight to any published day instead of scrolling the archive back to it. The details
+ * screen downloads the day if the feed has not cached it yet, so the whole archive is reachable in
+ * one tap.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ArchiveDatePickerDialog(
+    latestSelectableDate: LocalDate,
+    onDateSelected: (LocalDate) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val state = rememberDatePickerState(
+        initialSelectedDateMillis = latestSelectableDate.toUtcMillis(),
+        yearRange = Apod.FIRST_PUBLICATION_DATE.year..latestSelectableDate.year,
+        selectableDates = remember(latestSelectableDate) {
+            PublishedDates(latestSelectableDate)
+        },
+    )
+    val selectedDate = state.selectedDateMillis?.toUtcLocalDate()
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = { selectedDate?.let(onDateSelected) },
+                enabled = selectedDate != null,
+            ) {
+                Text(stringResource(R.string.feed_date_picker_confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.feed_date_picker_dismiss))
+            }
+        },
+    ) {
+        DatePicker(
+            state = state,
+            title = {
+                Text(
+                    text = stringResource(R.string.feed_date_picker_title),
+                    modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp),
+                )
+            },
+        )
+    }
+}
+
+/**
+ * Only days NASA has actually published: nothing before the first APOD, nothing in the future.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+internal class PublishedDates(private val latest: LocalDate) : SelectableDates {
+
+    override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+        val date = utcTimeMillis.toUtcLocalDate()
+        return !date.isBefore(Apod.FIRST_PUBLICATION_DATE) && !date.isAfter(latest)
+    }
+
+    override fun isSelectableYear(year: Int): Boolean =
+        year in Apod.FIRST_PUBLICATION_DATE.year..latest.year
+}
+
+// The Material date picker speaks in UTC milliseconds; the archive speaks in UTC dates.
+internal fun LocalDate.toUtcMillis(): Long = atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+
+internal fun Long.toUtcLocalDate(): LocalDate =
+    Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDate()
 
 @Composable
 private fun FeedList(
@@ -150,7 +266,8 @@ private fun FeedList(
         modifier = Modifier
             .fillMaxSize()
             .testTag(FEED_LIST_TEST_TAG),
-        contentPadding = PaddingValues(16.dp),
+        // The gutter matches the gap between cards, so the cards sit in an even 16dp frame.
+        contentPadding = PaddingValues(all = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(items = uiState.items, key = { apod -> apod.date.toString() }) { apod ->

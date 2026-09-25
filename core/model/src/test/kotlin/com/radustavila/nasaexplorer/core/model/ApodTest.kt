@@ -39,15 +39,118 @@ class ApodTest {
     }
 
     @Test
-    fun `video entries without a thumbnail have nothing to render`() {
-        val apod = apod(
-            mediaType = MediaType.VIDEO,
-            url = "https://youtube.com/embed/x",
-            hdUrl = null,
-            thumbnailUrl = null,
+    fun `a youtube video without a thumbnail falls back to the poster frame youtube serves`() {
+        val embeds = listOf(
+            "https://www.youtube.com/embed/$YOUTUBE_ID?rel=0",
+            "https://youtube.com/embed/$YOUTUBE_ID",
+            "https://www.youtube-nocookie.com/embed/$YOUTUBE_ID",
+            "https://youtu.be/$YOUTUBE_ID",
+            "https://www.youtube.com/watch?v=$YOUTUBE_ID&feature=share",
         )
 
-        assertEquals(null, apod.previewImageUrl)
+        embeds.forEach { url ->
+            val apod = apod(
+                mediaType = MediaType.VIDEO,
+                url = url,
+                hdUrl = null,
+                thumbnailUrl = null,
+            )
+
+            assertEquals(
+                "https://img.youtube.com/vi/$YOUTUBE_ID/hqdefault.jpg",
+                apod.previewImageUrl,
+            )
+        }
+    }
+
+    @Test
+    fun `a streamable video without a thumbnail is previewed through its own first frame`() {
+        val url = "https://apod.nasa.gov/apod/video/clip.mp4"
+        val apod = apod(mediaType = MediaType.VIDEO, url = url, hdUrl = null, thumbnailUrl = null)
+
+        assertEquals(url, apod.previewImageUrl)
+    }
+
+    @Test
+    fun `a thumbnail NASA publishes is preferred over any derived preview`() {
+        val apod = apod(
+            mediaType = MediaType.VIDEO,
+            url = "https://www.youtube.com/embed/$YOUTUBE_ID",
+            hdUrl = null,
+            thumbnailUrl = THUMBNAIL_URL,
+        )
+
+        assertEquals(THUMBNAIL_URL, apod.previewImageUrl)
+    }
+
+    @Test
+    fun `video entries with no thumbnail and no recoverable frame have nothing to render`() {
+        val unpreviewable = listOf(
+            // Vimeo exposes no poster frame at a predictable address.
+            "https://player.vimeo.com/video/123456",
+            // Not a video id, so nothing can be derived from it.
+            "https://www.youtube.com/embed/",
+            // Playable, but a frame extractor cannot follow a manifest to its segments.
+            "https://apod.nasa.gov/apod/video/clip.m3u8",
+            "https://apod.nasa.gov/apod/ap260910.html",
+        )
+
+        unpreviewable.forEach { url ->
+            val apod = apod(
+                mediaType = MediaType.VIDEO,
+                url = url,
+                hdUrl = null,
+                thumbnailUrl = null,
+            )
+
+            assertEquals(null, apod.previewImageUrl)
+        }
+    }
+
+    @Test
+    fun `a video served as a file or a manifest can be streamed in-app`() {
+        val streamable = listOf(
+            "https://apod.nasa.gov/apod/video/clip.mp4",
+            "https://apod.nasa.gov/apod/video/clip.webm",
+            "https://apod.nasa.gov/apod/video/clip.MP4",
+            "https://apod.nasa.gov/apod/video/clip.m3u8?token=abc",
+            "https://apod.nasa.gov/apod/video/clip.mpd#t=10",
+        )
+
+        streamable.forEach { url ->
+            val apod = apod(mediaType = MediaType.VIDEO, url = url, hdUrl = null, thumbnailUrl = null)
+
+            assertEquals(url, apod.streamUrl)
+        }
+    }
+
+    @Test
+    fun `an embedded player page is not a stream`() {
+        val embeds = listOf(
+            "https://www.youtube.com/embed/abc123",
+            "https://player.vimeo.com/video/123456",
+            "https://apod.nasa.gov/apod/ap260910.html",
+        )
+
+        embeds.forEach { url ->
+            val apod = apod(mediaType = MediaType.VIDEO, url = url, hdUrl = null, thumbnailUrl = null)
+
+            assertEquals(null, apod.streamUrl)
+        }
+    }
+
+    @Test
+    fun `an image is never treated as a stream`() {
+        val apod = apod(mediaType = MediaType.IMAGE, url = URL, hdUrl = HD_URL, thumbnailUrl = null)
+
+        assertEquals(null, apod.streamUrl)
+    }
+
+    @Test
+    fun `the archive page url is derived from the publication date`() {
+        val apod = apod(MediaType.IMAGE, url = URL, hdUrl = null, thumbnailUrl = null)
+
+        assertEquals("https://apod.nasa.gov/apod/ap260910.html", apod.webPageUrl)
     }
 
     private fun apod(
@@ -69,5 +172,6 @@ class ApodTest {
         const val URL = "https://apod.nasa.gov/image.jpg"
         const val HD_URL = "https://apod.nasa.gov/image_hd.jpg"
         const val THUMBNAIL_URL = "https://img.youtube.com/vi/x/0.jpg"
+        const val YOUTUBE_ID = "dQw4w9WgXcQ"
     }
 }

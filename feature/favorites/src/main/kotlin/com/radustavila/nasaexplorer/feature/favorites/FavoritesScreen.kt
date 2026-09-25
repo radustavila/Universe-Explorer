@@ -2,6 +2,7 @@ package com.radustavila.nasaexplorer.feature.favorites
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -69,6 +70,8 @@ internal fun FavoritesContent(
 
     Scaffold(
         modifier = modifier,
+        // See FeedScreen: insets belong to the top bar and to the app scaffold's navigation bar.
+        contentWindowInsets = WindowInsets(0),
         topBar = { TopAppBar(title = { Text(stringResource(R.string.favorites_title)) }) },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { padding ->
@@ -86,7 +89,7 @@ internal fun FavoritesContent(
                     .fillMaxSize()
                     .padding(padding)
                     .testTag(FAVORITES_LIST_TEST_TAG),
-                contentPadding = PaddingValues(16.dp),
+                contentPadding = PaddingValues(all = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 items(items = uiState.items, key = { apod -> apod.date.toString() }) { apod ->

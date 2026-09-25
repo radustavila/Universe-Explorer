@@ -30,6 +30,9 @@ object ImageLoaderModule {
         okHttpClient: dagger.Lazy<OkHttpClient>,
     ): ImageLoader = ImageLoader.Builder(context)
         .components {
+            // Ordered: the video frame fetcher declines everything that is not a media stream, and
+            // whatever it declines falls through to the network fetcher.
+            add(VideoFrameFetcher.Factory())
             add(OkHttpNetworkFetcherFactory(callFactory = { okHttpClient.get() }))
         }
         .memoryCache {

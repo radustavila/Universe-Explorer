@@ -27,6 +27,7 @@ class ApodMappersTest {
                 copyright = "Jane Doe",
                 isFavorite = false,
                 cachedAtEpochMillis = CACHED_AT.toEpochMilli(),
+                lastSyncedAtEpochMillis = CACHED_AT.toEpochMilli(),
             ),
             entity,
         )
@@ -129,12 +130,14 @@ class ApodMappersTest {
             copyright = null,
             isFavorite = true,
             cachedAtEpochMillis = CACHED_AT.toEpochMilli(),
+            lastSyncedAtEpochMillis = SYNCED_AT.toEpochMilli(),
         ).toDomain()
 
         assertEquals(LocalDate.of(2026, 9, 10), apod.date)
         assertEquals(MediaType.IMAGE, apod.mediaType)
         assertEquals(true, apod.isFavorite)
         assertEquals(CACHED_AT, apod.cachedAt)
+        assertEquals(SYNCED_AT, apod.lastSyncedAt)
     }
 
     private fun imageDto() = ApodDto(
@@ -149,5 +152,6 @@ class ApodMappersTest {
 
     private companion object {
         val CACHED_AT: Instant = Instant.parse("2026-09-10T12:00:00Z")
+        val SYNCED_AT: Instant = Instant.parse("2026-09-12T08:00:00Z")
     }
 }

@@ -13,8 +13,11 @@ sealed interface DetailsUiState {
     ) : DetailsUiState
 
     /**
-     * The entry is not in the cache. Offline this is terminal until connectivity returns, which is
-     * why the two cases are distinguished.
+     * The entry is neither cached nor downloadable. Offline this is terminal until connectivity
+     * returns, which is why the two cases are distinguished.
      */
-    data class Unavailable(val isOffline: Boolean) : DetailsUiState
+    data class Unavailable(
+        val isOffline: Boolean,
+        val error: UiError? = null,
+    ) : DetailsUiState
 }
