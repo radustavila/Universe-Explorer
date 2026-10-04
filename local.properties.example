@@ -1,5 +1,3 @@
 # Copy to local.properties and adjust. local.properties is never committed.
 sdk.dir=/Users/<you>/Library/Android/sdk
 
-# Optional: a personal key from https://api.nasa.gov (DEMO_KEY is used when omitted).
-NASA_API_KEY=DEMO_KEY

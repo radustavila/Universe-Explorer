@@ -12,9 +12,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      # Falls back to NASA's public demo key when the secret is absent (e.g. on forks).
-      NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
 
     steps:
       - uses: actions/checkout@v4

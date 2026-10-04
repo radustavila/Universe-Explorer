@@ -197,7 +197,7 @@ sequenceDiagram
     VM->>UC: refreshFeed() (on first composition / pull to refresh)
     UC->>Sync: requestSync()
     Sync->>Repo: SynchronizeApodsUseCase
-    Repo->>API: GET /planetary/apod?start_date&end_date
+    Repo->>API: GET /wp-json/wp/v2/apod-basic?date_from&date_to
     API-->>Repo: window of entries
     Repo->>Room: upsert preserving local state
     Room-->>UI: new emission, UI updates itself
@@ -416,21 +416,11 @@ cp local.properties.example local.properties   # then set sdk.dir
 
 ### NASA API configuration
 
-The API key is **never committed**. It is read at build time in this order:
-
-1. `NASA_API_KEY` in `local.properties` (git-ignored),
-2. the `NASA_API_KEY` environment variable (used by CI),
-3. `DEMO_KEY` as a fallback.
-
-```properties
-# local.properties
-sdk.dir=/Users/<you>/Library/Android/sdk
-NASA_API_KEY=your_key_from_https_api_nasa_gov
-```
-
-`DEMO_KEY` works but is rate limited to roughly 30 requests per hour per IP; the app reports that as
-"too many requests for this API key" rather than a generic failure. Get a free key at
-<https://api.nasa.gov>.
+No API key is needed. APOD moved from apod.nasa.gov to science.nasa.gov in 2026, and since then
+`api.nasa.gov/planetary/apod` answers every date with a placeholder ("NASA Science" and the NASA
+logo), because it still scrapes the old site. The app therefore reads the public endpoint behind the
+new site, `https://science.nasa.gov/wp-json/wp/v2/apod-basic`, and adapts its HTML fields
+(`ApodBasicDto.toApodDto`) to the shape the rest of `:data:nasa` already uses.
 
 ---
 

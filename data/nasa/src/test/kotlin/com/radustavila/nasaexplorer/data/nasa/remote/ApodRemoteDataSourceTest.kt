@@ -62,21 +62,39 @@ class ApodRemoteDataSourceTest {
 
         val entries = (result as DataResult.Success).data
         assertEquals(2, entries.size)
-        assertEquals("2026-09-09", entries.first().date)
-        assertEquals("video", entries.last().mediaType)
+        assertEquals("2026-09-10", entries.first().date)
+        assertEquals("video", entries.first().mediaType)
+        assertEquals("https://www.youtube.com/embed/abc?rel=0", entries.first().url)
+        assertEquals("https://assets.science.nasa.gov/ngc1300.jpg", entries.last().url)
     }
 
     @Test
-    fun `sends the date range as query parameters`() = runTest {
+    fun `sends the date range in APOD's yyMMdd form`() = runTest {
         server.enqueue(jsonResponse(RANGE_JSON))
 
         remoteDataSource.fetchRange(START_DATE, END_DATE)
 
         val requestUrl = server.takeRequest().requestUrl!!
-        assertEquals("/planetary/apod", requestUrl.encodedPath)
-        assertEquals("2026-09-09", requestUrl.queryParameter("start_date"))
-        assertEquals("2026-09-10", requestUrl.queryParameter("end_date"))
-        assertEquals("true", requestUrl.queryParameter("thumbs"))
+        assertEquals("/wp-json/wp/v2/apod-basic", requestUrl.encodedPath)
+        assertEquals("260909", requestUrl.queryParameter("date_from"))
+        assertEquals("260910", requestUrl.queryParameter("date_to"))
+        assertEquals("1", requestUrl.queryParameter("page"))
+    }
+
+    @Test
+    fun `follows pages until one comes back short`() = runTest {
+        val fullPage = (1..NasaApodService.MAX_PAGE_SIZE).joinToString(prefix = "[", postfix = "]") { day ->
+            """{"date": "2026-08-${"%02d".format(day)}", "media_type": "image"}"""
+        }
+        server.enqueue(jsonResponse(fullPage))
+        server.enqueue(jsonResponse(RANGE_JSON))
+
+        val result = remoteDataSource.fetchRange(START_DATE, END_DATE)
+
+        assertEquals(NasaApodService.MAX_PAGE_SIZE + 2, (result as DataResult.Success).data.size)
+        assertEquals("1", server.takeRequest().requestUrl!!.queryParameter("page"))
+        assertEquals("2", server.takeRequest().requestUrl!!.queryParameter("page"))
+        assertEquals(2, server.requestCount)
     }
 
     @Test
@@ -144,7 +162,7 @@ class ApodRemoteDataSourceTest {
         val result = remoteDataSource.fetchSingle(END_DATE)
 
         assertEquals("2026-09-10", (result as DataResult.Success).data.date)
-        assertEquals("2026-09-10", server.takeRequest().requestUrl!!.queryParameter("date"))
+        assertEquals("/wp-json/wp/v2/apod-basic/260910", server.takeRequest().requestUrl!!.encodedPath)
     }
 
     private fun jsonResponse(body: String) = MockResponse()
@@ -160,22 +178,22 @@ class ApodRemoteDataSourceTest {
         val RANGE_JSON = """
             [
               {
-                "date": "2026-09-09",
-                "title": "Spiral Galaxy NGC 1300",
-                "explanation": "A barred spiral galaxy.",
-                "media_type": "image",
-                "url": "https://apod.nasa.gov/apod/image/ngc1300.jpg",
-                "hdurl": "https://apod.nasa.gov/apod/image/ngc1300_hd.jpg",
-                "service_version": "v1"
+                "date": "2026-09-10",
+                "post_id": 1,
+                "title": "Flight Through Orion",
+                "media_type": "video",
+                "explanation": "<strong>Explanation: </strong>A visualization.",
+                "hdurl": "https://assets.science.nasa.gov/orion_snapshot.png",
+                "basic_html": "<center><iframe src=\"//www.youtube.com/embed/abc?rel=0\"></iframe></center>"
               },
               {
-                "date": "2026-09-10",
-                "title": "Flight Through Orion",
-                "explanation": "A visualization.",
-                "media_type": "video",
-                "url": "https://www.youtube.com/embed/abc",
-                "thumbnail_url": "https://img.youtube.com/vi/abc/0.jpg",
-                "copyright": "Jane Doe"
+                "date": "2026-09-09",
+                "post_id": 2,
+                "title": "Spiral Galaxy NGC 1300",
+                "media_type": "image",
+                "explanation": "A barred spiral galaxy.",
+                "hdurl": "https://assets.science.nasa.gov/ngc1300.jpg?w=4000",
+                "basic_html": "<a href=\"https://assets.science.nasa.gov/ngc1300.jpg\"><IMG SRC=\"https://assets.science.nasa.gov/ngc1300.jpg\"></a>"
               }
             ]
         """.trimIndent()
@@ -186,7 +204,7 @@ class ApodRemoteDataSourceTest {
               "title": "Spiral Galaxy NGC 1300",
               "explanation": "A barred spiral galaxy.",
               "media_type": "image",
-              "url": "https://apod.nasa.gov/apod/image/ngc1300.jpg"
+              "basic_html": "<img src=\"https://assets.science.nasa.gov/ngc1300.jpg\">"
             }
         """.trimIndent()
     }

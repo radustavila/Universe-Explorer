@@ -9,9 +9,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Qualifier
 import javax.inject.Singleton
-import okhttp3.Call
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.create
 
@@ -23,41 +20,12 @@ annotation class NasaApi
 @InstallIn(SingletonComponent::class)
 object NasaNetworkModule {
 
-    /**
-     * NASA authenticates with an `api_key` query parameter. Adding it in an interceptor keeps the
-     * key out of every call site (and out of the service interface).
-     */
+    /** science.nasa.gov serves APOD publicly: no API key, so no authenticating interceptor. */
     @Provides
     @Singleton
     @NasaApi
-    fun provideApiKeyInterceptor(): Interceptor = Interceptor { chain ->
-        val request = chain.request()
-        val authenticatedUrl = request.url.newBuilder()
-            .addQueryParameter("api_key", BuildConfig.NASA_API_KEY)
-            .build()
-        chain.proceed(request.newBuilder().url(authenticatedUrl).build())
-    }
-
-    @Provides
-    @Singleton
-    @NasaApi
-    fun provideNasaCallFactory(
-        client: OkHttpClient,
-        @NasaApi apiKeyInterceptor: Interceptor,
-    ): Call.Factory = client.newBuilder()
-        .addInterceptor(apiKeyInterceptor)
-        .build()
-
-    @Provides
-    @Singleton
-    @NasaApi
-    fun provideNasaRetrofit(
-        retrofitFactory: RetrofitFactory,
-        @NasaApi callFactory: Call.Factory,
-    ): Retrofit = retrofitFactory.create(
-        baseUrl = BuildConfig.NASA_BASE_URL,
-        callFactory = callFactory,
-    )
+    fun provideNasaRetrofit(retrofitFactory: RetrofitFactory): Retrofit =
+        retrofitFactory.create(baseUrl = BuildConfig.NASA_BASE_URL)
 
     @Provides
     @Singleton

@@ -1,28 +1,30 @@
 package com.radustavila.nasaexplorer.data.nasa.remote
 
-import com.radustavila.nasaexplorer.data.nasa.remote.dto.ApodDto
+import com.radustavila.nasaexplorer.data.nasa.remote.dto.ApodBasicDto
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
- * NASA APOD endpoints.
+ * APOD endpoints on science.nasa.gov. Dates are in APOD's own `yyMMdd` form.
  *
- * The feed uses the *date range* variant: one request returns a whole window, instead of one request
- * per day. `thumbs=true` asks NASA for still thumbnails of video entries, which is what makes a
- * mixed image/video feed renderable.
+ * The feed uses the *date range* variant: one request returns a whole window (newest first),
+ * instead of one request per day. The server caps a page at [MAX_PAGE_SIZE] entries.
  */
 interface NasaApodService {
 
-    @GET("planetary/apod")
+    @GET("wp-json/wp/v2/apod-basic")
     suspend fun getApodRange(
-        @Query("start_date") startDate: String,
-        @Query("end_date") endDate: String,
-        @Query("thumbs") includeThumbnails: Boolean = true,
-    ): List<ApodDto>
+        @Query("date_from") startDate: String,
+        @Query("date_to") endDate: String,
+        @Query("page") page: Int = 1,
+        @Query("per_page") pageSize: Int = MAX_PAGE_SIZE,
+    ): List<ApodBasicDto>
 
-    @GET("planetary/apod")
-    suspend fun getApod(
-        @Query("date") date: String,
-        @Query("thumbs") includeThumbnails: Boolean = true,
-    ): ApodDto
+    @GET("wp-json/wp/v2/apod-basic/{date}")
+    suspend fun getApod(@Path("date") date: String): ApodBasicDto
+
+    companion object {
+        const val MAX_PAGE_SIZE = 25
+    }
 }
