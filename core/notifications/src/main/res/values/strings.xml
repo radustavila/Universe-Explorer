@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="new_apod_channel_name">New picture of the day</string>
+    <string name="new_apod_channel_description">Announces each new Astronomy Picture of the Day as soon as it has been downloaded.</string>
+    <string name="new_apod_notification_title">New Astronomy Picture of the Day</string>
+</resources>

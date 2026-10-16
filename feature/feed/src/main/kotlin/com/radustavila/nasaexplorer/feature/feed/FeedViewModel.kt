@@ -9,8 +9,10 @@ import com.radustavila.nasaexplorer.core.designsystem.error.toUiError
 import com.radustavila.nasaexplorer.core.domain.usecase.LoadOlderApodsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveApodFeedUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveNewApodNotificationsEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSyncStateUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshFeedUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.SetNewApodNotificationsEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ToggleFavoriteUseCase
 import com.radustavila.nasaexplorer.core.model.Apod
 import com.radustavila.nasaexplorer.core.model.SyncState
@@ -36,9 +38,11 @@ class FeedViewModel @Inject constructor(
     observeApodFeed: ObserveApodFeedUseCase,
     observeConnectivity: ObserveConnectivityUseCase,
     observeSyncState: ObserveSyncStateUseCase,
+    observeNewApodNotificationsEnabled: ObserveNewApodNotificationsEnabledUseCase,
     private val refreshFeed: RefreshFeedUseCase,
     private val loadOlderApods: LoadOlderApodsUseCase,
     private val toggleFavorite: ToggleFavoriteUseCase,
+    private val setNewApodNotificationsEnabled: SetNewApodNotificationsEnabledUseCase,
     timeProvider: TimeProvider,
 ) : ViewModel() {
 
@@ -50,8 +54,9 @@ class FeedViewModel @Inject constructor(
         observeApodFeed(),
         observeConnectivity(),
         observeSyncState(),
+        observeNewApodNotificationsEnabled(),
         localState,
-    ) { items, isOnline, syncState, local ->
+    ) { items, isOnline, syncState, areNotificationsEnabled, local ->
         // A sync that is enqueued while offline cannot run: WorkManager holds it until the
         // connectivity constraint is met. Reporting it as "refreshing" would spin forever, so
         // progress is only shown for work that can actually make progress.
@@ -67,6 +72,7 @@ class FeedViewModel @Inject constructor(
             hasReachedArchiveStart = local.hasReachedArchiveStart,
             error = local.error ?: (syncState as? SyncState.Failed)?.error?.toUiError(),
             latestSelectableDate = today,
+            areNewApodNotificationsEnabled = areNotificationsEnabled,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -119,6 +125,11 @@ class FeedViewModel @Inject constructor(
                 localState.update { it.copy(error = result.error.toUiError()) }
             }
         }
+    }
+
+    /** Persists the user's choice; the screen has already secured the system permission. */
+    fun onNewApodNotificationsChanged(enabled: Boolean) {
+        viewModelScope.launch { setNewApodNotificationsEnabled(enabled) }
     }
 
     /** State owned by the screen rather than by the database. */

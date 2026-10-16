@@ -7,8 +7,10 @@ import com.radustavila.nasaexplorer.core.designsystem.R
 import com.radustavila.nasaexplorer.core.domain.usecase.LoadOlderApodsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveApodFeedUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveNewApodNotificationsEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSyncStateUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshFeedUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.SetNewApodNotificationsEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ToggleFavoriteUseCase
 import com.radustavila.nasaexplorer.core.model.SyncState
 import com.radustavila.nasaexplorer.core.testing.data.TestApods
@@ -17,6 +19,7 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
+import com.radustavila.nasaexplorer.core.testing.fake.FakeUserPreferencesRepository
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -36,6 +39,7 @@ class FeedViewModelTest {
     private val syncScheduler = FakeSyncScheduler()
     private val timeProvider = FakeTimeProvider()
     private val syncMetadata = FakeSyncMetadataRepository()
+    private val userPreferences = FakeUserPreferencesRepository()
 
     @Test
     fun `asks for a refresh as soon as it is created`() = runTest {
@@ -227,13 +231,31 @@ class FeedViewModelTest {
         }
     }
 
+    @Test
+    fun `turning new-entry notifications on is persisted and reflected in the state`() = runTest {
+        repository.setEntries(TestApods.feed(size = 1))
+        val viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            assertFalse(awaitItem().awaitContent(this).areNewApodNotificationsEnabled)
+
+            viewModel.onNewApodNotificationsChanged(enabled = true)
+
+            var state = awaitItem()
+            while (!state.areNewApodNotificationsEnabled) state = awaitItem()
+            assertTrue(userPreferences.currentNewApodNotificationsEnabled)
+        }
+    }
+
     private fun createViewModel() = FeedViewModel(
         observeApodFeed = ObserveApodFeedUseCase(repository),
         observeConnectivity = ObserveConnectivityUseCase(networkMonitor),
         observeSyncState = ObserveSyncStateUseCase(syncScheduler),
+        observeNewApodNotificationsEnabled = ObserveNewApodNotificationsEnabledUseCase(userPreferences),
         refreshFeed = RefreshFeedUseCase(syncScheduler),
         loadOlderApods = LoadOlderApodsUseCase(repository, syncMetadata, networkMonitor),
         toggleFavorite = ToggleFavoriteUseCase(repository),
+        setNewApodNotificationsEnabled = SetNewApodNotificationsEnabledUseCase(userPreferences),
         timeProvider = timeProvider,
     )
 

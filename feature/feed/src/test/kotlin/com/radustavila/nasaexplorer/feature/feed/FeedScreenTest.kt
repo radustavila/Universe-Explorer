@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -44,6 +45,8 @@ class FeedScreenTest {
                 onRetry = {},
                 onLoadMore = {},
                 onErrorDismissed = {},
+                areNotificationsOn = false,
+                onNotificationsClick = {},
             )
         }
 
@@ -66,12 +69,38 @@ class FeedScreenTest {
                 onRetry = {},
                 onLoadMore = {},
                 onErrorDismissed = {},
+                areNotificationsOn = false,
+                onNotificationsClick = {},
             )
         }
 
         composeTestRule.onNodeWithTag(FEED_CALENDAR_BUTTON_TEST_TAG).performClick()
 
         composeTestRule.onNodeWithText("Jump to a day").assertIsDisplayed()
+    }
+
+    @Test
+    fun `the notification action reflects its state and reports taps`() {
+        var clicks = 0
+        composeTestRule.setContent {
+            FeedContent(
+                uiState = FeedUiState(items = TestApods.feed(size = 1)),
+                areNotificationsOn = false,
+                onApodClick = {},
+                onToggleFavorite = {},
+                onRefresh = {},
+                onRetry = {},
+                onLoadMore = {},
+                onErrorDismissed = {},
+                onNotificationsClick = { clicks++ },
+            )
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription("Notify me about each new picture of the day")
+            .performClick()
+
+        assertEquals(1, clicks)
     }
 
     @Test
@@ -85,6 +114,8 @@ class FeedScreenTest {
                 onRetry = {},
                 onLoadMore = {},
                 onErrorDismissed = {},
+                areNotificationsOn = false,
+                onNotificationsClick = {},
             )
         }
 
@@ -102,6 +133,8 @@ class FeedScreenTest {
                 onRetry = {},
                 onLoadMore = {},
                 onErrorDismissed = {},
+                areNotificationsOn = false,
+                onNotificationsClick = {},
             )
         }
 
@@ -123,6 +156,8 @@ class FeedScreenTest {
                 onRetry = { retries++ },
                 onLoadMore = {},
                 onErrorDismissed = {},
+                areNotificationsOn = false,
+                onNotificationsClick = {},
             )
         }
 
@@ -144,6 +179,8 @@ class FeedScreenTest {
                 onRetry = {},
                 onLoadMore = {},
                 onErrorDismissed = {},
+                areNotificationsOn = false,
+                onNotificationsClick = {},
             )
         }
 
@@ -165,6 +202,8 @@ class FeedScreenTest {
                 onRetry = {},
                 onLoadMore = {},
                 onErrorDismissed = {},
+                areNotificationsOn = false,
+                onNotificationsClick = {},
             )
         }
 

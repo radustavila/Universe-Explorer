@@ -45,6 +45,8 @@ suite that runs the whole stack on a JVM with no emulator.
 | **Feed** | Chronological APOD feed with thumbnail, title, date, media-type badge and favourite state. Pull to refresh, infinite scroll backwards through the archive, offline banner, empty/offline/error states. |
 | **Details** | Full-size image (HD when available) or video still with a "watch video" action, title, date, explanation, copyright, favourite toggle. |
 | **Favorites** | Locally saved entries. Works with the network fully disabled. |
+| **Home screen widget** | The latest picture with its title and date, re-rendered after every sync; tapping it opens that entry's details. |
+| **New-entry notification** | Opt-in from the bell on the feed's top bar. After a sync brings in a newer entry, posts its title and picture; tapping opens the details screen. |
 | **Debug** | Live view of the offline-first machinery: connectivity, cached entry count, favourites count, oldest cached date, oldest requested window, last successful sync, WorkManager sync state, plus buttons to trigger a sync and re-register the periodic one. |
 
 ---
@@ -106,6 +108,7 @@ flowchart BT
     detailsF[":feature:details"]
     favoritesF[":feature:favorites"]
     debugF[":feature:debug"]
+    widgetF[":feature:widget"]
 
     nasa[":data:nasa"]
 
@@ -113,6 +116,7 @@ flowchart BT
     database[":core:database"]
     datastore[":core:datastore"]
     designsystem[":core:designsystem"]
+    notifications[":core:notifications"]
     domain[":core:domain"]
     model[":core:model"]
     common[":core:common"]
@@ -122,6 +126,8 @@ flowchart BT
     app --> detailsF
     app --> favoritesF
     app --> debugF
+    app --> widgetF
+    app --> notifications
     app --> nasa
     app --> designsystem
 
@@ -133,6 +139,10 @@ flowchart BT
     favoritesF --> designsystem
     debugF --> domain
     debugF --> designsystem
+    widgetF --> domain
+    widgetF --> designsystem
+    notifications --> domain
+    notifications --> designsystem
 
     nasa --> domain
     nasa --> network
@@ -158,10 +168,12 @@ flowchart BT
 | `:core:network` | Android library | OkHttp, JSON, `RetrofitFactory`, exception→`AppError` mapping, `ConnectivityManager`-backed `NetworkMonitor`. API-agnostic. |
 | `:core:database` | Android library | Room database, `ApodEntity`, `ApodDao`, exported schemas. |
 | `:core:datastore` | Android library | Preferences DataStore implementation of the sync bookkeeping contract. |
-| `:core:designsystem` | Android library | Material 3 theme, typography, shared components (`ApodCard`, `NasaAsyncImage`, state views), `AppError`→`UiError` presentation mapping. |
+| `:core:designsystem` | Android library | Material 3 theme, typography, shared components (`ApodCard`, `NasaAsyncImage`, state views), `AppError`→`UiError` presentation mapping, bitmap loading and the details deep-link intent for out-of-app surfaces. |
+| `:core:notifications` | Android library | `NewApodNotifier` implementation: notification channel, big-picture notification, deep link into details. |
 | `:core:testing` | **Pure Kotlin** | Fakes for every domain contract, test data builders, `MainDispatcherRule`. Shared by all test source sets. |
 | `:data:nasa` | Android library | NASA DTOs and endpoints, remote/local data sources, mappers, `ApodRepositoryImpl`, sync worker and scheduler, API key handling. |
 | `:feature:*` | Android libraries | One screen each: Compose UI, ViewModel, UI state, and its own type-safe navigation contract. |
+| `:feature:widget` | Android library | Glance home screen widget for the latest entry and the `LatestApodWidgetUpdater` implementation. |
 | `build-logic` | Included build | Convention plugins (`nasaexplorer.android.application/library/compose/feature/hilt/room`, `nasaexplorer.jvm.library`). |
 
 Feature modules do not depend on each other, and never on `:data:nasa` — they only see `:core:domain`
@@ -271,6 +283,9 @@ flowchart LR
     W --> UC["SynchronizeApodsUseCase"]
     UC --> R["ApodRepositoryImpl.refreshRecent()"]
     R --> DB[("Room")]
+    W -- "on success" --> AN["AnnounceLatestApodUseCase"]
+    AN --> WG["Home screen widget"]
+    AN -- "newer entry + opted in" --> NT["Notification"]
     W -. "WorkInfo flow" .-> ST["SyncState:<br/>Idle / Enqueued / Syncing /<br/>Succeeded / Failed(AppError)"]
     ST --> UI["Feed + Debug UI"]
 ```
@@ -286,6 +301,13 @@ flowchart LR
   *"too many requests for this API key"* instead of *"sync failed"*.
 * **Bookkeeping.** The last successful sync timestamp is persisted in DataStore and shown on the
   debug screen.
+* **Announcing new entries.** After a successful sync the worker hands over to
+  `AnnounceLatestApodUseCase`: the home screen widget is re-rendered, and if the newest cached entry is
+  later than the last one announced (persisted in DataStore) and the user opted in, a notification is
+  posted. The first run only records a baseline, an entry that arrived while notifications were off
+  is never replayed later, and nothing is posted while the app is in the foreground. Because the
+  announcement rides on the 12-hourly sync, a notification can arrive up to one interval after NASA
+  publishes.
 * **Swappable.** The UI depends on `SyncScheduler`, not on WorkManager. Replacing the strategy is a
   binding change in one Hilt module.
 
@@ -363,13 +385,16 @@ connected-but-dead networks correctly read as offline.
 Hilt, constructor injection everywhere, KSP (no kapt).
 
 * Contracts live in `:core:domain`; bindings live next to their implementations
-  (`NasaDataModule`, `NetworkBindingModule`, `DataStoreBindingModule`).
+  (`NasaDataModule`, `NetworkBindingModule`, `DataStoreBindingModule`, `NotificationsModule`,
+  `WidgetModule`).
 * Build-type knowledge (`BuildConfig.DEBUG`), the clock and the dispatchers are provided by `:app`,
   so library modules stay testable and free of build-type coupling.
 * Dispatchers are injected through a `@Dispatcher(AppDispatcher.IO)` qualifier — no hardcoded
   `Dispatchers.IO` in production code, and no `GlobalScope` anywhere.
 * The worker is a `@HiltWorker`; WorkManager is initialised through `Configuration.Provider` with the
   default initializer removed in the manifest.
+* The Glance widget cannot use constructor injection, so it reads its use cases through a Hilt
+  `@EntryPoint`.
 
 ---
 
@@ -381,12 +406,13 @@ provides the Android runtime, including for Compose UI tests.
 | Area | Module | What is verified |
 |---|---|---|
 | Business rules | `:core:common`, `:core:model` | Retry classification per error type; preview/full media URL selection for image vs. video entries. |
-| Use cases | `:core:domain` | Sync short-circuits when offline and records the timestamp only on success; paging stops at the first APOD and refuses to run offline; favourite toggling flips state through the repository. |
+| Use cases | `:core:domain` | Sync short-circuits when offline and records the timestamp only on success; paging stops at the first APOD and refuses to run offline; favourite toggling flips state through the repository; a new entry is announced once, only when opted in, never on the first run. |
 | Room | `:core:database` | Real in-memory SQLite: ordering, duplicate prevention on re-sync, **favourites surviving a sync**, Flow emissions on every toggle, counts and archive bounds. |
 | Mapping | `:data:nasa` | DTO→entity→domain, unknown media types, undated or media-less entries dropped, duplicate dates collapsed, blank titles normalised. |
 | Network | `:data:nasa`, `:core:network` | MockWebServer: success, query parameters, 500, 429 with `Retry-After`, malformed payload, stalled connection (timeout), dropped connection, empty array. Plus direct exception→`AppError` mapping and cancellation propagation. |
 | Repository | `:data:nasa` | Offline-first behaviour end to end against real Room: caching a window, the HTTP 400 "today not published yet" retry, failed refresh leaving the cache intact, paging windows, favourites preserved across re-sync. |
-| Sync | `:data:nasa` | Worker retry vs. fail decisions and the attempt budget; `WorkInfo`→`SyncState` mapping; error round-trip through WorkManager `Data`. |
+| Sync | `:data:nasa` | Worker retry vs. fail decisions and the attempt budget; announcing only after a successful sync; `WorkInfo`→`SyncState` mapping; error round-trip through WorkManager `Data`. |
+| Notifications | `:core:notifications` | The posted notification's channel and text, replacement of an older one, silence when blocked by the system. |
 | ViewModels | `:feature:*` | Loading, cached-content-first, refreshing, offline, offline-empty, error surfacing, retry, favourite toggle, pagination including end-of-archive. Driven by Turbine. |
 | Compose UI | `:feature:feed`, `:feature:favorites` | Feed rendering, opening details, favourite toggle, offline banner, retry action, empty states. |
 

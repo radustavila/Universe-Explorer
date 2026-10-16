@@ -33,14 +33,9 @@ class SyncMetadataDataSource @Inject constructor(
             preferences[LAST_SUCCESSFUL_SYNC]?.let(Instant::ofEpochMilli)
         }
 
-    override val oldestRequestedDate: Flow<LocalDate?> = dataStore.data
-        .catch { emit(androidx.datastore.preferences.core.emptyPreferences()) }
-        .map { preferences ->
-            preferences[OLDEST_REQUESTED_DATE]?.let { raw ->
-                runCatching { LocalDate.parse(raw) }
-                    .getOrElse { error -> if (error is DateTimeParseException) null else throw error }
-            }
-        }
+    override val oldestRequestedDate: Flow<LocalDate?> = observeDate(OLDEST_REQUESTED_DATE)
+
+    override val lastAnnouncedApodDate: Flow<LocalDate?> = observeDate(LAST_ANNOUNCED_APOD_DATE)
 
     override suspend fun setLastSuccessfulSync(instant: Instant) {
         editSafely { preferences -> preferences[LAST_SUCCESSFUL_SYNC] = instant.toEpochMilli() }
@@ -49,6 +44,19 @@ class SyncMetadataDataSource @Inject constructor(
     override suspend fun setOldestRequestedDate(date: LocalDate) {
         editSafely { preferences -> preferences[OLDEST_REQUESTED_DATE] = date.toString() }
     }
+
+    override suspend fun setLastAnnouncedApodDate(date: LocalDate) {
+        editSafely { preferences -> preferences[LAST_ANNOUNCED_APOD_DATE] = date.toString() }
+    }
+
+    private fun observeDate(key: Preferences.Key<String>): Flow<LocalDate?> = dataStore.data
+        .catch { emit(androidx.datastore.preferences.core.emptyPreferences()) }
+        .map { preferences ->
+            preferences[key]?.let { raw ->
+                runCatching { LocalDate.parse(raw) }
+                    .getOrElse { error -> if (error is DateTimeParseException) null else throw error }
+            }
+        }
 
     private suspend fun editSafely(block: (androidx.datastore.preferences.core.MutablePreferences) -> Unit) {
         try {
@@ -61,5 +69,6 @@ class SyncMetadataDataSource @Inject constructor(
     private companion object {
         val LAST_SUCCESSFUL_SYNC = longPreferencesKey("last_successful_sync_epoch_millis")
         val OLDEST_REQUESTED_DATE = stringPreferencesKey("oldest_requested_date")
+        val LAST_ANNOUNCED_APOD_DATE = stringPreferencesKey("last_announced_apod_date")
     }
 }

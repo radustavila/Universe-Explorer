@@ -27,12 +27,14 @@ dependencies {
     implementation(projects.core.database)
     implementation(projects.core.datastore)
     implementation(projects.core.network)
+    implementation(projects.core.notifications)
     implementation(projects.data.nasa)
 
     implementation(projects.feature.feed)
     implementation(projects.feature.details)
     implementation(projects.feature.favorites)
     implementation(projects.feature.debug)
+    implementation(projects.feature.widget)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

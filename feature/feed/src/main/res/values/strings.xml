@@ -11,4 +11,8 @@
     <string name="feed_date_picker_title">Jump to a day</string>
     <string name="feed_date_picker_confirm">Open</string>
     <string name="feed_date_picker_dismiss">Cancel</string>
+    <string name="feed_notifications_turn_on">Notify me about each new picture of the day</string>
+    <string name="feed_notifications_turn_off">Stop notifications about new pictures of the day</string>
+    <string name="feed_notifications_blocked">Notifications are blocked for NASA Explorer. Allow them in system settings to hear about each new picture.</string>
+    <string name="feed_notifications_open_settings">Settings</string>
 </resources>

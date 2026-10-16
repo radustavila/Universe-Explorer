@@ -38,6 +38,8 @@ class ApodRepositoryImpl @Inject constructor(
 
     override fun observeFeed(): Flow<List<Apod>> = localDataSource.observeFeed()
 
+    override fun observeLatestApod(): Flow<Apod?> = localDataSource.observeLatest()
+
     override fun observeApod(date: LocalDate): Flow<Apod?> = localDataSource.observeApod(date)
 
     override fun observeFavorites(): Flow<List<Apod>> = localDataSource.observeFavorites()

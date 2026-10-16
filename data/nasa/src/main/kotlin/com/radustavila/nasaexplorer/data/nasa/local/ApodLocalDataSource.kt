@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
  */
 interface ApodLocalDataSource {
     fun observeFeed(): Flow<List<Apod>>
+    fun observeLatest(): Flow<Apod?>
     fun observeApod(date: LocalDate): Flow<Apod?>
     fun observeFavorites(): Flow<List<Apod>>
     fun observeCount(): Flow<Int>

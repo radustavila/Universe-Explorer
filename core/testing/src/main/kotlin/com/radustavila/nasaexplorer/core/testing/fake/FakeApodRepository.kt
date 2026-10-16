@@ -50,6 +50,8 @@ class FakeApodRepository : ApodRepository {
             list.filterNot { apod -> apod.date in excluded }
         }
 
+    override fun observeLatestApod(): Flow<Apod?> = entries.map { list -> list.firstOrNull() }
+
     override fun observeApod(date: LocalDate): Flow<Apod?> =
         entries.map { list -> list.firstOrNull { it.date == date } }
 

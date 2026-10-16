@@ -6,11 +6,16 @@ import androidx.work.WorkerParameters
 import androidx.work.testing.TestListenableWorkerBuilder
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.domain.usecase.AnnounceLatestApodUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeApodsUseCase
+import com.radustavila.nasaexplorer.core.testing.data.TestApods
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeLatestApodWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
+import com.radustavila.nasaexplorer.core.testing.fake.FakeNewApodNotifier
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
+import com.radustavila.nasaexplorer.core.testing.fake.FakeUserPreferencesRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -28,6 +33,8 @@ class ApodSyncWorkerTest {
     private val repository = FakeApodRepository()
     private val networkMonitor = FakeNetworkMonitor()
     private val metadata = FakeSyncMetadataRepository()
+    private val widgetUpdater = FakeLatestApodWidgetUpdater()
+    private val notifier = FakeNewApodNotifier()
 
     @Test
     fun `a successful sync reports how many entries were written`() = runTest {
@@ -41,6 +48,28 @@ class ApodSyncWorkerTest {
             (result as ListenableWorker.Result.Success).outputData
                 .getInt(ApodSyncWorker.KEY_SYNCED_COUNT, 0),
         )
+    }
+
+    @Test
+    fun `a successful sync announces the newest entry`() = runTest {
+        val latest = TestApods.image()
+        repository.setEntries(listOf(latest))
+        metadata.setLastAnnouncedApodDate(latest.date.minusDays(1))
+
+        buildWorker(notificationsEnabled = true).doWork()
+
+        assertEquals(1, widgetUpdater.updateCallCount)
+        assertEquals(listOf(latest), notifier.notified)
+    }
+
+    @Test
+    fun `a failed sync announces nothing`() = runTest {
+        repository.refreshResult = DataResult.Failure(AppError.Http(code = 404))
+
+        buildWorker(notificationsEnabled = true).doWork()
+
+        assertEquals(0, widgetUpdater.updateCallCount)
+        assertTrue(notifier.notified.isEmpty())
     }
 
     @Test
@@ -74,7 +103,10 @@ class ApodSyncWorkerTest {
         assertTrue(result is ListenableWorker.Result.Failure)
     }
 
-    private fun buildWorker(runAttemptCount: Int = 0): ApodSyncWorker =
+    private fun buildWorker(
+        runAttemptCount: Int = 0,
+        notificationsEnabled: Boolean = false,
+    ): ApodSyncWorker =
         TestListenableWorkerBuilder<ApodSyncWorker>(ApplicationProvider.getApplicationContext())
             .setRunAttemptCount(runAttemptCount)
             .setWorkerFactory(
@@ -91,6 +123,13 @@ class ApodSyncWorkerTest {
                             syncMetadataRepository = metadata,
                             networkMonitor = networkMonitor,
                             timeProvider = FakeTimeProvider(),
+                        ),
+                        announceLatestApod = AnnounceLatestApodUseCase(
+                            apodRepository = repository,
+                            syncMetadataRepository = metadata,
+                            userPreferencesRepository = FakeUserPreferencesRepository(notificationsEnabled),
+                            widgetUpdater = widgetUpdater,
+                            notifier = notifier,
                         ),
                     )
                 },

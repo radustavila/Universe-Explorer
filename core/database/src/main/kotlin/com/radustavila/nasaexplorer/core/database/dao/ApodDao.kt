@@ -18,6 +18,13 @@ interface ApodDao {
     @Query("SELECT * FROM apods WHERE is_in_feed = 1 ORDER BY date DESC")
     fun observeFeed(): Flow<List<ApodEntity>>
 
+    /**
+     * Newest entry in the whole cache. Not limited to the feed window: a day the calendar fetched on
+     * its own is still the latest one if nothing newer exists.
+     */
+    @Query("SELECT * FROM apods ORDER BY date DESC LIMIT 1")
+    fun observeLatest(): Flow<ApodEntity?>
+
     @Query("SELECT * FROM apods WHERE date = :date")
     fun observeApod(date: String): Flow<ApodEntity?>
 

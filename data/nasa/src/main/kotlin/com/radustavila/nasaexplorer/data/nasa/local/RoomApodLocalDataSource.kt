@@ -27,6 +27,9 @@ class RoomApodLocalDataSource @Inject constructor(
     override fun observeFeed(): Flow<List<Apod>> =
         apodDao.observeFeed().map { entities -> entities.toDomain() }.flowOn(ioDispatcher)
 
+    override fun observeLatest(): Flow<Apod?> =
+        apodDao.observeLatest().map { entity -> entity?.toDomain() }.flowOn(ioDispatcher)
+
     override fun observeApod(date: LocalDate): Flow<Apod?> =
         apodDao.observeApod(date.toString())
             .map { entity -> entity?.toDomain() }

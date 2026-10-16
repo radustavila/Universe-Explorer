@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="latest_apod_widget_label">Picture of the Day</string>
+    <string name="latest_apod_widget_empty">Open NASA Explorer to download the latest picture of the day.</string>
+</resources>

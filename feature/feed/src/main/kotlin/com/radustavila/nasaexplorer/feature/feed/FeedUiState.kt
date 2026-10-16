@@ -18,6 +18,8 @@ data class FeedUiState(
     val error: UiError? = null,
     /** Newest date the archive can hold; the date picker refuses anything after it. */
     val latestSelectableDate: LocalDate = Apod.FIRST_PUBLICATION_DATE,
+    /** The user's choice only; whether the system currently allows notifications is checked by the screen. */
+    val areNewApodNotificationsEnabled: Boolean = false,
 ) {
     val hasContent: Boolean get() = items.isNotEmpty()
 

@@ -11,6 +11,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.domain.usecase.AnnounceLatestApodUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeApodsUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -23,17 +24,23 @@ import java.util.concurrent.TimeUnit
  * The worker owns no business logic: it delegates to [SynchronizeApodsUseCase] and only decides how
  * to report the outcome to WorkManager. Retryable failures (offline, timeout, 5xx, rate limiting)
  * become `Result.retry()` so the exponential backoff policy applies; permanent failures do not burn
- * retries.
+ * retries. A successful sync is handed to [AnnounceLatestApodUseCase], which refreshes the home
+ * screen widget and posts the new-entry notification.
  */
 @HiltWorker
 class ApodSyncWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParameters: WorkerParameters,
     private val synchronizeApods: SynchronizeApodsUseCase,
+    private val announceLatestApod: AnnounceLatestApodUseCase,
 ) : CoroutineWorker(appContext, workerParameters) {
 
     override suspend fun doWork(): Result = when (val result = synchronizeApods()) {
-        is DataResult.Success -> Result.success(workDataOf(KEY_SYNCED_COUNT to result.data))
+        is DataResult.Success -> {
+            announceLatestApod()
+            Result.success(workDataOf(KEY_SYNCED_COUNT to result.data))
+        }
+
         is DataResult.Failure -> if (result.error.isRetryable && runAttemptCount < MAX_ATTEMPTS) {
             Result.retry()
         } else {

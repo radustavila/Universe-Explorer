@@ -16,6 +16,9 @@ interface ApodRepository {
     /** Cached feed, newest first. Emits whenever the local cache changes. */
     fun observeFeed(): Flow<List<Apod>>
 
+    /** Most recently published entry in the cache, or `null` when the cache is empty. */
+    fun observeLatestApod(): Flow<Apod?>
+
     /** Single entry, or `null` while it is not cached yet. */
     fun observeApod(date: LocalDate): Flow<Apod?>
 

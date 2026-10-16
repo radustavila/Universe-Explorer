@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -151,6 +152,17 @@ class ApodDaoTest {
         val updatedRows = apodDao.setFavorite(date = "1999-01-01", isFavorite = true)
 
         assertEquals(0, updatedRows)
+    }
+
+    @Test
+    fun `the latest entry is the newest date in the cache`() = runTest {
+        assertNull(apodDao.observeLatest().first())
+
+        apodDao.upsertPreservingLocalState(
+            listOf(entity("2026-09-08"), entity("2026-09-10"), entity("2026-09-09")),
+        )
+
+        assertEquals("2026-09-10", apodDao.observeLatest().first()?.date)
     }
 
     private fun entity(

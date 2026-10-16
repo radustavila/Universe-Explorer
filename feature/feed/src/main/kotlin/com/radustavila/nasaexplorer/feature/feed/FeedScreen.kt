@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.NotificationsOff
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -64,6 +66,7 @@ import kotlinx.coroutines.flow.filter
 
 const val FEED_LIST_TEST_TAG = "feed-list"
 const val FEED_CALENDAR_BUTTON_TEST_TAG = "feed-calendar-button"
+const val FEED_NOTIFICATIONS_BUTTON_TEST_TAG = "feed-notifications-button"
 
 @Composable
 fun FeedScreen(
@@ -72,16 +75,25 @@ fun FeedScreen(
     viewModel: FeedViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val notificationToggle = rememberNewApodNotificationToggle(
+        isEnabled = uiState.areNewApodNotificationsEnabled,
+        onEnabledChange = viewModel::onNewApodNotificationsChanged,
+        snackbarHostState = snackbarHostState,
+    )
 
     FeedContent(
         uiState = uiState,
+        areNotificationsOn = notificationToggle.isOn,
         onApodClick = onApodClick,
         onToggleFavorite = viewModel::onToggleFavorite,
         onRefresh = viewModel::onRefresh,
         onRetry = viewModel::onRetry,
         onLoadMore = viewModel::onLoadMore,
         onErrorDismissed = viewModel::onErrorDismissed,
+        onNotificationsClick = notificationToggle.onClick,
         modifier = modifier,
+        snackbarHostState = snackbarHostState,
     )
 }
 
@@ -89,15 +101,17 @@ fun FeedScreen(
 @Composable
 internal fun FeedContent(
     uiState: FeedUiState,
+    areNotificationsOn: Boolean,
     onApodClick: (LocalDate) -> Unit,
     onToggleFavorite: (Apod) -> Unit,
     onRefresh: () -> Unit,
     onRetry: () -> Unit,
     onLoadMore: () -> Unit,
     onErrorDismissed: () -> Unit,
+    onNotificationsClick: () -> Unit,
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
     val errorMessage = uiState.error?.asText()
     var isDatePickerOpen by rememberSaveable { mutableStateOf(false) }
@@ -120,6 +134,25 @@ internal fun FeedContent(
             TopAppBar(
                 title = { Text(stringResource(R.string.feed_title)) },
                 actions = {
+                    IconButton(
+                        onClick = onNotificationsClick,
+                        modifier = Modifier.testTag(FEED_NOTIFICATIONS_BUTTON_TEST_TAG),
+                    ) {
+                        Icon(
+                            imageVector = if (areNotificationsOn) {
+                                Icons.Outlined.Notifications
+                            } else {
+                                Icons.Outlined.NotificationsOff
+                            },
+                            contentDescription = stringResource(
+                                if (areNotificationsOn) {
+                                    R.string.feed_notifications_turn_off
+                                } else {
+                                    R.string.feed_notifications_turn_on
+                                },
+                            ),
+                        )
+                    }
                     IconButton(
                         onClick = { isDatePickerOpen = true },
                         modifier = Modifier.testTag(FEED_CALENDAR_BUTTON_TEST_TAG),
@@ -357,12 +390,14 @@ private fun FeedScreenPreview() {
                     ),
                 ),
             ),
+            areNotificationsOn = true,
             onApodClick = {},
             onToggleFavorite = {},
             onRefresh = {},
             onRetry = {},
             onLoadMore = {},
             onErrorDismissed = {},
+            onNotificationsClick = {},
         )
     }
 }

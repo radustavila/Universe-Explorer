@@ -37,6 +37,7 @@ class SyncMetadataDataSourceTest {
     fun `reports nothing recorded on a fresh install`() = runTest {
         assertNull(syncMetadata.lastSuccessfulSync.first())
         assertNull(syncMetadata.oldestRequestedDate.first())
+        assertNull(syncMetadata.lastAnnouncedApodDate.first())
     }
 
     @Test
@@ -55,5 +56,14 @@ class SyncMetadataDataSourceTest {
         syncMetadata.setOldestRequestedDate(date)
 
         assertEquals(date, syncMetadata.oldestRequestedDate.first())
+    }
+
+    @Test
+    fun `persists the last announced entry`() = runTest {
+        val date = LocalDate.of(2026, 9, 10)
+
+        syncMetadata.setLastAnnouncedApodDate(date)
+
+        assertEquals(date, syncMetadata.lastAnnouncedApodDate.first())
     }
 }
