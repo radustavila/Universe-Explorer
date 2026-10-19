@@ -62,6 +62,7 @@ class LatestApodWidget : GlanceAppWidget() {
         val state = latest?.let { apod ->
             LatestApodWidgetState(
                 title = apod.title,
+                pictureDescription = apod.imageDescription,
                 dateLabel = apod.date.formatMedium(),
                 picture = apod.previewImageUrl?.let { url -> context.loadBitmap(url, PICTURE_SIZE_PX) },
                 openIntent = context.apodDetailsIntent(apod.date),
@@ -93,6 +94,7 @@ interface LatestApodWidgetEntryPoint {
 
 private class LatestApodWidgetState(
     val title: String,
+    val pictureDescription: String,
     val dateLabel: String,
     val picture: Bitmap?,
     val openIntent: Intent?,
@@ -112,7 +114,7 @@ private fun LatestApodContent(state: LatestApodWidgetState) {
         if (state.picture != null) {
             Image(
                 provider = ImageProvider(state.picture),
-                contentDescription = state.title,
+                contentDescription = state.pictureDescription,
                 contentScale = ContentScale.Crop,
                 modifier = GlanceModifier.fillMaxSize(),
             )

@@ -16,6 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.SubcomposeAsyncImage
@@ -30,6 +34,9 @@ import coil3.compose.SubcomposeAsyncImage
  * [previewUrl] names a smaller variant of the same picture, typically one the feed has already
  * cached. It is drawn while [url] downloads, and kept if [url] fails, which turns the wait for a
  * multi-megabyte HD file into a sharpening image rather than a spinner over an empty box.
+ *
+ * [contentDescription] belongs to the frame rather than to the loaded bitmap, so a screen reader
+ * announces the picture while it is still loading or when it failed to load, too.
  */
 @Composable
 fun NasaAsyncImage(
@@ -42,7 +49,18 @@ fun NasaAsyncImage(
     backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
 ) {
     Box(
-        modifier = modifier.background(backgroundColor),
+        modifier = modifier
+            .background(backgroundColor)
+            .then(
+                if (contentDescription == null) {
+                    Modifier
+                } else {
+                    Modifier.semantics {
+                        this.contentDescription = contentDescription
+                        role = Role.Image
+                    }
+                },
+            ),
         contentAlignment = Alignment.Center,
     ) {
         if (url == null) {
@@ -54,7 +72,8 @@ fun NasaAsyncImage(
 
         SubcomposeAsyncImage(
             model = url,
-            contentDescription = contentDescription,
+            // Described by the frame above; describing the bitmap as well would announce it twice.
+            contentDescription = null,
             contentScale = contentScale,
             modifier = Modifier.fillMaxSize(),
             loading = {

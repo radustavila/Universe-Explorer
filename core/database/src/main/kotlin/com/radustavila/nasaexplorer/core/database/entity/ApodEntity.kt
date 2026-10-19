@@ -64,6 +64,18 @@ data class ApodEntity(
      */
     @ColumnInfo(name = "is_in_feed", defaultValue = "1")
     val isInFeed: Boolean = true,
+    /** The entry's page on science.nasa.gov. Added in schema v4; `null` for rows synced before. */
+    @ColumnInfo(name = "permalink")
+    val permalink: String? = null,
+    /** NASA's screen reader description of the picture. Added in schema v4. */
+    @ColumnInfo(name = "alt")
+    val alt: String? = null,
+    /**
+     * The explanation's links, encoded by the data layer (character ranges plus URL). Added in
+     * schema v4; the database only stores it.
+     */
+    @ColumnInfo(name = "explanation_links")
+    val explanationLinks: String? = null,
 )
 
 /**
@@ -93,6 +105,12 @@ data class ApodRemoteContent(
     val copyright: String?,
     @ColumnInfo(name = "last_synced_at_epoch_millis")
     val lastSyncedAtEpochMillis: Long,
+    @ColumnInfo(name = "permalink")
+    val permalink: String?,
+    @ColumnInfo(name = "alt")
+    val alt: String?,
+    @ColumnInfo(name = "explanation_links")
+    val explanationLinks: String?,
 )
 
 fun ApodEntity.toRemoteContent(): ApodRemoteContent = ApodRemoteContent(
@@ -105,4 +123,7 @@ fun ApodEntity.toRemoteContent(): ApodRemoteContent = ApodRemoteContent(
     thumbnailUrl = thumbnailUrl,
     copyright = copyright,
     lastSyncedAtEpochMillis = lastSyncedAtEpochMillis,
+    permalink = permalink,
+    alt = alt,
+    explanationLinks = explanationLinks,
 )

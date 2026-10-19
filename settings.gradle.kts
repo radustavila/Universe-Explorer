@@ -32,6 +32,7 @@ include(":core:notifications")
 include(":core:testing")
 include(":core:cache")
 include(":core:map")
+include(":core:wallpaper")
 
 include(":data:nasa")
 include(":data:launches")

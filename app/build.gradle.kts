@@ -29,6 +29,7 @@ dependencies {
     implementation(projects.core.network)
     implementation(projects.core.notifications)
     implementation(projects.core.cache)
+    implementation(projects.core.wallpaper)
     implementation(projects.data.nasa)
     implementation(projects.data.launches)
     implementation(projects.data.nasaimages)

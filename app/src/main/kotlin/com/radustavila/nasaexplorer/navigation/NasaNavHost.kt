@@ -77,7 +77,10 @@ fun NasaNavHost(
         }
 
         // Root level: full-screen details reached from several tabs and from deep links.
-        detailsScreen(onBackClick = navController::popBackStack)
+        detailsScreen(
+            onBackClick = navController::popBackStack,
+            onApodClick = navController::navigateToDetails,
+        )
         nasaMediaDetailsScreen(onBackClick = navController::popBackStack)
     }
 }

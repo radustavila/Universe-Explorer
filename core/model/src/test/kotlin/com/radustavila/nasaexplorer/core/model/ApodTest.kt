@@ -147,10 +147,26 @@ class ApodTest {
     }
 
     @Test
-    fun `the archive page url is derived from the publication date`() {
+    fun `without a permalink the archive page url is derived from the publication date`() {
         val apod = apod(MediaType.IMAGE, url = URL, hdUrl = null, thumbnailUrl = null)
 
         assertEquals("https://apod.nasa.gov/apod/ap260910.html", apod.webPageUrl)
+    }
+
+    @Test
+    fun `the web page is the permalink NASA published for the entry`() {
+        val apod = apod(MediaType.IMAGE, url = URL, hdUrl = null, thumbnailUrl = null)
+            .copy(permalink = PERMALINK)
+
+        assertEquals(PERMALINK, apod.webPageUrl)
+    }
+
+    @Test
+    fun `the picture is described by NASA's alt text, or by the title without one`() {
+        val apod = apod(MediaType.IMAGE, url = URL, hdUrl = null, thumbnailUrl = null)
+
+        assertEquals("Title", apod.imageDescription)
+        assertEquals("Pillars of gas", apod.copy(altText = "Pillars of gas").imageDescription)
     }
 
     private fun apod(
@@ -173,5 +189,6 @@ class ApodTest {
         const val HD_URL = "https://apod.nasa.gov/image_hd.jpg"
         const val THUMBNAIL_URL = "https://img.youtube.com/vi/x/0.jpg"
         const val YOUTUBE_ID = "dQw4w9WgXcQ"
+        const val PERMALINK = "https://science.nasa.gov/image-article/apod-2026-september-10-ngc-1300/"
     }
 }

@@ -36,7 +36,21 @@ class UserPreferencesDataSource @Inject constructor(
         }
     }
 
+    override val dailyWallpaperEnabled: Flow<Boolean> = dataStore.data
+        .catch { emit(emptyPreferences()) }
+        // Opt-in: the wallpaper is the user's, and nothing replaces it until they ask.
+        .map { preferences -> preferences[DAILY_WALLPAPER_ENABLED] ?: false }
+
+    override suspend fun setDailyWallpaperEnabled(enabled: Boolean) {
+        try {
+            dataStore.edit { preferences -> preferences[DAILY_WALLPAPER_ENABLED] = enabled }
+        } catch (_: IOException) {
+            // As above: the toggle keeps its previous value.
+        }
+    }
+
     private companion object {
         val NEW_APOD_NOTIFICATIONS_ENABLED = booleanPreferencesKey("new_apod_notifications_enabled")
+        val DAILY_WALLPAPER_ENABLED = booleanPreferencesKey("daily_wallpaper_enabled")
     }
 }

@@ -21,6 +21,15 @@ data class Apod(
     val hdUrl: String? = null,
     val thumbnailUrl: String? = null,
     val copyright: String? = null,
+    /**
+     * The entry's own page on science.nasa.gov, as NASA publishes it. `null` for entries cached
+     * before it was stored (schema v4); see [webPageUrl].
+     */
+    val permalink: String? = null,
+    /** NASA's description of the picture for screen readers, when it wrote a real one. */
+    val altText: String? = null,
+    /** Links NASA placed in [explanation], as character ranges of the plain text. */
+    val explanationLinks: List<ApodLink> = emptyList(),
     val isFavorite: Boolean = false,
     /** When this entry first entered the local cache. */
     val cachedAt: Instant = Instant.EPOCH,
@@ -57,10 +66,16 @@ data class Apod(
     val isPlayable: Boolean get() = mediaType == MediaType.VIDEO
 
     /**
-     * The page NASA publishes for this entry. The archive is addressed by date in `apYYMMDD.html`
-     * form, so no identifier beyond [date] is needed.
+     * The page NASA publishes for this entry: its [permalink], or - for an entry cached before the
+     * permalink was stored - the classic archive address, which is built from the date alone.
+     * Recent entries are better served by the permalink: apod.nasa.gov now redirects them to the
+     * APOD home page rather than to the entry.
      */
-    val webPageUrl: String get() = "$ARCHIVE_BASE_URL/ap${ARCHIVE_DATE_FORMAT.format(date)}.html"
+    val webPageUrl: String
+        get() = permalink ?: "$ARCHIVE_BASE_URL/ap${ARCHIVE_DATE_FORMAT.format(date)}.html"
+
+    /** What a screen reader announces for the picture: NASA's alt text, or the title without one. */
+    val imageDescription: String get() = altText ?: title
 
     /**
      * The media stream a player can open directly, or `null` when there is none.

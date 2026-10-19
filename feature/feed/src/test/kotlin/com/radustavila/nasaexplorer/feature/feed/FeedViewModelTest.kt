@@ -7,9 +7,13 @@ import com.radustavila.nasaexplorer.core.designsystem.R
 import com.radustavila.nasaexplorer.core.domain.usecase.LoadOlderApodsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveApodFeedUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDailyWallpaperEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveNewApodNotificationsEnabledUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveOnThisDayUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSyncStateUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshFeedUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.SearchCachedApodsUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.SetDailyWallpaperEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetNewApodNotificationsEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ToggleFavoriteUseCase
 import com.radustavila.nasaexplorer.core.model.SyncState
@@ -21,6 +25,7 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import com.radustavila.nasaexplorer.core.testing.fake.FakeUserPreferencesRepository
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
+import java.time.LocalDate
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -247,15 +252,121 @@ class FeedViewModelTest {
         }
     }
 
+    @Test
+    fun `search is closed until opened and then starts blank`() = runTest {
+        repository.setEntries(TestApods.feed(size = 3))
+        val viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            assertNull(awaitItem().awaitContent(this).search)
+
+            viewModel.onSearchQueryChanged("")
+
+            val search = awaitSearch { it != null }
+            assertTrue(requireNotNull(search).isBlank)
+            assertTrue(search.results.isEmpty())
+        }
+    }
+
+    @Test
+    fun `search shows matching cached entries and follows the query`() = runTest {
+        repository.setEntries(
+            listOf(
+                TestApods.image(date = LocalDate.of(2026, 9, 10), title = "Andromeda Rising"),
+                TestApods.image(date = LocalDate.of(2026, 9, 9), title = "Saturn's Rings"),
+                TestApods.image(date = LocalDate.of(2026, 9, 8), title = "Saturn at Night"),
+            ),
+        )
+        val viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            viewModel.onSearchQueryChanged("saturn")
+            var search = requireNotNull(awaitSearch { it?.query == "saturn" })
+            assertEquals(listOf("Saturn's Rings", "Saturn at Night"), search.results.map { it.title })
+
+            viewModel.onSearchQueryChanged("saturn night")
+            search = requireNotNull(awaitSearch { it?.query == "saturn night" })
+            assertEquals(listOf("Saturn at Night"), search.results.map { it.title })
+
+            viewModel.onSearchQueryChanged("jupiter")
+            search = requireNotNull(awaitSearch { it?.query == "jupiter" })
+            assertTrue(search.hasNoResults)
+        }
+    }
+
+    @Test
+    fun `closing search returns to the feed`() = runTest {
+        repository.setEntries(TestApods.feed(size = 2))
+        val viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            viewModel.onSearchQueryChanged("apod")
+            awaitSearch { it != null }
+
+            viewModel.onSearchQueryChanged(null)
+
+            var state = awaitItem()
+            while (state.search != null) state = awaitItem()
+            assertEquals(2, state.items.size)
+        }
+    }
+
+    @Test
+    fun `On this day lists today's month and day from earlier years`() = runTest {
+        timeProvider.currentDate = LocalDate.of(2026, 10, 19)
+        repository.setEntries(
+            listOf(
+                TestApods.image(date = LocalDate.of(2026, 10, 19)),
+                TestApods.image(date = LocalDate.of(2020, 10, 19), title = "Five years ago"),
+                TestApods.image(date = LocalDate.of(1999, 10, 19), title = "Last century"),
+                TestApods.image(date = LocalDate.of(2020, 10, 18)),
+            ),
+        )
+
+        createViewModel().uiState.test {
+            var state = awaitItem()
+            while (state.onThisDay.isEmpty()) state = awaitItem()
+
+            assertEquals(listOf("Five years ago", "Last century"), state.onThisDay.map { it.title })
+        }
+    }
+
+    @Test
+    fun `turning the daily wallpaper on is persisted and handed to the sync pipeline`() = runTest {
+        val viewModel = createViewModel()
+        val syncsBefore = syncScheduler.requestSyncCallCount
+
+        viewModel.uiState.test {
+            viewModel.onDailyWallpaperChanged(true)
+
+            var state = awaitItem()
+            while (!state.isDailyWallpaperEnabled) state = awaitItem()
+            assertTrue(userPreferences.currentDailyWallpaperEnabled)
+            assertEquals(syncsBefore + 1, syncScheduler.requestSyncCallCount)
+        }
+    }
+
+    private suspend fun app.cash.turbine.TurbineTestContext<FeedUiState>.awaitSearch(
+        predicate: (FeedSearchState?) -> Boolean,
+    ): FeedSearchState? {
+        var state = awaitItem()
+        while (!predicate(state.search)) state = awaitItem()
+        return state.search
+    }
+
     private fun createViewModel() = FeedViewModel(
         observeApodFeed = ObserveApodFeedUseCase(repository),
         observeConnectivity = ObserveConnectivityUseCase(networkMonitor),
         observeSyncState = ObserveSyncStateUseCase(syncScheduler),
         observeNewApodNotificationsEnabled = ObserveNewApodNotificationsEnabledUseCase(userPreferences),
+        observeDailyWallpaperEnabled = ObserveDailyWallpaperEnabledUseCase(userPreferences),
+        observeOnThisDay = ObserveOnThisDayUseCase(repository, timeProvider),
+        searchCachedApods = SearchCachedApodsUseCase(repository),
         refreshFeed = RefreshFeedUseCase(syncScheduler),
         loadOlderApods = LoadOlderApodsUseCase(repository, syncMetadata, networkMonitor),
         toggleFavorite = ToggleFavoriteUseCase(repository.favorites, FakeTimeProvider()),
         setNewApodNotificationsEnabled = SetNewApodNotificationsEnabledUseCase(userPreferences),
+        setDailyWallpaperEnabled = SetDailyWallpaperEnabledUseCase(userPreferences, syncMetadata, syncScheduler),
         timeProvider = timeProvider,
     )
 

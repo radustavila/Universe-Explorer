@@ -9,4 +9,9 @@ interface UserPreferencesRepository {
     val newApodNotificationsEnabled: Flow<Boolean>
 
     suspend fun setNewApodNotificationsEnabled(enabled: Boolean)
+
+    /** Whether each new picture of the day becomes the home screen wallpaper. */
+    val dailyWallpaperEnabled: Flow<Boolean>
+
+    suspend fun setDailyWallpaperEnabled(enabled: Boolean)
 }

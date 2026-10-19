@@ -16,6 +16,8 @@ interface ApodLocalDataSource {
     fun observeFeed(): Flow<List<Apod>>
     fun observeLatest(): Flow<Apod?>
     fun observeApod(date: LocalDate): Flow<Apod?>
+    fun search(query: String): Flow<List<Apod>>
+    fun observeSameDayInEarlierYears(date: LocalDate): Flow<List<Apod>>
     fun observeCount(): Flow<Int>
     fun observeOldestDate(): Flow<LocalDate?>
 

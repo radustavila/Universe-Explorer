@@ -28,6 +28,37 @@ interface ApodDao {
     @Query("SELECT * FROM apods WHERE date = :date")
     fun observeApod(date: String): Flow<ApodEntity?>
 
+    /**
+     * Cached entries whose title or explanation matches [match], newest first.
+     *
+     * [match] is an FTS4 `MATCH` expression; callers build it from user input rather than passing
+     * that input through, so stray quotes or operators cannot break the query.
+     */
+    @Query(
+        """
+        SELECT apods.* FROM apods
+        JOIN apods_fts ON apods.rowid = apods_fts.rowid
+        WHERE apods_fts MATCH :match
+        ORDER BY apods.date DESC
+        LIMIT :limit
+        """,
+    )
+    fun observeSearch(match: String, limit: Int): Flow<List<ApodEntity>>
+
+    /**
+     * Entries published on the same day of the year as [monthDay] (`MM-dd`) in other years, newest
+     * first, excluding [excludedDate] itself. Dates are ISO-8601 text, so the month and day are its
+     * last five characters.
+     */
+    @Query(
+        """
+        SELECT * FROM apods
+        WHERE substr(date, 6) = :monthDay AND date < :excludedDate
+        ORDER BY date DESC
+        """,
+    )
+    fun observeSameDayBefore(monthDay: String, excludedDate: String): Flow<List<ApodEntity>>
+
     @Query("SELECT COUNT(*) FROM apods")
     fun observeCount(): Flow<Int>
 

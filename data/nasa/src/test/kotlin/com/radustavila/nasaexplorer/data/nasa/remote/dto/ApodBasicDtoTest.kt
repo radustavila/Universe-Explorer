@@ -117,6 +117,69 @@ class ApodBasicDtoTest {
         assertNull(ApodBasicDto(date = "2026-10-04", mediaType = "image").toApodDto().url)
     }
 
+    @Test
+    fun `the permalink is kept as the entry's web page`() {
+        val dto = ApodBasicDto(
+            permalink = "https://science.nasa.gov/image-article/apod-2026-october-18-sonified-eagle-nebula-pillars/",
+        ).toApodDto()
+
+        assertEquals(
+            "https://science.nasa.gov/image-article/apod-2026-october-18-sonified-eagle-nebula-pillars/",
+            dto.permalink,
+        )
+        assertNull(ApodBasicDto(permalink = "").toApodDto().permalink)
+    }
+
+    @Test
+    fun `a real alt text is kept and the archive's generic one is dropped`() {
+        assertEquals(
+            "Hubble image of Eagle Nebula Pillars with superimposed graph.",
+            ApodBasicDto(alt = "Hubble image of Eagle Nebula Pillars with superimposed graph.").toApodDto().alt,
+        )
+        assertNull(
+            ApodBasicDto(
+                alt = "See Explanation. Clicking on the picture will download the highest resolution " +
+                    "version available.",
+            ).toApodDto().alt,
+        )
+        assertNull(ApodBasicDto(alt = " ").toApodDto().alt)
+    }
+
+    @Test
+    fun `explanation links point at exactly their words in the plain text`() {
+        val dto = ApodBasicDto(
+            explanation = "<strong>Explanation:</strong> The famous nebula " +
+                "<a href=\"https://en.wikipedia.org/wiki/Eagle_Nebula\">M16</a> is best known for " +
+                "<a href=\"https://science.nasa.gov/image-article/apod-2024-october-22-m16-pillars/\">" +
+                " its pillars </a>, seen <em>here</em> ( <a href=\"https://youtu.be/x\">video</a> ).",
+        ).toApodDto()
+
+        val text = requireNotNull(dto.explanation)
+        assertEquals("The famous nebula M16 is best known for its pillars, seen here (video).", text)
+        assertEquals(
+            listOf(
+                "M16" to "https://en.wikipedia.org/wiki/Eagle_Nebula",
+                "its pillars" to "https://science.nasa.gov/image-article/apod-2024-october-22-m16-pillars/",
+                "video" to "https://youtu.be/x",
+            ),
+            dto.explanationLinks.map { text.substring(it.start, it.end) to it.url },
+        )
+    }
+
+    @Test
+    fun `links in the trailing notices are dropped with them and relative links become absolute`() {
+        val dto = ApodBasicDto(
+            explanation = "See <a href=\"ap950620.html\">the Pleiades</a> and <a href=\"#top\">top</a>." +
+                "<br><br><strong>Tomorrow's picture: </strong><a href=\"ap261019.html\">tomorrow</a>",
+        ).toApodDto()
+
+        val text = requireNotNull(dto.explanation)
+        assertEquals("See the Pleiades and top.", text)
+        val link = dto.explanationLinks.single()
+        assertEquals("the Pleiades", text.substring(link.start, link.end))
+        assertEquals("https://apod.nasa.gov/apod/ap950620.html", link.url)
+    }
+
     private companion object {
         const val PLACEHOLDER = "https://assets.science.nasa.gov/dynamicimage/assets/science/astro/programs/" +
             "cosmic-origins/images/misc/news-thumbnail.png?w=594&h=516"

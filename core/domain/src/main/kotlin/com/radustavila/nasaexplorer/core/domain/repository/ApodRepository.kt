@@ -25,6 +25,18 @@ interface ApodRepository {
     /** Single entry, or `null` while it is not cached yet. */
     fun observeApod(date: LocalDate): Flow<Apod?>
 
+    /**
+     * Cached entries whose title or explanation matches [query], newest first. Searches the local
+     * cache only - the APOD service has no search - so entries never downloaded are not found.
+     * A query without a single searchable word matches nothing.
+     */
+    fun searchCached(query: String): Flow<List<Apod>>
+
+    /**
+     * Cached entries published on the same month and day as [date] in earlier years, newest first.
+     */
+    fun observeSameDayInEarlierYears(date: LocalDate): Flow<List<Apod>>
+
     fun observeCachedCount(): Flow<Int>
 
     /** Oldest publication date currently cached, or `null` when the cache is empty. */

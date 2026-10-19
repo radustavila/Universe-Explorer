@@ -105,8 +105,51 @@ object NasaDatabaseMigrations {
         }
     }
 
+    /**
+     * v4 -> v5: stores what the science.nasa.gov feed offers beyond the old API, and indexes the
+     * cache for full-text search.
+     *
+     * - `permalink`, `alt` and `explanation_links` are nullable: existing rows keep working (the
+     *   model falls back to the archive URL and the title) and pick the values up on their next sync.
+     * - `apods_fts` is an external-content FTS4 table over `title` and `explanation`, kept in step by
+     *   the same triggers Room creates for a fresh install. `rebuild` indexes every row already
+     *   cached, so search covers the whole cache straight after the upgrade.
+     *
+     * The statements mirror `schemas/…/5.json` verbatim; opening the migrated database through Room
+     * validates them against it.
+     */
+    val MIGRATION_4_5 = object : Migration(4, 5) {
+        override fun migrate(connection: SQLiteConnection) {
+            connection.execSQL("ALTER TABLE `apods` ADD COLUMN `permalink` TEXT")
+            connection.execSQL("ALTER TABLE `apods` ADD COLUMN `alt` TEXT")
+            connection.execSQL("ALTER TABLE `apods` ADD COLUMN `explanation_links` TEXT")
+
+            connection.execSQL(
+                "CREATE VIRTUAL TABLE IF NOT EXISTS `apods_fts` USING FTS4(" +
+                    "`title` TEXT NOT NULL, `explanation` TEXT NOT NULL, " +
+                    "tokenize=porter, content=`apods`)",
+            )
+            FTS_CONTENT_SYNC_TRIGGERS.forEach(connection::execSQL)
+            connection.execSQL("INSERT INTO `apods_fts`(`apods_fts`) VALUES ('rebuild')")
+        }
+    }
+
+    private val FTS_CONTENT_SYNC_TRIGGERS = listOf(
+        "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_apods_fts_BEFORE_UPDATE " +
+            "BEFORE UPDATE ON `apods` BEGIN DELETE FROM `apods_fts` WHERE `docid`=OLD.`rowid`; END",
+        "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_apods_fts_BEFORE_DELETE " +
+            "BEFORE DELETE ON `apods` BEGIN DELETE FROM `apods_fts` WHERE `docid`=OLD.`rowid`; END",
+        "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_apods_fts_AFTER_UPDATE " +
+            "AFTER UPDATE ON `apods` BEGIN INSERT INTO `apods_fts`(`docid`, `title`, `explanation`) " +
+            "VALUES (NEW.`rowid`, NEW.`title`, NEW.`explanation`); END",
+        "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_apods_fts_AFTER_INSERT " +
+            "AFTER INSERT ON `apods` BEGIN INSERT INTO `apods_fts`(`docid`, `title`, `explanation`) " +
+            "VALUES (NEW.`rowid`, NEW.`title`, NEW.`explanation`); END",
+    )
+
     /** Every migration the database ships with, in order. */
-    val ALL: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+    val ALL: Array<Migration> =
+        arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
 
     private class MigratedFavorite(
         val itemId: String,

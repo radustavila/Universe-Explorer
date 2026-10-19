@@ -10,6 +10,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -148,15 +149,103 @@ class ApodDaoTest {
         assertEquals("Title 2001-03-05", apodDao.findByDate("2001-03-05")?.title)
     }
 
+    @Test
+    fun `search matches words in the title or the explanation, newest first`() = runTest {
+        apodDao.upsertPreservingLocalState(
+            listOf(
+                entity("2026-09-08", title = "Andromeda Galaxy"),
+                entity("2026-09-09", explanation = "A nebula near the Andromeda galaxy."),
+                entity("2026-09-10", title = "Saturn's Rings"),
+            ),
+        )
+
+        val dates = apodDao.observeSearch(match = "andromeda*", limit = 10).first().map(ApodEntity::date)
+
+        assertEquals(listOf("2026-09-09", "2026-09-08"), dates)
+    }
+
+    @Test
+    fun `search matches prefixes, requires every word and folds plurals`() = runTest {
+        apodDao.upsertPreservingLocalState(
+            listOf(
+                entity("2026-09-08", title = "Colliding Galaxies"),
+                entity("2026-09-09", title = "A Spiral Galaxy"),
+                entity("2026-09-10", title = "Galactic Dust"),
+            ),
+        )
+
+        suspend fun search(match: String) =
+            apodDao.observeSearch(match = match, limit = 10).first().map(ApodEntity::date)
+
+        // Porter stemming: "galaxy" and "galaxies" index as the same word.
+        assertEquals(listOf("2026-09-09", "2026-09-08"), search("galaxy*"))
+        assertEquals(listOf("2026-09-10", "2026-09-09", "2026-09-08"), search("gala*"))
+        assertEquals(listOf("2026-09-09"), search("spiral* galaxy*"))
+    }
+
+    @Test
+    fun `the search index follows syncs that rewrite an entry`() = runTest {
+        apodDao.upsertPreservingLocalState(listOf(entity("2026-09-10", title = "Old Title")))
+
+        apodDao.upsertPreservingLocalState(listOf(entity("2026-09-10", title = "Comet Tails")))
+
+        assertTrue(apodDao.observeSearch(match = "old*", limit = 10).first().isEmpty())
+        val match = apodDao.observeSearch(match = "comet*", limit = 10).first().single()
+        assertEquals("Comet Tails", match.title)
+    }
+
+    @Test
+    fun `evicted rows leave the search index`() = runTest {
+        apodDao.upsertPreservingLocalState(
+            listOf(entity("2026-09-10", title = "Comet Tails"), entity("2026-05-30", title = "Comet Dust")),
+        )
+
+        apodDao.evict(cutoffDate = "2026-06-01", staleBeforeMillis = FRESH, favoriteSource = "apod")
+
+        assertEquals(
+            listOf("2026-09-10"),
+            apodDao.observeSearch(match = "comet*", limit = 10).first().map(ApodEntity::date),
+        )
+    }
+
+    @Test
+    fun `cleared rows leave the search index`() = runTest {
+        apodDao.upsertPreservingLocalState(listOf(entity("2026-09-10", title = "Comet Tails")))
+
+        apodDao.clear()
+
+        assertTrue(apodDao.observeSearch(match = "comet*", limit = 10).first().isEmpty())
+    }
+
+    @Test
+    fun `the same day in earlier years excludes the day itself and other days`() = runTest {
+        apodDao.upsertPreservingLocalState(
+            listOf(
+                entity("2026-10-19"),
+                entity("2025-10-19", isInFeed = false),
+                entity("2010-10-19", isInFeed = false),
+                entity("2025-10-18"),
+                entity("2025-11-19"),
+            ),
+        )
+
+        val dates = apodDao.observeSameDayBefore(monthDay = "10-19", excludedDate = "2026-10-19")
+            .first()
+            .map(ApodEntity::date)
+
+        assertEquals(listOf("2025-10-19", "2010-10-19"), dates)
+    }
+
     private fun entity(
         date: String,
         title: String = "Title $date",
+        explanation: String = "Explanation",
         isInFeed: Boolean = true,
         syncedAt: Long = 1_757_500_000_000,
     ) = ApodEntity(
         date = date,
         title = title,
-        explanation = "Explanation",
+        explanation = explanation,
         mediaType = "image",
         url = "https://apod.nasa.gov/$date.jpg",
         hdUrl = null,

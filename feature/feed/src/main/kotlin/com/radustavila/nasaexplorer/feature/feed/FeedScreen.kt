@@ -1,5 +1,6 @@
 package com.radustavila.nasaexplorer.feature.feed
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,10 +15,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.NotificationsOff
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Wallpaper
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -45,6 +52,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.toggleableState
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -69,6 +81,9 @@ import kotlinx.coroutines.flow.filter
 const val FEED_LIST_TEST_TAG = "feed-list"
 const val FEED_CALENDAR_BUTTON_TEST_TAG = "feed-calendar-button"
 const val FEED_NOTIFICATIONS_BUTTON_TEST_TAG = "feed-notifications-button"
+const val FEED_SEARCH_BUTTON_TEST_TAG = "feed-search-button"
+const val FEED_MORE_BUTTON_TEST_TAG = "feed-more-button"
+const val FEED_DAILY_WALLPAPER_TEST_TAG = "feed-daily-wallpaper"
 private const val FEED_HEADER_KEY = "header"
 
 /**
@@ -103,6 +118,8 @@ fun FeedScreen(
         modifier = modifier,
         header = header,
         snackbarHostState = snackbarHostState,
+        onSearchQueryChange = viewModel::onSearchQueryChanged,
+        onDailyWallpaperChange = viewModel::onDailyWallpaperChanged,
     )
 }
 
@@ -121,10 +138,25 @@ internal fun FeedContent(
     modifier: Modifier = Modifier,
     header: (@Composable () -> Unit)? = null,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    onSearchQueryChange: (String?) -> Unit = {},
+    onDailyWallpaperChange: (Boolean) -> Unit = {},
 ) {
     val listState = rememberLazyListState()
     val errorMessage = uiState.error?.asText()
     var isDatePickerOpen by rememberSaveable { mutableStateOf(false) }
+
+    // The text field needs its value synchronously, so the query lives here and the ViewModel
+    // follows it; this also restores an open search after process death.
+    var isSearchOpen by rememberSaveable { mutableStateOf(false) }
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+    val closeSearch = {
+        isSearchOpen = false
+        searchQuery = ""
+    }
+    LaunchedEffect(isSearchOpen, searchQuery) {
+        onSearchQueryChange(if (isSearchOpen) searchQuery else null)
+    }
+    BackHandler(enabled = isSearchOpen, onBack = closeSearch)
 
     LaunchedEffect(errorMessage) {
         if (errorMessage != null && uiState.hasContent) {
@@ -141,42 +173,73 @@ internal fun FeedContent(
         // by the app scaffold; taking the insets again here left a gap at both ends of the list.
         contentWindowInsets = WindowInsets(0),
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.feed_title)) },
-                actions = {
-                    IconButton(
-                        onClick = onNotificationsClick,
-                        modifier = Modifier.testTag(FEED_NOTIFICATIONS_BUTTON_TEST_TAG),
-                    ) {
-                        Icon(
-                            imageVector = if (areNotificationsOn) {
-                                Icons.Outlined.Notifications
-                            } else {
-                                Icons.Outlined.NotificationsOff
-                            },
-                            contentDescription = stringResource(
-                                if (areNotificationsOn) {
-                                    R.string.feed_notifications_turn_off
+            if (isSearchOpen) {
+                SearchTopBar(
+                    query = searchQuery,
+                    onQueryChange = { searchQuery = it },
+                    onClose = closeSearch,
+                )
+            } else {
+                TopAppBar(
+                    title = { Text(stringResource(R.string.feed_title)) },
+                    actions = {
+                        IconButton(
+                            onClick = { isSearchOpen = true },
+                            modifier = Modifier.testTag(FEED_SEARCH_BUTTON_TEST_TAG),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Search,
+                                contentDescription = stringResource(R.string.feed_search_open),
+                            )
+                        }
+                        IconButton(
+                            onClick = onNotificationsClick,
+                            modifier = Modifier.testTag(FEED_NOTIFICATIONS_BUTTON_TEST_TAG),
+                        ) {
+                            Icon(
+                                imageVector = if (areNotificationsOn) {
+                                    Icons.Outlined.Notifications
                                 } else {
-                                    R.string.feed_notifications_turn_on
+                                    Icons.Outlined.NotificationsOff
                                 },
-                            ),
+                                contentDescription = stringResource(
+                                    if (areNotificationsOn) {
+                                        R.string.feed_notifications_turn_off
+                                    } else {
+                                        R.string.feed_notifications_turn_on
+                                    },
+                                ),
+                            )
+                        }
+                        IconButton(
+                            onClick = { isDatePickerOpen = true },
+                            modifier = Modifier.testTag(FEED_CALENDAR_BUTTON_TEST_TAG),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.CalendarMonth,
+                                contentDescription = stringResource(R.string.feed_pick_date),
+                            )
+                        }
+                        MoreOptionsMenu(
+                            isDailyWallpaperEnabled = uiState.isDailyWallpaperEnabled,
+                            onDailyWallpaperChange = onDailyWallpaperChange,
                         )
-                    }
-                    IconButton(
-                        onClick = { isDatePickerOpen = true },
-                        modifier = Modifier.testTag(FEED_CALENDAR_BUTTON_TEST_TAG),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.CalendarMonth,
-                            contentDescription = stringResource(R.string.feed_pick_date),
-                        )
-                    }
-                },
-            )
+                    },
+                )
+            }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { padding ->
+        if (isSearchOpen) {
+            SearchResults(
+                search = uiState.search ?: FeedSearchState(query = searchQuery),
+                onApodClick = onApodClick,
+                onToggleFavorite = onToggleFavorite,
+                modifier = Modifier.padding(padding),
+            )
+            return@Scaffold
+        }
+
         PullToRefreshBox(
             isRefreshing = uiState.isRefreshing,
             onRefresh = onRefresh,
@@ -225,6 +288,53 @@ internal fun FeedContent(
             },
             onDismiss = { isDatePickerOpen = false },
         )
+    }
+}
+
+/**
+ * Settings that do not deserve a place in the app bar of their own. The daily wallpaper is applied
+ * by the sync worker after each update, never from here.
+ */
+@Composable
+private fun MoreOptionsMenu(
+    isDailyWallpaperEnabled: Boolean,
+    onDailyWallpaperChange: (Boolean) -> Unit,
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    Box {
+        IconButton(
+            onClick = { isExpanded = true },
+            modifier = Modifier.testTag(FEED_MORE_BUTTON_TEST_TAG),
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.MoreVert,
+                contentDescription = stringResource(R.string.feed_more_options),
+            )
+        }
+        DropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false }) {
+            DropdownMenuItem(
+                text = {
+                    Column {
+                        Text(stringResource(R.string.feed_daily_wallpaper))
+                        Text(
+                            text = stringResource(R.string.feed_daily_wallpaper_description),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                },
+                leadingIcon = { Icon(Icons.Outlined.Wallpaper, contentDescription = null) },
+                trailingIcon = { Switch(checked = isDailyWallpaperEnabled, onCheckedChange = null) },
+                onClick = { onDailyWallpaperChange(!isDailyWallpaperEnabled) },
+                modifier = Modifier
+                    .testTag(FEED_DAILY_WALLPAPER_TEST_TAG)
+                    .semantics {
+                        role = Role.Switch
+                        toggleableState = ToggleableState(isDailyWallpaperEnabled)
+                    },
+            )
+        }
     }
 }
 
@@ -306,6 +416,19 @@ private fun FeedList(
     onToggleFavorite: (Apod) -> Unit,
     header: (@Composable () -> Unit)?,
 ) {
+    // "On this day" usually arrives after the feed (the sync worker fills it), and the list keeps
+    // its first card anchored when an item is inserted above it - which would leave the rail
+    // scrolled out of view. A reader still at the top is brought back up to see it.
+    val hasOnThisDay = uiState.onThisDay.isNotEmpty()
+    LaunchedEffect(hasOnThisDay) {
+        if (hasOnThisDay &&
+            listState.firstVisibleItemIndex <= 1 &&
+            listState.firstVisibleItemScrollOffset == 0
+        ) {
+            listState.scrollToItem(0)
+        }
+    }
+
     LazyColumn(
         state = listState,
         modifier = Modifier
@@ -325,6 +448,12 @@ private fun FeedList(
         if (header != null) {
             item(key = FEED_HEADER_KEY) {
                 Column(modifier = Modifier.topGutterUnlessEmpty(FEED_GUTTER)) { header() }
+            }
+        }
+
+        if (uiState.onThisDay.isNotEmpty()) {
+            item(key = "on-this-day") {
+                OnThisDayRail(entries = uiState.onThisDay, onApodClick = onApodClick)
             }
         }
 

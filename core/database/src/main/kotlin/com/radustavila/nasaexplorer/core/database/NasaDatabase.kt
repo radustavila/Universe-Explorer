@@ -5,11 +5,12 @@ import androidx.room.RoomDatabase
 import com.radustavila.nasaexplorer.core.database.dao.ApodDao
 import com.radustavila.nasaexplorer.core.database.dao.FavoriteDao
 import com.radustavila.nasaexplorer.core.database.entity.ApodEntity
+import com.radustavila.nasaexplorer.core.database.entity.ApodFtsEntity
 import com.radustavila.nasaexplorer.core.database.entity.FavoriteEntity
 
 @Database(
-    entities = [ApodEntity::class, FavoriteEntity::class],
-    version = 4,
+    entities = [ApodEntity::class, ApodFtsEntity::class, FavoriteEntity::class],
+    version = 5,
     exportSchema = true,
 )
 abstract class NasaDatabase : RoomDatabase() {

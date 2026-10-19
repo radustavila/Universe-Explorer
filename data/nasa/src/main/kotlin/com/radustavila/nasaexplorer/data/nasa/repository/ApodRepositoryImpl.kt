@@ -61,6 +61,16 @@ class ApodRepositoryImpl @Inject constructor(
             apod?.markFavorite(favorites)
         }
 
+    override fun searchCached(query: String): Flow<List<Apod>> =
+        combine(localDataSource.search(query), favoriteDates) { results, favorites ->
+            results.map { apod -> apod.markFavorite(favorites) }
+        }
+
+    override fun observeSameDayInEarlierYears(date: LocalDate): Flow<List<Apod>> =
+        combine(localDataSource.observeSameDayInEarlierYears(date), favoriteDates) { days, favorites ->
+            days.map { apod -> apod.markFavorite(favorites) }
+        }
+
     override fun observeCachedCount(): Flow<Int> = localDataSource.observeCount()
 
     override fun observeOldestCachedDate(): Flow<LocalDate?> = localDataSource.observeOldestDate()

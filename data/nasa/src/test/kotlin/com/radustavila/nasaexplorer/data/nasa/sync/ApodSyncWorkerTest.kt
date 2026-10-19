@@ -7,6 +7,8 @@ import androidx.work.testing.TestListenableWorkerBuilder
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.usecase.AnnounceLatestApodUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ApplyDailyWallpaperUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.CacheOnThisDayUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshSourceUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeApodsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeUpcomingLaunchesUseCase
@@ -19,6 +21,8 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeNewApodNotifier
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import com.radustavila.nasaexplorer.core.testing.fake.FakeUserPreferencesRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeWallpaperSetter
+import java.time.LocalDate
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -39,6 +43,8 @@ class ApodSyncWorkerTest {
     private val widgetUpdater = FakeLatestApodWidgetUpdater()
     private val notifier = FakeNewApodNotifier()
     private val launchRepository = FakeLaunchRepository()
+    private val wallpaperSetter = FakeWallpaperSetter()
+    private val timeProvider = FakeTimeProvider(currentDate = TODAY)
 
     @Test
     fun `a successful sync reports how many entries were written`() = runTest {
@@ -123,9 +129,45 @@ class ApodSyncWorkerTest {
         assertTrue(result is ListenableWorker.Result.Failure)
     }
 
+    @Test
+    fun `a successful sync applies the opted-in wallpaper and caches On this day`() = runTest {
+        val latest = TestApods.image(date = TODAY)
+        repository.setEntries(listOf(latest))
+        repository.cacheEveryFetchedDate = true
+
+        buildWorker(wallpaperEnabled = true).doWork()
+
+        assertEquals(listOf(latest), wallpaperSetter.applied)
+        assertEquals(TODAY.minusYears(1), repository.fetchedDates.first())
+        assertEquals(LocalDate.of(1995, 9, 10), repository.fetchedDates.last())
+    }
+
+    @Test
+    fun `failures after the sync itself do not fail the sync`() = runTest {
+        repository.setEntries(listOf(TestApods.image(date = TODAY)))
+        repository.fetchApodResult = DataResult.Failure(AppError.Timeout)
+        wallpaperSetter.succeeds = false
+
+        val result = buildWorker(wallpaperEnabled = true).doWork()
+
+        assertTrue(result is ListenableWorker.Result.Success)
+    }
+
+    @Test
+    fun `a failed sync neither sets the wallpaper nor fetches On this day`() = runTest {
+        repository.setEntries(listOf(TestApods.image(date = TODAY)))
+        repository.refreshResult = DataResult.Failure(AppError.Http(code = 404))
+
+        buildWorker(wallpaperEnabled = true).doWork()
+
+        assertTrue(wallpaperSetter.applied.isEmpty())
+        assertTrue(repository.fetchedDates.isEmpty())
+    }
+
     private fun buildWorker(
         runAttemptCount: Int = 0,
         notificationsEnabled: Boolean = false,
+        wallpaperEnabled: Boolean = false,
     ): ApodSyncWorker =
         TestListenableWorkerBuilder<ApodSyncWorker>(ApplicationProvider.getApplicationContext())
             .setRunAttemptCount(runAttemptCount)
@@ -156,8 +198,25 @@ class ApodSyncWorkerTest {
                             networkMonitor = networkMonitor,
                             refreshSource = RefreshSourceUseCase(metadata, FakeTimeProvider()),
                         ),
+                        applyDailyWallpaper = ApplyDailyWallpaperUseCase(
+                            apodRepository = repository,
+                            syncMetadataRepository = metadata,
+                            userPreferencesRepository = FakeUserPreferencesRepository(
+                                initialDailyWallpaperEnabled = wallpaperEnabled,
+                            ),
+                            wallpaperSetter = wallpaperSetter,
+                        ),
+                        cacheOnThisDay = CacheOnThisDayUseCase(
+                            apodRepository = repository,
+                            networkMonitor = networkMonitor,
+                            timeProvider = timeProvider,
+                        ),
                     )
                 },
             )
             .build()
+
+    private companion object {
+        val TODAY: LocalDate = LocalDate.of(2026, 9, 10)
+    }
 }

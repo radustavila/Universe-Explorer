@@ -41,4 +41,14 @@ class UserPreferencesDataSourceTest {
         userPreferences.setNewApodNotificationsEnabled(false)
         assertFalse(userPreferences.newApodNotificationsEnabled.first())
     }
+
+    @Test
+    fun `the daily wallpaper is off until the user opts in, then persists`() = runTest {
+        assertFalse(userPreferences.dailyWallpaperEnabled.first())
+
+        userPreferences.setDailyWallpaperEnabled(true)
+        assertTrue(userPreferences.dailyWallpaperEnabled.first())
+        // The two choices are independent.
+        assertFalse(userPreferences.newApodNotificationsEnabled.first())
+    }
 }

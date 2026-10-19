@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onFirst
@@ -18,6 +19,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import com.radustavila.nasaexplorer.core.designsystem.component.FAVORITE_BUTTON_TEST_TAG
 import com.radustavila.nasaexplorer.core.designsystem.component.LOADING_INDICATOR_TEST_TAG
 import com.radustavila.nasaexplorer.core.designsystem.component.OFFLINE_BANNER_TEST_TAG
@@ -289,5 +291,160 @@ class FeedScreenTest {
         composeTestRule.onAllNodesWithTag(FAVORITE_BUTTON_TEST_TAG).onFirst().performClick()
 
         assertEquals(apod.title, toggled)
+    }
+
+    @Test
+    fun `cards announce NASA's alt text for the picture`() {
+        composeTestRule.setContent {
+            FeedContent(
+                uiState = FeedUiState(
+                    items = listOf(TestApods.image().copy(altText = "Barred spiral galaxy, face on")),
+                ),
+                areNotificationsOn = false,
+                onApodClick = {},
+                onToggleFavorite = {},
+                onRefresh = {},
+                onRetry = {},
+                onLoadMore = {},
+                onErrorDismissed = {},
+                onNotificationsClick = {},
+            )
+        }
+
+        composeTestRule.onNodeWithContentDescription("Barred spiral galaxy, face on").assertExists()
+    }
+
+    @Test
+    fun `search opens with its scope stated and reports what is typed`() {
+        val queries = mutableListOf<String?>()
+        composeTestRule.setContent {
+            FeedContent(
+                uiState = FeedUiState(items = TestApods.feed(size = 2)),
+                areNotificationsOn = false,
+                onApodClick = {},
+                onToggleFavorite = {},
+                onRefresh = {},
+                onRetry = {},
+                onLoadMore = {},
+                onErrorDismissed = {},
+                onNotificationsClick = {},
+                onSearchQueryChange = { queries += it },
+            )
+        }
+
+        composeTestRule.onNodeWithTag(FEED_SEARCH_BUTTON_TEST_TAG).performClick()
+        composeTestRule.onNodeWithTag(FEED_SEARCH_FIELD_TEST_TAG).performTextInput("nebula")
+
+        composeTestRule
+            .onNodeWithText("Search only looks through pictures saved on this device", substring = true)
+            .assertIsDisplayed()
+        composeTestRule.waitForIdle()
+        assertEquals(listOf(null, "", "nebula"), queries)
+
+        composeTestRule.onNodeWithContentDescription("Close search").performClick()
+        composeTestRule.waitForIdle()
+        assertEquals(null, queries.last())
+        composeTestRule.onNodeWithTag(FEED_LIST_TEST_TAG).assertIsDisplayed()
+    }
+
+    @Test
+    fun `search results open their entry`() {
+        var opened: LocalDate? = null
+        val match = TestApods.image(title = "Crab Nebula")
+        composeTestRule.setContent {
+            FeedContent(
+                uiState = FeedUiState(
+                    items = TestApods.feed(size = 2),
+                    search = FeedSearchState(query = "crab", results = listOf(match)),
+                ),
+                areNotificationsOn = false,
+                onApodClick = { opened = it },
+                onToggleFavorite = {},
+                onRefresh = {},
+                onRetry = {},
+                onLoadMore = {},
+                onErrorDismissed = {},
+                onNotificationsClick = {},
+            )
+        }
+
+        composeTestRule.onNodeWithTag(FEED_SEARCH_BUTTON_TEST_TAG).performClick()
+        composeTestRule.onNodeWithText("Crab Nebula").performClick()
+
+        assertEquals(match.date, opened)
+    }
+
+    @Test
+    fun `On this day shows earlier years and opens the entry`() {
+        var opened: LocalDate? = null
+        val lastYear = TestApods.image(date = LocalDate.of(2025, 9, 10), title = "A year ago")
+        composeTestRule.setContent {
+            FeedContent(
+                uiState = FeedUiState(items = TestApods.feed(size = 2), onThisDay = listOf(lastYear)),
+                areNotificationsOn = false,
+                onApodClick = { opened = it },
+                onToggleFavorite = {},
+                onRefresh = {},
+                onRetry = {},
+                onLoadMore = {},
+                onErrorDismissed = {},
+                onNotificationsClick = {},
+            )
+        }
+
+        composeTestRule.onNodeWithTag(FEED_ON_THIS_DAY_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithText("2025").assertIsDisplayed()
+        composeTestRule.onNodeWithText("A year ago").performClick()
+
+        assertEquals(lastYear.date, opened)
+    }
+
+    @Test
+    fun `the daily wallpaper switch lives in the overflow menu`() {
+        val changes = mutableListOf<Boolean>()
+        composeTestRule.setContent {
+            FeedContent(
+                uiState = FeedUiState(items = TestApods.feed(size = 1), isDailyWallpaperEnabled = false),
+                areNotificationsOn = false,
+                onApodClick = {},
+                onToggleFavorite = {},
+                onRefresh = {},
+                onRetry = {},
+                onLoadMore = {},
+                onErrorDismissed = {},
+                onNotificationsClick = {},
+                onDailyWallpaperChange = { changes += it },
+            )
+        }
+
+        composeTestRule.onNodeWithTag(FEED_MORE_BUTTON_TEST_TAG).performClick()
+        composeTestRule.onNodeWithTag(FEED_DAILY_WALLPAPER_TEST_TAG).assertIsOff().performClick()
+
+        assertEquals(listOf(true), changes)
+    }
+
+    @Test
+    fun `On this day arriving after the feed is shown at the top, not scrolled out of view`() {
+        var uiState by mutableStateOf(FeedUiState(items = TestApods.feed(size = 5)))
+        composeTestRule.setContent {
+            FeedContent(
+                uiState = uiState,
+                areNotificationsOn = false,
+                onApodClick = {},
+                onToggleFavorite = {},
+                onRefresh = {},
+                onRetry = {},
+                onLoadMore = {},
+                onErrorDismissed = {},
+                onNotificationsClick = {},
+            )
+        }
+        composeTestRule.onNodeWithText("Apod #0").assertIsDisplayed()
+
+        uiState = uiState.copy(
+            onThisDay = listOf(TestApods.image(date = LocalDate.of(2025, 9, 10), title = "A year ago")),
+        )
+
+        composeTestRule.onNodeWithTag(FEED_ON_THIS_DAY_TEST_TAG).assertIsDisplayed()
     }
 }

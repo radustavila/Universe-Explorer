@@ -258,6 +258,38 @@ class ApodRepositoryImplTest {
         assertTrue(repository.observeApod(TODAY).first()?.isFavorite == false)
     }
 
+    @Test
+    fun `search finds synced and single-day entries in the cache only`() = runTest {
+        remoteDataSource.rangeResult = DataResult.Success(dtosFor(TODAY.minusDays(6), TODAY))
+        repository.refreshRecent()
+        val archiveDate = LocalDate.of(2001, 3, 5)
+        remoteDataSource.singleResult = DataResult.Success(
+            dtosFor(archiveDate, archiveDate).first().copy(title = "Comet Hale-Bopp"),
+        )
+        repository.fetchApod(archiveDate)
+
+        repository.searchCached("hale").test {
+            assertEquals(listOf(archiveDate), awaitItem().map(Apod::date))
+        }
+        assertEquals(8, repository.searchCached("explanation").first().size)
+        assertTrue(repository.searchCached("\"(*-").first().isEmpty())
+    }
+
+    @Test
+    fun `the same day in earlier years comes from the cache, newest first`() = runTest {
+        listOf(LocalDate.of(2001, 9, 10), LocalDate.of(2015, 9, 10), LocalDate.of(2015, 9, 11))
+            .forEach { date ->
+                remoteDataSource.singleResult = DataResult.Success(dtosFor(date, date).first())
+                repository.fetchApod(date)
+            }
+        remoteDataSource.rangeResult = DataResult.Success(dtosFor(TODAY, TODAY))
+        repository.refreshRecent()
+
+        assertEquals(
+            listOf(LocalDate.of(2015, 9, 10), LocalDate.of(2001, 9, 10)),
+            repository.observeSameDayInEarlierYears(TODAY).first().map(Apod::date),
+        )
+    }
     private fun apodFavorite(date: LocalDate) = FavoriteItem(
         source = FavoriteSource.APOD,
         itemId = date.toString(),

@@ -22,11 +22,16 @@ fun NavController.navigateToDetails(date: LocalDate, navOptions: NavOptions? = n
 /**
  * Also reachable from outside the app as `nasaexplorer://apod/{date}` (see [ApodDeepLink]): the
  * new-entry notification and the home screen widget open the details screen directly.
+ *
+ * @param onApodClick opens another entry, for links in the explanation that point into the archive.
  */
-fun NavGraphBuilder.detailsScreen(onBackClick: () -> Unit) {
+fun NavGraphBuilder.detailsScreen(
+    onBackClick: () -> Unit,
+    onApodClick: (LocalDate) -> Unit,
+) {
     composable<DetailsRoute>(
         deepLinks = listOf(navDeepLink<DetailsRoute>(basePath = ApodDeepLink.BASE_URI)),
     ) {
-        DetailsScreen(onBackClick = onBackClick)
+        DetailsScreen(onBackClick = onBackClick, onApodClick = onApodClick)
     }
 }
