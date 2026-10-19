@@ -17,8 +17,10 @@ data class LaunchListDto(
 @Serializable
 data class LaunchDto(
     val id: String? = null,
-    /** API URL of the launch; LL2 serves it as a browsable page too. */
+    /** API URL of the launch. */
     val url: String? = null,
+    /** URL-safe name; Space Launch Now's public launch pages are keyed by it. */
+    val slug: String? = null,
     val name: String? = null,
     /** ISO-8601 UTC instant, e.g. `2026-10-19T10:30:00Z`. */
     val net: String? = null,

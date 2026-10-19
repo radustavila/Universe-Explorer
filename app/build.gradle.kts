@@ -60,6 +60,7 @@ dependencies {
     androidTestImplementation(projects.core.network)
     androidTestImplementation(projects.core.database)
     androidTestImplementation(projects.data.nasa)
+    androidTestImplementation(projects.data.launches)
     androidTestImplementation(projects.feature.feed)
     androidTestImplementation(projects.feature.details)
     androidTestImplementation(projects.feature.favorites)

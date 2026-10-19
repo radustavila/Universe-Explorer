@@ -20,7 +20,7 @@ data class Launch(
     val imageUrl: String? = null,
     /** First livestream listed for the launch, if any is announced yet. */
     val livestreamUrl: String? = null,
-    /** Launch Library 2 page for the launch, opened when there is no livestream. */
+    /** Public web page about the launch, opened when there is no livestream. */
     val pageUrl: String,
 ) {
     /** Where tapping the launch leads: the livestream when there is one, the launch page otherwise. */
