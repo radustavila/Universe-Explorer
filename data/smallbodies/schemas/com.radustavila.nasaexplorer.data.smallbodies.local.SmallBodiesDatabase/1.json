@@ -1,0 +1,278 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "683f68038efe0aa36644e43451c504de",
+    "entities": [
+      {
+        "tableName": "close_approaches",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`designation` TEXT NOT NULL, `name` TEXT NOT NULL, `time` INTEGER NOT NULL, `distance_au` REAL NOT NULL, `velocity_km_s` REAL NOT NULL, `absolute_magnitude` REAL, `diameter_km` REAL, PRIMARY KEY(`designation`, `time`))",
+        "fields": [
+          {
+            "fieldPath": "designation",
+            "columnName": "designation",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "time",
+            "columnName": "time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "distanceAu",
+            "columnName": "distance_au",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "relativeVelocityKmPerSecond",
+            "columnName": "velocity_km_s",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "absoluteMagnitude",
+            "columnName": "absolute_magnitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "diameterKm",
+            "columnName": "diameter_km",
+            "affinity": "REAL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "designation",
+            "time"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_close_approaches_time",
+            "unique": false,
+            "columnNames": [
+              "time"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_close_approaches_time` ON `${TABLE_NAME}` (`time`)"
+          }
+        ]
+      },
+      {
+        "tableName": "sentry_objects",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`designation` TEXT NOT NULL, `impact_probability` REAL NOT NULL, `palermo_max` REAL, `torino_max` INTEGER, `potential_impacts` INTEGER, `year_range` TEXT, PRIMARY KEY(`designation`))",
+        "fields": [
+          {
+            "fieldPath": "designation",
+            "columnName": "designation",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "impactProbability",
+            "columnName": "impact_probability",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "palermoMax",
+            "columnName": "palermo_max",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "torinoMax",
+            "columnName": "torino_max",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "potentialImpacts",
+            "columnName": "potential_impacts",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "yearRange",
+            "columnName": "year_range",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "designation"
+          ]
+        }
+      },
+      {
+        "tableName": "fireballs",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`time` INTEGER NOT NULL, `radiated_energy_j` REAL NOT NULL, `impact_energy_kt` REAL NOT NULL, `latitude` REAL, `longitude` REAL, `altitude_km` REAL, `velocity_km_s` REAL, PRIMARY KEY(`time`))",
+        "fields": [
+          {
+            "fieldPath": "time",
+            "columnName": "time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "radiatedEnergyJoules",
+            "columnName": "radiated_energy_j",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "impactEnergyKilotons",
+            "columnName": "impact_energy_kt",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "altitudeKm",
+            "columnName": "altitude_km",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "velocityKmPerSecond",
+            "columnName": "velocity_km_s",
+            "affinity": "REAL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "time"
+          ]
+        }
+      },
+      {
+        "tableName": "small_body_details",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`designation` TEXT NOT NULL, `name` TEXT NOT NULL, `orbit_class` TEXT, `neo` INTEGER NOT NULL, `pha` INTEGER NOT NULL, `earth_moid_au` REAL, `semi_major_axis_au` REAL, `eccentricity` REAL, `inclination_deg` REAL, `perihelion_au` REAL, `aphelion_au` REAL, `period_days` REAL, `absolute_magnitude` REAL, `diameter_km` REAL, `first_observed` TEXT, `last_observed` TEXT, `observations_used` INTEGER, `fetched_at` INTEGER NOT NULL, PRIMARY KEY(`designation`))",
+        "fields": [
+          {
+            "fieldPath": "designation",
+            "columnName": "designation",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "orbitClass",
+            "columnName": "orbit_class",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isNearEarthObject",
+            "columnName": "neo",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPotentiallyHazardous",
+            "columnName": "pha",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "earthMoidAu",
+            "columnName": "earth_moid_au",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "semiMajorAxisAu",
+            "columnName": "semi_major_axis_au",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "eccentricity",
+            "columnName": "eccentricity",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "inclinationDegrees",
+            "columnName": "inclination_deg",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "perihelionAu",
+            "columnName": "perihelion_au",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "aphelionAu",
+            "columnName": "aphelion_au",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "orbitalPeriodDays",
+            "columnName": "period_days",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "absoluteMagnitude",
+            "columnName": "absolute_magnitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "diameterKm",
+            "columnName": "diameter_km",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "firstObserved",
+            "columnName": "first_observed",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastObserved",
+            "columnName": "last_observed",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "observationsUsed",
+            "columnName": "observations_used",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "fetchedAt",
+            "columnName": "fetched_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "designation"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '683f68038efe0aa36644e43451c504de')"
+    ]
+  }
+}

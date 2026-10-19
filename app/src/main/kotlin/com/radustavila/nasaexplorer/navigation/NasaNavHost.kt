@@ -19,6 +19,10 @@ import com.radustavila.nasaexplorer.feature.feed.feedScreen
 import com.radustavila.nasaexplorer.feature.mars.marsPhotoScreen
 import com.radustavila.nasaexplorer.feature.mars.marsPhotosScreen
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
+import com.radustavila.nasaexplorer.feature.spaceweather.navigateToSmallBody
+import com.radustavila.nasaexplorer.feature.spaceweather.neighbourhoodScreen
+import com.radustavila.nasaexplorer.feature.spaceweather.smallBodyScreen
+import com.radustavila.nasaexplorer.feature.spaceweather.spaceWeatherScreen
 import com.radustavila.nasaexplorer.feature.universe.GalleryRoute
 import com.radustavila.nasaexplorer.feature.universe.galleryScreen
 import com.radustavila.nasaexplorer.feature.universe.nasaMediaDetailsScreen
@@ -69,6 +73,12 @@ fun NasaNavHost(
             }
             earthMapScreen(onBackClick = navController::popBackStack)
             earthEventsScreen(onBackClick = navController::popBackStack)
+            spaceWeatherScreen(onBackClick = navController::popBackStack)
+            neighbourhoodScreen(
+                onBackClick = navController::popBackStack,
+                onApproachClick = navController::navigateToSmallBody,
+            )
+            smallBodyScreen(onBackClick = navController::popBackStack)
         }
 
         navigation<FavoritesGraph>(startDestination = FavoritesRoute) {

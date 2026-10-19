@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Space weather screen -->
+    <string name="space_weather_title">Aurora &amp; space weather</string>
+    <string name="space_weather_back">Back</string>
+    <string name="space_weather_offline_title">No space weather yet</string>
+    <string name="space_weather_offline_description">Connect to the internet once to download the Kp index and aurora forecast. After that they open offline.</string>
+    <string name="space_weather_error_title">Could not load space weather</string>
+    <string name="space_weather_error_description">NOAA did not answer. Pull down or retry in a moment.</string>
+    <string name="space_weather_updated">Updated %1$s</string>
+    <string name="space_weather_updated_failed">Updated %1$s. The last refresh failed.</string>
+
+    <string name="space_weather_kp_label">Kp index</string>
+    <string name="space_weather_kp_unknown">No reading yet</string>
+    <string name="space_weather_kp_quiet">Quiet</string>
+    <string name="space_weather_kp_unsettled">Unsettled</string>
+    <string name="space_weather_kp_active">Active</string>
+    <string name="space_weather_kp_g1">Minor storm</string>
+    <string name="space_weather_kp_g2">Moderate storm</string>
+    <string name="space_weather_kp_g3">Strong storm</string>
+    <string name="space_weather_kp_g4">Severe storm</string>
+    <string name="space_weather_kp_g5">Extreme storm</string>
+    <string name="space_weather_storm_level">%1$s · %2$s</string>
+    <string name="space_weather_kp_gauge_description">Kp index %1$s: %2$s</string>
+    <string name="space_weather_kp_value">Kp %1$d</string>
+    <string name="space_weather_kp_with_storm">Kp %1$d (%2$s)</string>
+
+    <string name="space_weather_forecast_title">Next 3 days</string>
+    <string name="space_weather_forecast_day_summary">%1$s: up to Kp %2$d</string>
+    <string name="space_weather_forecast_threshold_caption">Dashed line: the Kp your place needs to see the aurora</string>
+    <string name="space_weather_today">Today</string>
+
+    <string name="space_weather_aurora_title">Aurora oval</string>
+    <string name="space_weather_north">Northern lights</string>
+    <string name="space_weather_south">Southern lights</string>
+    <string name="space_weather_aurora_caption">Chance of aurora, NOAA OVATION forecast for %1$s</string>
+    <string name="space_weather_aurora_missing">The aurora map downloads while you are online.</string>
+
+    <string name="space_weather_alerts_title">Aurora alerts</string>
+    <string name="space_weather_alerts_description">A notification when the forecast says the aurora may reach your place, once per storm.</string>
+    <string name="space_weather_alerts_no_place">Set where you watch from to get alerts.</string>
+    <string name="space_weather_alerts_place_threshold">%1$s: alerts from %2$s</string>
+    <string name="space_weather_alerts_place_unreachable">%1$s: too far from the poles. Even the strongest storms rarely reach it.</string>
+    <string name="space_weather_alerts_set_place">Set your place</string>
+    <string name="space_weather_alerts_change_place">Change place</string>
+    <string name="space_weather_alerts_location_note">Entered by hand and only used for these alerts. Nothing is sent anywhere.</string>
+    <string name="space_weather_notifications_blocked">Notifications are blocked for NASA Explorer</string>
+    <string name="space_weather_notifications_open_settings">Settings</string>
+
+    <string name="space_weather_location_title">Where do you watch from?</string>
+    <string name="space_weather_location_description">Decimal degrees. North and east are positive, south and west negative.</string>
+    <string name="space_weather_location_latitude">Latitude (−90 to 90)</string>
+    <string name="space_weather_location_longitude">Longitude (−180 to 180)</string>
+    <string name="space_weather_location_threshold">From here the aurora shows from %1$s.</string>
+    <string name="space_weather_location_unreachable">Too far from the poles: even Kp 9 storms rarely reach here.</string>
+    <string name="space_weather_location_save">Save</string>
+    <string name="space_weather_location_cancel">Cancel</string>
+
+    <string name="space_weather_sun_title">The Sun</string>
+    <string name="space_weather_flare_title">Latest solar flare</string>
+    <string name="space_weather_flare_none">No flare in the last month.</string>
+    <string name="space_weather_flare_class">Class %1$s</string>
+    <string name="space_weather_flare_peak">Peaked %1$s</string>
+    <string name="space_weather_flare_region">Region %1$d</string>
+    <string name="space_weather_flare_x">X class: the strongest kind. Can cause radio blackouts on the day side of Earth.</string>
+    <string name="space_weather_flare_m">M class: medium. Can cause brief radio blackouts near the poles.</string>
+    <string name="space_weather_flare_minor">A small flare with little effect on Earth.</string>
+    <string name="space_weather_cme_title">Latest coronal mass ejection</string>
+    <string name="space_weather_cme_none">No CME in the last two weeks.</string>
+    <string name="space_weather_cme_started">Left the Sun %1$s</string>
+    <string name="space_weather_cme_speed">%1$d km/s</string>
+    <string name="space_weather_cme_arrival">Expected at Earth around %1$s</string>
+    <string name="space_weather_cme_glancing">A glancing blow at Earth expected around %1$s</string>
+    <string name="space_weather_cme_misses">Not expected to reach Earth.</string>
+
+    <!-- Earth's neighbourhood -->
+    <string name="neighbourhood_title">Earth\'s neighbourhood</string>
+    <string name="neighbourhood_offline_title">No asteroid list yet</string>
+    <string name="neighbourhood_approaches_title">Passing close</string>
+    <string name="neighbourhood_approaches_subtitle">Asteroids within 20 lunar distances in the next 30 days, from NASA JPL</string>
+    <string name="neighbourhood_approaches_empty">Nothing passes that close in the next 30 days.</string>
+    <string name="neighbourhood_distance_ld">%1$s LD</string>
+    <string name="neighbourhood_speed">%1$s km/s</string>
+    <string name="neighbourhood_size">%1$s across</string>
+    <string name="neighbourhood_sentry_badge">On risk list</string>
+    <string name="neighbourhood_fireballs_title">Recent fireballs</string>
+    <string name="neighbourhood_fireballs_subtitle">Bright meteors that exploded in the atmosphere</string>
+    <string name="neighbourhood_fireballs_empty">No fireball reported recently.</string>
+    <string name="neighbourhood_fireball_energy">%1$s kilotons of TNT</string>
+    <string name="neighbourhood_fireball_altitude">%1$s km up</string>
+    <string name="neighbourhood_updated">Updated %1$s. 1 LD is the Moon\'s distance, 384,400 km.</string>
+
+    <!-- One asteroid -->
+    <string name="small_body_approach_title">Close approach</string>
+    <string name="small_body_closest">Closest</string>
+    <string name="small_body_distance">Distance</string>
+    <string name="small_body_distance_value">%1$s LD (%2$s km)</string>
+    <string name="small_body_speed">Speed</string>
+    <string name="small_body_size">Size</string>
+    <string name="small_body_size_estimated">Size (estimated from brightness)</string>
+    <string name="small_body_sentry_title">On JPL\'s Sentry risk list</string>
+    <string name="small_body_sentry_explanation">Its orbit is not yet known well enough to rule out a future impact. More observations usually remove objects from the list.</string>
+    <string name="small_body_sentry_odds">Impact chance</string>
+    <string name="small_body_sentry_years">Possible years</string>
+    <string name="small_body_sentry_impacts">Possible impacts</string>
+    <string name="small_body_sentry_torino">Torino scale</string>
+    <string name="small_body_sentry_palermo">Palermo scale</string>
+    <string name="small_body_orbit_title">Orbit</string>
+    <string name="small_body_orbit_class">Class</string>
+    <string name="small_body_hazardous">Potentially hazardous</string>
+    <string name="small_body_yes">Yes</string>
+    <string name="small_body_no">No</string>
+    <string name="small_body_moid">Closest orbit distance to Earth</string>
+    <string name="small_body_ld">%1$s LD</string>
+    <string name="small_body_period">Year length</string>
+    <string name="small_body_days">%1$s days</string>
+    <string name="small_body_semi_major_axis">Average distance from the Sun</string>
+    <string name="small_body_sun_distance">Nearest – farthest from the Sun</string>
+    <string name="small_body_eccentricity">Eccentricity</string>
+    <string name="small_body_inclination">Inclination</string>
+    <string name="small_body_magnitude">Absolute magnitude</string>
+    <string name="small_body_observed">Observed</string>
+    <string name="small_body_observations">Observations used</string>
+    <string name="small_body_details_failed">Could not load the orbit: %1$s</string>
+    <string name="small_body_retry">Retry</string>
+    <string name="small_body_details_offline">you are offline, and this object has not been opened before</string>
+</resources>

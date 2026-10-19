@@ -5,23 +5,33 @@ import com.radustavila.nasaexplorer.core.datastore.di.DataStoreBindingModule
 import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
 import com.radustavila.nasaexplorer.core.domain.repository.EarthEventRepository
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
+import com.radustavila.nasaexplorer.core.domain.repository.AuroraAlertRepository
 import com.radustavila.nasaexplorer.core.domain.repository.FavoritesRepository
 import com.radustavila.nasaexplorer.core.domain.repository.LaunchRepository
 import com.radustavila.nasaexplorer.core.domain.repository.MarsPhotoRepository
 import com.radustavila.nasaexplorer.core.domain.repository.NasaMediaRepository
+import com.radustavila.nasaexplorer.core.domain.repository.SmallBodiesRepository
+import com.radustavila.nasaexplorer.core.domain.repository.SpaceWeatherRepository
 import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepository
 import com.radustavila.nasaexplorer.core.domain.repository.UserPreferencesRepository
 import com.radustavila.nasaexplorer.core.domain.sync.MarsSyncScheduler
+import com.radustavila.nasaexplorer.core.domain.sync.SmallBodiesSyncScheduler
+import com.radustavila.nasaexplorer.core.domain.sync.SpaceWeatherSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
 import com.radustavila.nasaexplorer.core.network.di.NetworkBindingModule
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthEventRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeAuroraAlertRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeFavoritesRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsPhotoRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNasaMediaRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
+import com.radustavila.nasaexplorer.core.testing.fake.FakeSmallBodiesRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeSmallBodiesSyncScheduler
+import com.radustavila.nasaexplorer.core.testing.fake.FakeSpaceWeatherRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeSpaceWeatherSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeUserPreferencesRepository
@@ -30,6 +40,8 @@ import com.radustavila.nasaexplorer.data.launches.di.LaunchesDataModule
 import com.radustavila.nasaexplorer.data.mars.di.MarsDataModule
 import com.radustavila.nasaexplorer.data.nasa.di.NasaDataModule
 import com.radustavila.nasaexplorer.data.nasaimages.di.NasaImagesDataModule
+import com.radustavila.nasaexplorer.data.smallbodies.di.SmallBodiesDataModule
+import com.radustavila.nasaexplorer.data.spaceweather.di.SpaceWeatherDataModule
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
@@ -173,4 +185,51 @@ object TestNetworkBindingModule {
 
     @Provides
     fun provideNetworkMonitor(fake: FakeNetworkMonitor): NetworkMonitor = fake
+}
+
+/**
+ * Keeps NOAA, DONKI and the space weather database out of the end-to-end test, along with the alert
+ * settings' DataStore (a second Hilt component would open it twice) and the 30-minute job.
+ */
+@Module
+@TestInstallIn(components = [SingletonComponent::class], replaces = [SpaceWeatherDataModule::class])
+object TestSpaceWeatherDataModule {
+
+    @Provides
+    @Singleton
+    fun provideFakeSpaceWeatherRepository(): FakeSpaceWeatherRepository = FakeSpaceWeatherRepository()
+
+    @Provides
+    fun provideSpaceWeatherRepository(fake: FakeSpaceWeatherRepository): SpaceWeatherRepository = fake
+
+    @Provides
+    @Singleton
+    fun provideFakeSpaceWeatherSyncScheduler(): FakeSpaceWeatherSyncScheduler = FakeSpaceWeatherSyncScheduler()
+
+    @Provides
+    fun provideSpaceWeatherSyncScheduler(fake: FakeSpaceWeatherSyncScheduler): SpaceWeatherSyncScheduler = fake
+
+    @Provides
+    @Singleton
+    fun provideAuroraAlertRepository(): AuroraAlertRepository = FakeAuroraAlertRepository()
+}
+
+/** Keeps JPL and the asteroid database out of the end-to-end test. */
+@Module
+@TestInstallIn(components = [SingletonComponent::class], replaces = [SmallBodiesDataModule::class])
+object TestSmallBodiesDataModule {
+
+    @Provides
+    @Singleton
+    fun provideFakeSmallBodiesRepository(): FakeSmallBodiesRepository = FakeSmallBodiesRepository()
+
+    @Provides
+    fun provideSmallBodiesRepository(fake: FakeSmallBodiesRepository): SmallBodiesRepository = fake
+
+    @Provides
+    @Singleton
+    fun provideFakeSmallBodiesSyncScheduler(): FakeSmallBodiesSyncScheduler = FakeSmallBodiesSyncScheduler()
+
+    @Provides
+    fun provideSmallBodiesSyncScheduler(fake: FakeSmallBodiesSyncScheduler): SmallBodiesSyncScheduler = fake
 }

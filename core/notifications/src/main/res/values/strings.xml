@@ -3,4 +3,10 @@
     <string name="new_apod_channel_name">New picture of the day</string>
     <string name="new_apod_channel_description">Announces each new Astronomy Picture of the Day as soon as it has been downloaded.</string>
     <string name="new_apod_notification_title">New Astronomy Picture of the Day</string>
+    <string name="aurora_alert_channel_name">Aurora alerts</string>
+    <string name="aurora_alert_channel_description">Tells you when the forecast says the aurora may be visible from your place.</string>
+    <string name="aurora_alert_title">Aurora may be visible tonight</string>
+    <string name="aurora_alert_strength">Kp %1$d</string>
+    <string name="aurora_alert_strength_storm">Kp %1$d (%2$s storm)</string>
+    <string name="aurora_alert_text">%1$s is forecast from %2$s. From your place the aurora shows at Kp %3$d or more.</string>
 </resources>
