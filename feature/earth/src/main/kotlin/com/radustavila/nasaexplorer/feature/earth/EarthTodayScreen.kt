@@ -53,6 +53,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -264,6 +266,10 @@ private fun EarthRotation(images: List<EpicImage>, autoPlay: Boolean) {
 
     val current = images[pagerState.currentPage.coerceIn(images.indices)]
 
+    // In landscape a full-width square would push the time, centroid and controls off screen.
+    val windowHeight = with(LocalDensity.current) { LocalWindowInfo.current.containerSize.height.toDp() }
+    val discSize = minOf(MAX_DISC_WIDTH, windowHeight * DISC_HEIGHT_FRACTION)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -274,7 +280,7 @@ private fun EarthRotation(images: List<EpicImage>, autoPlay: Boolean) {
             state = pagerState,
             key = { page -> images[page].identifier },
             modifier = Modifier
-                .widthIn(max = MAX_DISC_WIDTH)
+                .widthIn(max = discSize)
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .testTag(EARTH_PAGER_TEST_TAG),
@@ -322,7 +328,14 @@ private fun EarthRotation(images: List<EpicImage>, autoPlay: Boolean) {
 @Composable
 private fun AutoAdvance(pagerState: PagerState, isPlaying: Boolean) {
     LaunchedEffect(pagerState, isPlaying) {
-        if (!isPlaying) return@LaunchedEffect
+        if (!isPlaying) {
+            // Pausing cancels a slide that may be halfway done; settle on the nearest frame instead
+            // of freezing between two. A finger on the pager outranks this and simply takes over.
+            if (pagerState.currentPageOffsetFraction != 0f) {
+                pagerState.animateScrollToPage(pagerState.currentPage)
+            }
+            return@LaunchedEffect
+        }
         while (true) {
             delay(FRAME_DURATION_MILLIS)
             val next = (pagerState.currentPage + 1) % pagerState.pageCount
@@ -469,6 +482,7 @@ internal fun GeoPoint.toCoordinateLabel(): String {
 }
 
 private val MAX_DISC_WIDTH = 480.dp
+private const val DISC_HEIGHT_FRACTION = 0.6f
 private const val FRAME_DURATION_MILLIS = 1_000L
 
 @Preview
