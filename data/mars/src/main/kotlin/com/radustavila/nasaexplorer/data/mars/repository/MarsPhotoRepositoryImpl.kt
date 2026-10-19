@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.combine
 
 /**
  * Room is the source of truth; [refresh] downloads both rovers at once (Curiosity answers in under
- * a second, Perseverance can take a minute and a half) and stores each one that answered.
+ * a second, Perseverance can take a minute and a half) and stores each one as soon as it answers.
  */
 @Singleton
 class MarsPhotoRepositoryImpl @Inject constructor(
@@ -44,13 +44,20 @@ class MarsPhotoRepositoryImpl @Inject constructor(
     override fun observePhoto(id: String): Flow<MarsPhoto?> = localDataSource.observePhoto(id)
 
     override suspend fun refresh(): DataResult<Int> = coroutineScope {
-        val downloads = listOf(
-            async { remoteDataSource.fetchCuriosity().map { page -> page.items.mapNotNull { it.toDomainOrNull() } } },
+        // Each rover is stored as soon as it answers, so Curiosity's photos reach the rail while
+        // Perseverance's feed is still thinking.
+        val outcomes = listOf(
             async {
-                remoteDataSource.fetchPerseverance().map { page -> page.images.mapNotNull { it.toDomainOrNull() } }
+                remoteDataSource.fetchCuriosity()
+                    .map { page -> page.items.mapNotNull { it.toDomainOrNull() } }
+                    .flatMap { photos -> store(photos) }
+            },
+            async {
+                remoteDataSource.fetchPerseverance()
+                    .map { page -> page.images.mapNotNull { it.toDomainOrNull() } }
+                    .flatMap { photos -> store(photos) }
             },
         ).awaitAll()
-        val outcomes = downloads.map { download -> download.flatMap { photos -> store(photos) } }
 
         outcomes.firstNotNullOfOrNull { it.errorOrNull() }?.let { error -> DataResult.Failure(error) }
             ?: DataResult.Success(outcomes.sumOf { it.getOrNull() ?: 0 })
