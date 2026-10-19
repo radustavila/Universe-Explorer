@@ -9,6 +9,7 @@ import com.radustavila.nasaexplorer.core.domain.location.ObserverLocationReposit
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
 import com.radustavila.nasaexplorer.core.domain.repository.AuroraAlertRepository
 import com.radustavila.nasaexplorer.core.domain.repository.EarthEventRepository
+import com.radustavila.nasaexplorer.core.domain.repository.EpicRepository
 import com.radustavila.nasaexplorer.core.domain.repository.ExoplanetRepository
 import com.radustavila.nasaexplorer.core.domain.repository.FavoritesRepository
 import com.radustavila.nasaexplorer.core.domain.repository.LaunchRepository
@@ -22,6 +23,7 @@ import com.radustavila.nasaexplorer.core.domain.sky.IssPassReminderScheduler
 import com.radustavila.nasaexplorer.core.domain.sky.PeopleInSpaceRepository
 import com.radustavila.nasaexplorer.core.domain.sky.SatelliteRepository
 import com.radustavila.nasaexplorer.core.domain.sky.SkyPreferencesRepository
+import com.radustavila.nasaexplorer.core.domain.sync.EpicSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.ExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.MarsSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SmallBodiesSyncScheduler
@@ -34,6 +36,8 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeAuroraAlertRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeCityDirectory
 import com.radustavila.nasaexplorer.core.testing.fake.FakeDeviceLocationProvider
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthEventRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEpicRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEpicSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeExoplanetRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeFavoritesRepository
@@ -55,6 +59,7 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeUserPreferencesRepository
 import com.radustavila.nasaexplorer.data.earthevents.di.EarthEventsDataModule
+import com.radustavila.nasaexplorer.data.epic.di.EpicDataModule
 import com.radustavila.nasaexplorer.data.exoplanets.di.ExoplanetsDataModule
 import com.radustavila.nasaexplorer.data.launches.di.LaunchesDataModule
 import com.radustavila.nasaexplorer.data.mars.di.MarsDataModule
@@ -248,6 +253,24 @@ object TestDataStoreModule {
     @Provides
     @Singleton
     fun provideUserPreferencesRepository(): UserPreferencesRepository = FakeUserPreferencesRepository()
+/** Keeps the Today screen's Earth card off the network too: an empty EPIC cache, a scheduler that never runs. */
+@Module
+@TestInstallIn(components = [SingletonComponent::class], replaces = [EpicDataModule::class])
+object TestEpicDataModule {
+
+    @Provides
+    @Singleton
+    fun provideFakeEpicRepository(): FakeEpicRepository = FakeEpicRepository()
+
+    @Provides
+    fun provideEpicRepository(fake: FakeEpicRepository): EpicRepository = fake
+
+    @Provides
+    @Singleton
+    fun provideFakeEpicSyncScheduler(): FakeEpicSyncScheduler = FakeEpicSyncScheduler()
+
+    @Provides
+    fun provideEpicSyncScheduler(fake: FakeEpicSyncScheduler): EpicSyncScheduler = fake
 }
 
 @Module

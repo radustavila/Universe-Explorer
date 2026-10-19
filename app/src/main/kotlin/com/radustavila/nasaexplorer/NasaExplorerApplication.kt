@@ -7,6 +7,7 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import com.radustavila.nasaexplorer.core.cache.CacheEvictionScheduler
+import com.radustavila.nasaexplorer.core.domain.sync.EpicSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.ExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
 import com.radustavila.nasaexplorer.data.earthevents.sync.EarthEventsSyncScheduler
@@ -33,6 +34,7 @@ class NasaExplorerApplication :
 
     @Inject
     lateinit var exoplanetSyncScheduler: ExoplanetSyncScheduler
+    lateinit var epicSyncScheduler: EpicSyncScheduler
 
     @Inject
     lateinit var imageLoader: dagger.Lazy<ImageLoader>
@@ -53,5 +55,6 @@ class NasaExplorerApplication :
         cacheEvictionScheduler.ensurePeriodicEviction()
         earthEventsSyncScheduler.ensurePeriodicSync()
         exoplanetSyncScheduler.ensurePeriodicSync()
+        epicSyncScheduler.ensurePeriodicSync()
     }
 }

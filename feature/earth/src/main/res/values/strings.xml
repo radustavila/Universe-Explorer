@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="earth_today_title">Earth today</string>
+    <string name="earth_today_back">Back</string>
+    <string name="earth_today_pick_date">Pick a date</string>
+    <string name="earth_today_date_picker_title">Show Earth on</string>
+    <string name="earth_today_date_picker_confirm">Show</string>
+    <string name="earth_today_date_picker_dismiss">Cancel</string>
+    <string name="earth_today_latest">Back to the latest day</string>
+    <string name="earth_today_collection_natural">Natural</string>
+    <string name="earth_today_collection_enhanced">Enhanced</string>
+    <string name="earth_today_play">Play rotation</string>
+    <string name="earth_today_pause">Pause rotation</string>
+    <string name="earth_today_frame">Photo %1$d of %2$d</string>
+    <string name="earth_today_facing">Facing %1$s</string>
+    <string name="earth_today_image_description">Earth photographed by DSCOVR on %1$s, facing %2$s</string>
+    <string name="earth_today_zoom_hint">Tap the photo to see it full size</string>
+    <string name="earth_today_source">Photos by NASA\'s EPIC camera on the DSCOVR spacecraft, 1.5 million km from Earth.</string>
+    <string name="earth_today_empty_title">No Earth photos yet</string>
+    <string name="earth_today_empty_description">Photos of Earth from DSCOVR will appear here once they have been downloaded.</string>
+    <string name="earth_today_offline_title">You are offline</string>
+    <string name="earth_today_offline_description">Connect to the internet to download today\'s photos of Earth.</string>
+    <string name="earth_today_card_title">Earth today</string>
+    <plurals name="earth_today_card_subtitle">
+        <item quantity="one">%1$s · %2$d photo from DSCOVR</item>
+        <item quantity="other">%1$s · %2$d photos from DSCOVR</item>
+    </plurals>
+    <string name="earth_today_card_loading">Downloading today\'s photos of Earth…</string>
+</resources>
