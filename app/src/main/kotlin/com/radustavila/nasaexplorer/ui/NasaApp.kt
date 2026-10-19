@@ -21,9 +21,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.radustavila.nasaexplorer.feature.debug.navigateToDebug
-import com.radustavila.nasaexplorer.feature.favorites.navigateToFavorites
-import com.radustavila.nasaexplorer.feature.feed.navigateToFeed
 import com.radustavila.nasaexplorer.navigation.NasaNavHost
 import com.radustavila.nasaexplorer.navigation.TopLevelDestination
 
@@ -77,19 +74,21 @@ fun NasaApp(
     }
 }
 
+/** A destination belongs to a tab when it sits anywhere inside that tab's nested graph. */
 private fun NavDestination?.isOn(destination: TopLevelDestination): Boolean =
-    this?.hierarchy?.any { it.hasRoute(destination.route) } == true
+    this?.hierarchy?.any { it.hasRoute(destination.graph::class) } == true
 
+/**
+ * Switches tabs keeping one back stack per tab: the current tab's stack is saved, the target's is
+ * restored, and re-selecting a tab does not stack a second copy of it.
+ */
 private fun NavHostController.navigateToTopLevel(destination: TopLevelDestination) {
-    val navOptions = navOptions {
-        popUpTo(graph.findStartDestination().id) { saveState = true }
-        launchSingleTop = true
-        restoreState = true
-    }
-
-    when (destination) {
-        TopLevelDestination.FEED -> navigateToFeed(navOptions)
-        TopLevelDestination.FAVORITES -> navigateToFavorites(navOptions)
-        TopLevelDestination.DEBUG -> navigateToDebug(navOptions)
-    }
+    navigate(
+        destination.graph,
+        navOptions {
+            popUpTo(graph.findStartDestination().id) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        },
+    )
 }

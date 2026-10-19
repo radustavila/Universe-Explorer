@@ -18,7 +18,11 @@ sealed interface AppError {
     /** Server answered with a non-2xx status code. */
     data class Http(val code: Int, val message: String? = null) : AppError
 
-    /** NASA rejected the call because the (demo) API key exceeded its quota. */
+    /**
+     * A host's quota is used up: it answered HTTP 429, or the app refused the call locally because
+     * the host is still cooling down (see `RateLimitInterceptor`). [retryAfterSeconds] is when it
+     * accepts calls again, when known.
+     */
     data class RateLimited(val retryAfterSeconds: Long? = null) : AppError
 
     /** The payload could not be decoded into the expected model. */

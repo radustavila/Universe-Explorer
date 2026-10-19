@@ -1,9 +1,10 @@
 package com.radustavila.nasaexplorer.core.testing.fake
 
-import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
 import com.radustavila.nasaexplorer.core.model.Apod
+import com.radustavila.nasaexplorer.core.model.FavoriteItem
+import com.radustavila.nasaexplorer.core.model.FavoriteSource
 import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,18 +14,34 @@ import kotlinx.coroutines.flow.update
 
 /**
  * In-memory [ApodRepository] that behaves like the real one where it matters: reads are flows over
- * the stored entries, and favourite toggles are visible on the next emission.
+ * the stored entries, and [Apod.isFavorite] comes from [favorites], so a favourite saved through it
+ * is visible on the next emission.
+ *
+ * Entries seeded with `isFavorite = true` are saved to [favorites] as well.
  */
-class FakeApodRepository : ApodRepository {
+class FakeApodRepository(
+    val favorites: FakeFavoritesRepository = FakeFavoritesRepository(),
+) : ApodRepository {
 
-    private val entries = MutableStateFlow<List<Apod>>(emptyList())
+    private val stored = MutableStateFlow<List<Apod>>(emptyList())
+
+    private val entries: Flow<List<Apod>> =
+        combine(stored, favorites.observeFavoriteIds(FavoriteSource.APOD)) { list, favoriteIds ->
+            list.map { apod -> apod.copy(isFavorite = apod.date.toString() in favoriteIds) }
+        }
 
     /** Dates cached on their own by [fetchApod]; like the real cache, they stay out of the feed. */
     private val outsideFeed = MutableStateFlow<Set<LocalDate>>(emptySet())
 
     var refreshResult: DataResult<Int> = DataResult.Success(0)
     var loadOlderResult: DataResult<Int> = DataResult.Success(0)
-    var setFavoriteResult: DataResult<Unit>? = null
+
+    /** Forces the outcome of favourite writes, which go through [favorites]. */
+    var setFavoriteResult: DataResult<Unit>?
+        get() = favorites.writeResult
+        set(value) {
+            favorites.writeResult = value
+        }
     var fetchApodResult: DataResult<Unit> = DataResult.Success(Unit)
 
     /** Entry handed back by [fetchApod] on success, as a download would populate the cache. */
@@ -38,7 +55,12 @@ class FakeApodRepository : ApodRepository {
         private set
 
     fun setEntries(apods: List<Apod>) {
-        entries.value = apods.sortedByDescending(Apod::date)
+        stored.value = apods.sortedByDescending(Apod::date)
+        apods.filter(Apod::isFavorite).forEach { apod ->
+            favorites.seed(
+                FavoriteItem(FavoriteSource.APOD, apod.date.toString(), apod.title, apod.previewImageUrl),
+            )
+        }
         // Anything the test seeds directly stands in for a synced window.
         outsideFeed.update { excluded -> excluded - apods.map(Apod::date).toSet() }
     }
@@ -55,27 +77,10 @@ class FakeApodRepository : ApodRepository {
     override fun observeApod(date: LocalDate): Flow<Apod?> =
         entries.map { list -> list.firstOrNull { it.date == date } }
 
-    override fun observeFavorites(): Flow<List<Apod>> =
-        entries.map { list -> list.filter(Apod::isFavorite) }
-
     override fun observeCachedCount(): Flow<Int> = entries.map { it.size }
-
-    override fun observeFavoritesCount(): Flow<Int> = entries.map { list -> list.count(Apod::isFavorite) }
 
     override fun observeOldestCachedDate(): Flow<LocalDate?> =
         entries.map { list -> list.minOfOrNull(Apod::date) }
-
-    override suspend fun setFavorite(date: LocalDate, isFavorite: Boolean): DataResult<Unit> {
-        setFavoriteResult?.let { forced -> return forced }
-
-        val known = entries.value.any { it.date == date }
-        if (!known) return DataResult.Failure(AppError.Database("No cached APOD for $date"))
-
-        entries.update { list ->
-            list.map { apod -> if (apod.date == date) apod.copy(isFavorite = isFavorite) else apod }
-        }
-        return DataResult.Success(Unit)
-    }
 
     override suspend fun refreshRecent(): DataResult<Int> {
         refreshCallCount++
@@ -86,7 +91,7 @@ class FakeApodRepository : ApodRepository {
         fetchedDates = fetchedDates + date
         if (fetchApodResult is DataResult.Success) {
             fetchApodEntry?.let { entry ->
-                setEntries(entries.value + entry)
+                setEntries(stored.value + entry)
                 outsideFeed.update { it + entry.date }
             }
         }

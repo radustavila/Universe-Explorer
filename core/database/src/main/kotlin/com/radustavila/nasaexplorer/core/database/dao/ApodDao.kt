@@ -28,14 +28,8 @@ interface ApodDao {
     @Query("SELECT * FROM apods WHERE date = :date")
     fun observeApod(date: String): Flow<ApodEntity?>
 
-    @Query("SELECT * FROM apods WHERE is_favorite = 1 ORDER BY date DESC")
-    fun observeFavorites(): Flow<List<ApodEntity>>
-
     @Query("SELECT COUNT(*) FROM apods")
     fun observeCount(): Flow<Int>
-
-    @Query("SELECT COUNT(*) FROM apods WHERE is_favorite = 1")
-    fun observeFavoritesCount(): Flow<Int>
 
     @Query("SELECT MIN(date) FROM apods")
     fun observeOldestDate(): Flow<String?>
@@ -49,13 +43,10 @@ interface ApodDao {
     @Query("SELECT * FROM apods WHERE date = :date")
     suspend fun findByDate(date: String): ApodEntity?
 
-    @Query("UPDATE apods SET is_favorite = :isFavorite WHERE date = :date")
-    suspend fun setFavorite(date: String, isFavorite: Boolean): Int
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIgnoringExisting(entities: List<ApodEntity>): List<Long>
 
-    /** Updates only the remote-owned columns; `is_favorite` is not part of the projection. */
+    /** Updates only the remote-owned columns; `cached_at_epoch_millis` is not part of the projection. */
     @Update(entity = ApodEntity::class)
     suspend fun updateRemoteContent(content: List<ApodRemoteContent>)
 
@@ -70,8 +61,8 @@ interface ApodDao {
      * Merges a freshly fetched window into the cache.
      *
      * Insert-ignore first, then update the rows that already existed, using a projection without
-     * `is_favorite`. The result: no duplicates, remote edits are picked up, and local favourites
-     * survive every sync.
+     * the locally owned columns. The result: no duplicates, remote edits are picked up, and the
+     * first-cached timestamp survives every sync.
      *
      * Rows arriving with [ApodEntity.isInFeed] set also join the feed window, which is how a day
      * cached on its own from the calendar is absorbed once paging catches up with it.
@@ -97,6 +88,37 @@ interface ApodDao {
 
     @Query("DELETE FROM apods")
     suspend fun clear()
+
+    /**
+     * Takes favourites published before [cutoffDate] out of the feed window, so trimming the window
+     * below cannot leave them behind as isolated rows in it. Paging re-admits them on its way back.
+     */
+    @Query(
+        "UPDATE apods SET is_in_feed = 0 WHERE is_in_feed = 1 AND date < :cutoffDate " +
+            "AND date IN (SELECT item_id FROM favorite WHERE source = :favoriteSource)",
+    )
+    suspend fun detachFavoritesFromFeedBefore(cutoffDate: String, favoriteSource: String)
+
+    /**
+     * Deletes non-favourite rows nobody needs offline any more: feed rows published before
+     * [cutoffDate] (by date, so the feed window stays contiguous), and one-off days not refreshed
+     * since [staleBeforeMillis].
+     *
+     * @return the number of deleted rows.
+     */
+    @Query(
+        "DELETE FROM apods " +
+            "WHERE date NOT IN (SELECT item_id FROM favorite WHERE source = :favoriteSource) " +
+            "AND ((is_in_feed = 1 AND date < :cutoffDate) " +
+            "OR (is_in_feed = 0 AND last_synced_at_epoch_millis < :staleBeforeMillis))",
+    )
+    suspend fun deleteEvictable(cutoffDate: String, staleBeforeMillis: Long, favoriteSource: String): Int
+
+    @Transaction
+    suspend fun evict(cutoffDate: String, staleBeforeMillis: Long, favoriteSource: String): Int {
+        detachFavoritesFromFeedBefore(cutoffDate, favoriteSource)
+        return deleteEvictable(cutoffDate, staleBeforeMillis, favoriteSource)
+    }
 
     private companion object {
         const val NOT_INSERTED = -1L

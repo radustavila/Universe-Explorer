@@ -30,6 +30,7 @@ import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
 import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
 import com.radustavila.nasaexplorer.core.domain.model.DebugInfo
+import com.radustavila.nasaexplorer.core.domain.model.SourceSyncStatus
 import com.radustavila.nasaexplorer.core.model.SyncState
 
 const val DEBUG_CONTENT_TEST_TAG = "debug-content"
@@ -137,6 +138,19 @@ internal fun DebugContent(
                     }
                 }
             }
+
+            DebugSection(title = stringResource(R.string.debug_section_sources)) {
+                if (info.sources.isEmpty()) {
+                    Text(
+                        text = stringResource(R.string.debug_sources_none),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+                info.sources.forEachIndexed { index, status ->
+                    if (index > 0) HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    SourceRows(status)
+                }
+            }
         }
     }
 }
@@ -150,6 +164,35 @@ private fun SyncState.describe(): String = when (this) {
     is SyncState.Failed -> stringResource(
         R.string.debug_state_failed,
         error?.toString() ?: stringResource(R.string.debug_none),
+    )
+}
+
+@Composable
+private fun SourceRows(status: SourceSyncStatus) {
+    val none = stringResource(R.string.debug_none)
+    Text(
+        text = status.source.key,
+        style = MaterialTheme.typography.labelLarge,
+        modifier = Modifier.padding(vertical = 4.dp),
+    )
+    DebugRow(
+        label = stringResource(R.string.debug_source_last_success),
+        value = status.lastSuccessAt?.formatDateTime() ?: stringResource(R.string.debug_never),
+    )
+    DebugRow(
+        label = stringResource(R.string.debug_source_last_error),
+        value = status.lastFailureAt?.let { failedAt ->
+            stringResource(
+                R.string.debug_source_error_at,
+                status.lastErrorDescription ?: none,
+                failedAt.formatDateTime(),
+            )
+        } ?: none,
+    )
+    DebugRow(
+        label = stringResource(R.string.debug_source_next_refresh),
+        value = status.nextAllowedRefreshAt?.formatDateTime()
+            ?: stringResource(R.string.debug_source_any_time),
     )
 }
 

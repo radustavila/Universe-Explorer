@@ -37,16 +37,20 @@ on JVM selection, point `JAVA_HOME` at a JDK 21 (e.g. the JetBrains Runtime 21 u
 Clean Architecture, dependencies pointing inward:
 
 - **Domain (pure Kotlin JVM, no Android on the classpath)**: `:core:common` (`AppError`, `DataResult`, dispatcher
-  qualifiers, `TimeProvider`), `:core:model` (`Apod`, `MediaType`, `SyncState`, `ApodDeepLink`), `:core:domain` (use
-  cases + contracts: `ApodRepository`, `SyncScheduler`, `NetworkMonitor`, `SyncMetadataRepository`,
-  `UserPreferencesRepository`, `NewApodNotifier`, `LatestApodWidgetUpdater`).
+  qualifiers, `TimeProvider`), `:core:model` (`Apod`, `MediaType`, `SyncState`, `ApodDeepLink`, `FavoriteItem`/
+  `FavoriteSource`, `SyncSource`), `:core:domain` (use cases + contracts: `ApodRepository`, `FavoritesRepository`,
+  `SyncScheduler`, `NetworkMonitor`, `SyncMetadataRepository`, `UserPreferencesRepository`, `NewApodNotifier`,
+  `LatestApodWidgetUpdater`).
 - **Data**: `:data:nasa` (DTOs, Retrofit service, remote/local data sources, mappers, `ApodRepositoryImpl`,
-  `ApodSyncWorker`, `WorkManagerSyncScheduler`) on top of the API-agnostic `:core:network`, `:core:database`,
-  `:core:datastore`.
+  `ApodSyncWorker`, `WorkManagerSyncScheduler`, `ApodCacheEvictor`) on top of the API-agnostic `:core:network`
+  (incl. per-host `RateLimitInterceptor`), `:core:database` (incl. the cross-source `favorite` table and
+  `RoomFavoritesRepository`), `:core:datastore`, `:core:cache` (`CacheEvictor` + daily `CacheEvictionWorker`).
 - **Presentation**: `:feature:*` (one screen each: Compose UI, ViewModel, immutable `UiState`, own type-safe
   `@Serializable` route + `NavGraphBuilder` extension), `:feature:widget` (Glance), `:core:notifications`,
   `:core:designsystem` (theme, shared components like `ApodCard`/`NasaAsyncImage`, `AppError`→`UiError` mapping).
-- `:app` wires everything: nav host + bottom bar, Hilt bindings for dispatchers/clock/HTTP config/`BuildConfig.DEBUG`,
+- `:app` wires everything: nav host (one nested graph per tab: Today · Universe · Earth · Favourites · More) +
+  bottom bar, the registries features add one line to (`TodayCards.kt`, `UniverseHub.kt`/`EarthHub.kt`/`MoreHub.kt`,
+  `FavoriteNavigation.kt`), Hilt bindings for dispatchers/clock/HTTP config/`BuildConfig.DEBUG`,
   WorkManager `Configuration.Provider` (default initializer removed in the manifest).
 
 Boundary rules the code relies on:
@@ -66,10 +70,17 @@ Boundary rules the code relies on:
   into Room. Nothing in the UI waits on a network call.
 - `ApodEntity` is keyed by publication date (ISO-8601 TEXT, sorts chronologically). Syncs merge with
   `ApodDao.upsertPreservingLocalState` (insert-ignore, then partial `@Update` via `ApodRemoteContent`, which omits
-  `is_favorite`) so a sync can never clobber favourites. Don't replace this with a plain `@Upsert`.
+  the locally owned columns). Don't replace this with a plain `@Upsert`.
+- Favourites of every source live in the `favorite` table keyed by `(source, item_id)` with a title/image snapshot
+  (schema v4); `ApodEntity.is_favorite` is a dead legacy column. `ApodRepositoryImpl` sets `Apod.isFavorite` by
+  combining reads with the APOD favourite ids. Cache evictors must never delete a favourite.
 - Room schemas are exported to `core/database/schemas/` and checked in; bump the version, add a migration in
   `NasaDatabaseMigrations`, and cover it in `NasaDatabaseMigrationTest`.
-- **All syncing goes through one unique WorkManager job** (`WorkManagerSyncScheduler` → `ApodSyncWorker` →
+- Every remote source records last success / last error / next allowed refresh per `SyncSource`; wrap refreshes in
+  `RefreshSourceUseCase` (skips while not due, records the outcome). Rate limits are enforced per host by
+  `RateLimitInterceptor` on the shared OkHttp client (429 → cooldown until `Retry-After`, local refusal →
+  `AppError.RateLimited`); register a quota with `@IntoSet HostRateBudget`.
+- **All APOD syncing goes through one unique WorkManager job** (`WorkManagerSyncScheduler` → `ApodSyncWorker` →
   `SynchronizeApodsUseCase`): app start, pull-to-refresh, debug button and the 12 h periodic sync share constraints,
   backoff and observability. Never sync from a Composable or ViewModel directly. The worker retries only when
   `AppError.isRetryable`; `SyncErrorCodec` round-trips the `AppError` through WorkManager `Data`, and `WorkInfo` is
@@ -97,8 +108,9 @@ A new module must be added to `settings.gradle.kts`.
 
 ## Testing
 
-- Tests are written against shared fakes in `:core:testing` (`FakeApodRepository`, `FakeSyncScheduler`,
-  `FakeTimeProvider`, …, plus `TestApods` builders and `MainDispatcherRule`), not mocks. When adding a domain contract,
+- Tests are written against shared fakes in `:core:testing` (`FakeApodRepository`, `FakeFavoritesRepository`,
+  `FakeSyncScheduler`, `FakeTimeProvider`, …, plus `TestApods` builders and `MainDispatcherRule`), not mocks.
+  `FixtureServer` serves recorded JSON from `src/test/resources/fixtures/` through MockWebServer. When adding a domain contract,
   add its fake there.
 - Robolectric provides the Android runtime for Room (real in-memory SQLite), WorkManager, notifications and Compose UI
   tests; network tests use MockWebServer; ViewModel flows use Turbine.

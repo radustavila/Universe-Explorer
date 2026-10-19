@@ -4,11 +4,13 @@ import app.cash.turbine.test
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.designsystem.R
-import com.radustavila.nasaexplorer.core.domain.usecase.ObserveFavoriteApodsUseCase
-import com.radustavila.nasaexplorer.core.domain.usecase.ToggleFavoriteUseCase
-import com.radustavila.nasaexplorer.core.testing.data.TestApods
-import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveFavoritesUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RemoveFavoriteUseCase
+import com.radustavila.nasaexplorer.core.model.FavoriteItem
+import com.radustavila.nasaexplorer.core.model.FavoriteSource
+import com.radustavila.nasaexplorer.core.testing.fake.FakeFavoritesRepository
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
+import java.time.Instant
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -20,66 +22,69 @@ class FavoritesViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val repository = FakeApodRepository()
+    private val apod = FavoriteItem(
+        source = FavoriteSource.APOD,
+        itemId = "2026-09-10",
+        title = "Spiral Galaxy NGC 1300",
+        imageUrl = "https://apod.nasa.gov/apod/image/ngc1300.jpg",
+        savedAt = Instant.parse("2026-09-10T10:00:00Z"),
+    )
+    private val earth = FavoriteItem(
+        source = FavoriteSource.EPIC,
+        itemId = "epic_1b_20261018003633",
+        title = "Earth, 18 Oct 2026",
+        imageUrl = null,
+        savedAt = Instant.parse("2026-10-18T10:00:00Z"),
+    )
+
+    private val repository = FakeFavoritesRepository(listOf(apod, earth))
 
     @Test
-    fun `shows only favorited entries and works without any network involvement`() = runTest {
-        repository.setEntries(
-            listOf(
-                TestApods.image(isFavorite = true),
-                TestApods.video(isFavorite = false),
-            ),
-        )
-
+    fun `shows favourites of every source, most recently saved first`() = runTest {
         createViewModel().uiState.test {
             var state = awaitItem()
             while (state.isLoading) state = awaitItem()
 
-            assertEquals(1, state.items.size)
-            assertTrue(state.items.single().isFavorite)
-            assertEquals(0, repository.refreshCallCount)
+            assertEquals(listOf(earth, apod), state.items)
         }
     }
 
     @Test
-    fun `un-favoriting removes the entry from the list`() = runTest {
-        val apod = TestApods.image(isFavorite = true)
-        repository.setEntries(listOf(apod))
+    fun `removing a favourite takes it off the list`() = runTest {
         val viewModel = createViewModel()
 
         viewModel.uiState.test {
             var state = awaitItem()
-            while (state.items.isEmpty()) state = awaitItem()
+            while (state.items.size != 2) state = awaitItem()
 
-            viewModel.onToggleFavorite(state.items.single())
+            viewModel.onRemoveFavorite(earth)
 
             state = awaitItem()
-            while (state.items.isNotEmpty()) state = awaitItem()
-            assertTrue(state.isEmpty)
+            while (state.items.size != 1) state = awaitItem()
+            assertEquals(listOf(apod), state.items)
         }
     }
 
     @Test
-    fun `a failed toggle surfaces an error`() = runTest {
-        val apod = TestApods.image(isFavorite = true)
-        repository.setEntries(listOf(apod))
-        repository.setFavoriteResult = DataResult.Failure(AppError.Database("locked"))
+    fun `a failed removal surfaces an error`() = runTest {
+        repository.writeResult = DataResult.Failure(AppError.Database("locked"))
         val viewModel = createViewModel()
 
         viewModel.uiState.test {
             var state = awaitItem()
             while (state.items.isEmpty()) state = awaitItem()
 
-            viewModel.onToggleFavorite(apod)
+            viewModel.onRemoveFavorite(apod)
 
             state = awaitItem()
             while (state.error == null) state = awaitItem()
             assertEquals(R.string.error_database, state.error?.messageRes)
+            assertTrue(state.items.contains(apod))
         }
     }
 
     private fun createViewModel() = FavoritesViewModel(
-        observeFavorites = ObserveFavoriteApodsUseCase(repository),
-        toggleFavorite = ToggleFavoriteUseCase(repository),
+        observeFavorites = ObserveFavoritesUseCase(repository),
+        removeFavorite = RemoveFavoriteUseCase(repository),
     )
 }

@@ -2,6 +2,7 @@ package com.radustavila.nasaexplorer.core.network.http
 
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.network.ratelimit.RateLimitedException
 import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
@@ -15,6 +16,8 @@ import retrofit2.HttpException
  * ever sees an `IOException` or an `HttpException`.
  */
 fun Throwable.toAppError(): AppError = when (this) {
+    // Before the IOException branch: a locally refused call is a quota problem, not a lost connection.
+    is RateLimitedException -> AppError.RateLimited(retryAfterSeconds = retryAfterSeconds)
     is UnknownHostException, is ConnectException -> AppError.NoConnection
     is SocketTimeoutException -> AppError.Timeout
     is HttpException -> toAppError()

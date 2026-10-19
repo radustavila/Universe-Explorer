@@ -6,7 +6,10 @@ import app.cash.turbine.test
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.database.NasaDatabase
+import com.radustavila.nasaexplorer.core.database.repository.RoomFavoritesRepository
 import com.radustavila.nasaexplorer.core.model.Apod
+import com.radustavila.nasaexplorer.core.model.FavoriteItem
+import com.radustavila.nasaexplorer.core.model.FavoriteSource
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import com.radustavila.nasaexplorer.data.nasa.local.RoomApodLocalDataSource
@@ -34,6 +37,7 @@ class ApodRepositoryImplTest {
 
     private lateinit var database: NasaDatabase
     private lateinit var repository: ApodRepositoryImpl
+    private lateinit var favorites: RoomFavoritesRepository
 
     private val remoteDataSource = ScriptedRemoteDataSource()
     private val syncMetadata = FakeSyncMetadataRepository()
@@ -46,6 +50,7 @@ class ApodRepositoryImplTest {
             NasaDatabase::class.java,
         ).allowMainThreadQueries().build()
 
+        favorites = RoomFavoritesRepository(database.favoriteDao(), UnconfinedTestDispatcher())
         repository = ApodRepositoryImpl(
             localDataSource = RoomApodLocalDataSource(
                 apodDao = database.apodDao(),
@@ -53,6 +58,7 @@ class ApodRepositoryImplTest {
             ),
             remoteDataSource = remoteDataSource,
             syncMetadataRepository = syncMetadata,
+            favoritesRepository = favorites,
             timeProvider = timeProvider,
         )
     }
@@ -148,7 +154,7 @@ class ApodRepositoryImplTest {
     fun `re-syncing an already cached window neither duplicates rows nor clears favorites`() = runTest {
         remoteDataSource.rangeResult = DataResult.Success(dtosFor(TODAY.minusDays(6), TODAY))
         repository.refreshRecent()
-        repository.setFavorite(date = TODAY, isFavorite = true)
+        favorites.save(apodFavorite(TODAY))
 
         remoteDataSource.rangeResult = DataResult.Success(
             dtosFor(TODAY.minusDays(6), TODAY, titlePrefix = "Updated"),
@@ -226,26 +232,38 @@ class ApodRepositoryImplTest {
     }
 
     @Test
-    fun `favorites are observable and require no network`() = runTest {
+    fun `a favourite saved in the shared table marks the entry in every read, offline`() = runTest {
         remoteDataSource.rangeResult = DataResult.Success(dtosFor(TODAY.minusDays(1), TODAY))
         repository.refreshRecent()
         remoteDataSource.rangeResult = DataResult.Failure(AppError.NoConnection)
 
-        repository.observeFavorites().test {
-            assertTrue(awaitItem().isEmpty())
+        repository.observeFeed().test {
+            assertTrue(awaitItem().none(Apod::isFavorite))
 
-            repository.setFavorite(date = TODAY, isFavorite = true)
+            favorites.save(apodFavorite(TODAY))
 
-            assertEquals(listOf(TODAY), awaitItem().map(Apod::date))
+            assertEquals(listOf(TODAY), awaitItem().filter(Apod::isFavorite).map(Apod::date))
         }
+        assertTrue(repository.observeApod(TODAY).first()?.isFavorite == true)
+        assertTrue(repository.observeLatestApod().first()?.isFavorite == true)
     }
 
     @Test
-    fun `favoriting an entry that is not cached fails with a database error`() = runTest {
-        val result = repository.setFavorite(date = TODAY, isFavorite = true)
+    fun `a favourite of another source with the same id does not mark the entry`() = runTest {
+        remoteDataSource.rangeResult = DataResult.Success(dtosFor(TODAY, TODAY))
+        repository.refreshRecent()
 
-        assertTrue((result as DataResult.Failure).error is AppError.Database)
+        favorites.save(apodFavorite(TODAY).copy(source = FavoriteSource.EPIC))
+
+        assertTrue(repository.observeApod(TODAY).first()?.isFavorite == false)
     }
+
+    private fun apodFavorite(date: LocalDate) = FavoriteItem(
+        source = FavoriteSource.APOD,
+        itemId = date.toString(),
+        title = "Apod $date",
+        imageUrl = null,
+    )
 
     private fun dtosFor(
         start: LocalDate,

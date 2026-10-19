@@ -254,7 +254,7 @@ class FeedViewModelTest {
         observeNewApodNotificationsEnabled = ObserveNewApodNotificationsEnabledUseCase(userPreferences),
         refreshFeed = RefreshFeedUseCase(syncScheduler),
         loadOlderApods = LoadOlderApodsUseCase(repository, syncMetadata, networkMonitor),
-        toggleFavorite = ToggleFavoriteUseCase(repository),
+        toggleFavorite = ToggleFavoriteUseCase(repository.favorites, FakeTimeProvider()),
         setNewApodNotificationsEnabled = SetNewApodNotificationsEnabledUseCase(userPreferences),
         timeProvider = timeProvider,
     )

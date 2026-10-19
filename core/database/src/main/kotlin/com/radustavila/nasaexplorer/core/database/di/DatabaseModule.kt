@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.radustavila.nasaexplorer.core.database.NasaDatabase
 import com.radustavila.nasaexplorer.core.database.dao.ApodDao
+import com.radustavila.nasaexplorer.core.database.dao.FavoriteDao
 import com.radustavila.nasaexplorer.core.database.migration.NasaDatabaseMigrations
 import dagger.Module
 import dagger.Provides
@@ -27,4 +28,7 @@ object DatabaseModule {
 
     @Provides
     fun provideApodDao(database: NasaDatabase): ApodDao = database.apodDao()
+
+    @Provides
+    fun provideFavoriteDao(database: NasaDatabase): FavoriteDao = database.favoriteDao()
 }

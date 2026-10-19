@@ -128,6 +128,7 @@ class ApodMappersTest {
             hdUrl = null,
             thumbnailUrl = null,
             copyright = null,
+            // Legacy column: favourites live in their own table since v4.
             isFavorite = true,
             cachedAtEpochMillis = CACHED_AT.toEpochMilli(),
             lastSyncedAtEpochMillis = SYNCED_AT.toEpochMilli(),
@@ -135,7 +136,7 @@ class ApodMappersTest {
 
         assertEquals(LocalDate.of(2026, 9, 10), apod.date)
         assertEquals(MediaType.IMAGE, apod.mediaType)
-        assertEquals(true, apod.isFavorite)
+        assertEquals(false, apod.isFavorite)
         assertEquals(CACHED_AT, apod.cachedAt)
         assertEquals(SYNCED_AT, apod.lastSyncedAt)
     }

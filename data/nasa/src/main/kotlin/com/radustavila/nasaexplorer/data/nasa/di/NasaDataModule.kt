@@ -2,8 +2,10 @@ package com.radustavila.nasaexplorer.data.nasa.di
 
 import android.content.Context
 import androidx.work.WorkManager
+import com.radustavila.nasaexplorer.core.cache.CacheEvictor
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
+import com.radustavila.nasaexplorer.data.nasa.cache.ApodCacheEvictor
 import com.radustavila.nasaexplorer.data.nasa.local.ApodLocalDataSource
 import com.radustavila.nasaexplorer.data.nasa.local.RoomApodLocalDataSource
 import com.radustavila.nasaexplorer.data.nasa.remote.ApodRemoteDataSource
@@ -16,6 +18,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dagger.multibindings.IntoSet
 import javax.inject.Singleton
 
 /**
@@ -38,6 +41,10 @@ interface NasaDataModule {
 
     @Binds
     fun bindSyncScheduler(impl: WorkManagerSyncScheduler): SyncScheduler
+
+    @Binds
+    @IntoSet
+    fun bindApodCacheEvictor(impl: ApodCacheEvictor): CacheEvictor
 }
 
 @Module

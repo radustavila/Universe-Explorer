@@ -16,11 +16,8 @@ interface ApodLocalDataSource {
     fun observeFeed(): Flow<List<Apod>>
     fun observeLatest(): Flow<Apod?>
     fun observeApod(date: LocalDate): Flow<Apod?>
-    fun observeFavorites(): Flow<List<Apod>>
     fun observeCount(): Flow<Int>
-    fun observeFavoritesCount(): Flow<Int>
     fun observeOldestDate(): Flow<LocalDate?>
 
     suspend fun upsertPreservingLocalState(entities: List<ApodEntity>): DataResult<Int>
-    suspend fun setFavorite(date: LocalDate, isFavorite: Boolean): DataResult<Unit>
 }

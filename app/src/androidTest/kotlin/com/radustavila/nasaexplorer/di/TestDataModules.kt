@@ -1,10 +1,13 @@
 package com.radustavila.nasaexplorer.di
 
+import com.radustavila.nasaexplorer.core.database.di.FavoritesModule
 import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
+import com.radustavila.nasaexplorer.core.domain.repository.FavoritesRepository
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
 import com.radustavila.nasaexplorer.core.network.di.NetworkBindingModule
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeFavoritesRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
 import com.radustavila.nasaexplorer.data.nasa.di.NasaDataModule
@@ -26,9 +29,15 @@ import javax.inject.Singleton
 @TestInstallIn(components = [SingletonComponent::class], replaces = [NasaDataModule::class])
 object TestNasaDataModule {
 
+    /** Shared with [TestFavoritesModule], so a heart toggled anywhere marks the fake's entries. */
     @Provides
     @Singleton
-    fun provideFakeApodRepository(): FakeApodRepository = FakeApodRepository()
+    fun provideFakeFavoritesRepository(): FakeFavoritesRepository = FakeFavoritesRepository()
+
+    @Provides
+    @Singleton
+    fun provideFakeApodRepository(favorites: FakeFavoritesRepository): FakeApodRepository =
+        FakeApodRepository(favorites)
 
     @Provides
     fun provideApodRepository(fake: FakeApodRepository): ApodRepository = fake
@@ -39,6 +48,14 @@ object TestNasaDataModule {
 
     @Provides
     fun provideSyncScheduler(fake: FakeSyncScheduler): SyncScheduler = fake
+}
+
+@Module
+@TestInstallIn(components = [SingletonComponent::class], replaces = [FavoritesModule::class])
+object TestFavoritesModule {
+
+    @Provides
+    fun provideFavoritesRepository(fake: FakeFavoritesRepository): FavoritesRepository = fake
 }
 
 @Module

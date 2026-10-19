@@ -3,4 +3,9 @@
     <string name="favorites_title">Favorites</string>
     <string name="favorites_empty_title">No favorites yet</string>
     <string name="favorites_empty_description">Tap the heart on any picture to keep it here. Favorites are stored on the device and work offline.</string>
+    <string name="favorites_source_apod">Astronomy Picture of the Day</string>
+    <string name="favorites_source_epic">Earth from DSCOVR</string>
+    <string name="favorites_source_nasa_library">NASA Image Library</string>
+    <string name="favorites_source_mars">Mars rover</string>
+    <string name="favorites_source_exoplanet">Exoplanet</string>
 </resources>

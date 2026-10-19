@@ -4,7 +4,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import com.radustavila.nasaexplorer.core.testing.data.TestApods
+import com.radustavila.nasaexplorer.core.model.FavoriteItem
+import com.radustavila.nasaexplorer.core.model.FavoriteSource
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,17 +24,22 @@ class FavoritesScreenTest {
         composeTestRule.setContent {
             FavoritesContent(
                 uiState = FavoritesUiState(
-                    items = listOf(TestApods.image(isFavorite = true)),
+                    items = listOf(
+                        FavoriteItem(FavoriteSource.APOD, "2026-09-10", "Spiral Galaxy NGC 1300", null),
+                        FavoriteItem(FavoriteSource.EPIC, "epic_1b", "Earth, 18 Oct 2026", null),
+                    ),
                     isLoading = false,
                 ),
-                onApodClick = {},
-                onToggleFavorite = {},
+                onFavoriteClick = {},
+                onRemoveFavorite = {},
                 onErrorDismissed = {},
             )
         }
 
         composeTestRule.onNodeWithTag(FAVORITES_LIST_TEST_TAG).assertIsDisplayed()
         composeTestRule.onNodeWithText("Spiral Galaxy NGC 1300").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Astronomy Picture of the Day").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Earth from DSCOVR").assertExists()
     }
 
     @Test
@@ -41,8 +47,8 @@ class FavoritesScreenTest {
         composeTestRule.setContent {
             FavoritesContent(
                 uiState = FavoritesUiState(items = emptyList(), isLoading = false),
-                onApodClick = {},
-                onToggleFavorite = {},
+                onFavoriteClick = {},
+                onRemoveFavorite = {},
                 onErrorDismissed = {},
             )
         }

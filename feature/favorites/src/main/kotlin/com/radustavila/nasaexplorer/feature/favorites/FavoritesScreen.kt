@@ -23,18 +23,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.radustavila.nasaexplorer.core.designsystem.component.ApodCard
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
-import com.radustavila.nasaexplorer.core.model.Apod
-import java.time.LocalDate
+import com.radustavila.nasaexplorer.core.model.FavoriteItem
 
 const val FAVORITES_LIST_TEST_TAG = "favorites-list"
 
 @Composable
 fun FavoritesScreen(
-    onApodClick: (LocalDate) -> Unit,
+    onFavoriteClick: (FavoriteItem) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FavoritesViewModel = hiltViewModel(),
 ) {
@@ -42,8 +40,8 @@ fun FavoritesScreen(
 
     FavoritesContent(
         uiState = uiState,
-        onApodClick = onApodClick,
-        onToggleFavorite = viewModel::onToggleFavorite,
+        onFavoriteClick = onFavoriteClick,
+        onRemoveFavorite = viewModel::onRemoveFavorite,
         onErrorDismissed = viewModel::onErrorDismissed,
         modifier = modifier,
     )
@@ -53,8 +51,8 @@ fun FavoritesScreen(
 @Composable
 internal fun FavoritesContent(
     uiState: FavoritesUiState,
-    onApodClick: (LocalDate) -> Unit,
-    onToggleFavorite: (Apod) -> Unit,
+    onFavoriteClick: (FavoriteItem) -> Unit,
+    onRemoveFavorite: (FavoriteItem) -> Unit,
     onErrorDismissed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -92,11 +90,11 @@ internal fun FavoritesContent(
                 contentPadding = PaddingValues(all = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                items(items = uiState.items, key = { apod -> apod.date.toString() }) { apod ->
-                    ApodCard(
-                        apod = apod,
-                        onClick = { onApodClick(apod.date) },
-                        onToggleFavorite = { onToggleFavorite(apod) },
+                items(items = uiState.items, key = { item -> "${item.source.key}/${item.itemId}" }) { item ->
+                    FavoriteCard(
+                        item = item,
+                        onClick = { onFavoriteClick(item) },
+                        onRemove = { onRemoveFavorite(item) },
                     )
                 }
             }

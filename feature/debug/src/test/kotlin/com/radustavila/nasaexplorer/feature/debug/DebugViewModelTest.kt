@@ -1,7 +1,9 @@
 package com.radustavila.nasaexplorer.feature.debug
 
 import app.cash.turbine.test
+import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDebugInfoUseCase
+import com.radustavila.nasaexplorer.core.model.SyncSource
 import com.radustavila.nasaexplorer.core.model.SyncState
 import com.radustavila.nasaexplorer.core.testing.data.TestApods
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
@@ -46,6 +48,20 @@ class DebugViewModelTest {
     }
 
     @Test
+    fun `lists every source that has synced, with its last error`() = runTest {
+        metadata.recordSyncFailure(SyncSource.LAUNCHES, at = LAST_SYNC, error = AppError.RateLimited(60))
+
+        createViewModel().uiState.test {
+            var state = awaitItem()
+            while (state.info?.sources?.size != 2) state = awaitItem()
+
+            val sources = requireNotNull(state.info).sources
+            assertEquals(listOf(SyncSource.APOD, SyncSource.LAUNCHES), sources.map { it.source })
+            assertEquals("RateLimited(retryAfterSeconds=60)", sources.last().lastErrorDescription)
+        }
+    }
+
+    @Test
     fun `sync actions are delegated to the scheduler`() = runTest {
         val viewModel = createViewModel()
 
@@ -59,6 +75,7 @@ class DebugViewModelTest {
     private fun createViewModel() = DebugViewModel(
         observeDebugInfo = ObserveDebugInfoUseCase(
             apodRepository = repository,
+            favoritesRepository = repository.favorites,
             syncMetadataRepository = metadata,
             syncScheduler = syncScheduler,
             networkMonitor = networkMonitor,

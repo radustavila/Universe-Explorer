@@ -30,6 +30,7 @@ include(":core:datastore")
 include(":core:designsystem")
 include(":core:notifications")
 include(":core:testing")
+include(":core:cache")
 
 include(":data:nasa")
 

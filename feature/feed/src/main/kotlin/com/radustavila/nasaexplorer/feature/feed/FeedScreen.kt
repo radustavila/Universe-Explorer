@@ -67,11 +67,17 @@ import kotlinx.coroutines.flow.filter
 const val FEED_LIST_TEST_TAG = "feed-list"
 const val FEED_CALENDAR_BUTTON_TEST_TAG = "feed-calendar-button"
 const val FEED_NOTIFICATIONS_BUTTON_TEST_TAG = "feed-notifications-button"
+private const val FEED_HEADER_KEY = "header"
 
+/**
+ * @param header content above the first entry: the Today cards of other features, which `:app`
+ * supplies because this module cannot depend on them. `null` adds no item (and no gap).
+ */
 @Composable
 fun FeedScreen(
     onApodClick: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
+    header: (@Composable () -> Unit)? = null,
     viewModel: FeedViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -93,6 +99,7 @@ fun FeedScreen(
         onErrorDismissed = viewModel::onErrorDismissed,
         onNotificationsClick = notificationToggle.onClick,
         modifier = modifier,
+        header = header,
         snackbarHostState = snackbarHostState,
     )
 }
@@ -110,6 +117,7 @@ internal fun FeedContent(
     onErrorDismissed: () -> Unit,
     onNotificationsClick: () -> Unit,
     modifier: Modifier = Modifier,
+    header: (@Composable () -> Unit)? = null,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val listState = rememberLazyListState()
@@ -199,6 +207,7 @@ internal fun FeedContent(
                         listState = listState,
                         onApodClick = onApodClick,
                         onToggleFavorite = onToggleFavorite,
+                        header = header,
                     )
                 }
             }
@@ -293,6 +302,7 @@ private fun FeedList(
     listState: LazyListState,
     onApodClick: (LocalDate) -> Unit,
     onToggleFavorite: (Apod) -> Unit,
+    header: (@Composable () -> Unit)?,
 ) {
     LazyColumn(
         state = listState,
@@ -303,6 +313,10 @@ private fun FeedList(
         contentPadding = PaddingValues(all = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        if (header != null) {
+            item(key = FEED_HEADER_KEY) { header() }
+        }
+
         items(items = uiState.items, key = { apod -> apod.date.toString() }) { apod ->
             ApodCard(
                 apod = apod,

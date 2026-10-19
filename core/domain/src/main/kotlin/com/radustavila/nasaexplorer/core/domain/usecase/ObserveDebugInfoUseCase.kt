@@ -2,10 +2,13 @@ package com.radustavila.nasaexplorer.core.domain.usecase
 
 import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
 import com.radustavila.nasaexplorer.core.domain.model.DebugInfo
+import com.radustavila.nasaexplorer.core.domain.model.SourceSyncStatus
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
+import com.radustavila.nasaexplorer.core.domain.repository.FavoritesRepository
 import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepository
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
-import java.time.Instant
+import com.radustavila.nasaexplorer.core.model.SyncSource
+import com.radustavila.nasaexplorer.core.model.SyncState
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +20,7 @@ import kotlinx.coroutines.flow.combine
  */
 class ObserveDebugInfoUseCase @Inject constructor(
     private val apodRepository: ApodRepository,
+    private val favoritesRepository: FavoritesRepository,
     private val syncMetadataRepository: SyncMetadataRepository,
     private val syncScheduler: SyncScheduler,
     private val networkMonitor: NetworkMonitor,
@@ -24,27 +28,30 @@ class ObserveDebugInfoUseCase @Inject constructor(
     operator fun invoke(): Flow<DebugInfo> {
         val cacheStats: Flow<CacheStats> = combine(
             apodRepository.observeCachedCount(),
-            apodRepository.observeFavoritesCount(),
+            favoritesRepository.observeCount(),
             apodRepository.observeOldestCachedDate(),
         ) { cached, favorites, oldestCached -> CacheStats(cached, favorites, oldestCached) }
 
         val syncStats: Flow<SyncStats> = combine(
-            syncMetadataRepository.lastSuccessfulSync,
+            syncMetadataRepository.sourceStatuses,
             syncMetadataRepository.oldestRequestedDate,
             syncScheduler.syncState,
-        ) { lastSync, oldestRequested, syncState ->
-            SyncStats(lastSync, oldestRequested, syncState)
+        ) { sources, oldestRequested, syncState ->
+            SyncStats(sources, oldestRequested, syncState)
         }
 
         return combine(networkMonitor.isOnline, cacheStats, syncStats) { isOnline, cache, sync ->
             DebugInfo(
                 isOnline = isOnline,
-                lastSuccessfulSync = sync.lastSuccessfulSync,
+                lastSuccessfulSync = sync.sources
+                    .firstOrNull { it.source == SyncSource.APOD }
+                    ?.lastSuccessAt,
                 cachedApodCount = cache.cachedApodCount,
                 favoriteCount = cache.favoriteCount,
                 oldestCachedDate = cache.oldestCachedDate,
                 oldestRequestedDate = sync.oldestRequestedDate,
                 syncState = sync.syncState,
+                sources = sync.sources,
             )
         }
     }
@@ -56,8 +63,8 @@ class ObserveDebugInfoUseCase @Inject constructor(
     )
 
     private data class SyncStats(
-        val lastSuccessfulSync: Instant?,
+        val sources: List<SourceSyncStatus>,
         val oldestRequestedDate: LocalDate?,
-        val syncState: com.radustavila.nasaexplorer.core.model.SyncState,
+        val syncState: SyncState,
     )
 }
