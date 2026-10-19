@@ -4,6 +4,7 @@ import androidx.navigation.NavHostController
 import com.radustavila.nasaexplorer.core.model.FavoriteItem
 import com.radustavila.nasaexplorer.core.model.FavoriteSource
 import com.radustavila.nasaexplorer.feature.details.navigateToDetails
+import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
 import com.radustavila.nasaexplorer.feature.universe.navigateToNasaMedia
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
@@ -18,9 +19,10 @@ internal fun NavHostController.openFavorite(item: FavoriteItem) {
 
         FavoriteSource.NASA_LIBRARY -> navigateToNasaMedia(item.itemId)
 
+        FavoriteSource.MARS -> navigateToMarsPhoto(item.itemId)
+
         // Not reachable yet: nothing saves these until their features land.
         FavoriteSource.EPIC,
-        FavoriteSource.MARS,
         FavoriteSource.EXOPLANET,
         -> Unit
     }

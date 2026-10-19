@@ -32,6 +32,7 @@ dependencies {
     implementation(projects.data.nasa)
     implementation(projects.data.launches)
     implementation(projects.data.nasaimages)
+    implementation(projects.data.mars)
 
     implementation(projects.feature.feed)
     implementation(projects.feature.details)
@@ -41,6 +42,7 @@ dependencies {
     implementation(projects.feature.launches)
     implementation(projects.feature.universe)
     implementation(projects.feature.earthmap)
+    implementation(projects.feature.mars)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
@@ -66,10 +68,12 @@ dependencies {
     androidTestImplementation(projects.data.nasa)
     androidTestImplementation(projects.data.launches)
     androidTestImplementation(projects.data.nasaimages)
+    androidTestImplementation(projects.data.mars)
     androidTestImplementation(projects.feature.feed)
     androidTestImplementation(projects.feature.details)
     androidTestImplementation(projects.feature.favorites)
     androidTestImplementation(projects.feature.universe)
+    androidTestImplementation(projects.feature.mars)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.espresso.core)

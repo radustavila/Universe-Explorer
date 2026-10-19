@@ -15,6 +15,9 @@ import com.radustavila.nasaexplorer.feature.favorites.FavoritesRoute
 import com.radustavila.nasaexplorer.feature.favorites.favoritesScreen
 import com.radustavila.nasaexplorer.feature.feed.FeedRoute
 import com.radustavila.nasaexplorer.feature.feed.feedScreen
+import com.radustavila.nasaexplorer.feature.mars.marsPhotoScreen
+import com.radustavila.nasaexplorer.feature.mars.marsPhotosScreen
+import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
 import com.radustavila.nasaexplorer.feature.universe.GalleryRoute
 import com.radustavila.nasaexplorer.feature.universe.galleryScreen
 import com.radustavila.nasaexplorer.feature.universe.nasaMediaDetailsScreen
@@ -50,6 +53,10 @@ fun NasaNavHost(
                 onMediaClick = navController::navigateToNasaMedia,
                 header = universeHeader(navController),
             )
+            marsPhotosScreen(
+                onBackClick = navController::popBackStack,
+                onPhotoClick = navController::navigateToMarsPhoto,
+            )
         }
 
         navigation<EarthGraph>(startDestination = EarthHomeRoute) {
@@ -79,5 +86,6 @@ fun NasaNavHost(
         // Root level: full-screen details reached from several tabs and from deep links.
         detailsScreen(onBackClick = navController::popBackStack)
         nasaMediaDetailsScreen(onBackClick = navController::popBackStack)
+        marsPhotoScreen(onBackClick = navController::popBackStack)
     }
 }

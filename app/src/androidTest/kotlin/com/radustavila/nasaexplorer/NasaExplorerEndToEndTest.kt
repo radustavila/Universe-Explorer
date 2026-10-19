@@ -24,8 +24,10 @@ import com.radustavila.nasaexplorer.core.model.Apod
 import com.radustavila.nasaexplorer.core.model.GalleryRail
 import com.radustavila.nasaexplorer.core.model.MediaType
 import com.radustavila.nasaexplorer.core.testing.data.TestApods
+import com.radustavila.nasaexplorer.core.testing.data.TestMarsPhotos
 import com.radustavila.nasaexplorer.core.testing.data.TestNasaMedia
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsPhotoRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNasaMediaRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.feature.details.DETAILS_CONTENT_TEST_TAG
@@ -33,6 +35,8 @@ import com.radustavila.nasaexplorer.feature.details.VIDEO_PLAYER_ERROR_TEST_TAG
 import com.radustavila.nasaexplorer.feature.details.VIDEO_PLAYER_TEST_TAG
 import com.radustavila.nasaexplorer.feature.favorites.FAVORITES_LIST_TEST_TAG
 import com.radustavila.nasaexplorer.feature.feed.FEED_LIST_TEST_TAG
+import com.radustavila.nasaexplorer.feature.mars.marsPhotoTestTag
+import com.radustavila.nasaexplorer.feature.mars.photo.MARS_PHOTO_CONTENT_TEST_TAG
 import com.radustavila.nasaexplorer.feature.universe.details.MEDIA_DETAILS_CONTENT_TEST_TAG
 import com.radustavila.nasaexplorer.feature.universe.gallery.GALLERY_RAILS_TEST_TAG
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -77,6 +81,9 @@ class NasaExplorerEndToEndTest {
 
     @Inject
     lateinit var nasaMediaRepository: FakeNasaMediaRepository
+
+    @Inject
+    lateinit var marsPhotoRepository: FakeMarsPhotoRepository
 
     private var scenario: ActivityScenario<MainActivity>? = null
 
@@ -198,6 +205,33 @@ class NasaExplorerEndToEndTest {
 
         composeTestRule.onNodeWithTag(MEDIA_DETAILS_CONTENT_TEST_TAG).assertIsDisplayed()
         composeTestRule.onNodeWithText(item.description).assertIsDisplayed()
+    }
+
+    @Test
+    fun aRoverPhotoSavedFromTheMarsRailReopensFromFavorites() {
+        val photo = TestMarsPhotos.curiosity()
+        nasaMediaRepository.setRails(mapOf(GalleryRail.WEBB_GALAXIES to listOf(TestNasaMedia.image())))
+        marsPhotoRepository.setPhotos(listOf(photo, TestMarsPhotos.perseverance()))
+        launchApp()
+
+        composeTestRule.onAllNodesWithText(string(R.string.destination_universe)).onFirst().performClick()
+        composeTestRule.onNodeWithTag(marsPhotoTestTag(photo.id)).performClick()
+
+        composeTestRule.onNodeWithTag(MARS_PHOTO_CONTENT_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithText(photo.cameraName).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(FAVORITE_BUTTON_TEST_TAG).performClick()
+        composeTestRule.onNodeWithContentDescription(string(DesignSystemR.string.content_description_favorite_remove))
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription(
+            string(com.radustavila.nasaexplorer.feature.mars.R.string.mars_photos_back),
+        ).performClick()
+
+        composeTestRule.onNodeWithText(string(R.string.destination_favorites)).performClick()
+        composeTestRule.onNodeWithTag(FAVORITES_LIST_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithText(photo.title).performClick()
+
+        composeTestRule.onNodeWithTag(MARS_PHOTO_CONTENT_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithText(photo.cameraName).assertIsDisplayed()
     }
 
     private fun launchApp() {

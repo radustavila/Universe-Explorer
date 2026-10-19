@@ -1,7 +1,18 @@
 package com.radustavila.nasaexplorer.navigation
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.radustavila.nasaexplorer.R
+import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
+import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhotos
+import com.radustavila.nasaexplorer.feature.mars.rail.MarsRail
 import com.radustavila.nasaexplorer.ui.hub.HubEntry
 import com.radustavila.nasaexplorer.ui.hub.HubEntryCards
 
@@ -11,13 +22,29 @@ import com.radustavila.nasaexplorer.ui.hub.HubEntryCards
  * its screens inside `navigation<UniverseGraph>` in `NasaNavHost`; the entries are listed above the
  * gallery's rails.
  */
-@Suppress("UNUSED_PARAMETER", "UnusedParameter") // Entries navigate with it once features land.
 internal fun universeHubEntries(navController: NavHostController): List<HubEntry> = listOf(
+    HubEntry(
+        key = "mars",
+        icon = Icons.Outlined.PhotoCamera,
+        titleRes = R.string.universe_mars_title,
+        descriptionRes = R.string.universe_mars_description,
+        onClick = { navController.navigateToMarsPhotos() },
+    ),
 )
 
-/** The gallery's header slot: the other Universe entries, or no header while there are none. */
-internal fun universeHeader(navController: NavHostController): (@Composable () -> Unit)? {
+/**
+ * The gallery's header slot: the other Universe entries, then the rails that are not the library's
+ * (Mars). The header draws its own side margins, so rails can scroll edge to edge.
+ */
+internal fun universeHeader(navController: NavHostController): @Composable () -> Unit {
     val entries = universeHubEntries(navController)
-    if (entries.isEmpty()) return null
-    return { HubEntryCards(entries) }
+    return {
+        Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+            if (entries.isNotEmpty()) HubEntryCards(entries, Modifier.padding(horizontal = 16.dp))
+            MarsRail(
+                onPhotoClick = navController::navigateToMarsPhoto,
+                onSeeAllClick = navController::navigateToMarsPhotos,
+            )
+        }
+    }
 }

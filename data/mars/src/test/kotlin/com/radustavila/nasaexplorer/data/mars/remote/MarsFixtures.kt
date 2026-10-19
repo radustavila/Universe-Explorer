@@ -1,0 +1,45 @@
+package com.radustavila.nasaexplorer.data.mars.remote
+
+import com.radustavila.nasaexplorer.core.network.http.RetrofitFactory
+import com.radustavila.nasaexplorer.core.testing.http.FixtureServer
+import com.radustavila.nasaexplorer.core.testing.http.Fixtures
+import com.radustavila.nasaexplorer.data.mars.remote.dto.CuriosityPageDto
+import com.radustavila.nasaexplorer.data.mars.remote.dto.PerseverancePageDto
+import kotlinx.serialization.json.Json
+import okhttp3.OkHttpClient
+import retrofit2.create
+
+/**
+ * Recorded mars.nasa.gov responses, trimmed to a few items each.
+ *
+ * Curiosity's was recorded on 2026-10-19 (sol 5048). Perseverance's feed answered only HTTP 403
+ * that day (its origin timing out behind the CDN), so its items come from an earlier recording of
+ * the same feed (sols 2 and 4, February 2021) wrapped in the feed's envelope.
+ */
+internal object MarsFixtures {
+    /** 11 items of sol 5048: MAHLI, Navcam, Hazcams, ChemCam; 3 of them thumbnails. */
+    const val CURIOSITY_LATEST = "mars/curiosity_latest.json"
+
+    /** What the catalogue answers to a query with no match. */
+    const val CURIOSITY_EMPTY = "mars/curiosity_empty.json"
+
+    /** 6 items of sols 4 and 2: Navcam, EDL, Mastcam-Z, Hazcam; 1 of them a thumbnail. */
+    const val PERSEVERANCE_LATEST = "mars/perseverance_latest.json"
+}
+
+/** The same JSON configuration the app's network module provides. */
+internal val testJson = Json {
+    ignoreUnknownKeys = true
+    explicitNulls = false
+    coerceInputValues = true
+    isLenient = true
+}
+
+internal fun marsService(server: FixtureServer): MarsRawImagesService =
+    RetrofitFactory(testJson, OkHttpClient()).create(server.baseUrl).create()
+
+internal fun curiosityFixture(path: String = MarsFixtures.CURIOSITY_LATEST): CuriosityPageDto =
+    testJson.decodeFromString(Fixtures.read(path))
+
+internal fun perseveranceFixture(path: String = MarsFixtures.PERSEVERANCE_LATEST): PerseverancePageDto =
+    testJson.decodeFromString(Fixtures.read(path))
