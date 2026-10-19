@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gallery_title">Universe</string>
+    <string name="gallery_search_hint">Search NASA images, videos and audio</string>
+    <string name="gallery_search_clear">Clear search</string>
+
+    <string name="gallery_rail_webb_galaxies">Webb galaxies</string>
+    <string name="gallery_rail_hubble_galaxies">Hubble galaxies</string>
+    <string name="gallery_rail_nebulae">Nebulae</string>
+    <string name="gallery_rail_black_holes">Black holes</string>
+    <string name="gallery_rail_milky_way">The Milky Way</string>
+    <string name="gallery_rail_webb">All of Webb</string>
+
+    <string name="gallery_rails_offline_title">Gallery not downloaded yet</string>
+    <string name="gallery_rails_offline_description">Connect once and the Webb and Hubble rails stay available offline.</string>
+    <string name="gallery_rails_error_title">Could not load the gallery</string>
+
+    <string name="gallery_filter_images">Images</string>
+    <string name="gallery_filter_videos">Videos</string>
+    <string name="gallery_filter_audio">Audio</string>
+    <string name="gallery_filter_any_year">Any year</string>
+    <string name="gallery_filter_years">%1$d–%2$d</string>
+    <string name="gallery_years_dialog_title">Years</string>
+    <string name="gallery_years_apply">Apply</string>
+    <string name="gallery_years_reset">Any year</string>
+
+    <string name="gallery_search_offline_title">Search needs a connection</string>
+    <string name="gallery_search_offline_description">The whole NASA library is searched online. The rails and your saved items work offline.</string>
+    <string name="gallery_search_empty_title">Nothing found</string>
+    <string name="gallery_search_empty_description">Try other words, or widen the media types and years.</string>
+    <string name="gallery_search_error_title">Search failed</string>
+    <plurals name="gallery_search_hits">
+        <item quantity="one">%1$s result</item>
+        <item quantity="other">%1$s results</item>
+    </plurals>
+
+    <string name="media_type_label_video">Video</string>
+    <string name="media_type_label_audio">Audio</string>
+
+    <string name="media_details_back">Back</string>
+    <string name="media_details_share">Share</string>
+    <string name="media_details_view_full_size">View full size</string>
+    <string name="media_details_download">Download original</string>
+    <string name="media_details_download_started">Downloading to Downloads…</string>
+    <string name="media_details_view_on_nasa">View on NASA</string>
+    <string name="media_details_credit">Credit: %1$s</string>
+    <string name="media_details_read_more">Read more</string>
+    <string name="media_details_read_less">Show less</string>
+    <string name="media_details_keywords">Keywords</string>
+    <string name="media_details_missing_title">Not available offline</string>
+    <string name="media_details_missing_description">Only saved items and the gallery rails are kept on this device. Connect to open this one.</string>
+    <string name="media_details_playback_offline">Playing needs a connection.</string>
+    <string name="media_details_playback_failed">This media could not be loaded.</string>
+    <string name="media_details_playback_retry">Try again</string>
+</resources>

@@ -2,6 +2,7 @@ package com.radustavila.nasaexplorer.ui.hub
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -73,19 +74,33 @@ fun HubScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            items(items = entries, key = HubEntry::key) { entry ->
-                Card(onClick = entry.onClick) {
-                    ListItem(
-                        leadingContent = { Icon(entry.icon, contentDescription = null) },
-                        headlineContent = { Text(stringResource(entry.titleRes)) },
-                        supportingContent = { Text(stringResource(entry.descriptionRes)) },
-                        trailingContent = {
-                            Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, contentDescription = null)
-                        },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                    )
-                }
-            }
+            items(items = entries, key = HubEntry::key) { entry -> HubEntryCard(entry) }
         }
+    }
+}
+
+/**
+ * [entries] as a column of cards, for a tab whose first screen is a feature (the Universe gallery)
+ * that still lists the tab's other features at its top.
+ */
+@Composable
+fun HubEntryCards(entries: List<HubEntry>, modifier: Modifier = Modifier) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        entries.forEach { entry -> HubEntryCard(entry) }
+    }
+}
+
+@Composable
+private fun HubEntryCard(entry: HubEntry, modifier: Modifier = Modifier) {
+    Card(onClick = entry.onClick, modifier = modifier) {
+        ListItem(
+            leadingContent = { Icon(entry.icon, contentDescription = null) },
+            headlineContent = { Text(stringResource(entry.titleRes)) },
+            supportingContent = { Text(stringResource(entry.descriptionRes)) },
+            trailingContent = {
+                Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, contentDescription = null)
+            },
+            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+        )
     }
 }

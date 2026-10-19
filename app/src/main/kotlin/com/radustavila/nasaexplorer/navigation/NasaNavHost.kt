@@ -14,6 +14,10 @@ import com.radustavila.nasaexplorer.feature.favorites.FavoritesRoute
 import com.radustavila.nasaexplorer.feature.favorites.favoritesScreen
 import com.radustavila.nasaexplorer.feature.feed.FeedRoute
 import com.radustavila.nasaexplorer.feature.feed.feedScreen
+import com.radustavila.nasaexplorer.feature.universe.GalleryRoute
+import com.radustavila.nasaexplorer.feature.universe.galleryScreen
+import com.radustavila.nasaexplorer.feature.universe.nasaMediaDetailsScreen
+import com.radustavila.nasaexplorer.feature.universe.navigateToNasaMedia
 import com.radustavila.nasaexplorer.ui.hub.HubScreen
 
 /**
@@ -39,13 +43,12 @@ fun NasaNavHost(
             )
         }
 
-        navigation<UniverseGraph>(startDestination = UniverseHomeRoute) {
-            composable<UniverseHomeRoute> {
-                HubScreen(
-                    titleRes = R.string.destination_universe,
-                    entries = universeHubEntries(navController),
-                )
-            }
+        // The gallery is the tab's home; the tab's other features are listed above its rails.
+        navigation<UniverseGraph>(startDestination = GalleryRoute) {
+            galleryScreen(
+                onMediaClick = navController::navigateToNasaMedia,
+                header = universeHeader(navController),
+            )
         }
 
         navigation<EarthGraph>(startDestination = EarthHomeRoute) {
@@ -73,5 +76,6 @@ fun NasaNavHost(
 
         // Root level: full-screen details reached from several tabs and from deep links.
         detailsScreen(onBackClick = navController::popBackStack)
+        nasaMediaDetailsScreen(onBackClick = navController::popBackStack)
     }
 }
