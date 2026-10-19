@@ -2,7 +2,9 @@ package com.radustavila.nasaexplorer.core.notifications.di
 
 import com.radustavila.nasaexplorer.core.domain.announcement.AuroraAlertNotifier
 import com.radustavila.nasaexplorer.core.domain.announcement.NewApodNotifier
+import com.radustavila.nasaexplorer.core.domain.sky.IssPassNotifier
 import com.radustavila.nasaexplorer.core.notifications.SystemTrayAuroraAlertNotifier
+import com.radustavila.nasaexplorer.core.notifications.SystemTrayIssPassNotifier
 import com.radustavila.nasaexplorer.core.notifications.SystemTrayNewApodNotifier
 import dagger.Binds
 import dagger.Module
@@ -18,4 +20,7 @@ interface NotificationsModule {
 
     @Binds
     fun bindAuroraAlertNotifier(impl: SystemTrayAuroraAlertNotifier): AuroraAlertNotifier
+
+    @Binds
+    fun bindIssPassNotifier(impl: SystemTrayIssPassNotifier): IssPassNotifier
 }

@@ -38,6 +38,8 @@ dependencies {
     implementation(projects.data.spaceweather)
     implementation(projects.data.smallbodies)
     implementation(projects.data.exoplanets)
+    implementation(projects.core.location)
+    implementation(projects.data.sky)
 
     implementation(projects.feature.feed)
     implementation(projects.feature.details)
@@ -51,6 +53,7 @@ dependencies {
     implementation(projects.feature.earthevents)
     implementation(projects.feature.spaceweather)
     implementation(projects.feature.exoplanets)
+    implementation(projects.feature.sky)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
@@ -81,6 +84,9 @@ dependencies {
     androidTestImplementation(projects.data.spaceweather)
     androidTestImplementation(projects.data.smallbodies)
     androidTestImplementation(projects.data.exoplanets)
+    androidTestImplementation(projects.data.sky)
+    androidTestImplementation(projects.core.location)
+    androidTestImplementation(projects.feature.sky)
     androidTestImplementation(projects.feature.feed)
     androidTestImplementation(projects.feature.details)
     androidTestImplementation(projects.feature.favorites)

@@ -14,7 +14,7 @@ enum class SyncSource(val key: String) {
     /** DSCOVR EPIC whole-Earth photos. */
     EPIC("epic"),
 
-    /** Launch Library 2: upcoming launches and people in space. */
+    /** Launch Library 2 upcoming launches. */
     LAUNCHES("launch_library"),
 
     /** NASA Image and Video Library. */
@@ -40,6 +40,12 @@ enum class SyncSource(val key: String) {
 
     /** CelesTrak orbital elements. */
     CELESTRAK("celestrak"),
+
+    /**
+     * Launch Library 2 astronauts in space. Same host and hourly budget as [LAUNCHES], but its own
+     * interval: the crew list changes a few times a year, the launch list several times a day.
+     */
+    PEOPLE_IN_SPACE("launch_library_astronauts"),
     ;
 
     companion object {

@@ -3,6 +3,9 @@ package com.radustavila.nasaexplorer.di
 import com.radustavila.nasaexplorer.core.database.di.FavoritesModule
 import com.radustavila.nasaexplorer.core.datastore.di.DataStoreBindingModule
 import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
+import com.radustavila.nasaexplorer.core.domain.location.CityDirectory
+import com.radustavila.nasaexplorer.core.domain.location.DeviceLocationProvider
+import com.radustavila.nasaexplorer.core.domain.location.ObserverLocationRepository
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
 import com.radustavila.nasaexplorer.core.domain.repository.AuroraAlertRepository
 import com.radustavila.nasaexplorer.core.domain.repository.EarthEventRepository
@@ -15,23 +18,35 @@ import com.radustavila.nasaexplorer.core.domain.repository.SmallBodiesRepository
 import com.radustavila.nasaexplorer.core.domain.repository.SpaceWeatherRepository
 import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepository
 import com.radustavila.nasaexplorer.core.domain.repository.UserPreferencesRepository
+import com.radustavila.nasaexplorer.core.domain.sky.IssPassReminderScheduler
+import com.radustavila.nasaexplorer.core.domain.sky.PeopleInSpaceRepository
+import com.radustavila.nasaexplorer.core.domain.sky.SatelliteRepository
+import com.radustavila.nasaexplorer.core.domain.sky.SkyPreferencesRepository
 import com.radustavila.nasaexplorer.core.domain.sync.ExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.MarsSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SmallBodiesSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SpaceWeatherSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
+import com.radustavila.nasaexplorer.core.location.di.LocationModule
 import com.radustavila.nasaexplorer.core.network.di.NetworkBindingModule
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeAuroraAlertRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeCityDirectory
+import com.radustavila.nasaexplorer.core.testing.fake.FakeDeviceLocationProvider
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthEventRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeExoplanetRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeFavoritesRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeIssPassReminderScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsPhotoRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNasaMediaRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
+import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakePeopleInSpaceRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeSatelliteRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeSkyPreferencesRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSmallBodiesRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSmallBodiesSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSpaceWeatherRepository
@@ -45,6 +60,7 @@ import com.radustavila.nasaexplorer.data.launches.di.LaunchesDataModule
 import com.radustavila.nasaexplorer.data.mars.di.MarsDataModule
 import com.radustavila.nasaexplorer.data.nasa.di.NasaDataModule
 import com.radustavila.nasaexplorer.data.nasaimages.di.NasaImagesDataModule
+import com.radustavila.nasaexplorer.data.sky.di.SkyDataModule
 import com.radustavila.nasaexplorer.data.smallbodies.di.SmallBodiesDataModule
 import com.radustavila.nasaexplorer.data.spaceweather.di.SpaceWeatherDataModule
 import dagger.Module
@@ -86,7 +102,10 @@ object TestNasaDataModule {
     fun provideSyncScheduler(fake: FakeSyncScheduler): SyncScheduler = fake
 }
 
-/** Launches start empty, so the next-launches card stays hidden unless a test seeds the fake. */
+/**
+ * Launches start empty, so the next-launches card stays hidden unless a test seeds the fake; so
+ * does the crew list, which shares the Launch Library 2 module.
+ */
 @Module
 @TestInstallIn(components = [SingletonComponent::class], replaces = [LaunchesDataModule::class])
 object TestLaunchesDataModule {
@@ -97,6 +116,57 @@ object TestLaunchesDataModule {
 
     @Provides
     fun provideLaunchRepository(fake: FakeLaunchRepository): LaunchRepository = fake
+
+    @Provides
+    @Singleton
+    fun provideFakePeopleInSpaceRepository(): FakePeopleInSpaceRepository = FakePeopleInSpaceRepository()
+
+    @Provides
+    fun providePeopleInSpaceRepository(fake: FakePeopleInSpaceRepository): PeopleInSpaceRepository = fake
+}
+
+/**
+ * Sky tonight without CelesTrak, wheretheiss.at or WorkManager: orbital elements the test seeds,
+ * reminders kept in memory. The astronomy itself (Astronomy Engine, SGP4) stays real.
+ */
+@Module
+@TestInstallIn(components = [SingletonComponent::class], replaces = [SkyDataModule::class])
+object TestSkyDataModule {
+
+    @Provides
+    @Singleton
+    fun provideFakeSatelliteRepository(): FakeSatelliteRepository = FakeSatelliteRepository()
+
+    @Provides
+    fun provideSatelliteRepository(fake: FakeSatelliteRepository): SatelliteRepository = fake
+
+    @Provides
+    @Singleton
+    fun provideSkyPreferencesRepository(): SkyPreferencesRepository = FakeSkyPreferencesRepository()
+
+    @Provides
+    @Singleton
+    fun provideIssPassReminderScheduler(): IssPassReminderScheduler = FakeIssPassReminderScheduler()
+}
+
+/** The observer's location in memory (no DataStore, no platform location). */
+@Module
+@TestInstallIn(components = [SingletonComponent::class], replaces = [LocationModule::class])
+object TestLocationModule {
+
+    @Provides
+    @Singleton
+    fun provideFakeObserverLocationRepository(): FakeObserverLocationRepository = FakeObserverLocationRepository()
+
+    @Provides
+    fun provideObserverLocationRepository(fake: FakeObserverLocationRepository): ObserverLocationRepository = fake
+
+    @Provides
+    @Singleton
+    fun provideDeviceLocationProvider(): DeviceLocationProvider = FakeDeviceLocationProvider()
+
+    @Provides
+    fun provideCityDirectory(): CityDirectory = FakeCityDirectory()
 }
 
 @Module
