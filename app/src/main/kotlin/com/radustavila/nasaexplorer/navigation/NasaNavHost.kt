@@ -22,6 +22,7 @@ import com.radustavila.nasaexplorer.feature.feed.feedScreen
 import com.radustavila.nasaexplorer.feature.mars.marsPhotoScreen
 import com.radustavila.nasaexplorer.feature.mars.marsPhotosScreen
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
+import com.radustavila.nasaexplorer.feature.sky.skyTonightScreen
 import com.radustavila.nasaexplorer.feature.spaceweather.navigateToSmallBody
 import com.radustavila.nasaexplorer.feature.spaceweather.neighbourhoodScreen
 import com.radustavila.nasaexplorer.feature.spaceweather.smallBodyScreen
@@ -69,6 +70,7 @@ fun NasaNavHost(
                 onBackClick = navController::popBackStack,
                 onExoplanetClick = navController::navigateToExoplanetDetails,
             )
+            skyTonightScreen(onBackClick = navController::popBackStack)
         }
 
         navigation<EarthGraph>(startDestination = EarthHomeRoute) {

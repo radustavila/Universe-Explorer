@@ -4,6 +4,7 @@ import com.radustavila.nasaexplorer.core.common.dispatchers.AppDispatcher
 import com.radustavila.nasaexplorer.core.common.dispatchers.Dispatcher
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.network.http.safeNetworkCall
+import com.radustavila.nasaexplorer.data.launches.remote.dto.AstronautDto
 import com.radustavila.nasaexplorer.data.launches.remote.dto.LaunchDto
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,6 +14,7 @@ import kotlinx.coroutines.withContext
 /** Remote boundary of the launches module. Returns [DataResult] instead of throwing. */
 interface LaunchRemoteDataSource {
     suspend fun fetchUpcoming(): DataResult<List<LaunchDto>>
+    suspend fun fetchAstronautsInSpace(): DataResult<List<AstronautDto>>
 }
 
 @Singleton
@@ -23,5 +25,9 @@ class RetrofitLaunchRemoteDataSource @Inject constructor(
 
     override suspend fun fetchUpcoming(): DataResult<List<LaunchDto>> = withContext(ioDispatcher) {
         safeNetworkCall { service.getUpcomingLaunches().results }
+    }
+
+    override suspend fun fetchAstronautsInSpace(): DataResult<List<AstronautDto>> = withContext(ioDispatcher) {
+        safeNetworkCall { service.getAstronautsInSpace().results }
     }
 }

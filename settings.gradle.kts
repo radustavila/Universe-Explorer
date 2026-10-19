@@ -12,6 +12,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // Astronomy Engine is published only on JitPack; nothing else may resolve from there.
+        maven("https://jitpack.io") {
+            content { includeGroup("io.github.cosinekitty") }
+        }
     }
 }
 
@@ -33,6 +37,8 @@ include(":core:testing")
 include(":core:cache")
 include(":core:map")
 include(":core:wallpaper")
+include(":core:astro")
+include(":core:location")
 
 include(":data:nasa")
 include(":data:launches")
@@ -42,6 +48,7 @@ include(":data:earthevents")
 include(":data:spaceweather")
 include(":data:smallbodies")
 include(":data:exoplanets")
+include(":data:sky")
 
 include(":feature:feed")
 include(":feature:details")
@@ -55,3 +62,4 @@ include(":feature:mars")
 include(":feature:earthevents")
 include(":feature:spaceweather")
 include(":feature:exoplanets")
+include(":feature:sky")

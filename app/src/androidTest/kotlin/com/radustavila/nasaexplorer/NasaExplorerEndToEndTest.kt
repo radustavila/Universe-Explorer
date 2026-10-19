@@ -2,6 +2,7 @@ package com.radustavila.nasaexplorer
 
 import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -26,10 +27,14 @@ import com.radustavila.nasaexplorer.core.model.MediaType
 import com.radustavila.nasaexplorer.core.testing.data.TestApods
 import com.radustavila.nasaexplorer.core.testing.data.TestMarsPhotos
 import com.radustavila.nasaexplorer.core.testing.data.TestNasaMedia
+import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsPhotoRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNasaMediaRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
+import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakePeopleInSpaceRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeSatelliteRepository
 import com.radustavila.nasaexplorer.feature.details.DETAILS_CONTENT_TEST_TAG
 import com.radustavila.nasaexplorer.feature.details.VIDEO_PLAYER_ERROR_TEST_TAG
 import com.radustavila.nasaexplorer.feature.details.VIDEO_PLAYER_TEST_TAG
@@ -37,12 +42,19 @@ import com.radustavila.nasaexplorer.feature.favorites.FAVORITES_LIST_TEST_TAG
 import com.radustavila.nasaexplorer.feature.feed.FEED_LIST_TEST_TAG
 import com.radustavila.nasaexplorer.feature.mars.marsPhotoTestTag
 import com.radustavila.nasaexplorer.feature.mars.photo.MARS_PHOTO_CONTENT_TEST_TAG
+import com.radustavila.nasaexplorer.feature.sky.SKY_LIST_TEST_TAG
+import com.radustavila.nasaexplorer.feature.sky.component.SKY_ISS_CARD_TEST_TAG
+import com.radustavila.nasaexplorer.feature.sky.component.SKY_LOCATION_HEADER_TEST_TAG
+import com.radustavila.nasaexplorer.feature.sky.component.SKY_MOON_CARD_TEST_TAG
 import com.radustavila.nasaexplorer.feature.universe.details.MEDIA_DETAILS_CONTENT_TEST_TAG
 import com.radustavila.nasaexplorer.feature.universe.gallery.GALLERY_RAILS_TEST_TAG
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import java.time.Duration
+import java.time.Instant
 import java.time.LocalDate
 import javax.inject.Inject
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -84,6 +96,15 @@ class NasaExplorerEndToEndTest {
 
     @Inject
     lateinit var marsPhotoRepository: FakeMarsPhotoRepository
+
+    @Inject
+    lateinit var observerLocation: FakeObserverLocationRepository
+
+    @Inject
+    lateinit var satelliteRepository: FakeSatelliteRepository
+
+    @Inject
+    lateinit var peopleInSpace: FakePeopleInSpaceRepository
 
     private var scenario: ActivityScenario<MainActivity>? = null
 
@@ -234,6 +255,30 @@ class NasaExplorerEndToEndTest {
         composeTestRule.onNodeWithText(photo.cameraName).assertIsDisplayed()
     }
 
+    @Test
+    fun skyTonightWorksOfflineForAPickedCity() {
+        networkMonitor.setOnline(false)
+        runBlocking { observerLocation.setLocation(TestSky.location()) }
+        satelliteRepository.setElements(TestSky.issElements(epoch = Instant.now().minus(Duration.ofHours(6))))
+        peopleInSpace.setPeople(listOf(TestSky.person()))
+        // Offline, the gallery lists the tab's other features above its cached rails only.
+        nasaMediaRepository.setRails(mapOf(GalleryRail.WEBB_GALAXIES to listOf(TestNasaMedia.image())))
+        launchApp()
+
+        composeTestRule.onAllNodesWithText(string(R.string.destination_universe)).onFirst().performClick()
+        composeTestRule.onNodeWithText(string(R.string.universe_sky_title)).performClick()
+
+        composeTestRule.onNodeWithTag(SKY_LOCATION_HEADER_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Bucharest").assertIsDisplayed()
+        composeTestRule.waitUntil(SKY_COMPUTE_TIMEOUT_MILLIS) {
+            composeTestRule.onAllNodesWithTag(SKY_MOON_CARD_TEST_TAG).fetchSemanticsNodes().isNotEmpty()
+        }
+        composeTestRule.onNodeWithTag(SKY_LIST_TEST_TAG).performScrollToNode(hasTestTag(SKY_ISS_CARD_TEST_TAG))
+        composeTestRule.onNodeWithTag(SKY_ISS_CARD_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(SKY_LIST_TEST_TAG).performScrollToNode(hasText(TestSky.person().name))
+        composeTestRule.onNodeWithText(TestSky.person().name).assertIsDisplayed()
+    }
+
     private fun launchApp() {
         scenario = ActivityScenario.launch(MainActivity::class.java)
     }
@@ -255,5 +300,6 @@ class NasaExplorerEndToEndTest {
 
     private companion object {
         const val PLAYBACK_TIMEOUT_MILLIS = 10_000L
+        const val SKY_COMPUTE_TIMEOUT_MILLIS = 10_000L
     }
 }

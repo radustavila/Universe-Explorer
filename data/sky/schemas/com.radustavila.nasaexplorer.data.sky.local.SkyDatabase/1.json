@@ -1,0 +1,91 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "12f67857835f9d16cef95023adeeac28",
+    "entities": [
+      {
+        "tableName": "orbital_elements",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`norad_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `epoch_millis` INTEGER NOT NULL, `mean_motion` REAL NOT NULL, `eccentricity` REAL NOT NULL, `inclination_degrees` REAL NOT NULL, `raan_degrees` REAL NOT NULL, `arg_of_pericenter_degrees` REAL NOT NULL, `mean_anomaly_degrees` REAL NOT NULL, `bstar` REAL NOT NULL, `fetched_at_millis` INTEGER NOT NULL, PRIMARY KEY(`norad_id`))",
+        "fields": [
+          {
+            "fieldPath": "noradId",
+            "columnName": "norad_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "epochMillis",
+            "columnName": "epoch_millis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "meanMotion",
+            "columnName": "mean_motion",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eccentricity",
+            "columnName": "eccentricity",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "inclinationDegrees",
+            "columnName": "inclination_degrees",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "raanDegrees",
+            "columnName": "raan_degrees",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "argOfPericenterDegrees",
+            "columnName": "arg_of_pericenter_degrees",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "meanAnomalyDegrees",
+            "columnName": "mean_anomaly_degrees",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bstar",
+            "columnName": "bstar",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fetchedAtMillis",
+            "columnName": "fetched_at_millis",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "norad_id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '12f67857835f9d16cef95023adeeac28')"
+    ]
+  }
+}

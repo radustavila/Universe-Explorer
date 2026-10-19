@@ -9,4 +9,16 @@
     <string name="aurora_alert_strength">Kp %1$d</string>
     <string name="aurora_alert_strength_storm">Kp %1$d (%2$s storm)</string>
     <string name="aurora_alert_text">%1$s is forecast from %2$s. From your place the aurora shows at Kp %3$d or more.</string>
+    <string name="iss_pass_channel_name">ISS passes</string>
+    <string name="iss_pass_channel_description">A reminder a few minutes before the International Space Station passes visibly over your location.</string>
+    <string name="iss_pass_notification_title">The ISS passes over you at %1$s</string>
+    <string name="iss_pass_notification_text">Look %1$s. It climbs to %2$d° and is visible for about %3$d min.</string>
+    <string name="iss_pass_compass_n">north</string>
+    <string name="iss_pass_compass_ne">north-east</string>
+    <string name="iss_pass_compass_e">east</string>
+    <string name="iss_pass_compass_se">south-east</string>
+    <string name="iss_pass_compass_s">south</string>
+    <string name="iss_pass_compass_sw">south-west</string>
+    <string name="iss_pass_compass_w">west</string>
+    <string name="iss_pass_compass_nw">north-west</string>
 </resources>

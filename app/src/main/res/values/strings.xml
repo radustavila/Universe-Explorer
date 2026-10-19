@@ -22,4 +22,6 @@
     <string name="universe_mars_description">The newest raw photos from Curiosity and Perseverance</string>
     <string name="universe_exoplanets_title">Exoplanets</string>
     <string name="universe_exoplanets_description">The newest worlds beyond the Solar System, their size and distance</string>
+    <string name="universe_sky_title">Sky tonight</string>
+    <string name="universe_sky_description">Moon, planets and ISS passes above you, and who is in space</string>
 </resources>
