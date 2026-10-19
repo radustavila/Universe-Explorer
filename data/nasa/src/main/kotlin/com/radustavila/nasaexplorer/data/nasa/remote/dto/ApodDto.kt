@@ -22,4 +22,16 @@ data class ApodDto(
     @SerialName("thumbnail_url") val thumbnailUrl: String? = null,
     @SerialName("copyright") val copyright: String? = null,
     @SerialName("service_version") val serviceVersion: String? = null,
+    @SerialName("permalink") val permalink: String? = null,
+    @SerialName("alt") val alt: String? = null,
+    /** Links inside [explanation], as character ranges of the plain text. */
+    @SerialName("explanation_links") val explanationLinks: List<ExplanationLinkDto> = emptyList(),
+)
+
+/** A link in an explanation: the plain-text range `[start, end)` and where it points. */
+@Serializable
+data class ExplanationLinkDto(
+    @SerialName("start") val start: Int,
+    @SerialName("end") val end: Int,
+    @SerialName("url") val url: String,
 )

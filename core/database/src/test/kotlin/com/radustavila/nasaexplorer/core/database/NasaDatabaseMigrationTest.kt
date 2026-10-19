@@ -4,12 +4,15 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import com.radustavila.nasaexplorer.core.database.entity.ApodEntity
 import com.radustavila.nasaexplorer.core.database.entity.FavoriteEntity
 import com.radustavila.nasaexplorer.core.database.migration.NasaDatabaseMigrations
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -137,6 +140,65 @@ class NasaDatabaseMigrationTest {
         // Nothing else moved and no cached row was lost.
         assertEquals(5, database.apodDao().observeCount().first())
         assertEquals("2001-03-05", database.apodDao().findByDate("2001-03-05")?.date)
+    }
+
+    @Test
+    fun `migrating from 3 through 4 to 5 keeps rows and favourites, with the new columns empty`() = runTest {
+        createVersion3Database()
+
+        val database = openWithMigrations()
+        val dao = database.apodDao()
+
+        assertEquals(5, dao.observeCount().first())
+        val row = requireNotNull(dao.findByDate("2026-09-10"))
+        assertEquals("Spiral Galaxy NGC 1300", row.title)
+        assertNull(row.permalink)
+        assertNull(row.alt)
+        assertNull(row.explanationLinks)
+        assertFalse(requireNotNull(dao.findByDate("2001-03-05")).isInFeed)
+        // F0's 3 -> 4 step still moved the favourites before F1's 4 -> 5 step ran.
+        assertEquals(
+            setOf("2026-09-10", "2026-09-09", "2026-09-08", "2001-03-05"),
+            database.favoriteDao().observeAll().first().map(FavoriteEntity::itemId).toSet(),
+        )
+    }
+
+    @Test
+    fun `migrating to 5 indexes the rows already cached for search`() = runTest {
+        createVersion3Database()
+
+        val dao = openWithMigrations().apodDao()
+
+        assertEquals(
+            listOf("2026-09-10"),
+            dao.observeSearch(match = "spiral*", limit = 10).first().map(ApodEntity::date),
+        )
+        // A day opened from the calendar is searchable too, though it is not in the feed.
+        assertEquals(
+            listOf("2001-03-05"),
+            dao.observeSearch(match = "moon*", limit = 10).first().map(ApodEntity::date),
+        )
+    }
+
+    @Test
+    fun `after migrating to 5 the index keeps up with new syncs`() = runTest {
+        createVersion3Database()
+        val database = openWithMigrations()
+        val dao = database.apodDao()
+
+        dao.upsertPreservingLocalState(
+            listOf(
+                requireNotNull(dao.findByDate("2026-09-10")).copy(
+                    title = "Barred Spiral Revisited",
+                    permalink = "https://science.nasa.gov/image-article/apod-2026-september-10/",
+                ),
+            ),
+        )
+
+        val row = dao.observeSearch(match = "revisited*", limit = 10).first().single()
+        assertEquals("https://science.nasa.gov/image-article/apod-2026-september-10/", row.permalink)
+        assertTrue(dao.observeSearch(match = "ngc*", limit = 10).first().isEmpty())
+        assertTrue(database.favoriteDao().observeAll().first().any { it.itemId == "2026-09-10" })
     }
 
     private fun openWithMigrations(): NasaDatabase =

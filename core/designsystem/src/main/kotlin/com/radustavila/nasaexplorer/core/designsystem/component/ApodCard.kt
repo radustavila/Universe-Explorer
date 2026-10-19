@@ -53,7 +53,7 @@ fun ApodCard(
             when {
                 previewImageUrl != null -> NasaAsyncImage(
                     url = previewImageUrl,
-                    contentDescription = apod.title,
+                    contentDescription = apod.imageDescription,
                     modifier = mediaModifier,
                 )
 
@@ -61,7 +61,7 @@ fun ApodCard(
 
                 else -> NasaAsyncImage(
                     url = null,
-                    contentDescription = apod.title,
+                    contentDescription = apod.imageDescription,
                     modifier = mediaModifier,
                 )
             }

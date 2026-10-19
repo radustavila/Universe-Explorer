@@ -5,6 +5,7 @@ import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
 import com.radustavila.nasaexplorer.core.model.Apod
 import com.radustavila.nasaexplorer.core.model.FavoriteItem
 import com.radustavila.nasaexplorer.core.model.FavoriteSource
+import com.radustavila.nasaexplorer.core.model.MediaType
 import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,6 +48,15 @@ class FakeApodRepository(
     /** Entry handed back by [fetchApod] on success, as a download would populate the cache. */
     var fetchApodEntry: Apod? = null
 
+    /** Per-date overrides of [fetchApodResult], for runs that fetch several days. */
+    val fetchApodResults: MutableMap<LocalDate, DataResult<Unit>> = mutableMapOf()
+
+    /**
+     * When set and no [fetchApodEntry] is given, every successful [fetchApod] caches an entry for
+     * the requested date, as the real download would.
+     */
+    var cacheEveryFetchedDate: Boolean = false
+
     var refreshCallCount: Int = 0
         private set
     var loadOlderCallCount: Int = 0
@@ -77,6 +87,28 @@ class FakeApodRepository(
     override fun observeApod(date: LocalDate): Flow<Apod?> =
         entries.map { list -> list.firstOrNull { it.date == date } }
 
+    /** Same contract as the real search: every word must appear, as a prefix, case-insensitively. */
+    override fun searchCached(query: String): Flow<List<Apod>> {
+        val words = query.lowercase().split(Regex("[^\\p{L}\\p{N}]+")).filter(String::isNotEmpty)
+        return entries.map { list ->
+            if (words.isEmpty()) return@map emptyList()
+            list.filter { apod ->
+                val text = "${apod.title} ${apod.explanation}".lowercase()
+                    .split(Regex("[^\\p{L}\\p{N}]+"))
+                words.all { word -> text.any { it.startsWith(word) } }
+            }
+        }
+    }
+
+    override fun observeSameDayInEarlierYears(date: LocalDate): Flow<List<Apod>> =
+        entries.map { list ->
+            list.filter { apod ->
+                apod.date.isBefore(date) &&
+                    apod.date.month == date.month &&
+                    apod.date.dayOfMonth == date.dayOfMonth
+            }
+        }
+
     override fun observeCachedCount(): Flow<Int> = entries.map { it.size }
 
     override fun observeOldestCachedDate(): Flow<LocalDate?> =
@@ -89,14 +121,24 @@ class FakeApodRepository(
 
     override suspend fun fetchApod(date: LocalDate): DataResult<Unit> {
         fetchedDates = fetchedDates + date
-        if (fetchApodResult is DataResult.Success) {
-            fetchApodEntry?.let { entry ->
+        val result = fetchApodResults[date] ?: fetchApodResult
+        if (result is DataResult.Success) {
+            val downloaded = fetchApodEntry ?: if (cacheEveryFetchedDate) downloadedEntry(date) else null
+            downloaded?.let { entry ->
                 setEntries(stored.value + entry)
                 outsideFeed.update { it + entry.date }
             }
         }
-        return fetchApodResult
+        return result
     }
+
+    private fun downloadedEntry(date: LocalDate) = Apod(
+        date = date,
+        title = "Downloaded $date",
+        explanation = "",
+        mediaType = MediaType.IMAGE,
+        url = "https://example.com/$date.jpg",
+    )
 
     override suspend fun loadOlderWindow(): DataResult<Int> {
         loadOlderCallCount++

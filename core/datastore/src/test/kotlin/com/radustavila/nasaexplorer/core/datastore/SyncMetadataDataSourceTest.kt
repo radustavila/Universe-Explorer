@@ -106,4 +106,16 @@ class SyncMetadataDataSourceTest {
 
         assertEquals(date, syncMetadata.lastAnnouncedApodDate.first())
     }
+
+    @Test
+    fun `persists and forgets the last wallpaper entry`() = runTest {
+        val date = LocalDate.of(2026, 10, 19)
+        assertNull(syncMetadata.lastWallpaperApodDate.first())
+
+        syncMetadata.setLastWallpaperApodDate(date)
+        assertEquals(date, syncMetadata.lastWallpaperApodDate.first())
+
+        syncMetadata.setLastWallpaperApodDate(null)
+        assertNull(syncMetadata.lastWallpaperApodDate.first())
+    }
 }

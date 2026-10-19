@@ -75,12 +75,24 @@ class SyncMetadataDataSource @Inject constructor(
 
     override val lastAnnouncedApodDate: Flow<LocalDate?> = observeDate(LAST_ANNOUNCED_APOD_DATE)
 
+    override val lastWallpaperApodDate: Flow<LocalDate?> = observeDate(LAST_WALLPAPER_APOD_DATE)
+
     override suspend fun setOldestRequestedDate(date: LocalDate) {
         editSafely { preferences -> preferences[OLDEST_REQUESTED_DATE] = date.toString() }
     }
 
     override suspend fun setLastAnnouncedApodDate(date: LocalDate) {
         editSafely { preferences -> preferences[LAST_ANNOUNCED_APOD_DATE] = date.toString() }
+    }
+
+    override suspend fun setLastWallpaperApodDate(date: LocalDate?) {
+        editSafely { preferences ->
+            if (date == null) {
+                preferences.remove(LAST_WALLPAPER_APOD_DATE)
+            } else {
+                preferences[LAST_WALLPAPER_APOD_DATE] = date.toString()
+            }
+        }
     }
 
     private fun Preferences.statusOf(source: SyncSource): SourceSyncStatus {
@@ -129,5 +141,6 @@ class SyncMetadataDataSource @Inject constructor(
         const val LEGACY_APOD_LAST_SUCCESS = "last_successful_sync_epoch_millis"
         val OLDEST_REQUESTED_DATE = stringPreferencesKey("oldest_requested_date")
         val LAST_ANNOUNCED_APOD_DATE = stringPreferencesKey("last_announced_apod_date")
+        val LAST_WALLPAPER_APOD_DATE = stringPreferencesKey("last_wallpaper_apod_date")
     }
 }

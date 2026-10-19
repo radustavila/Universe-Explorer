@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.Flow
  * be called again. Prefer [com.radustavila.nasaexplorer.core.domain.usecase.RefreshSourceUseCase],
  * which reads and writes these for you, over calling the `record*` functions directly.
  *
- * APOD-specific: how far back into the archive the user has paged, and which entry was last
- * announced outside the app.
+ * APOD-specific: how far back into the archive the user has paged, which entry was last announced
+ * outside the app, and which one was last set as the wallpaper.
  */
 interface SyncMetadataRepository {
 
@@ -40,7 +40,11 @@ interface SyncMetadataRepository {
 
     val oldestRequestedDate: Flow<LocalDate?>
     val lastAnnouncedApodDate: Flow<LocalDate?>
+    val lastWallpaperApodDate: Flow<LocalDate?>
 
     suspend fun setOldestRequestedDate(date: LocalDate)
     suspend fun setLastAnnouncedApodDate(date: LocalDate)
+
+    /** `null` forgets it, so the next run applies the current entry again. */
+    suspend fun setLastWallpaperApodDate(date: LocalDate?)
 }

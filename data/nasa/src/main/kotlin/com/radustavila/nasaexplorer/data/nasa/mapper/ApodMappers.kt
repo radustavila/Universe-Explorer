@@ -2,11 +2,15 @@ package com.radustavila.nasaexplorer.data.nasa.mapper
 
 import com.radustavila.nasaexplorer.core.database.entity.ApodEntity
 import com.radustavila.nasaexplorer.core.model.Apod
+import com.radustavila.nasaexplorer.core.model.ApodLink
 import com.radustavila.nasaexplorer.core.model.MediaType
 import com.radustavila.nasaexplorer.data.nasa.remote.dto.ApodDto
+import com.radustavila.nasaexplorer.data.nasa.remote.dto.ExplanationLinkDto
 import java.time.Instant
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.Json
 
 /**
  * DTO -> entity -> domain mapping. Both boundaries are crossed here and nowhere else: DTOs never
@@ -32,10 +36,12 @@ fun ApodDto.toEntityOrNull(cachedAt: Instant, isInFeed: Boolean = true): ApodEnt
     val mediaUrl = url.orNullIfBlank() ?: hdUrl.orNullIfBlank() ?: thumbnailUrl.orNullIfBlank()
         ?: return null
 
+    val plainExplanation = explanation?.takeIf(String::isNotBlank).orEmpty()
+
     return ApodEntity(
         date = parsedDate.toString(),
         title = title?.takeIf(String::isNotBlank) ?: UNTITLED,
-        explanation = explanation?.takeIf(String::isNotBlank).orEmpty(),
+        explanation = plainExplanation,
         mediaType = MediaType.toApiValue(MediaType.fromApiValue(mediaType)),
         url = mediaUrl,
         hdUrl = hdUrl.orNullIfBlank(),
@@ -45,6 +51,13 @@ fun ApodDto.toEntityOrNull(cachedAt: Instant, isInFeed: Boolean = true): ApodEnt
         cachedAtEpochMillis = cachedAt.toEpochMilli(),
         lastSyncedAtEpochMillis = cachedAt.toEpochMilli(),
         isInFeed = isInFeed,
+        permalink = permalink.orNullIfBlank(),
+        alt = alt.orNullIfBlank(),
+        explanationLinks = encodeLinks(
+            explanationLinks.filter { link ->
+                link.start in 0 until link.end && link.end <= plainExplanation.length
+            },
+        ),
     )
 }
 
@@ -69,11 +82,37 @@ fun ApodEntity.toDomain(): Apod = Apod(
     hdUrl = hdUrl,
     thumbnailUrl = thumbnailUrl,
     copyright = copyright,
+    permalink = permalink,
+    altText = alt,
+    explanationLinks = decodeLinks(explanationLinks)
+        .filter { link -> link.end <= explanation.length }
+        .map { link -> ApodLink(start = link.start, end = link.end, url = link.url) },
     cachedAt = Instant.ofEpochMilli(cachedAtEpochMillis),
     lastSyncedAt = Instant.ofEpochMilli(lastSyncedAtEpochMillis),
 )
 
 fun List<ApodEntity>.toDomain(): List<Apod> = map(ApodEntity::toDomain)
+
+/**
+ * Explanation links are stored as one JSON column: they are only ever read together with their row,
+ * so a table of their own would add a join and nothing else.
+ */
+private val linksSerializer = ListSerializer(ExplanationLinkDto.serializer())
+private val linksJson = Json { ignoreUnknownKeys = true }
+
+private fun encodeLinks(links: List<ExplanationLinkDto>): String? =
+    links.takeIf { it.isNotEmpty() }?.let { linksJson.encodeToString(linksSerializer, it) }
+
+/** A column that does not parse is treated as "no links": the text itself is still intact. */
+private fun decodeLinks(raw: String?): List<ExplanationLinkDto> {
+    if (raw.isNullOrBlank()) return emptyList()
+    return try {
+        linksJson.decodeFromString(linksSerializer, raw)
+    } catch (_: IllegalArgumentException) {
+        // Includes SerializationException.
+        emptyList()
+    }
+}
 
 private val WHITESPACE_RUN = Regex("\\s+")
 

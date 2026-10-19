@@ -51,6 +51,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -64,6 +65,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,12 +87,14 @@ import com.radustavila.nasaexplorer.core.designsystem.component.VideoPlaceholder
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
 import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
 import com.radustavila.nasaexplorer.core.model.Apod
+import java.time.LocalDate
 
 const val DETAILS_CONTENT_TEST_TAG = "details-content"
 
 @Composable
 fun DetailsScreen(
     onBackClick: () -> Unit,
+    onApodClick: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DetailsViewModel = hiltViewModel(),
 ) {
@@ -94,6 +103,7 @@ fun DetailsScreen(
     DetailsContent(
         uiState = uiState,
         onBackClick = onBackClick,
+        onApodClick = onApodClick,
         onToggleFavorite = viewModel::onToggleFavorite,
         onRetry = viewModel::onRetry,
         onErrorDismissed = viewModel::onErrorDismissed,
@@ -113,6 +123,7 @@ internal fun DetailsContent(
     onRetry: () -> Unit,
     onErrorDismissed: () -> Unit,
     modifier: Modifier = Modifier,
+    onApodClick: (LocalDate) -> Unit = {},
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val errorMessage = (uiState as? DetailsUiState.Content)?.error?.asText()
@@ -169,6 +180,7 @@ internal fun DetailsContent(
                     apod = uiState.apod,
                     isOffline = uiState.isOffline,
                     onBackClick = onBackClick,
+                    onApodClick = onApodClick,
                     onToggleFavorite = onToggleFavorite,
                 )
             }
@@ -181,6 +193,7 @@ private fun ApodDetails(
     apod: Apod,
     isOffline: Boolean,
     onBackClick: () -> Unit,
+    onApodClick: (LocalDate) -> Unit,
     onToggleFavorite: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -263,7 +276,11 @@ private fun ApodDetails(
                     }
                 }
 
-                Explanation(apod = apod, modifier = Modifier.padding(top = 8.dp))
+                Explanation(
+                    apod = apod,
+                    onApodClick = onApodClick,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
             }
 
             Spacer(modifier = Modifier.height(with(density) { actionBarHeight.toDp() }))
@@ -289,7 +306,7 @@ private fun ApodDetails(
         FullSizeImageDialog(
             url = fullImageUrl,
             previewUrl = apod.previewImageUrl,
-            contentDescription = apod.title,
+            contentDescription = apod.imageDescription,
             onDismiss = { isViewerOpen = false },
         )
     }
@@ -383,7 +400,7 @@ private fun Hero(
             // fetched only when the viewer is actually opened.
             else -> NasaAsyncImage(
                 url = apod.previewImageUrl,
-                contentDescription = apod.title,
+                contentDescription = apod.imageDescription,
                 contentScale = ContentScale.Crop,
                 modifier = if (onViewFullSize == null) {
                     mediaModifier
@@ -491,12 +508,35 @@ private fun ScrimIconButton(
     }
 }
 
-/** The explanation is long-form text, so it starts clamped and expands on demand. */
+/**
+ * The explanation is long-form text, so it starts clamped and expands on demand.
+ *
+ * NASA's links stay in it: one that points to another APOD entry opens that entry in the app, any
+ * other one opens in the browser.
+ */
 @Composable
-private fun Explanation(apod: Apod, modifier: Modifier = Modifier) {
+private fun Explanation(
+    apod: Apod,
+    onApodClick: (LocalDate) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     var isExpanded by rememberSaveable(apod.date) { mutableStateOf(false) }
     var isClamped by remember(apod.date) { mutableStateOf(false) }
-    val explanation = remember(apod.explanation) { apod.explanation.withParagraphBreaks() }
+    val context = LocalContext.current
+    val currentOnApodClick by rememberUpdatedState(onApodClick)
+    val linkStyles = TextLinkStyles(
+        style = SpanStyle(
+            color = MaterialTheme.colorScheme.primary,
+            textDecoration = TextDecoration.Underline,
+        ),
+    )
+    val explanation = remember(apod.explanation, apod.explanationLinks, linkStyles) {
+        apod.linkedExplanation(
+            linkStyles = linkStyles,
+            onApodLinkClick = { date -> currentOnApodClick(date) },
+            onWebLinkClick = context::openUrl,
+        )
+    }
 
     Column(
         modifier = modifier.animateContentSize(),
@@ -544,6 +584,37 @@ private fun Explanation(apod: Apod, modifier: Modifier = Modifier) {
                         .padding(start = 4.dp)
                         .size(18.dp),
                 )
+            }
+        }
+    }
+}
+
+/**
+ * The explanation with its links attached. Link ranges address the stored text, so they are only
+ * applied when restoring paragraph breaks left that text as it was - true for everything the current
+ * feed delivers, whose whitespace is already collapsed.
+ */
+private fun Apod.linkedExplanation(
+    linkStyles: TextLinkStyles,
+    onApodLinkClick: (LocalDate) -> Unit,
+    onWebLinkClick: (String) -> Unit,
+): AnnotatedString {
+    val text = explanation.withParagraphBreaks()
+    val links = if (text == explanation) explanationLinks else emptyList()
+    return buildAnnotatedString {
+        append(text)
+        links.filter { it.end <= text.length }.forEach { link ->
+            val apodDate = link.apodDate
+            if (apodDate != null) {
+                val annotation = LinkAnnotation.Clickable(tag = link.url, styles = linkStyles) {
+                    onApodLinkClick(apodDate)
+                }
+                addLink(annotation, start = link.start, end = link.end)
+            } else {
+                val annotation = LinkAnnotation.Url(url = link.url, styles = linkStyles) {
+                    onWebLinkClick(link.url)
+                }
+                addLink(annotation, start = link.start, end = link.end)
             }
         }
     }

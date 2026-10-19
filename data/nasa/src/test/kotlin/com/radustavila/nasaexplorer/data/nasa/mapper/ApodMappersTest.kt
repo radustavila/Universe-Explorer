@@ -1,12 +1,15 @@
 package com.radustavila.nasaexplorer.data.nasa.mapper
 
 import com.radustavila.nasaexplorer.core.database.entity.ApodEntity
+import com.radustavila.nasaexplorer.core.model.ApodLink
 import com.radustavila.nasaexplorer.core.model.MediaType
 import com.radustavila.nasaexplorer.data.nasa.remote.dto.ApodDto
+import com.radustavila.nasaexplorer.data.nasa.remote.dto.ExplanationLinkDto
 import java.time.Instant
 import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ApodMappersTest {
@@ -139,6 +142,54 @@ class ApodMappersTest {
         assertEquals(false, apod.isFavorite)
         assertEquals(CACHED_AT, apod.cachedAt)
         assertEquals(SYNCED_AT, apod.lastSyncedAt)
+    }
+
+    @Test
+    fun `permalink, alt text and explanation links survive the round trip through the cache`() {
+        val apod = imageDto().copy(
+            explanation = "See the Pleiades and Wikipedia.",
+            permalink = "https://science.nasa.gov/image-article/apod-2026-september-10-ngc-1300/",
+            alt = "A barred spiral galaxy seen face on.",
+            explanationLinks = listOf(
+                ExplanationLinkDto(start = 4, end = 16, url = "https://apod.nasa.gov/apod/ap950620.html"),
+                ExplanationLinkDto(start = 21, end = 30, url = "https://en.wikipedia.org/"),
+            ),
+        ).toEntityOrNull(CACHED_AT)?.toDomain()
+
+        requireNotNull(apod)
+        assertEquals(
+            "https://science.nasa.gov/image-article/apod-2026-september-10-ngc-1300/",
+            apod.webPageUrl,
+        )
+        assertEquals("A barred spiral galaxy seen face on.", apod.imageDescription)
+        assertEquals(
+            listOf(
+                ApodLink(start = 4, end = 16, url = "https://apod.nasa.gov/apod/ap950620.html"),
+                ApodLink(start = 21, end = 30, url = "https://en.wikipedia.org/"),
+            ),
+            apod.explanationLinks,
+        )
+        assertEquals(LocalDate.of(1995, 6, 20), apod.explanationLinks.first().apodDate)
+    }
+
+    @Test
+    fun `links outside the explanation are dropped and an entry without links stores none`() {
+        val entity = imageDto().copy(
+            explanationLinks = listOf(ExplanationLinkDto(start = 10, end = 400, url = "https://x.org/")),
+        ).toEntityOrNull(CACHED_AT)
+
+        assertNull(entity?.explanationLinks)
+        assertTrue(entity?.toDomain()?.explanationLinks.orEmpty().isEmpty())
+    }
+
+    @Test
+    fun `an unreadable links column degrades to no links`() {
+        val apod = requireNotNull(imageDto().toEntityOrNull(CACHED_AT))
+            .copy(explanationLinks = "{not json")
+            .toDomain()
+
+        assertTrue(apod.explanationLinks.isEmpty())
+        assertEquals("A barred spiral galaxy.", apod.explanation)
     }
 
     private fun imageDto() = ApodDto(

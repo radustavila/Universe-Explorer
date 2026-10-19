@@ -15,6 +15,7 @@ class FakeSyncMetadataRepository(
     initialLastSync: Instant? = null,
     initialOldestRequested: LocalDate? = null,
     initialLastAnnounced: LocalDate? = null,
+    initialLastWallpaper: LocalDate? = null,
 ) : SyncMetadataRepository {
 
     private val statuses = MutableStateFlow(
@@ -23,6 +24,7 @@ class FakeSyncMetadataRepository(
     )
     private val oldestRequested = MutableStateFlow(initialOldestRequested)
     private val lastAnnounced = MutableStateFlow(initialLastAnnounced)
+    private val lastWallpaper = MutableStateFlow(initialLastWallpaper)
 
     override val sourceStatuses: Flow<List<SourceSyncStatus>> = statuses.map { map ->
         SyncSource.entries.mapNotNull { map[it] }.filter { it.hasRecord }
@@ -33,11 +35,13 @@ class FakeSyncMetadataRepository(
 
     override val oldestRequestedDate: Flow<LocalDate?> = oldestRequested
     override val lastAnnouncedApodDate: Flow<LocalDate?> = lastAnnounced
+    override val lastWallpaperApodDate: Flow<LocalDate?> = lastWallpaper
 
     /** APOD's last successful sync, the one the existing tests care about. */
     val currentLastSync: Instant? get() = statusOf(SyncSource.APOD).lastSuccessAt
     val currentOldestRequested: LocalDate? get() = oldestRequested.value
     val currentLastAnnounced: LocalDate? get() = lastAnnounced.value
+    val currentLastWallpaper: LocalDate? get() = lastWallpaper.value
 
     fun statusOf(source: SyncSource): SourceSyncStatus = statuses.value[source] ?: SourceSyncStatus(source)
 
@@ -70,5 +74,9 @@ class FakeSyncMetadataRepository(
 
     override suspend fun setLastAnnouncedApodDate(date: LocalDate) {
         lastAnnounced.value = date
+    }
+
+    override suspend fun setLastWallpaperApodDate(date: LocalDate?) {
+        lastWallpaper.value = date
     }
 }

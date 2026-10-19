@@ -612,9 +612,25 @@ disk cache under an offline banner.
 
 * **Video entries are not played in-app** — the details screen shows NASA's still thumbnail and hands
   the URL to an external app.
-* **No search, filtering or date jumping.** Paging is strictly sequential and backwards.
 * **Rate-limit state is in memory.** A process restart forgets a host's cooldown and budget, which at
   worst costs one more 429.
+* **Search covers the local cache only.** The `apod-basic` endpoint silently ignores a `search`
+  parameter, so the feed searches an FTS4 index of what is already on the device (the screen says
+  so). Days the user never scrolled back to or opened are not found.
+* **"On this day" costs up to ~31 single-day requests the first time each calendar day comes
+  round** (one per earlier year); they run in the sync worker after a successful sync, and days
+  already cached are never requested again. A day NASA publishes without an image (e.g.
+  2022-10-19) never reaches the cache, so it is asked for again on every sync.
+* **Entries cached before schema v5 have no permalink, alt text or explanation links** until their
+  window is synced again; until then "View on NASA" and share fall back to the classic
+  `apod.nasa.gov/apod/apYYMMDD.html` address, which now redirects recent entries to the APOD home
+  page, and screen readers announce the title instead of NASA's description.
+* **The daily wallpaper only follows syncs.** It is set from the sync worker (twice a day and at app
+  start), only for still images, and only on the home screen; a video day leaves the previous
+  wallpaper in place.
+* **The search index relies on stable rowids.** `apods_fts` is an external-content table keyed by
+  `apods.rowid`, and `apods` has no INTEGER PRIMARY KEY; anything that VACUUMs the database must
+  rebuild the index afterwards.
 * **Instrumented (on-device) tests are not included.** The Compose flows are covered on Robolectric,
   and the modules are configured for `androidTest`, but no `androidTest` sources are checked in.
 * **No baseline profile or macrobenchmark module.** Both would be natural next steps for a
