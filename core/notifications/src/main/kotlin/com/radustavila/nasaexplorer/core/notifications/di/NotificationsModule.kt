@@ -1,6 +1,8 @@
 package com.radustavila.nasaexplorer.core.notifications.di
 
+import com.radustavila.nasaexplorer.core.domain.announcement.AuroraAlertNotifier
 import com.radustavila.nasaexplorer.core.domain.announcement.NewApodNotifier
+import com.radustavila.nasaexplorer.core.notifications.SystemTrayAuroraAlertNotifier
 import com.radustavila.nasaexplorer.core.notifications.SystemTrayNewApodNotifier
 import dagger.Binds
 import dagger.Module
@@ -13,4 +15,7 @@ interface NotificationsModule {
 
     @Binds
     fun bindNewApodNotifier(impl: SystemTrayNewApodNotifier): NewApodNotifier
+
+    @Binds
+    fun bindAuroraAlertNotifier(impl: SystemTrayAuroraAlertNotifier): AuroraAlertNotifier
 }

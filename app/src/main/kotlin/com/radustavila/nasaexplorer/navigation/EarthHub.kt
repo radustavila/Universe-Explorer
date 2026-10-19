@@ -1,12 +1,16 @@
 package com.radustavila.nasaexplorer.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.SatelliteAlt
 import androidx.navigation.NavHostController
 import com.radustavila.nasaexplorer.R
 import com.radustavila.nasaexplorer.feature.earthevents.navigateToEarthEvents
 import com.radustavila.nasaexplorer.feature.earthmap.navigateToEarthMap
+import com.radustavila.nasaexplorer.feature.spaceweather.navigateToNeighbourhood
+import com.radustavila.nasaexplorer.feature.spaceweather.navigateToSpaceWeather
 import com.radustavila.nasaexplorer.ui.hub.HubEntry
 
 /**
@@ -28,5 +32,19 @@ internal fun earthHubEntries(navController: NavHostController): List<HubEntry> =
         titleRes = R.string.earth_live_events_title,
         descriptionRes = R.string.earth_live_events_description,
         onClick = { navController.navigateToEarthEvents() },
+    ),
+    HubEntry(
+        key = "space-weather",
+        icon = Icons.Outlined.AutoAwesome,
+        titleRes = R.string.earth_space_weather_title,
+        descriptionRes = R.string.earth_space_weather_description,
+        onClick = { navController.navigateToSpaceWeather() },
+    ),
+    HubEntry(
+        key = "neighbourhood",
+        icon = Icons.Outlined.Explore,
+        titleRes = R.string.earth_neighbourhood_title,
+        descriptionRes = R.string.earth_neighbourhood_description,
+        onClick = { navController.navigateToNeighbourhood() },
     ),
 )

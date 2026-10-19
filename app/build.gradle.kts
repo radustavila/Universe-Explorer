@@ -35,6 +35,8 @@ dependencies {
     implementation(projects.data.nasaimages)
     implementation(projects.data.mars)
     implementation(projects.data.earthevents)
+    implementation(projects.data.spaceweather)
+    implementation(projects.data.smallbodies)
 
     implementation(projects.feature.feed)
     implementation(projects.feature.details)
@@ -46,6 +48,7 @@ dependencies {
     implementation(projects.feature.earthmap)
     implementation(projects.feature.mars)
     implementation(projects.feature.earthevents)
+    implementation(projects.feature.spaceweather)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
@@ -73,6 +76,8 @@ dependencies {
     androidTestImplementation(projects.data.nasaimages)
     androidTestImplementation(projects.data.mars)
     androidTestImplementation(projects.data.earthevents)
+    androidTestImplementation(projects.data.spaceweather)
+    androidTestImplementation(projects.data.smallbodies)
     androidTestImplementation(projects.feature.feed)
     androidTestImplementation(projects.feature.details)
     androidTestImplementation(projects.feature.favorites)
