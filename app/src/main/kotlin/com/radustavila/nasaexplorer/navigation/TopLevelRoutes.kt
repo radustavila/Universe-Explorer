@@ -24,12 +24,9 @@ data object MoreGraph
 
 /*
  * Start screens of the tabs that have no feature of their own yet: a hub listing what the tab
- * offers (see `UniverseHub.kt`, `EarthHub.kt`, `MoreHub.kt`). A feature that becomes a tab's first
- * screen replaces its hub as the graph's `startDestination` in `NasaNavHost`.
+ * offers (see `EarthHub.kt`, `MoreHub.kt`). A feature that becomes a tab's first screen replaces
+ * its hub as the graph's `startDestination` in `NasaNavHost`, as the gallery did for Universe.
  */
-
-@Serializable
-data object UniverseHomeRoute
 
 @Serializable
 data object EarthHomeRoute

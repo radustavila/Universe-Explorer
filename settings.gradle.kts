@@ -34,6 +34,7 @@ include(":core:cache")
 
 include(":data:nasa")
 include(":data:launches")
+include(":data:nasaimages")
 
 include(":feature:feed")
 include(":feature:details")
@@ -41,3 +42,4 @@ include(":feature:favorites")
 include(":feature:debug")
 include(":feature:widget")
 include(":feature:launches")
+include(":feature:universe")

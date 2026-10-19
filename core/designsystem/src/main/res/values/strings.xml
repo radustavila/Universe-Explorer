@@ -10,9 +10,12 @@
     <string name="error_unknown">Something went wrong.</string>
 
     <string name="action_retry">Retry</string>
+    <string name="action_close_full_size">Close full size view</string>
     <string name="content_description_favorite_add">Add to favorites</string>
     <string name="content_description_favorite_remove">Remove from favorites</string>
     <string name="media_type_image">Image</string>
     <string name="media_type_video">Video</string>
     <string name="media_type_other">Other</string>
+    <string name="media_player_error">This media could not be played.</string>
+    <string name="media_player_retry">Try again</string>
 </resources>

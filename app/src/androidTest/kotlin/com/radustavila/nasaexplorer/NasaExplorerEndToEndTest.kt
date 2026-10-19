@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -20,15 +21,20 @@ import coil3.request.CachePolicy
 import com.radustavila.nasaexplorer.core.designsystem.component.FAVORITE_BUTTON_TEST_TAG
 import com.radustavila.nasaexplorer.core.designsystem.component.OFFLINE_BANNER_TEST_TAG
 import com.radustavila.nasaexplorer.core.model.Apod
+import com.radustavila.nasaexplorer.core.model.GalleryRail
 import com.radustavila.nasaexplorer.core.model.MediaType
 import com.radustavila.nasaexplorer.core.testing.data.TestApods
+import com.radustavila.nasaexplorer.core.testing.data.TestNasaMedia
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeNasaMediaRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.feature.details.DETAILS_CONTENT_TEST_TAG
 import com.radustavila.nasaexplorer.feature.details.VIDEO_PLAYER_ERROR_TEST_TAG
 import com.radustavila.nasaexplorer.feature.details.VIDEO_PLAYER_TEST_TAG
 import com.radustavila.nasaexplorer.feature.favorites.FAVORITES_LIST_TEST_TAG
 import com.radustavila.nasaexplorer.feature.feed.FEED_LIST_TEST_TAG
+import com.radustavila.nasaexplorer.feature.universe.details.MEDIA_DETAILS_CONTENT_TEST_TAG
+import com.radustavila.nasaexplorer.feature.universe.gallery.GALLERY_RAILS_TEST_TAG
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import java.time.LocalDate
@@ -68,6 +74,9 @@ class NasaExplorerEndToEndTest {
 
     @Inject
     lateinit var networkMonitor: FakeNetworkMonitor
+
+    @Inject
+    lateinit var nasaMediaRepository: FakeNasaMediaRepository
 
     private var scenario: ActivityScenario<MainActivity>? = null
 
@@ -163,6 +172,32 @@ class NasaExplorerEndToEndTest {
                 .fetchSemanticsNodes()
                 .isNotEmpty()
         }
+    }
+
+    @Test
+    fun aLibraryItemSavedFromTheUniverseGalleryReopensFromFavorites() {
+        val item = TestNasaMedia.image(nasaId = "PIA26702", title = "Webb Data Reveals Dark Matter")
+        nasaMediaRepository.setRails(mapOf(GalleryRail.WEBB_GALAXIES to listOf(item)))
+        launchApp()
+
+        composeTestRule.onAllNodesWithText(string(R.string.destination_universe)).onFirst().performClick()
+        composeTestRule.onNodeWithTag(GALLERY_RAILS_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithText(item.title).performClick()
+
+        composeTestRule.onNodeWithTag(MEDIA_DETAILS_CONTENT_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(FAVORITE_BUTTON_TEST_TAG).performClick()
+        composeTestRule.onNodeWithContentDescription(string(DesignSystemR.string.content_description_favorite_remove))
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription(
+            string(com.radustavila.nasaexplorer.feature.universe.R.string.media_details_back),
+        ).performClick()
+
+        composeTestRule.onNodeWithText(string(R.string.destination_favorites)).performClick()
+        composeTestRule.onNodeWithTag(FAVORITES_LIST_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithText(item.title).performClick()
+
+        composeTestRule.onNodeWithTag(MEDIA_DETAILS_CONTENT_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithText(item.description).assertIsDisplayed()
     }
 
     private fun launchApp() {

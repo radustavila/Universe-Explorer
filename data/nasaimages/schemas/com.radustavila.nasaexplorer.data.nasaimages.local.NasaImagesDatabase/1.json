@@ -1,0 +1,143 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "5089ca6e414a85e80d1f2e381aad3759",
+    "entities": [
+      {
+        "tableName": "nasa_media",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`nasa_id` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `media_type` TEXT NOT NULL, `date_created` TEXT, `center` TEXT, `creator` TEXT, `keywords` TEXT NOT NULL, `thumbnail_url` TEXT, `image_url` TEXT, `full_image_url` TEXT, `original_url` TEXT, `alt_text` TEXT, `cached_at` INTEGER NOT NULL, PRIMARY KEY(`nasa_id`))",
+        "fields": [
+          {
+            "fieldPath": "nasaId",
+            "columnName": "nasa_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mediaType",
+            "columnName": "media_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateCreated",
+            "columnName": "date_created",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "center",
+            "columnName": "center",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "creator",
+            "columnName": "creator",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "keywords",
+            "columnName": "keywords",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnailUrl",
+            "columnName": "thumbnail_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "imageUrl",
+            "columnName": "image_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "fullImageUrl",
+            "columnName": "full_image_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "originalUrl",
+            "columnName": "original_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "altText",
+            "columnName": "alt_text",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "cachedAt",
+            "columnName": "cached_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "nasa_id"
+          ]
+        }
+      },
+      {
+        "tableName": "rail_item",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`rail` TEXT NOT NULL, `nasa_id` TEXT NOT NULL, `position` INTEGER NOT NULL, PRIMARY KEY(`rail`, `nasa_id`))",
+        "fields": [
+          {
+            "fieldPath": "rail",
+            "columnName": "rail",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nasaId",
+            "columnName": "nasa_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "position",
+            "columnName": "position",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "rail",
+            "nasa_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_rail_item_nasa_id",
+            "unique": false,
+            "columnNames": [
+              "nasa_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_rail_item_nasa_id` ON `${TABLE_NAME}` (`nasa_id`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5089ca6e414a85e80d1f2e381aad3759')"
+    ]
+  }
+}

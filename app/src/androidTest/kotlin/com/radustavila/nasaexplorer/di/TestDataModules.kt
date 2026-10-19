@@ -5,15 +5,18 @@ import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
 import com.radustavila.nasaexplorer.core.domain.repository.FavoritesRepository
 import com.radustavila.nasaexplorer.core.domain.repository.LaunchRepository
+import com.radustavila.nasaexplorer.core.domain.repository.NasaMediaRepository
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
 import com.radustavila.nasaexplorer.core.network.di.NetworkBindingModule
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeFavoritesRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeNasaMediaRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
 import com.radustavila.nasaexplorer.data.launches.di.LaunchesDataModule
 import com.radustavila.nasaexplorer.data.nasa.di.NasaDataModule
+import com.radustavila.nasaexplorer.data.nasaimages.di.NasaImagesDataModule
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
@@ -72,6 +75,22 @@ object TestFavoritesModule {
 
     @Provides
     fun provideFavoritesRepository(fake: FakeFavoritesRepository): FavoritesRepository = fake
+}
+
+/**
+ * Keeps the Universe gallery off the network: rails the test seeds, and no real library calls
+ * (nor the library's cache evictor, which this module also contributes).
+ */
+@Module
+@TestInstallIn(components = [SingletonComponent::class], replaces = [NasaImagesDataModule::class])
+object TestNasaImagesDataModule {
+
+    @Provides
+    @Singleton
+    fun provideFakeNasaMediaRepository(): FakeNasaMediaRepository = FakeNasaMediaRepository()
+
+    @Provides
+    fun provideNasaMediaRepository(fake: FakeNasaMediaRepository): NasaMediaRepository = fake
 }
 
 @Module
