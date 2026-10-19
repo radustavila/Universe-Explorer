@@ -36,7 +36,7 @@ class LaunchDtoTest {
         assertEquals("Falcon 9 Block 5", first.rocket)
         assertEquals("Space Launch Complex 40, Cape Canaveral SFS, FL, USA", first.pad)
         assertEquals(
-            "https://lldev.thespacedevs.com/2.3.0/launches/3b430f81-0ff1-4d85-8a1a-cef0de326198/",
+            "https://spacelaunchnow.app/launch/falcon-9-block-5-bandwagon-5-dedicated-mid-inclina/",
             first.pageUrl,
         )
     }
@@ -73,6 +73,11 @@ class LaunchDtoTest {
         assertNull(valid.copy(id = null).toEntityOrNull())
         assertNull(valid.copy(name = " ").toEntityOrNull())
         assertNull(valid.copy(url = null).toEntityOrNull())
+        assertEquals("https://ll/a/", valid.toEntityOrNull()?.pageUrl)
+        assertEquals(
+            "https://spacelaunchnow.app/launch/rocket-mission/",
+            valid.copy(slug = "rocket-mission", url = null).toEntityOrNull()?.pageUrl,
+        )
         assertNull(valid.copy(net = "not a date").toEntityOrNull())
         assertEquals(LaunchStatus.UNKNOWN.id, valid.toEntityOrNull()?.statusId)
     }

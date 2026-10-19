@@ -14,7 +14,7 @@ import java.time.format.DateTimeParseException
 fun LaunchDto.toEntityOrNull(): LaunchEntity? {
     val id = id?.takeIf(String::isNotBlank) ?: return null
     val name = name?.takeIf(String::isNotBlank) ?: return null
-    val pageUrl = url?.takeIf(String::isNotBlank) ?: return null
+    val pageUrl = pageUrl() ?: return null
     val net = net?.toInstantOrNull() ?: return null
 
     return LaunchEntity(
@@ -45,6 +45,17 @@ fun LaunchEntity.toDomain(): Launch = Launch(
     livestreamUrl = livestreamUrl,
     pageUrl = pageUrl,
 )
+
+/**
+ * A page for people: Space Launch Now, The Space Devs' own site on top of Launch Library 2. The API
+ * URL is only a last resort - in a browser it shows the API's developer view, and every visit counts
+ * against the same 15-calls-an-hour budget the app's refresh uses.
+ */
+private fun LaunchDto.pageUrl(): String? =
+    slug?.takeIf(String::isNotBlank)?.let { "$SPACE_LAUNCH_NOW_LAUNCH_URL$it/" }
+        ?: url?.takeIf(String::isNotBlank)
+
+private const val SPACE_LAUNCH_NOW_LAUNCH_URL = "https://spacelaunchnow.app/launch/"
 
 private fun String.toInstantOrNull(): Instant? = try {
     Instant.parse(this)

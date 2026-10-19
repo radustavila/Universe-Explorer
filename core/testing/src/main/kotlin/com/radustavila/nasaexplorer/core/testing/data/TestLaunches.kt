@@ -24,7 +24,7 @@ object TestLaunches {
         pad = "Space Launch Complex 40, Cape Canaveral SFS, FL, USA",
         imageUrl = "https://example.com/falcon9.jpg",
         livestreamUrl = livestreamUrl,
-        pageUrl = "https://ll.thespacedevs.com/2.3.0/launches/$id/",
+        pageUrl = "https://spacelaunchnow.app/launch/$id/",
     )
 
     /** [size] launches a day apart, soonest first, all still ahead of [NOW]. */

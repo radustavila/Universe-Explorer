@@ -4,12 +4,15 @@ import com.radustavila.nasaexplorer.core.database.di.FavoritesModule
 import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
 import com.radustavila.nasaexplorer.core.domain.repository.FavoritesRepository
+import com.radustavila.nasaexplorer.core.domain.repository.LaunchRepository
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
 import com.radustavila.nasaexplorer.core.network.di.NetworkBindingModule
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeFavoritesRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
+import com.radustavila.nasaexplorer.data.launches.di.LaunchesDataModule
 import com.radustavila.nasaexplorer.data.nasa.di.NasaDataModule
 import dagger.Module
 import dagger.Provides
@@ -48,6 +51,19 @@ object TestNasaDataModule {
 
     @Provides
     fun provideSyncScheduler(fake: FakeSyncScheduler): SyncScheduler = fake
+}
+
+/** Launches start empty, so the next-launches card stays hidden unless a test seeds the fake. */
+@Module
+@TestInstallIn(components = [SingletonComponent::class], replaces = [LaunchesDataModule::class])
+object TestLaunchesDataModule {
+
+    @Provides
+    @Singleton
+    fun provideFakeLaunchRepository(): FakeLaunchRepository = FakeLaunchRepository()
+
+    @Provides
+    fun provideLaunchRepository(fake: FakeLaunchRepository): LaunchRepository = fake
 }
 
 @Module
