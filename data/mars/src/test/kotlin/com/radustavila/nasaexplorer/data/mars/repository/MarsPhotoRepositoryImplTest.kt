@@ -12,6 +12,7 @@ import com.radustavila.nasaexplorer.data.mars.local.RoomMarsLocalDataSource
 import com.radustavila.nasaexplorer.data.mars.remote.MarsFixtures
 import com.radustavila.nasaexplorer.data.mars.remote.RetrofitMarsRemoteDataSource
 import com.radustavila.nasaexplorer.data.mars.remote.marsService
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -82,6 +83,28 @@ class MarsPhotoRepositoryImplTest {
         assertEquals(403, ((result as DataResult.Failure).error as AppError.Http).code)
         assertEquals(8, repository.observeRoverPhotos(MarsRover.CURIOSITY).first().size)
         assertTrue(repository.observeRoverPhotos(MarsRover.PERSEVERANCE).first().isEmpty())
+    }
+
+    @Test
+    fun `Curiosity is in the cache while Perseverance is still answering`() = runTest {
+        val perseveranceAnswered = java.util.concurrent.CountDownLatch(1)
+        server.route { request ->
+            if (request.path.orEmpty().startsWith("/api/v1/")) {
+                server.fixtureResponse(MarsFixtures.CURIOSITY_LATEST)
+            } else {
+                perseveranceAnswered.await(20, java.util.concurrent.TimeUnit.SECONDS)
+                server.fixtureResponse(MarsFixtures.PERSEVERANCE_LATEST)
+            }
+        }
+
+        val refresh = backgroundScope.async(kotlinx.coroutines.Dispatchers.IO) { repository.refresh() }
+        val curiosity = repository.observeRoverPhotos(MarsRover.CURIOSITY).first { it.isNotEmpty() }
+        // Perseverance is held until now, so the refresh cannot have finished.
+        assertTrue(refresh.isActive)
+        perseveranceAnswered.countDown()
+
+        assertEquals(8, curiosity.size)
+        assertEquals(DataResult.Success(13), refresh.await())
     }
 
     @Test

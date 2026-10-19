@@ -1,16 +1,21 @@
 package com.radustavila.nasaexplorer.feature.mars.photos
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -114,24 +119,51 @@ internal fun MarsPhotosContent(
                 when {
                     uiState.sols.isNotEmpty() -> SolList(uiState = uiState, onPhotoClick = onPhotoClick)
                     !uiState.isLoaded || uiState.isSyncing -> LoadingState()
-                    uiState.isOffline -> OfflineState(
-                        title = stringResource(R.string.mars_photos_offline_title),
-                        description = stringResource(R.string.mars_photos_offline_description),
-                    )
+                    uiState.isOffline -> ScrollableMessage { messageModifier ->
+                        OfflineState(
+                            title = stringResource(R.string.mars_photos_offline_title),
+                            description = stringResource(R.string.mars_photos_offline_description),
+                            modifier = messageModifier,
+                        )
+                    }
 
-                    uiState.lastAttemptFailed -> EmptyState(
-                        title = stringResource(R.string.mars_photos_failed_title, uiState.rover.displayName),
-                        description = stringResource(R.string.mars_photos_failed_description),
-                        onRetry = onRefresh,
-                    )
+                    uiState.lastAttemptFailed -> ScrollableMessage { messageModifier ->
+                        EmptyState(
+                            title = stringResource(R.string.mars_photos_failed_title, uiState.rover.displayName),
+                            description = stringResource(R.string.mars_photos_failed_description),
+                            onRetry = onRefresh,
+                            modifier = messageModifier,
+                        )
+                    }
 
-                    else -> EmptyState(
-                        title = stringResource(R.string.mars_photos_empty_title, uiState.rover.displayName),
-                        description = stringResource(R.string.mars_photos_empty_description),
-                        onRetry = onRefresh,
-                    )
+                    else -> ScrollableMessage { messageModifier ->
+                        EmptyState(
+                            title = stringResource(R.string.mars_photos_empty_title, uiState.rover.displayName),
+                            description = stringResource(R.string.mars_photos_empty_description),
+                            onRetry = onRefresh,
+                            modifier = messageModifier,
+                        )
+                    }
                 }
             }
+        }
+    }
+}
+
+/**
+ * A message that is centred while it fits and scrolls once it does not (landscape), which also lets
+ * pull-to-refresh work over it.
+ */
+@Composable
+private fun ScrollableMessage(content: @Composable (Modifier) -> Unit) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val viewportHeight = maxHeight
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+        ) {
+            content(Modifier.heightIn(min = viewportHeight))
         }
     }
 }
