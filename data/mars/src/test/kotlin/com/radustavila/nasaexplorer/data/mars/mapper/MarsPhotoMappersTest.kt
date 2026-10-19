@@ -47,19 +47,25 @@ class MarsPhotoMappersTest {
     }
 
     @Test
-    fun `Perseverance thumbnails are dropped and renditions are picked by size`() {
+    fun `Perseverance renditions are picked by size`() {
         val photos = perseveranceFixture().images.mapNotNull { it.toDomainOrNull() }
 
-        assertEquals(5, photos.size)
+        assertEquals(6, photos.size)
         val navcam = photos.first()
         assertEquals(MarsRover.PERSEVERANCE, navcam.rover)
-        assertEquals(4, navcam.sol)
+        assertEquals(2013, navcam.sol)
         assertEquals("NAVCAM_LEFT", navcam.cameraId)
         assertEquals("Left Navigation Camera (Navcam)", navcam.cameraName)
-        assertEquals(Instant.parse("2021-02-23T04:40:31Z"), navcam.takenAt)
+        // The feed gives UTC times without an offset.
+        assertEquals(Instant.parse("2026-10-19T01:41:29.709Z"), navcam.takenAt)
         assertTrue(navcam.imageUrl.endsWith("_1200.jpg"))
         assertTrue(navcam.thumbnailUrl!!.endsWith("_320.jpg"))
         assertEquals(navcam.thumbnailUrl, navcam.previewUrl)
+    }
+
+    @Test
+    fun `Perseverance thumbnails are dropped`() {
+        assertNull(perseverance(sampleType = "Thumbnail").toDomainOrNull())
     }
 
     @Test
@@ -109,6 +115,7 @@ class MarsPhotoMappersTest {
         sol: Int? = 1,
         instrument: String? = "NAVCAM_LEFT",
         dateTakenUtc: String? = null,
+        sampleType: String = "Full",
         files: PerseveranceImageFilesDto = PerseveranceImageFilesDto(
             large = "https://m/l.jpg",
             small = "https://m/s.jpg",
@@ -118,7 +125,7 @@ class MarsPhotoMappersTest {
         sol = sol,
         camera = PerseveranceCameraDto(instrument = instrument),
         title = "Mars Perseverance Sol 1: Left Navigation Camera (Navcam)",
-        sampleType = "Full",
+        sampleType = sampleType,
         dateTakenUtc = dateTakenUtc,
         imageFiles = files,
     )

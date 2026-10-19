@@ -20,13 +20,62 @@ class GibsTileInterceptorTest {
 
     private val outcomes = mutableListOf<TileLoadStatus>()
 
+    private val maskedTiles = mutableListOf<String>()
+
+    /** Stands in for [NoDataMask]: "masks" tiles whose body says they have no-data. */
+    private val fakeMask: (ByteArray) -> ByteArray? = { tile ->
+        maskedTiles += tile.decodeToString()
+        if (tile.decodeToString() == "jpeg with no-data") "png".encodeToByteArray() else null
+    }
+
     private fun client(host: String = server.hostName) = OkHttpClient.Builder()
         .retryOnConnectionFailure(false)
-        .addInterceptor(GibsTileInterceptor(onOutcome = outcomes::add, maxAgeSeconds = 3_600, host = host))
+        .addInterceptor(
+            GibsTileInterceptor(onOutcome = outcomes::add, maxAgeSeconds = 3_600, host = host, noDataMask = fakeMask),
+        )
         .build()
 
-    private fun get(client: OkHttpClient = client()) =
-        client.newCall(Request.Builder().url(server.baseUrl + "tile.jpg").build()).execute()
+    private fun get(client: OkHttpClient = client(), path: String = "tile.jpg") =
+        client.newCall(Request.Builder().url(server.baseUrl + path).build()).execute()
+
+    private fun enqueueTile(body: String, contentType: String = "image/jpeg") {
+        server.enqueue(MockResponse().setResponseCode(200).setHeader("Content-Type", contentType).setBody(body))
+    }
+
+    @Test
+    fun `imagery no-data is masked and the tile becomes a PNG`() {
+        enqueueTile("jpeg with no-data")
+
+        get(path = "VIIRS_SNPP_CorrectedReflectance_TrueColor/default/2026-10-18/L9/2/0/2.jpg").use { response ->
+            assertEquals("image/png", response.header("Content-Type"))
+            assertEquals("png", response.body.string())
+        }
+    }
+
+    @Test
+    fun `an imagery tile without no-data keeps its JPEG`() {
+        enqueueTile("jpeg")
+
+        get(path = "VIIRS_SNPP_CorrectedReflectance_TrueColor/default/2026-10-18/L9/4/5/8.jpg").use { response ->
+            assertEquals("image/jpeg", response.header("Content-Type"))
+            assertEquals("jpeg", response.body.string())
+        }
+        assertEquals(listOf("jpeg"), maskedTiles)
+    }
+
+    @Test
+    fun `the Blue Marble base and PNG layers are never masked`() {
+        enqueueTile("jpeg with no-data")
+        enqueueTile("jpeg with no-data", contentType = "image/png")
+
+        get(path = "BlueMarble_ShadedRelief_Bathymetry/default/L8/1/0/0.jpeg").use { response ->
+            assertEquals("jpeg with no-data", response.body.string())
+        }
+        get(path = "VIIRS_Black_Marble/default/2016-01-01/L8/1/0/0.png").use { response ->
+            assertEquals("jpeg with no-data", response.body.string())
+        }
+        assertEquals(emptyList<String>(), maskedTiles)
+    }
 
     @Test
     fun `GIBS no-store headers are replaced so the ambient cache can serve tiles offline`() {
