@@ -1,9 +1,11 @@
 package com.radustavila.nasaexplorer.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.SatelliteAlt
 import androidx.navigation.NavHostController
 import com.radustavila.nasaexplorer.R
+import com.radustavila.nasaexplorer.feature.earthevents.navigateToEarthEvents
 import com.radustavila.nasaexplorer.feature.earthmap.navigateToEarthMap
 import com.radustavila.nasaexplorer.ui.hub.HubEntry
 
@@ -19,5 +21,12 @@ internal fun earthHubEntries(navController: NavHostController): List<HubEntry> =
         titleRes = R.string.earth_satellite_map_title,
         descriptionRes = R.string.earth_satellite_map_description,
         onClick = { navController.navigateToEarthMap() },
+    ),
+    HubEntry(
+        key = "earth-events",
+        icon = Icons.Outlined.Public,
+        titleRes = R.string.earth_live_events_title,
+        descriptionRes = R.string.earth_live_events_description,
+        onClick = { navController.navigateToEarthEvents() },
     ),
 )

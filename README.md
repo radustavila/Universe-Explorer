@@ -50,6 +50,7 @@ The bottom bar has five tabs: **Today · Universe · Earth · Favourites · More
 | **Today (feed)** | Chronological APOD feed with thumbnail, title, date, media-type badge and favourite state. Pull to refresh, infinite scroll backwards through the archive, offline banner, empty/offline/error states. |
 | **Details** | Full-size image (HD when available) or video still with a "watch video" action, title, date, explanation, copyright, favourite toggle. |
 | **Universe gallery** | The Universe tab's home: curated rails of Webb and Hubble images (galaxies, nebulae, black holes, the Milky Way) cached for offline use, full-text search over NASA's image, video and audio library with media-type and year filters, and a details screen with zoom, in-app playback, download of the original and saving to Favourites. Other Universe features are listed above the rails. |
+| **Live Earth events** (Earth tab) | Wildfires, storms, volcanoes, ice and floods from NASA EONET on the satellite map: markers coloured by category, a category filter, storm tracks, and a sheet per event (category, last update, magnitude, source link) whose "Show imagery" switches the map to that day and a GIBS layer EONET suggests. Works offline from the cache; a "Right now on Earth" card on Today counts the open events. |
 | **Favorites** | Saved items of every source (APOD today; library images, rover and Earth photos as they land), drawn from a snapshot taken when saved. Works with the network fully disabled. |
 | **Home screen widget** | The latest picture with its title and date, re-rendered after every sync; tapping it opens that entry's details. |
 | **New-entry notification** | Opt-in from the bell on the feed's top bar. After a sync brings in a newer entry, posts its title and picture; tapping opens the details screen. |
@@ -185,6 +186,7 @@ flowchart BT
 | `:core:testing` | **Pure Kotlin** | Fakes for every domain contract, test data builders, `MainDispatcherRule`, `FixtureServer` (recorded JSON through MockWebServer). Shared by all test source sets. |
 | `:data:nasa` | Android library | NASA DTOs and endpoints, remote/local data sources, mappers, `ApodRepositoryImpl`, sync worker and scheduler, API key handling. |
 | `:data:nasaimages` | Android library | NASA Image and Video Library: Retrofit service, DTOs, mappers to `NasaMedia`, its own small Room database (rails and saved items), in-memory search page cache, `NasaMediaCacheEvictor`. |
+| `:data:earthevents` | Android library | NASA EONET: open natural events (Point and Polygon geometry) and their suggested GIBS layers, its own small Room database (`earth_events.db`), a 3-hourly sync worker, `EarthEventsCacheEvictor`. |
 | `:feature:*` | Android libraries | One screen each: Compose UI, ViewModel, UI state, and its own type-safe navigation contract. |
 | `:feature:universe` | Android library | Universe gallery (rails and search) and the NASA library details screen. |
 | `:feature:widget` | Android library | Glance home screen widget for the latest entry and the `LatestApodWidgetUpdater` implementation. |
