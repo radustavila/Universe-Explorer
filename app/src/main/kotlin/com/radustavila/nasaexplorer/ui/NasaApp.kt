@@ -82,7 +82,7 @@ private fun NavDestination?.isOn(destination: TopLevelDestination): Boolean =
  * Switches tabs keeping one back stack per tab: the current tab's stack is saved, the target's is
  * restored, and re-selecting a tab does not stack a second copy of it.
  */
-private fun NavHostController.navigateToTopLevel(destination: TopLevelDestination) {
+internal fun NavHostController.navigateToTopLevel(destination: TopLevelDestination) {
     navigate(
         destination.graph,
         navOptions {

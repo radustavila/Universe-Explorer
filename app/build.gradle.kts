@@ -90,6 +90,7 @@ dependencies {
     androidTestImplementation(projects.core.location)
     androidTestImplementation(projects.feature.sky)
     androidTestImplementation(projects.data.epic)
+    androidTestImplementation(projects.feature.earth)
     androidTestImplementation(projects.feature.feed)
     androidTestImplementation(projects.feature.details)
     androidTestImplementation(projects.feature.favorites)

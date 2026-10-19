@@ -12,6 +12,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -25,10 +26,12 @@ import com.radustavila.nasaexplorer.core.model.Apod
 import com.radustavila.nasaexplorer.core.model.GalleryRail
 import com.radustavila.nasaexplorer.core.model.MediaType
 import com.radustavila.nasaexplorer.core.testing.data.TestApods
+import com.radustavila.nasaexplorer.core.testing.data.TestEpicImages
 import com.radustavila.nasaexplorer.core.testing.data.TestMarsPhotos
 import com.radustavila.nasaexplorer.core.testing.data.TestNasaMedia
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEpicRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsPhotoRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNasaMediaRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
@@ -38,6 +41,8 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeSatelliteRepository
 import com.radustavila.nasaexplorer.feature.details.DETAILS_CONTENT_TEST_TAG
 import com.radustavila.nasaexplorer.feature.details.VIDEO_PLAYER_ERROR_TEST_TAG
 import com.radustavila.nasaexplorer.feature.details.VIDEO_PLAYER_TEST_TAG
+import com.radustavila.nasaexplorer.feature.earth.EARTH_PAGER_TEST_TAG
+import com.radustavila.nasaexplorer.feature.earth.EARTH_PLAY_BUTTON_TEST_TAG
 import com.radustavila.nasaexplorer.feature.favorites.FAVORITES_LIST_TEST_TAG
 import com.radustavila.nasaexplorer.feature.feed.FEED_LIST_TEST_TAG
 import com.radustavila.nasaexplorer.feature.mars.marsPhotoTestTag
@@ -61,6 +66,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import com.radustavila.nasaexplorer.core.designsystem.R as DesignSystemR
+import com.radustavila.nasaexplorer.feature.earth.R as EarthR
 
 /**
  * End-to-end coverage on a real device/emulator: the real Activity, the real navigation graph, the
@@ -105,6 +111,9 @@ class NasaExplorerEndToEndTest {
 
     @Inject
     lateinit var peopleInSpace: FakePeopleInSpaceRepository
+
+    @Inject
+    lateinit var epicRepository: FakeEpicRepository
 
     private var scenario: ActivityScenario<MainActivity>? = null
 
@@ -253,6 +262,50 @@ class NasaExplorerEndToEndTest {
 
         composeTestRule.onNodeWithTag(MARS_PHOTO_CONTENT_TEST_TAG).assertIsDisplayed()
         composeTestRule.onNodeWithText(photo.cameraName).assertIsDisplayed()
+    }
+
+    @Test
+    fun theEarthTabOpensOnEarthTodayWithTheTabsOtherFeaturesBelow() {
+        epicRepository.setImages(TestEpicImages.day(size = 3))
+        launchApp()
+
+        composeTestRule.onAllNodesWithText(string(R.string.destination_earth)).onFirst().performClick()
+        // Stop the rotation first: a pager that keeps turning would never let Compose go idle.
+        composeTestRule.onNodeWithTag(EARTH_PLAY_BUTTON_TEST_TAG).performClick()
+
+        composeTestRule.onNodeWithTag(EARTH_PAGER_TEST_TAG).assertIsDisplayed()
+        // Opening them is left to their own features' tests (the map would need live tiles).
+        listOf(
+            R.string.earth_satellite_map_title,
+            R.string.earth_live_events_title,
+            R.string.earth_space_weather_title,
+            R.string.earth_neighbourhood_title,
+        ).forEach { title -> composeTestRule.onNodeWithText(string(title)).performScrollTo().assertIsDisplayed() }
+    }
+
+    @Test
+    fun anEarthPhotoSavedOnTheEarthTabReopensFromFavorites() {
+        val day = TestEpicImages.day(size = 3)
+        epicRepository.setImages(day)
+        launchApp()
+
+        composeTestRule.onAllNodesWithText(string(R.string.destination_earth)).onFirst().performClick()
+        composeTestRule.onNodeWithTag(EARTH_PLAY_BUTTON_TEST_TAG).performClick()
+        composeTestRule.onNodeWithTag(FAVORITE_BUTTON_TEST_TAG).performScrollTo().performClick()
+        composeTestRule.onNodeWithContentDescription(string(DesignSystemR.string.content_description_favorite_remove))
+            .assertIsDisplayed()
+
+        composeTestRule.onNodeWithText(string(R.string.destination_favorites)).performClick()
+        composeTestRule.onNodeWithTag(FAVORITES_LIST_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Earth, 16 Oct 2026", substring = true).performClick()
+
+        // Opened for that photo: a way back, held still, and already saved.
+        composeTestRule.onNodeWithContentDescription(string(EarthR.string.earth_today_back)).assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription(string(EarthR.string.earth_today_play)).assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription(string(DesignSystemR.string.content_description_favorite_remove))
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription(string(EarthR.string.earth_today_back)).performClick()
+        composeTestRule.onNodeWithTag(FAVORITES_LIST_TEST_TAG).assertIsDisplayed()
     }
 
     @Test

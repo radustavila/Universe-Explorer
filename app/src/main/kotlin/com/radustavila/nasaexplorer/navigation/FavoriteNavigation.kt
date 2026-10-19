@@ -1,9 +1,11 @@
 package com.radustavila.nasaexplorer.navigation
 
 import androidx.navigation.NavHostController
+import com.radustavila.nasaexplorer.core.model.EpicPhotoRef
 import com.radustavila.nasaexplorer.core.model.FavoriteItem
 import com.radustavila.nasaexplorer.core.model.FavoriteSource
 import com.radustavila.nasaexplorer.feature.details.navigateToDetails
+import com.radustavila.nasaexplorer.feature.earth.navigateToEpicPhoto
 import com.radustavila.nasaexplorer.feature.exoplanets.navigateToExoplanetDetails
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
 import com.radustavila.nasaexplorer.feature.universe.navigateToNasaMedia
@@ -23,9 +25,7 @@ internal fun NavHostController.openFavorite(item: FavoriteItem) {
 
         FavoriteSource.MARS -> navigateToMarsPhoto(item.itemId)
 
-        // Not reachable yet: nothing saves these until their features land.
-        FavoriteSource.EPIC,
-        -> Unit
+        FavoriteSource.EPIC -> EpicPhotoRef.fromFavoriteId(item.itemId)?.let { ref -> navigateToEpicPhoto(ref) }
     }
 }
 

@@ -253,7 +253,12 @@ object TestDataStoreModule {
     @Provides
     @Singleton
     fun provideUserPreferencesRepository(): UserPreferencesRepository = FakeUserPreferencesRepository()
-/** Keeps the Today screen's Earth card off the network too: an empty EPIC cache, a scheduler that never runs. */
+}
+
+/**
+ * Keeps the Earth tab and the Today screen's Earth card off the network too: photos the test seeds,
+ * and a scheduler that never runs.
+ */
 @Module
 @TestInstallIn(components = [SingletonComponent::class], replaces = [EpicDataModule::class])
 object TestEpicDataModule {

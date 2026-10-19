@@ -11,7 +11,7 @@ enum class FavoriteSource(val key: String) {
     /** Astronomy Picture of the Day; item id is the ISO publication date. */
     APOD("apod"),
 
-    /** DSCOVR EPIC whole-Earth photo; item id is the EPIC image name. */
+    /** DSCOVR EPIC whole-Earth photo; item id is [EpicPhotoRef.favoriteId] (`collection/date/identifier`). */
     EPIC("epic"),
 
     /** NASA Image and Video Library; item id is the library's `nasa_id`. */

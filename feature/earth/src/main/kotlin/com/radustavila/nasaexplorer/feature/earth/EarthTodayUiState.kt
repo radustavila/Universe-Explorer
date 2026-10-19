@@ -14,6 +14,10 @@ data class EarthTodayUiState(
     val selectedDate: LocalDate? = null,
     /** Days the date picker may offer, as published by EPIC. Empty until the first sync. */
     val availableDates: Set<LocalDate> = emptySet(),
+    /** Favourite ids of the saved EPIC photos, to fill each frame's heart. */
+    val favoriteIds: Set<String> = emptySet(),
+    /** The photo to start on and hold still (the screen was opened for it), or `null`. */
+    val focusedImageId: String? = null,
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val isOffline: Boolean = false,
@@ -29,4 +33,6 @@ data class EarthTodayUiState(
     val isOfflineEmpty: Boolean get() = isEmpty && isOffline
 
     val canPickDate: Boolean get() = availableDates.isNotEmpty()
+
+    fun isFavorite(image: EpicImage): Boolean = image.ref.favoriteId in favoriteIds
 }

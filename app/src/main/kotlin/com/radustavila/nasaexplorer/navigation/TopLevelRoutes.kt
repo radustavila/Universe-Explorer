@@ -23,13 +23,10 @@ data object FavoritesGraph
 data object MoreGraph
 
 /*
- * Start screens of the tabs that have no feature of their own yet: a hub listing what the tab
- * offers (see `EarthHub.kt`, `MoreHub.kt`). A feature that becomes a tab's first screen replaces
- * its hub as the graph's `startDestination` in `NasaNavHost`, as the gallery did for Universe.
+ * Start screen of a tab that has no feature of its own: a hub listing what the tab offers (see
+ * `MoreHub.kt`). A feature that becomes a tab's first screen replaces its hub as the graph's
+ * `startDestination` in `NasaNavHost`, as the gallery did for Universe and Earth today for Earth.
  */
-
-@Serializable
-data object EarthHomeRoute
 
 @Serializable
 data object MoreHomeRoute

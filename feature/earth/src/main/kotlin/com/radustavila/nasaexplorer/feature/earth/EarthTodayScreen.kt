@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.HorizontalPager
@@ -63,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
+import com.radustavila.nasaexplorer.core.designsystem.component.FavoriteButton
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.NasaAsyncImage
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
@@ -89,6 +91,7 @@ const val EARTH_PLAY_BUTTON_TEST_TAG = "earth-play-button"
 fun EarthTodayScreen(
     onBackClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
+    footer: (@Composable () -> Unit)? = null,
     viewModel: EarthTodayViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -100,7 +103,9 @@ fun EarthTodayScreen(
         onDateSelected = viewModel::onDateSelected,
         onRetry = viewModel::onRetry,
         onErrorDismissed = viewModel::onErrorDismissed,
+        onToggleFavorite = viewModel::onToggleFavorite,
         modifier = modifier,
+        footer = footer,
     )
 }
 
@@ -113,7 +118,9 @@ internal fun EarthTodayContent(
     onDateSelected: (LocalDate?) -> Unit,
     onRetry: () -> Unit,
     onErrorDismissed: () -> Unit,
+    onToggleFavorite: (EpicImage) -> Unit,
     modifier: Modifier = Modifier,
+    footer: (@Composable () -> Unit)? = null,
     /** Tests turn this off: an endless rotation would never let the UI go idle. */
     autoPlay: Boolean = true,
 ) {
@@ -184,24 +191,46 @@ internal fun EarthTodayContent(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
             )
 
-            when {
-                uiState.isLoading && !uiState.hasContent -> LoadingState()
+            // One scroll container for the rotation (or the state standing in for it) and whatever
+            // the footer adds below, so the footer stays reachable whatever state the day is in.
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                val stateModifier = Modifier.height(STATE_HEIGHT)
+                when {
+                    uiState.isLoading && !uiState.hasContent -> LoadingState(modifier = stateModifier)
 
-                uiState.isOfflineEmpty -> OfflineState(
-                    title = stringResource(R.string.earth_today_offline_title),
-                    description = stringResource(R.string.earth_today_offline_description),
-                    onRetry = onRetry,
-                )
+                    uiState.isOfflineEmpty -> OfflineState(
+                        title = stringResource(R.string.earth_today_offline_title),
+                        description = stringResource(R.string.earth_today_offline_description),
+                        onRetry = onRetry,
+                        modifier = stateModifier,
+                    )
 
-                uiState.isEmpty -> EmptyState(
-                    title = errorMessage ?: stringResource(R.string.earth_today_empty_title),
-                    description = stringResource(R.string.earth_today_empty_description),
-                    onRetry = onRetry,
-                )
+                    uiState.isEmpty -> EmptyState(
+                        title = errorMessage ?: stringResource(R.string.earth_today_empty_title),
+                        description = stringResource(R.string.earth_today_empty_description),
+                        onRetry = onRetry,
+                        modifier = stateModifier,
+                    )
 
-                // Keyed by the day and set, so a new selection starts its rotation from the first frame.
-                else -> key(uiState.collection, uiState.displayedDate) {
-                    EarthRotation(images = uiState.images, autoPlay = autoPlay)
+                    // Keyed by the day and set, so a new selection starts its rotation afresh.
+                    else -> key(uiState.collection, uiState.displayedDate) {
+                        EarthRotation(
+                            images = uiState.images,
+                            autoPlay = autoPlay,
+                            initialImageId = uiState.focusedImageId,
+                            isFavorite = uiState::isFavorite,
+                            onToggleFavorite = onToggleFavorite,
+                        )
+                    }
+                }
+
+                footer?.let { content ->
+                    Column(modifier = Modifier.padding(bottom = 16.dp)) { content() }
                 }
             }
         }
@@ -249,11 +278,20 @@ private fun CollectionToggle(
  * While playing, frames are the few-KB thumbnails, which the sync prefetches and therefore play
  * offline. Once paused (or swiped by hand) the frame on screen sharpens to the full JPEG, drawn
  * over its thumbnail; tapping it opens the zoomable full-size view.
+ *
+ * Opened for one photo ([initialImageId], a favourite), it starts on that frame and holds still.
  */
 @Composable
-private fun EarthRotation(images: List<EpicImage>, autoPlay: Boolean) {
-    val pagerState = rememberPagerState(pageCount = { images.size })
-    var isPlaying by rememberSaveable { mutableStateOf(autoPlay) }
+private fun EarthRotation(
+    images: List<EpicImage>,
+    autoPlay: Boolean,
+    initialImageId: String?,
+    isFavorite: (EpicImage) -> Boolean,
+    onToggleFavorite: (EpicImage) -> Unit,
+) {
+    val initialPage = images.indexOfFirst { it.identifier == initialImageId }
+    val pagerState = rememberPagerState(initialPage = initialPage.coerceAtLeast(0), pageCount = { images.size })
+    var isPlaying by rememberSaveable { mutableStateOf(autoPlay && initialPage < 0) }
     var zoomedImage by remember { mutableStateOf<EpicImage?>(null) }
     val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
 
@@ -270,12 +308,7 @@ private fun EarthRotation(images: List<EpicImage>, autoPlay: Boolean) {
     val windowHeight = with(LocalDensity.current) { LocalWindowInfo.current.containerSize.height.toDp() }
     val discSize = minOf(MAX_DISC_WIDTH, windowHeight * DISC_HEIGHT_FRACTION)
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         HorizontalPager(
             state = pagerState,
             key = { page -> images[page].identifier },
@@ -312,6 +345,8 @@ private fun EarthRotation(images: List<EpicImage>, autoPlay: Boolean) {
             frameCount = images.size,
             isPlaying = isPlaying,
             onPlayPause = { isPlaying = !isPlaying },
+            isFavorite = isFavorite(current),
+            onToggleFavorite = { onToggleFavorite(current) },
         )
     }
 
@@ -352,6 +387,8 @@ private fun FrameDetails(
     frameCount: Int,
     isPlaying: Boolean,
     onPlayPause: () -> Unit,
+    isFavorite: Boolean,
+    onToggleFavorite: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -390,6 +427,7 @@ private fun FrameDetails(
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            FavoriteButton(isFavorite = isFavorite, onToggle = onToggleFavorite)
         }
         Text(
             text = stringResource(R.string.earth_today_zoom_hint),
@@ -483,6 +521,7 @@ internal fun GeoPoint.toCoordinateLabel(): String {
 
 private val MAX_DISC_WIDTH = 480.dp
 private const val DISC_HEIGHT_FRACTION = 0.6f
+private val STATE_HEIGHT = 360.dp
 private const val FRAME_DURATION_MILLIS = 1_000L
 
 @Preview
@@ -510,6 +549,7 @@ private fun EarthTodayPreview() {
             onDateSelected = {},
             onRetry = {},
             onErrorDismissed = {},
+            onToggleFavorite = {},
             autoPlay = false,
         )
     }

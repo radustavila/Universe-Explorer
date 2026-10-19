@@ -34,6 +34,8 @@ class NasaExplorerApplication :
 
     @Inject
     lateinit var exoplanetSyncScheduler: ExoplanetSyncScheduler
+
+    @Inject
     lateinit var epicSyncScheduler: EpicSyncScheduler
 
     @Inject
