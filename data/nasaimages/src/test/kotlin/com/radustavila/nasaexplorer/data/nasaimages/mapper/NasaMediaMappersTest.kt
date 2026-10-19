@@ -60,7 +60,11 @@ class NasaMediaMappersTest {
         val item = imageItem(
             links = listOf(
                 RenditionLinkDto(href = "http://images-assets.nasa.gov/image/x/x~large.jpg", rel = "alternate"),
-                RenditionLinkDto(href = "http://images-assets.nasa.gov/image/x/x~orig.jpg", rel = "canonical", size = 4_000_000),
+                RenditionLinkDto(
+                    href = "http://images-assets.nasa.gov/image/x/x~orig.jpg",
+                    rel = "canonical",
+                    size = 4_000_000,
+                ),
             ),
         ).toDomainOrNull()!!
 
@@ -74,7 +78,7 @@ class NasaMediaMappersTest {
         assertEquals("Webb Journey to Space Ep2", video.nasaId)
         assertEquals(NasaMediaType.VIDEO, video.mediaType)
         assertEquals(
-            "https://images-assets.nasa.gov/video/Webb%20Journey%20to%20Space%20Ep2/Webb%20Journey%20to%20Space%20Ep2~thumb.jpg",
+            "$EP2_DIR/Webb%20Journey%20to%20Space%20Ep2~thumb.jpg",
             video.thumbnailUrl,
         )
         // Captions are not an image rendition.
@@ -144,7 +148,7 @@ class NasaMediaMappersTest {
         val url = assetFixture(NasaImagesFixtures.VIDEO_ASSETS).playbackUrlFor(NasaMediaType.VIDEO)
 
         assertEquals(
-            "https://images-assets.nasa.gov/video/Webb%20Journey%20to%20Space%20Ep2/Webb%20Journey%20to%20Space%20Ep2~medium.mp4",
+            "$EP2_DIR/Webb%20Journey%20to%20Space%20Ep2~medium.mp4",
             url,
         )
     }
@@ -154,7 +158,7 @@ class NasaMediaMappersTest {
         val url = assetFixture(NasaImagesFixtures.AUDIO_ASSETS).playbackUrlFor(NasaMediaType.AUDIO)
 
         assertEquals(
-            "https://images-assets.nasa.gov/audio/Ep433_Callsign%20White%20Flight/Ep433_Callsign%20White%20Flight~128k.mp3",
+            "$EP433_DIR/Ep433_Callsign%20White%20Flight~128k.mp3",
             url,
         )
     }
@@ -185,4 +189,9 @@ class NasaMediaMappersTest {
         data = listOf(SearchItemDataDto(nasaId = nasaId, title = title, mediaType = mediaType, keywords = keywords)),
         links = links,
     )
+
+    private companion object {
+        const val EP2_DIR = "https://images-assets.nasa.gov/video/Webb%20Journey%20to%20Space%20Ep2"
+        const val EP433_DIR = "https://images-assets.nasa.gov/audio/Ep433_Callsign%20White%20Flight"
+    }
 }

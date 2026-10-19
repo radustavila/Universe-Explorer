@@ -63,7 +63,11 @@ class NasaMediaRepositoryImpl @Inject constructor(
 
         val rails = responses
             .associate { (rail, result) ->
-                rail to (result as DataResult.Success).data.collection.items.mapNotNull { it.toDomainOrNull() }
+                rail to (result as DataResult.Success).data.collection.items
+                    .mapNotNull { it.toDomainOrNull() }
+                    // Untitled uploads (the title is just the id) are mostly engineering shots that
+                    // match on words like "C-5 Galaxy"; a curated rail does without them.
+                    .filterNot { it.title == it.nasaId }
             }
             .filterValues(List<NasaMedia>::isNotEmpty)
         // Nothing usable at all: keep showing the old rails rather than an empty tab.

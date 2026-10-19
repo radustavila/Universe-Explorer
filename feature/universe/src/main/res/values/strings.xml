@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="gallery_title">Universe</string>
-    <string name="gallery_search_hint">Search NASA images, videos and audio</string>
+    <string name="gallery_search_hint">Search the NASA library</string>
     <string name="gallery_search_clear">Clear search</string>
 
     <string name="gallery_rail_webb_galaxies">Webb galaxies</string>

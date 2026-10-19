@@ -61,6 +61,7 @@ dependencies {
     androidTestImplementation(projects.core.designsystem)
     androidTestImplementation(projects.core.network)
     androidTestImplementation(projects.core.database)
+    androidTestImplementation(projects.core.datastore)
     androidTestImplementation(projects.data.nasa)
     androidTestImplementation(projects.data.launches)
     androidTestImplementation(projects.data.nasaimages)

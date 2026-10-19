@@ -1,11 +1,14 @@
 package com.radustavila.nasaexplorer.di
 
 import com.radustavila.nasaexplorer.core.database.di.FavoritesModule
+import com.radustavila.nasaexplorer.core.datastore.di.DataStoreBindingModule
 import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
 import com.radustavila.nasaexplorer.core.domain.repository.FavoritesRepository
 import com.radustavila.nasaexplorer.core.domain.repository.LaunchRepository
 import com.radustavila.nasaexplorer.core.domain.repository.NasaMediaRepository
+import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepository
+import com.radustavila.nasaexplorer.core.domain.repository.UserPreferencesRepository
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
 import com.radustavila.nasaexplorer.core.network.di.NetworkBindingModule
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
@@ -13,7 +16,9 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeFavoritesRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNasaMediaRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
+import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
+import com.radustavila.nasaexplorer.core.testing.fake.FakeUserPreferencesRepository
 import com.radustavila.nasaexplorer.data.launches.di.LaunchesDataModule
 import com.radustavila.nasaexplorer.data.nasa.di.NasaDataModule
 import com.radustavila.nasaexplorer.data.nasaimages.di.NasaImagesDataModule
@@ -91,6 +96,24 @@ object TestNasaImagesDataModule {
 
     @Provides
     fun provideNasaMediaRepository(fake: FakeNasaMediaRepository): NasaMediaRepository = fake
+}
+
+/**
+ * Every test builds a fresh Hilt component, and with it a second DataStore on the same file while
+ * the previous one is still alive, which DataStore refuses. Per-source sync bookkeeping (the
+ * Universe gallery records its refreshes) and preferences are kept in memory instead.
+ */
+@Module
+@TestInstallIn(components = [SingletonComponent::class], replaces = [DataStoreBindingModule::class])
+object TestDataStoreModule {
+
+    @Provides
+    @Singleton
+    fun provideSyncMetadataRepository(): SyncMetadataRepository = FakeSyncMetadataRepository()
+
+    @Provides
+    @Singleton
+    fun provideUserPreferencesRepository(): UserPreferencesRepository = FakeUserPreferencesRepository()
 }
 
 @Module
