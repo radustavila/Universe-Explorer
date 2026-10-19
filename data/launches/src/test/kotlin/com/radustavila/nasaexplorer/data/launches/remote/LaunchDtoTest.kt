@@ -1,7 +1,7 @@
 package com.radustavila.nasaexplorer.data.launches.remote
 
 import com.radustavila.nasaexplorer.core.model.LaunchStatus
-import com.radustavila.nasaexplorer.data.launches.LaunchFixtures
+import com.radustavila.nasaexplorer.core.testing.http.Fixtures
 import com.radustavila.nasaexplorer.data.launches.mapper.toDomain
 import com.radustavila.nasaexplorer.data.launches.mapper.toEntityOrNull
 import com.radustavila.nasaexplorer.data.launches.remote.dto.LaunchDto
@@ -16,7 +16,7 @@ class LaunchDtoTest {
 
     private val json = Json { ignoreUnknownKeys = true; explicitNulls = false; coerceInputValues = true }
 
-    private val launches = json.decodeFromString<LaunchListDto>(LaunchFixtures.UPCOMING_DETAILED)
+    private val launches = json.decodeFromString<LaunchListDto>(Fixtures.read(UPCOMING_FIXTURE))
         .results
         .map { dto -> checkNotNull(dto.toEntityOrNull()).toDomain() }
 
@@ -82,3 +82,9 @@ class LaunchDtoTest {
         assertEquals(LaunchStatus.UNKNOWN.id, valid.toEntityOrNull()?.statusId)
     }
 }
+
+/**
+ * `GET /2.3.0/launches/upcoming/?limit=5&mode=detailed&hide_recent_previous=true`, recorded from
+ * lldev.thespacedevs.com on 2026-10-19 and trimmed of nested fields the app never reads.
+ */
+internal const val UPCOMING_FIXTURE = "launches/upcoming.json"

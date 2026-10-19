@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.radustavila.nasaexplorer.feature.launches.NextLaunchesCard
 
 /**
  * The cards on the Today tab, above the APOD feed, top to bottom. The registry for every feature
@@ -20,6 +21,7 @@ import androidx.navigation.NavHostController
  */
 @Suppress("UNUSED_PARAMETER", "UnusedParameter") // Cards navigate with it once features land.
 internal fun todayCards(navController: NavHostController): List<@Composable () -> Unit> = listOf(
+    { NextLaunchesCard() }, // F2
 )
 
 /** The feed's header slot: the cards in a column, or no header at all while there are none. */

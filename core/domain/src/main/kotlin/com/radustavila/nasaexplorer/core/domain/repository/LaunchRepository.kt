@@ -14,19 +14,12 @@ interface LaunchRepository {
     fun observeUpcomingLaunches(): Flow<List<Launch>>
 
     /**
-     * Replaces the cache with the current list of upcoming launches, unless the cache was refreshed
-     * too recently. Launch Library 2 allows only a handful of anonymous calls per hour, so this makes
-     * at most one network call and is a no-op inside the minimum refresh interval.
+     * Replaces the cache with the current list of upcoming launches in exactly one network call. How
+     * often that may happen is the caller's decision (see `SynchronizeUpcomingLaunchesUseCase`).
      *
      * On failure the cached launches are kept.
+     *
+     * @return the number of launches now cached.
      */
-    suspend fun refreshUpcomingLaunches(): DataResult<LaunchRefreshOutcome>
-}
-
-enum class LaunchRefreshOutcome {
-    /** The network was called and the cache now holds its answer. */
-    REFRESHED,
-
-    /** The cache is still fresh enough; no network call was made. */
-    SKIPPED,
+    suspend fun refreshUpcomingLaunches(): DataResult<Int>
 }

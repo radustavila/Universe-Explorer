@@ -25,13 +25,4 @@ interface LaunchDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(launches: List<LaunchEntity>)
-
-    @Query(
-        "SELECT next_allowed_at_epoch_millis FROM launch_refresh " +
-            "WHERE id = ${LaunchRefreshEntity.SINGLE_ROW_ID}",
-    )
-    suspend fun nextAllowedRefreshAt(): Long?
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun setRefreshState(state: LaunchRefreshEntity)
 }

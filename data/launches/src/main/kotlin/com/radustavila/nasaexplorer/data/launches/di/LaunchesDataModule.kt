@@ -4,13 +4,12 @@ import android.content.Context
 import androidx.room.Room
 import com.radustavila.nasaexplorer.core.domain.repository.LaunchRepository
 import com.radustavila.nasaexplorer.core.network.http.RetrofitFactory
+import com.radustavila.nasaexplorer.core.network.ratelimit.HostRateBudget
 import com.radustavila.nasaexplorer.data.launches.BuildConfig
 import com.radustavila.nasaexplorer.data.launches.local.LaunchDao
 import com.radustavila.nasaexplorer.data.launches.local.LaunchLocalDataSource
-import com.radustavila.nasaexplorer.data.launches.local.LaunchRefreshThrottle
 import com.radustavila.nasaexplorer.data.launches.local.LaunchesDatabase
 import com.radustavila.nasaexplorer.data.launches.local.RoomLaunchLocalDataSource
-import com.radustavila.nasaexplorer.data.launches.local.RoomLaunchRefreshThrottle
 import com.radustavila.nasaexplorer.data.launches.remote.LaunchLibraryService
 import com.radustavila.nasaexplorer.data.launches.remote.LaunchRemoteDataSource
 import com.radustavila.nasaexplorer.data.launches.remote.RetrofitLaunchRemoteDataSource
@@ -21,6 +20,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dagger.multibindings.IntoSet
+import java.net.URI
 import javax.inject.Qualifier
 import javax.inject.Singleton
 import retrofit2.Retrofit
@@ -42,9 +43,6 @@ interface LaunchesDataModule {
 
     @Binds
     fun bindLaunchRemoteDataSource(impl: RetrofitLaunchRemoteDataSource): LaunchRemoteDataSource
-
-    @Binds
-    fun bindLaunchRefreshThrottle(impl: RoomLaunchRefreshThrottle): LaunchRefreshThrottle
 }
 
 @Module
@@ -67,6 +65,15 @@ object LaunchesInfrastructureModule {
     @LaunchLibraryApi
     fun provideLaunchLibraryRetrofit(retrofitFactory: RetrofitFactory): Retrofit =
         retrofitFactory.create(baseUrl = BuildConfig.LAUNCH_LIBRARY_BASE_URL)
+
+    /**
+     * `:core:network` already budgets the production host; this covers the dev host debug builds
+     * use, so development traffic is held to the same 15 calls an hour.
+     */
+    @Provides
+    @IntoSet
+    fun provideLaunchLibraryRateBudget(): HostRateBudget =
+        HostRateBudget.LAUNCH_LIBRARY.copy(host = URI(BuildConfig.LAUNCH_LIBRARY_BASE_URL).host)
 
     @Provides
     @Singleton

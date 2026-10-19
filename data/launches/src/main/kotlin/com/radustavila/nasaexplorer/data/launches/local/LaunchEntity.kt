@@ -22,16 +22,3 @@ data class LaunchEntity(
     @ColumnInfo(name = "page_url") val pageUrl: String,
 )
 
-/**
- * Single-row refresh bookkeeping: the earliest time the next Launch Library 2 call may be made. Kept
- * in the same database as the cache so both survive (and are cleared) together.
- */
-@Entity(tableName = "launch_refresh")
-data class LaunchRefreshEntity(
-    @PrimaryKey val id: Int = SINGLE_ROW_ID,
-    @ColumnInfo(name = "next_allowed_at_epoch_millis") val nextAllowedAtEpochMillis: Long,
-) {
-    companion object {
-        const val SINGLE_ROW_ID = 0
-    }
-}
