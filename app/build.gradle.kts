@@ -40,6 +40,7 @@ dependencies {
     implementation(projects.feature.widget)
     implementation(projects.feature.launches)
     implementation(projects.feature.universe)
+    implementation(projects.feature.earthmap)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
