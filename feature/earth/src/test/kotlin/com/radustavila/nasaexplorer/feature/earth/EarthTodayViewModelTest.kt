@@ -10,19 +10,26 @@ import com.radustavila.nasaexplorer.core.domain.usecase.FetchEpicDayUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEpicAvailableDatesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEpicDayUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEpicFavoriteIdsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEpicSyncStateUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveLatestEpicDayUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEpicUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RemoveFavoriteUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.SaveFavoriteUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ToggleEpicFavoriteUseCase
 import com.radustavila.nasaexplorer.core.model.EpicCollection
 import com.radustavila.nasaexplorer.core.model.SyncState
 import com.radustavila.nasaexplorer.core.testing.data.TestEpicImages
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEpicRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEpicSyncScheduler
+import com.radustavila.nasaexplorer.core.testing.fake.FakeFavoritesRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
+import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
 import java.time.LocalDate
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -36,6 +43,7 @@ class EarthTodayViewModelTest {
     private val repository = FakeEpicRepository()
     private val scheduler = FakeEpicSyncScheduler()
     private val networkMonitor = FakeNetworkMonitor()
+    private val favorites = FakeFavoritesRepository()
 
     private val latestDay = TestEpicImages.day(size = 3)
     private val archiveDate = LocalDate.of(2026, 9, 28)
@@ -193,6 +201,60 @@ class EarthTodayViewModelTest {
         }
     }
 
+    @Test
+    fun `a photo is saved as a favourite and its heart fills`() = runTest {
+        repository.setImages(latestDay)
+        val viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            awaitUntil { it.hasContent }
+            viewModel.onToggleFavorite(latestDay[1])
+
+            val state = awaitUntil { it.favoriteIds.isNotEmpty() }
+            assertTrue(state.isFavorite(latestDay[1]))
+            assertFalse(state.isFavorite(latestDay[0]))
+
+            viewModel.onToggleFavorite(latestDay[1])
+            assertTrue(awaitUntil { it.favoriteIds.isEmpty() }.images.isNotEmpty())
+        }
+        assertTrue(favorites.current.isEmpty())
+    }
+
+    @Test
+    fun `opened for one photo it shows that set and day, starting on that photo`() = runTest {
+        val enhancedDay = TestEpicImages.day(date = archiveDate, collection = EpicCollection.ENHANCED)
+        repository.setImages(latestDay + enhancedDay)
+        val route = SavedStateHandle(
+            mapOf("collection" to "enhanced", "date" to archiveDate.toString(), "imageId" to enhancedDay[2].identifier),
+        )
+
+        val viewModel = createViewModel(route)
+
+        viewModel.uiState.test {
+            val state = awaitUntil { it.hasContent }
+            assertEquals(enhancedDay, state.images)
+            assertEquals(enhancedDay[2].identifier, state.focusedImageId)
+
+            // Moving on to another day is a new rotation, no longer about that photo.
+            viewModel.onDateSelected(null)
+            assertNull(awaitUntil { it.selectedDate == null }.focusedImageId)
+        }
+        assertTrue(repository.fetchedDays.isEmpty())
+    }
+
+    @Test
+    fun `a favourite whose day has left the cache is downloaded again`() = runTest {
+        val oldDay = TestEpicImages.day(date = LocalDate.of(2025, 1, 2), size = 2)
+        repository.fetchDayResult = DataResult.Success(2)
+        repository.fetchDayImages = oldDay
+        val route = SavedStateHandle(mapOf("collection" to "natural", "date" to "2025-01-02", "imageId" to oldDay[1].identifier))
+
+        createViewModel(route).uiState.test {
+            assertEquals(oldDay, awaitUntil { it.hasContent }.images)
+        }
+        assertEquals(listOf(EpicCollection.NATURAL to LocalDate.of(2025, 1, 2)), repository.fetchedDays)
+    }
+
     private suspend fun ReceiveTurbine<EarthTodayUiState>.awaitUntil(
         predicate: (EarthTodayUiState) -> Boolean,
     ): EarthTodayUiState {
@@ -208,7 +270,12 @@ class EarthTodayViewModelTest {
         observeEpicAvailableDates = ObserveEpicAvailableDatesUseCase(repository),
         observeConnectivity = ObserveConnectivityUseCase(networkMonitor),
         observeEpicSyncState = ObserveEpicSyncStateUseCase(scheduler),
+        observeEpicFavoriteIds = ObserveEpicFavoriteIdsUseCase(favorites),
         refreshEpic = RefreshEpicUseCase(scheduler),
         fetchEpicDay = FetchEpicDayUseCase(repository),
+        toggleEpicFavorite = ToggleEpicFavoriteUseCase(
+            saveFavorite = SaveFavoriteUseCase(favorites, FakeTimeProvider()),
+            removeFavorite = RemoveFavoriteUseCase(favorites),
+        ),
     )
 }

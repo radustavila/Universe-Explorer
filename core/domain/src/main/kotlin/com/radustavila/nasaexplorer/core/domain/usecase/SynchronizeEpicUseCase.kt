@@ -4,12 +4,19 @@ import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
 import com.radustavila.nasaexplorer.core.domain.repository.EpicRepository
+import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
 import com.radustavila.nasaexplorer.core.model.EpicCollection
+import com.radustavila.nasaexplorer.core.model.SyncSource
+import java.time.Duration
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 
 /**
  * The one definition of "synchronise the EPIC cache", run by the EPIC sync worker only.
+ *
+ * Goes through [RefreshSourceUseCase] as [SyncSource.EPIC]: the outcome is recorded for the Debug
+ * screen, and a sync requested again within [REFRESH_INTERVAL] of a success is skipped. EPIC
+ * publishes about once a day, so opening Today and the Earth tab need not download it every time.
  *
  * Both collections are refreshed on every run so the natural/enhanced toggle works offline. Each
  * collection is attempted even when the other fails; the first failure is what gets reported, so
@@ -19,12 +26,18 @@ import kotlinx.coroutines.flow.first
 class SynchronizeEpicUseCase @Inject constructor(
     private val epicRepository: EpicRepository,
     private val networkMonitor: NetworkMonitor,
+    private val refreshSource: RefreshSourceUseCase,
 ) {
-    suspend operator fun invoke(): DataResult<Int> {
+    suspend operator fun invoke(): SourceRefreshResult<Int> {
+        // Not worth recording as a failure of the source: nothing was even attempted.
         if (!networkMonitor.isOnline.first()) {
-            return DataResult.Failure(AppError.NoConnection)
+            return SourceRefreshResult.Completed(DataResult.Failure(AppError.NoConnection))
         }
 
+        return refreshSource(SyncSource.EPIC, minInterval = REFRESH_INTERVAL) { refreshAllCollections() }
+    }
+
+    private suspend fun refreshAllCollections(): DataResult<Int> {
         val results = EpicCollection.entries.map { collection ->
             epicRepository.refreshLatest(collection).also { result ->
                 if (result is DataResult.Success) epicRepository.prefetchLatestThumbnails(collection)
@@ -33,5 +46,9 @@ class SynchronizeEpicUseCase @Inject constructor(
 
         return results.firstOrNull { it is DataResult.Failure }
             ?: DataResult.Success(results.sumOf { (it as DataResult.Success).data })
+    }
+
+    companion object {
+        val REFRESH_INTERVAL: Duration = Duration.ofHours(3)
     }
 }

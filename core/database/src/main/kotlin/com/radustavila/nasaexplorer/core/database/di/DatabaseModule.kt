@@ -32,5 +32,7 @@ object DatabaseModule {
 
     @Provides
     fun provideFavoriteDao(database: NasaDatabase): FavoriteDao = database.favoriteDao()
+
+    @Provides
     fun provideEpicDao(database: NasaDatabase): EpicDao = database.epicDao()
 }

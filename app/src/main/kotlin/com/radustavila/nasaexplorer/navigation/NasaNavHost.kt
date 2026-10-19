@@ -10,6 +10,8 @@ import com.radustavila.nasaexplorer.R
 import com.radustavila.nasaexplorer.feature.debug.debugScreen
 import com.radustavila.nasaexplorer.feature.details.detailsScreen
 import com.radustavila.nasaexplorer.feature.details.navigateToDetails
+import com.radustavila.nasaexplorer.feature.earth.EarthTodayRoute
+import com.radustavila.nasaexplorer.feature.earth.earthTodayScreen
 import com.radustavila.nasaexplorer.feature.earthevents.earthEventsScreen
 import com.radustavila.nasaexplorer.feature.earthmap.earthMapScreen
 import com.radustavila.nasaexplorer.feature.exoplanets.exoplanetDetailsScreen
@@ -73,13 +75,12 @@ fun NasaNavHost(
             skyTonightScreen(onBackClick = navController::popBackStack)
         }
 
-        navigation<EarthGraph>(startDestination = EarthHomeRoute) {
-            composable<EarthHomeRoute> {
-                HubScreen(
-                    titleRes = R.string.destination_earth,
-                    entries = earthHubEntries(navController),
-                )
-            }
+        // Earth today is the tab's home; the tab's other features are listed below the rotation.
+        navigation<EarthGraph>(startDestination = EarthTodayRoute()) {
+            earthTodayScreen(
+                onBackClick = navController::popBackStack,
+                footer = earthFooter(navController),
+            )
             earthMapScreen(onBackClick = navController::popBackStack)
             earthEventsScreen(onBackClick = navController::popBackStack)
             spaceWeatherScreen(onBackClick = navController::popBackStack)

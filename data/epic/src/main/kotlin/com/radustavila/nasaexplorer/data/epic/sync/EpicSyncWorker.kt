@@ -11,6 +11,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
 import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeEpicUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -19,7 +20,8 @@ import java.util.concurrent.TimeUnit
 
 /**
  * Background synchronisation of the EPIC cache. Like the APOD worker it owns one decision only:
- * retry (transient failure, attempts left) or fail with the reason encoded for observers.
+ * retry (transient failure, attempts left) or fail with the reason encoded for observers. Whether a
+ * sync is due, and the per-source record of how it went, belong to [SynchronizeEpicUseCase].
  */
 @HiltWorker
 class EpicSyncWorker @AssistedInject constructor(
@@ -28,13 +30,19 @@ class EpicSyncWorker @AssistedInject constructor(
     private val synchronizeEpic: SynchronizeEpicUseCase,
 ) : CoroutineWorker(appContext, workerParameters) {
 
-    override suspend fun doWork(): Result = when (val result = synchronizeEpic()) {
-        is DataResult.Success -> Result.success(workDataOf(KEY_SYNCED_COUNT to result.data))
+    override suspend fun doWork(): Result {
+        // Skipped: synced recently enough, nothing to report.
+        val result = (synchronizeEpic() as? SourceRefreshResult.Completed)?.result
+            ?: return Result.success(workDataOf(KEY_SYNCED_COUNT to 0))
 
-        is DataResult.Failure -> if (result.error.isRetryable && runAttemptCount < MAX_ATTEMPTS) {
-            Result.retry()
-        } else {
-            Result.failure(EpicSyncErrorCodec.encode(result.error))
+        return when (result) {
+            is DataResult.Success -> Result.success(workDataOf(KEY_SYNCED_COUNT to result.data))
+
+            is DataResult.Failure -> if (result.error.isRetryable && runAttemptCount < MAX_ATTEMPTS) {
+                Result.retry()
+            } else {
+                Result.failure(EpicSyncErrorCodec.encode(result.error))
+            }
         }
     }
 

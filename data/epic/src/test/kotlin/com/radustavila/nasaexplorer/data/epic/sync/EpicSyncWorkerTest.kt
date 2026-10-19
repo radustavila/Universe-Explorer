@@ -8,10 +8,13 @@ import androidx.work.WorkerParameters
 import androidx.work.testing.TestListenableWorkerBuilder
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.domain.usecase.RefreshSourceUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeEpicUseCase
 import com.radustavila.nasaexplorer.core.model.EpicCollection
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEpicRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
+import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -24,6 +27,7 @@ class EpicSyncWorkerTest {
 
     private val repository = FakeEpicRepository()
     private val networkMonitor = FakeNetworkMonitor()
+    private val metadata = FakeSyncMetadataRepository()
 
     @Test
     fun `a successful sync reports how many photos were cached`() = runTest {
@@ -33,6 +37,16 @@ class EpicSyncWorkerTest {
         val result = buildWorker().doWork()
 
         assertEquals(25, (result as ListenableWorker.Result.Success).outputData.getInt(EpicSyncWorker.KEY_SYNCED_COUNT, 0))
+    }
+
+    @Test
+    fun `a sync requested while EPIC is fresh succeeds without downloading`() = runTest {
+        buildWorker().doWork()
+
+        val result = buildWorker().doWork()
+
+        assertEquals(0, (result as ListenableWorker.Result.Success).outputData.getInt(EpicSyncWorker.KEY_SYNCED_COUNT, -1))
+        assertEquals(EpicCollection.entries, repository.refreshedCollections)
     }
 
     @Test
@@ -73,7 +87,11 @@ class EpicSyncWorkerTest {
                     ) = EpicSyncWorker(
                         appContext = appContext,
                         workerParameters = workerParameters,
-                        synchronizeEpic = SynchronizeEpicUseCase(repository, networkMonitor),
+                        synchronizeEpic = SynchronizeEpicUseCase(
+                            epicRepository = repository,
+                            networkMonitor = networkMonitor,
+                            refreshSource = RefreshSourceUseCase(metadata, FakeTimeProvider()),
+                        ),
                     )
                 },
             )

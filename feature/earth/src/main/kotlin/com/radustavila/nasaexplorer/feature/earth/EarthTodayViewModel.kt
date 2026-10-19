@@ -10,13 +10,17 @@ import com.radustavila.nasaexplorer.core.domain.usecase.FetchEpicDayUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEpicAvailableDatesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEpicDayUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEpicFavoriteIdsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEpicSyncStateUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveLatestEpicDayUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEpicUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ToggleEpicFavoriteUseCase
 import com.radustavila.nasaexplorer.core.model.EpicCollection
+import com.radustavila.nasaexplorer.core.model.EpicImage
 import com.radustavila.nasaexplorer.core.model.SyncState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
+import java.time.format.DateTimeParseException
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,8 +52,10 @@ class EarthTodayViewModel @Inject constructor(
     private val observeEpicAvailableDates: ObserveEpicAvailableDatesUseCase,
     observeConnectivity: ObserveConnectivityUseCase,
     observeEpicSyncState: ObserveEpicSyncStateUseCase,
+    observeEpicFavoriteIds: ObserveEpicFavoriteIdsUseCase,
     private val refreshEpic: RefreshEpicUseCase,
     private val fetchEpicDay: FetchEpicDayUseCase,
+    private val toggleEpicFavorite: ToggleEpicFavoriteUseCase,
 ) : ViewModel() {
 
     private val selection = MutableStateFlow(
@@ -57,11 +63,13 @@ class EarthTodayViewModel @Inject constructor(
             collection = savedStateHandle.get<String>(KEY_COLLECTION)
                 ?.let(EpicCollection::fromApiValue)
                 ?: EpicCollection.NATURAL,
-            date = savedStateHandle.get<String>(KEY_DATE)?.let(LocalDate::parse),
+            date = savedStateHandle.get<String>(KEY_DATE)?.let(::parseDateOrNull),
         ),
     )
 
-    private val localState = MutableStateFlow(LocalState())
+    private val localState = MutableStateFlow(
+        LocalState(focusedImageId = savedStateHandle.get<String>(KEY_IMAGE_ID)),
+    )
 
     /**
      * The photos together with the selection they belong to. Rendering both from one emission keeps
@@ -80,11 +88,11 @@ class EarthTodayViewModel @Inject constructor(
         .map { dates -> dates.toSet() }
 
     val uiState: StateFlow<EarthTodayUiState> = combine(
-        combine(shownDay, availableDates, ::Pair),
+        combine(shownDay, availableDates, observeEpicFavoriteIds(), ::Triple),
         observeConnectivity(),
         observeEpicSyncState(),
         localState,
-    ) { (day, dates), isOnline, syncState, local ->
+    ) { (day, dates, favoriteIds), isOnline, syncState, local ->
         val (current, images) = day
         // A sync waiting for connectivity cannot make progress; showing it as such would spin forever.
         val isSyncMakingProgress = syncState == SyncState.Syncing ||
@@ -97,6 +105,8 @@ class EarthTodayViewModel @Inject constructor(
             collection = current.collection,
             selectedDate = current.date,
             availableDates = dates,
+            favoriteIds = favoriteIds,
+            focusedImageId = local.focusedImageId,
             isLoading = images.isEmpty() && (isWaitingForSync || local.isFetchingDay),
             isRefreshing = images.isNotEmpty() && isWaitingForSync,
             isOffline = !isOnline,
@@ -147,16 +157,27 @@ class EarthTodayViewModel @Inject constructor(
         if (selection.value.date == null) refreshEpic() else downloadSelectedDayIfMissing()
     }
 
+    fun onToggleFavorite(image: EpicImage) {
+        val isFavorite = image.ref.favoriteId in uiState.value.favoriteIds
+        viewModelScope.launch {
+            val result = toggleEpicFavorite(image, isFavorite = isFavorite)
+            if (result is DataResult.Failure) localState.update { it.copy(error = result.error.toUiError()) }
+        }
+    }
+
     fun onErrorDismissed() {
         localState.update { it.copy(error = null) }
     }
 
     private fun updateSelection(transform: (Selection) -> Selection) {
+        // Cleared before the new selection is published: a different day or set is a new rotation,
+        // and the photo the screen was opened on must not leak into it, not even for one frame.
+        localState.update { it.copy(isFetchingDay = false, error = null, focusedImageId = null) }
         val updated = transform(selection.value)
         selection.value = updated
         savedStateHandle[KEY_COLLECTION] = updated.collection.apiValue
         savedStateHandle[KEY_DATE] = updated.date?.toString()
-        localState.update { it.copy(isFetchingDay = false, error = null) }
+        savedStateHandle[KEY_IMAGE_ID] = null
         downloadSelectedDayIfMissing()
     }
 
@@ -189,11 +210,21 @@ class EarthTodayViewModel @Inject constructor(
     private data class LocalState(
         val isFetchingDay: Boolean = false,
         val error: UiError? = null,
+        /** The photo the screen was opened on (a favourite), until the selection changes. */
+        val focusedImageId: String? = null,
     )
 
     private companion object {
         const val STATE_TIMEOUT_MILLIS = 5_000L
-        const val KEY_COLLECTION = "epic_collection"
-        const val KEY_DATE = "epic_date"
+        // The names of EarthTodayRoute's arguments, which navigation puts in the SavedStateHandle.
+        const val KEY_COLLECTION = "collection"
+        const val KEY_DATE = "date"
+        const val KEY_IMAGE_ID = "imageId"
+
+        fun parseDateOrNull(raw: String): LocalDate? = try {
+            LocalDate.parse(raw)
+        } catch (_: DateTimeParseException) {
+            null
+        }
     }
 }

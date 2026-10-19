@@ -1,5 +1,7 @@
 package com.radustavila.nasaexplorer.feature.earth
 
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -8,8 +10,10 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import com.radustavila.nasaexplorer.core.designsystem.component.RETRY_BUTTON_TEST_TAG
 import com.radustavila.nasaexplorer.core.model.EpicCollection
+import com.radustavila.nasaexplorer.core.model.EpicImage
 import com.radustavila.nasaexplorer.core.testing.data.TestEpicImages
 import java.time.LocalDate
 import org.junit.Assert.assertEquals
@@ -98,12 +102,50 @@ class EarthTodayScreenTest {
         assertTrue(backClicked)
     }
 
+    @Test
+    fun `the heart saves the photo on screen and shows whether it is saved`() {
+        val day = TestEpicImages.day(size = 3)
+        var toggled: EpicImage? = null
+        setContent(
+            EarthTodayUiState(images = day, favoriteIds = setOf(day[1].ref.favoriteId)),
+            onToggleFavorite = { toggled = it },
+        )
+
+        composeTestRule.onNodeWithContentDescription("Add to favorites").performClick()
+
+        assertEquals(day[0], toggled)
+    }
+
+    @Test
+    fun `opened for one photo it starts on that photo, saved and holding still`() {
+        val day = TestEpicImages.day(size = 3)
+        setContent(
+            EarthTodayUiState(images = day, focusedImageId = day[2].identifier, favoriteIds = setOf(day[2].ref.favoriteId)),
+            autoPlayOverride = true,
+        )
+
+        composeTestRule.onNodeWithText("Photo 3 of 3").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Play rotation").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Remove from favorites").assertIsDisplayed()
+    }
+
+    @Test
+    fun `the footer sits below the rotation, and below an empty state too`() {
+        setContent(EarthTodayUiState(isOffline = true), footer = { Text("Satellite map") })
+
+        composeTestRule.onNodeWithText("Satellite map").performScrollTo().assertIsDisplayed()
+    }
+
     private fun setContent(
         uiState: EarthTodayUiState,
         onBackClick: (() -> Unit)? = null,
         onCollectionSelected: (EpicCollection) -> Unit = {},
         onDateSelected: (LocalDate?) -> Unit = {},
         onRetry: () -> Unit = {},
+        onToggleFavorite: (EpicImage) -> Unit = {},
+        footer: (@Composable () -> Unit)? = null,
+        // Only safe where something else stops the rotation (a focused photo holds still).
+        autoPlayOverride: Boolean = false,
     ) {
         composeTestRule.setContent {
             EarthTodayContent(
@@ -113,7 +155,9 @@ class EarthTodayScreenTest {
                 onDateSelected = onDateSelected,
                 onRetry = onRetry,
                 onErrorDismissed = {},
-                autoPlay = false,
+                onToggleFavorite = onToggleFavorite,
+                footer = footer,
+                autoPlay = autoPlayOverride,
             )
         }
     }

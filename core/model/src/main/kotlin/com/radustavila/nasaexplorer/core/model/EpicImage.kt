@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.core.model
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
+import java.time.format.DateTimeParseException
 
 /**
  * One full-disk photo of Earth taken by the EPIC camera on the DSCOVR spacecraft, about 1.5 million
@@ -27,6 +28,9 @@ data class EpicImage(
     /** EPIC files its archive by UTC capture day. */
     val date: LocalDate get() = capturedAt.atOffset(ZoneOffset.UTC).toLocalDate()
 
+    /** Where to find this photo again, e.g. from a favourite saved long after the cache dropped it. */
+    val ref: EpicPhotoRef get() = EpicPhotoRef(collection = collection, date = date, identifier = identifier)
+
     companion object {
         /** DSCOVR's first EPIC images; the archive holds nothing older. */
         val FIRST_CAPTURE_DATE: LocalDate = LocalDate.of(2015, 6, 13)
@@ -48,3 +52,33 @@ enum class EpicCollection(val apiValue: String) {
 }
 
 data class GeoPoint(val latitude: Double, val longitude: Double)
+
+/**
+ * Enough to find one EPIC photo again: the set, the archive day to load, and the photo within it.
+ * Its [favoriteId] form is the item id of an EPIC favourite.
+ */
+data class EpicPhotoRef(
+    val collection: EpicCollection,
+    val date: LocalDate,
+    val identifier: String,
+) {
+    /** `natural/2026-10-16/20261016002713`. */
+    val favoriteId: String get() = "${collection.apiValue}/$date/$identifier"
+
+    companion object {
+        /** Inverse of [favoriteId]; `null` for anything that is not one. */
+        fun fromFavoriteId(id: String): EpicPhotoRef? {
+            val parts = id.split('/')
+            if (parts.size != FAVORITE_ID_PARTS) return null
+            val collection = EpicCollection.fromApiValue(parts[0]) ?: return null
+            val date = try {
+                LocalDate.parse(parts[1])
+            } catch (_: DateTimeParseException) {
+                return null
+            }
+            return parts[2].takeIf(String::isNotBlank)?.let { EpicPhotoRef(collection, date, it) }
+        }
+
+        private const val FAVORITE_ID_PARTS = 3
+    }
+}

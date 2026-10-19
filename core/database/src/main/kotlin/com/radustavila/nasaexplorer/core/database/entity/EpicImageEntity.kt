@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.Index
 
 /**
- * Cached EPIC photo metadata (the pixels live in Coil's disk cache). Added in schema v4.
+ * Cached EPIC photo metadata (the pixels live in Coil's disk cache). Added in schema v6.
  *
  * Keyed by (`collection`, `identifier`): EPIC's identifier is the capture timestamp, which the
  * natural and enhanced sets share. `date` is the UTC capture day in ISO-8601, denormalised from the
@@ -42,7 +42,7 @@ data class EpicImageEntity(
 )
 
 /**
- * A day EPIC has published photos for, from its `/all` listing. Added in schema v4.
+ * A day EPIC has published photos for, from its `/all` listing. Added in schema v6.
  *
  * Kept separate from [EpicImageEntity] because the listing covers the whole archive (thousands of
  * days) while photo metadata is only cached for the last week.
