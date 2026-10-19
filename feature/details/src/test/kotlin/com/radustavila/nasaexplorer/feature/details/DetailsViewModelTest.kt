@@ -131,8 +131,23 @@ class DetailsViewModelTest {
         assertEquals(listOf(apod.date, apod.date), repository.fetchedDates)
     }
 
-    private fun createViewModel() = DetailsViewModel(
-        savedStateHandle = SavedStateHandle(mapOf("date" to apod.date.toString())),
+    @Test
+    fun `a malformed date from a deep link is reported as unavailable without a download`() = runTest {
+        val viewModel = createViewModel(date = "not-a-date")
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertTrue(state is DetailsUiState.Unavailable)
+            assertEquals(false, (state as DetailsUiState.Unavailable).isOffline)
+        }
+
+        viewModel.onRetry()
+
+        assertEquals(emptyList<Any>(), repository.fetchedDates)
+    }
+
+    private fun createViewModel(date: String = apod.date.toString()) = DetailsViewModel(
+        savedStateHandle = SavedStateHandle(mapOf("date" to date)),
         observeApod = ObserveApodUseCase(repository),
         observeConnectivity = ObserveConnectivityUseCase(networkMonitor),
         toggleFavorite = ToggleFavoriteUseCase(repository),

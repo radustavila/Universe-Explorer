@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Stand-in picture for the widget picker: the real widget shows a downloaded photo, which does not
+  exist until the app has synced, so the preview uses this night-sky illustration instead.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="180dp"
+    android:height="180dp"
+    android:viewportWidth="180"
+    android:viewportHeight="180">
+
+    <path android:pathData="M0,0h180v180h-180z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endColor="#FF07070D"
+                android:endX="0"
+                android:endY="180"
+                android:startColor="#FF1B2340"
+                android:startX="0"
+                android:startY="0"
+                android:type="linear" />
+        </aapt:attr>
+    </path>
+
+    <!-- Moon with an earthshine-lit night side. -->
+    <path
+        android:fillColor="#FF5A6075"
+        android:pathData="M90,82m-34,0a34,34 0,1 1,68 0a34,34 0,1 1,-68 0" />
+    <path
+        android:fillColor="#FFE8EAF2"
+        android:pathData="M64,104a34,34 0,0 0,56 -4a38,38 0,0 1,-56 4z" />
+    <path
+        android:fillColor="#FF4A4F63"
+        android:pathData="M80,70m-7,0a7,7 0,1 1,14 0a7,7 0,1 1,-14 0" />
+    <path
+        android:fillColor="#FF4A4F63"
+        android:pathData="M102,86m-5,0a5,5 0,1 1,10 0a5,5 0,1 1,-10 0" />
+
+    <!-- Stars. -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M92,30m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
+    <path
+        android:fillColor="#CCFFFFFF"
+        android:pathData="M30,40m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0" />
+    <path
+        android:fillColor="#CCFFFFFF"
+        android:pathData="M150,52m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0" />
+    <path
+        android:fillColor="#99FFFFFF"
+        android:pathData="M40,120m-1,0a1,1 0,1 1,2 0a1,1 0,1 1,-2 0" />
+    <path
+        android:fillColor="#99FFFFFF"
+        android:pathData="M140,120m-1,0a1,1 0,1 1,2 0a1,1 0,1 1,-2 0" />
+</vector>
