@@ -3,9 +3,10 @@ package com.radustavila.nasaexplorer.di
 import com.radustavila.nasaexplorer.core.database.di.FavoritesModule
 import com.radustavila.nasaexplorer.core.datastore.di.DataStoreBindingModule
 import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
-import com.radustavila.nasaexplorer.core.domain.repository.EarthEventRepository
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
 import com.radustavila.nasaexplorer.core.domain.repository.AuroraAlertRepository
+import com.radustavila.nasaexplorer.core.domain.repository.EarthEventRepository
+import com.radustavila.nasaexplorer.core.domain.repository.ExoplanetRepository
 import com.radustavila.nasaexplorer.core.domain.repository.FavoritesRepository
 import com.radustavila.nasaexplorer.core.domain.repository.LaunchRepository
 import com.radustavila.nasaexplorer.core.domain.repository.MarsPhotoRepository
@@ -14,14 +15,17 @@ import com.radustavila.nasaexplorer.core.domain.repository.SmallBodiesRepository
 import com.radustavila.nasaexplorer.core.domain.repository.SpaceWeatherRepository
 import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepository
 import com.radustavila.nasaexplorer.core.domain.repository.UserPreferencesRepository
+import com.radustavila.nasaexplorer.core.domain.sync.ExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.MarsSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SmallBodiesSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SpaceWeatherSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
 import com.radustavila.nasaexplorer.core.network.di.NetworkBindingModule
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
-import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthEventRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeAuroraAlertRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthEventRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeExoplanetRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeFavoritesRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsPhotoRepository
@@ -36,6 +40,7 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeUserPreferencesRepository
 import com.radustavila.nasaexplorer.data.earthevents.di.EarthEventsDataModule
+import com.radustavila.nasaexplorer.data.exoplanets.di.ExoplanetsDataModule
 import com.radustavila.nasaexplorer.data.launches.di.LaunchesDataModule
 import com.radustavila.nasaexplorer.data.mars.di.MarsDataModule
 import com.radustavila.nasaexplorer.data.nasa.di.NasaDataModule
@@ -232,4 +237,24 @@ object TestSmallBodiesDataModule {
 
     @Provides
     fun provideSmallBodiesSyncScheduler(fake: FakeSmallBodiesSyncScheduler): SmallBodiesSyncScheduler = fake
+}
+
+/** Keeps a catalogue cached on the device (or the archive itself) out of the end-to-end test. */
+@Module
+@TestInstallIn(components = [SingletonComponent::class], replaces = [ExoplanetsDataModule::class])
+object TestExoplanetsDataModule {
+
+    @Provides
+    @Singleton
+    fun provideFakeExoplanetRepository(): FakeExoplanetRepository = FakeExoplanetRepository()
+
+    @Provides
+    fun provideExoplanetRepository(fake: FakeExoplanetRepository): ExoplanetRepository = fake
+
+    @Provides
+    @Singleton
+    fun provideFakeExoplanetSyncScheduler(): FakeExoplanetSyncScheduler = FakeExoplanetSyncScheduler()
+
+    @Provides
+    fun provideExoplanetSyncScheduler(fake: FakeExoplanetSyncScheduler): ExoplanetSyncScheduler = fake
 }

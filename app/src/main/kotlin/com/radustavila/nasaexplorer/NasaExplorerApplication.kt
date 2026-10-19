@@ -7,6 +7,7 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import com.radustavila.nasaexplorer.core.cache.CacheEvictionScheduler
+import com.radustavila.nasaexplorer.core.domain.sync.ExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
 import com.radustavila.nasaexplorer.data.earthevents.sync.EarthEventsSyncScheduler
 import dagger.hilt.android.HiltAndroidApp
@@ -31,6 +32,9 @@ class NasaExplorerApplication :
     lateinit var earthEventsSyncScheduler: EarthEventsSyncScheduler
 
     @Inject
+    lateinit var exoplanetSyncScheduler: ExoplanetSyncScheduler
+
+    @Inject
     lateinit var imageLoader: dagger.Lazy<ImageLoader>
 
     override val workManagerConfiguration: Configuration
@@ -48,5 +52,6 @@ class NasaExplorerApplication :
         syncScheduler.ensurePeriodicSync()
         cacheEvictionScheduler.ensurePeriodicEviction()
         earthEventsSyncScheduler.ensurePeriodicSync()
+        exoplanetSyncScheduler.ensurePeriodicSync()
     }
 }

@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.PhotoCamera
+import androidx.compose.material.icons.outlined.Public
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.radustavila.nasaexplorer.R
+import com.radustavila.nasaexplorer.feature.exoplanets.navigateToExoplanets
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhotos
 import com.radustavila.nasaexplorer.feature.mars.rail.MarsRail
@@ -23,6 +25,13 @@ import com.radustavila.nasaexplorer.ui.hub.HubEntryCards
  * gallery's rails.
  */
 internal fun universeHubEntries(navController: NavHostController): List<HubEntry> = listOf(
+    HubEntry(
+        key = "exoplanets",
+        icon = Icons.Outlined.Public,
+        titleRes = R.string.universe_exoplanets_title,
+        descriptionRes = R.string.universe_exoplanets_description,
+        onClick = { navController.navigateToExoplanets() },
+    ),
     HubEntry(
         key = "mars",
         icon = Icons.Outlined.PhotoCamera,
