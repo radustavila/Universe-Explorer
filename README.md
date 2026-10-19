@@ -54,6 +54,7 @@ The bottom bar has five tabs: **Today · Universe · Earth · Favourites · More
 | **Aurora & space weather** (Earth tab) | Current Kp on a NOAA G-scale gauge, 3-hourly forecast bars for three days, NOAA's aurora probability drawn on the satellite map for either hemisphere, the latest solar flare and CME from DONKI, and opt-in aurora alerts that fire once per storm when the forecast Kp reaches the level visible from a place the user enters. Refreshed every 30 minutes in the background; renders offline from the last refresh. |
 | **Earth's neighbourhood** (Earth tab) | Asteroids passing within 20 lunar distances in the next 30 days (date, distance, speed, size) with a badge for those on JPL's Sentry impact-risk list, recent fireballs, and a details screen with the object's orbit from the Small-Body Database. Refreshed daily. |
 | **Favorites** | Saved items of every source (APOD today; library images, rover and Earth photos as they land), drawn from a snapshot taken when saved. Works with the network fully disabled. |
+| **Exoplanets** (Universe tab) | Newest, nearest and Earth-sized confirmed planets from the NASA Exoplanet Archive, each with its size against Earth and Jupiter and its distance in light-years; a details screen draws the size comparison and explains the discovery method. Refreshed weekly, readable offline. |
 | **Home screen widget** | The latest picture with its title and date, re-rendered after every sync; tapping it opens that entry's details. |
 | **New-entry notification** | Opt-in from the bell on the feed's top bar. After a sync brings in a newer entry, posts its title and picture; tapping opens the details screen. |
 | **Debug** (More tab) | Live view of the offline-first machinery: connectivity, cached entry count, favourites count, oldest cached date, oldest requested window, last successful sync, WorkManager sync state, every data source's last success / last error / next allowed refresh, plus buttons to trigger a sync and re-register the periodic one. |
@@ -118,8 +119,10 @@ flowchart BT
     favoritesF[":feature:favorites"]
     debugF[":feature:debug"]
     widgetF[":feature:widget"]
+    exoplanetsF[":feature:exoplanets"]
 
     nasa[":data:nasa"]
+    exoplanets[":data:exoplanets"]
 
     network[":core:network"]
     database[":core:database"]
@@ -137,6 +140,8 @@ flowchart BT
     app --> favoritesF
     app --> debugF
     app --> widgetF
+    app --> exoplanetsF
+    app --> exoplanets
     app --> notifications
     app --> nasa
     app --> cache
@@ -152,6 +157,8 @@ flowchart BT
     debugF --> designsystem
     widgetF --> domain
     widgetF --> designsystem
+    exoplanetsF --> domain
+    exoplanetsF --> designsystem
     notifications --> domain
     notifications --> designsystem
 
@@ -160,6 +167,10 @@ flowchart BT
     nasa --> database
     nasa --> datastore
     nasa --> cache
+
+    exoplanets --> domain
+    exoplanets --> network
+    exoplanets --> cache
 
     network --> domain
     datastore --> domain
@@ -191,6 +202,7 @@ flowchart BT
 | `:data:earthevents` | Android library | NASA EONET: open natural events (Point and Polygon geometry) and their suggested GIBS layers, its own small Room database (`earth_events.db`), a 3-hourly sync worker, `EarthEventsCacheEvictor`. |
 | `:data:spaceweather` | Android library | NOAA SWPC (Kp forecast, 1-minute Kp, OVATION aurora grid) and DONKI (flares, CMEs): own Room database `space_weather.db`, 30-minute `SpaceWeatherSyncWorker`, `SpaceWeatherCacheEvictor`, and the aurora alert settings in their own DataStore. |
 | `:data:smallbodies` | Android library | JPL close approaches (CAD, mapped by field name), Sentry risk list, fireballs and SBDB details: own Room database `small_bodies.db`, daily `SmallBodiesSyncWorker`, `SmallBodiesCacheEvictor`. |
+| `:data:exoplanets` | Android library | NASA Exoplanet Archive (TAP): ADQL queries, its own Room database (`exoplanets.db`), `ExoplanetRepositoryImpl`, weekly sync worker and scheduler, cache evictor. |
 | `:feature:*` | Android libraries | One screen each: Compose UI, ViewModel, UI state, and its own type-safe navigation contract. |
 | `:feature:universe` | Android library | Universe gallery (rails and search) and the NASA library details screen. |
 | `:feature:spaceweather` | Android library | Aurora and space weather (Kp gauge, forecast, aurora oval on `SpaceMap`, flare and CME, alert settings), Earth's neighbourhood (asteroids and fireballs) and asteroid details. |

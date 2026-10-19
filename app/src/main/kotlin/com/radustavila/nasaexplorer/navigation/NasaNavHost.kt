@@ -12,6 +12,9 @@ import com.radustavila.nasaexplorer.feature.details.detailsScreen
 import com.radustavila.nasaexplorer.feature.details.navigateToDetails
 import com.radustavila.nasaexplorer.feature.earthevents.earthEventsScreen
 import com.radustavila.nasaexplorer.feature.earthmap.earthMapScreen
+import com.radustavila.nasaexplorer.feature.exoplanets.exoplanetDetailsScreen
+import com.radustavila.nasaexplorer.feature.exoplanets.exoplanetsScreen
+import com.radustavila.nasaexplorer.feature.exoplanets.navigateToExoplanetDetails
 import com.radustavila.nasaexplorer.feature.favorites.FavoritesRoute
 import com.radustavila.nasaexplorer.feature.favorites.favoritesScreen
 import com.radustavila.nasaexplorer.feature.feed.FeedRoute
@@ -62,6 +65,10 @@ fun NasaNavHost(
                 onBackClick = navController::popBackStack,
                 onPhotoClick = navController::navigateToMarsPhoto,
             )
+            exoplanetsScreen(
+                onBackClick = navController::popBackStack,
+                onExoplanetClick = navController::navigateToExoplanetDetails,
+            )
         }
 
         navigation<EarthGraph>(startDestination = EarthHomeRoute) {
@@ -102,5 +109,6 @@ fun NasaNavHost(
         )
         nasaMediaDetailsScreen(onBackClick = navController::popBackStack)
         marsPhotoScreen(onBackClick = navController::popBackStack)
+        exoplanetDetailsScreen(onBackClick = navController::popBackStack)
     }
 }

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="exoplanets_title">Exoplanets</string>
+    <string name="exoplanets_back">Back</string>
+    <string name="exoplanets_confirmed_count">%1$s confirmed planets beyond the Solar System</string>
+
+    <string name="exoplanets_list_newest">Newest</string>
+    <string name="exoplanets_list_nearest">Nearest</string>
+    <string name="exoplanets_list_earth_sized">Earth-sized</string>
+    <string name="exoplanets_list_newest_description">Discovered since %1$d, newest first</string>
+    <string name="exoplanets_list_nearest_description">Planets of the star systems closest to the Sun</string>
+    <string name="exoplanets_list_earth_sized_description">0.8 to 1.25 times Earth\'s radius, nearest first</string>
+
+    <string name="exoplanets_refresh_failed">Couldn\'t update from the Exoplanet Archive. Showing saved planets.</string>
+    <string name="exoplanets_loading_title">Downloading the catalogue…</string>
+    <string name="exoplanets_offline_empty_title">No planets saved yet</string>
+    <string name="exoplanets_offline_empty_description">Connect once to download the catalogue; after that it works offline.</string>
+    <string name="exoplanets_error_title">Couldn\'t reach the Exoplanet Archive</string>
+    <string name="exoplanets_error_description">Check your connection and try again.</string>
+    <string name="exoplanets_empty_title">No planets in this list yet</string>
+
+    <string name="exoplanets_row_summary">%1$s · %2$s · %3$s</string>
+    <string name="exoplanets_times_earth">%1$s× Earth</string>
+    <string name="exoplanets_light_years">%1$s ly</string>
+    <string name="exoplanets_unknown">Unknown</string>
+
+    <string name="exoplanet_details_not_found_title">This planet isn\'t saved on this device</string>
+    <string name="exoplanet_details_not_found_description">Open Exoplanets while online to download the catalogue.</string>
+    <string name="exoplanet_details_orbits">Orbits the star %1$s</string>
+    <string name="exoplanet_details_size_title">Size</string>
+    <string name="exoplanet_details_size_summary">%1$s× Earth\'s radius · %2$s× Jupiter\'s</string>
+    <string name="exoplanet_details_size_unknown">Its size has not been measured.</string>
+    <string name="exoplanet_details_size_description">%1$s compared with Earth and Jupiter: %2$s times Earth\'s radius</string>
+    <string name="exoplanet_details_earth">Earth</string>
+    <string name="exoplanet_details_jupiter">Jupiter</string>
+    <string name="exoplanet_details_distance_title">Distance</string>
+    <string name="exoplanet_details_distance_value">%1$s light-years (%2$s parsecs)</string>
+    <string name="exoplanet_details_distance_compared">%1$s× as far as Proxima Centauri, the nearest star</string>
+    <string name="exoplanet_details_distance_neighbour">One of the Sun\'s nearest neighbours: Proxima Centauri, the closest star, is 4.2 light-years away</string>
+    <string name="exoplanet_details_distance_unknown">Its distance has not been measured.</string>
+    <string name="exoplanet_details_facts_title">Facts</string>
+    <string name="exoplanet_details_mass">Mass</string>
+    <string name="exoplanet_details_mass_value">%1$s× Earth (%2$s× Jupiter)</string>
+    <string name="exoplanet_details_year">Year</string>
+    <string name="exoplanet_details_year_value">%1$s days</string>
+    <string name="exoplanet_details_temperature">Temperature</string>
+    <string name="exoplanet_details_temperature_value">%1$s K (%2$s °C)</string>
+    <string name="exoplanet_details_discovery_title">Discovery</string>
+    <string name="exoplanet_details_discovered">Discovered</string>
+    <string name="exoplanet_details_discovered_value">%1$s, published %2$s</string>
+    <string name="exoplanet_details_facility">Found by</string>
+    <string name="exoplanet_details_method">Method</string>
+
+    <string name="discovery_method_transit">Transit</string>
+    <string name="discovery_method_radial_velocity">Radial velocity</string>
+    <string name="discovery_method_microlensing">Microlensing</string>
+    <string name="discovery_method_imaging">Direct imaging</string>
+    <string name="discovery_method_transit_timing">Transit timing</string>
+    <string name="discovery_method_eclipse_timing">Eclipse timing</string>
+    <string name="discovery_method_orbital_brightness">Brightness modulation</string>
+    <string name="discovery_method_pulsar_timing">Pulsar timing</string>
+    <string name="discovery_method_pulsation_timing">Pulsation timing</string>
+    <string name="discovery_method_astrometry">Astrometry</string>
+    <string name="discovery_method_disk_kinematics">Disk kinematics</string>
+    <string name="discovery_method_other">Other</string>
+
+    <string name="discovery_method_transit_explained">The star dimmed slightly each time the planet passed in front of it.</string>
+    <string name="discovery_method_radial_velocity_explained">The planet\'s pull made its star wobble, shifting the colour of its light back and forth.</string>
+    <string name="discovery_method_microlensing_explained">Its gravity briefly magnified the light of a more distant star lined up behind it.</string>
+    <string name="discovery_method_imaging_explained">Telescopes photographed the planet itself, with the star\'s glare blocked out.</string>
+    <string name="discovery_method_transit_timing_explained">It tugged on a known transiting planet, making its transits come early or late.</string>
+    <string name="discovery_method_eclipse_timing_explained">It shifted the timing of the eclipses of the two stars it orbits.</string>
+    <string name="discovery_method_orbital_brightness_explained">The star\'s brightness rose and fell with the planet\'s orbit as it reflected and heated.</string>
+    <string name="discovery_method_pulsar_timing_explained">It disturbed the clock-like radio pulses of the dead star it orbits.</string>
+    <string name="discovery_method_pulsation_timing_explained">It shifted the timing of its star\'s regular pulsations.</string>
+    <string name="discovery_method_astrometry_explained">Precise positions showed the star tracing a tiny loop across the sky.</string>
+    <string name="discovery_method_disk_kinematics_explained">It disturbed the motion of gas in the disk around a young star.</string>
+    <string name="discovery_method_other_explained">Found by a method the archive does not classify further.</string>
+</resources>

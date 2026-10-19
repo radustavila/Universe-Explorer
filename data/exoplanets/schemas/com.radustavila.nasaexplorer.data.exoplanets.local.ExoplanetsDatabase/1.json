@@ -1,0 +1,149 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "29a91bd0d2ca6d84626a0678ef37bbe0",
+    "entities": [
+      {
+        "tableName": "exoplanets",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `host_name` TEXT NOT NULL, `disc_year` INTEGER NOT NULL, `disc_pubdate` TEXT, `disc_method` TEXT NOT NULL, `disc_facility` TEXT, `radius_earth` REAL, `mass_earth` REAL, `orbital_period_days` REAL, `equilibrium_temperature_k` REAL, `distance_pc` REAL, `fetched_at` INTEGER NOT NULL, PRIMARY KEY(`name`))",
+        "fields": [
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hostName",
+            "columnName": "host_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "discoveryYear",
+            "columnName": "disc_year",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "discoveryPublished",
+            "columnName": "disc_pubdate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "discoveryMethod",
+            "columnName": "disc_method",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "discoveryFacility",
+            "columnName": "disc_facility",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "radiusEarth",
+            "columnName": "radius_earth",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "massEarth",
+            "columnName": "mass_earth",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "orbitalPeriodDays",
+            "columnName": "orbital_period_days",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "equilibriumTemperatureKelvin",
+            "columnName": "equilibrium_temperature_k",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "distanceParsecs",
+            "columnName": "distance_pc",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "fetchedAtMillis",
+            "columnName": "fetched_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "name"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_exoplanets_disc_year",
+            "unique": false,
+            "columnNames": [
+              "disc_year"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_exoplanets_disc_year` ON `${TABLE_NAME}` (`disc_year`)"
+          },
+          {
+            "name": "index_exoplanets_distance_pc",
+            "unique": false,
+            "columnNames": [
+              "distance_pc"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_exoplanets_distance_pc` ON `${TABLE_NAME}` (`distance_pc`)"
+          },
+          {
+            "name": "index_exoplanets_radius_earth",
+            "unique": false,
+            "columnNames": [
+              "radius_earth"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_exoplanets_radius_earth` ON `${TABLE_NAME}` (`radius_earth`)"
+          }
+        ]
+      },
+      {
+        "tableName": "exoplanet_catalog_stats",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `confirmed_planets` INTEGER NOT NULL, `fetched_at` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "confirmedPlanets",
+            "columnName": "confirmed_planets",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fetchedAtMillis",
+            "columnName": "fetched_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '29a91bd0d2ca6d84626a0678ef37bbe0')"
+    ]
+  }
+}
