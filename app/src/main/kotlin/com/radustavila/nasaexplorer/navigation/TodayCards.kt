@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.radustavila.nasaexplorer.feature.earthevents.RightNowOnEarthCard
+import com.radustavila.nasaexplorer.feature.earthevents.navigateToEarthEvents
 import com.radustavila.nasaexplorer.feature.launches.NextLaunchesCard
 
 /**
@@ -19,8 +21,8 @@ import com.radustavila.nasaexplorer.feature.launches.NextLaunchesCard
  * Cards render their own empty/offline state (or nothing at all), and must not scroll vertically:
  * they sit inside the feed's list.
  */
-@Suppress("UNUSED_PARAMETER", "UnusedParameter") // Cards navigate with it once features land.
 internal fun todayCards(navController: NavHostController): List<@Composable () -> Unit> = listOf(
+    { RightNowOnEarthCard(onClick = { navController.navigateToEarthEvents() }) }, // F9
     { NextLaunchesCard() }, // F2
 )
 

@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.di
 import com.radustavila.nasaexplorer.core.database.di.FavoritesModule
 import com.radustavila.nasaexplorer.core.datastore.di.DataStoreBindingModule
 import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
+import com.radustavila.nasaexplorer.core.domain.repository.EarthEventRepository
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
 import com.radustavila.nasaexplorer.core.domain.repository.FavoritesRepository
 import com.radustavila.nasaexplorer.core.domain.repository.LaunchRepository
@@ -14,6 +15,7 @@ import com.radustavila.nasaexplorer.core.domain.sync.MarsSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
 import com.radustavila.nasaexplorer.core.network.di.NetworkBindingModule
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthEventRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeFavoritesRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsPhotoRepository
@@ -23,6 +25,7 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeUserPreferencesRepository
+import com.radustavila.nasaexplorer.data.earthevents.di.EarthEventsDataModule
 import com.radustavila.nasaexplorer.data.launches.di.LaunchesDataModule
 import com.radustavila.nasaexplorer.data.mars.di.MarsDataModule
 import com.radustavila.nasaexplorer.data.nasa.di.NasaDataModule
@@ -85,6 +88,22 @@ object TestFavoritesModule {
 
     @Provides
     fun provideFavoritesRepository(fake: FakeFavoritesRepository): FavoritesRepository = fake
+}
+
+/**
+ * Earth events start empty, so the Today card stays hidden unless a test seeds the fake; no EONET
+ * calls (nor the events cache evictor, which this module also contributes).
+ */
+@Module
+@TestInstallIn(components = [SingletonComponent::class], replaces = [EarthEventsDataModule::class])
+object TestEarthEventsDataModule {
+
+    @Provides
+    @Singleton
+    fun provideFakeEarthEventRepository(): FakeEarthEventRepository = FakeEarthEventRepository()
+
+    @Provides
+    fun provideEarthEventRepository(fake: FakeEarthEventRepository): EarthEventRepository = fake
 }
 
 /**

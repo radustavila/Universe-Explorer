@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="earth_events_title">Live Earth events</string>
+    <string name="earth_events_back">Back</string>
+    <string name="earth_events_refresh">Refresh events</string>
+    <string name="earth_events_refresh_failed">Couldn\'t update events. Showing the last ones saved.</string>
+    <string name="earth_events_imagery_fallback">Couldn\'t load the event\'s imagery layers. Showing true colour.</string>
+    <string name="earth_events_tiles_failed">Can\'t load imagery right now. Showing cached tiles where available.</string>
+    <string name="earth_events_imagery_unavailable">No imagery for this day yet.</string>
+    <string name="earth_events_imagery_caption">%1$s, %2$s</string>
+    <string name="earth_events_latest_imagery">Latest imagery</string>
+    <string name="earth_events_filter_label">%1$s · %2$d</string>
+    <string name="earth_events_empty">No open events right now.</string>
+    <string name="earth_events_empty_offline">No events saved yet. Connect to the internet to load them.</string>
+    <string name="earth_events_loading">Loading events…</string>
+    <string name="earth_events_close_event">Close</string>
+    <string name="earth_events_last_update">Last update: %1$s</string>
+    <string name="earth_events_magnitude">Magnitude: %1$s</string>
+    <string name="earth_events_show_imagery">Show imagery</string>
+    <string name="earth_events_source">Source: %1$s</string>
+    <string name="earth_events_source_unnamed">link</string>
+    <plurals name="earth_events_track">
+        <item quantity="one">Track: %1$d position since %2$s</item>
+        <item quantity="other">Track: %1$d positions since %2$s</item>
+    </plurals>
+
+    <string name="earth_events_card_title">Right now on Earth</string>
+    <string name="earth_events_card_open">Open the events map</string>
+
+    <string name="earth_events_category_drought">Drought</string>
+    <string name="earth_events_category_dust_haze">Dust and haze</string>
+    <string name="earth_events_category_earthquakes">Earthquakes</string>
+    <string name="earth_events_category_floods">Floods</string>
+    <string name="earth_events_category_landslides">Landslides</string>
+    <string name="earth_events_category_manmade">Manmade</string>
+    <string name="earth_events_category_sea_lake_ice">Sea and lake ice</string>
+    <string name="earth_events_category_severe_storms">Severe storms</string>
+    <string name="earth_events_category_snow">Snow</string>
+    <string name="earth_events_category_temp_extremes">Temperature extremes</string>
+    <string name="earth_events_category_volcanoes">Volcanoes</string>
+    <string name="earth_events_category_water_color">Water colour</string>
+    <string name="earth_events_category_wildfires">Wildfires</string>
+
+    <plurals name="earth_events_count_drought">
+        <item quantity="one">%d drought</item>
+        <item quantity="other">%d droughts</item>
+    </plurals>
+    <plurals name="earth_events_count_dust_haze">
+        <item quantity="one">%d dust or haze event</item>
+        <item quantity="other">%d dust and haze events</item>
+    </plurals>
+    <plurals name="earth_events_count_earthquakes">
+        <item quantity="one">%d earthquake</item>
+        <item quantity="other">%d earthquakes</item>
+    </plurals>
+    <plurals name="earth_events_count_floods">
+        <item quantity="one">%d flood</item>
+        <item quantity="other">%d floods</item>
+    </plurals>
+    <plurals name="earth_events_count_landslides">
+        <item quantity="one">%d landslide</item>
+        <item quantity="other">%d landslides</item>
+    </plurals>
+    <plurals name="earth_events_count_manmade">
+        <item quantity="one">%d manmade event</item>
+        <item quantity="other">%d manmade events</item>
+    </plurals>
+    <plurals name="earth_events_count_sea_lake_ice">
+        <item quantity="one">%d iceberg or sea-ice event</item>
+        <item quantity="other">%d icebergs and sea-ice events</item>
+    </plurals>
+    <plurals name="earth_events_count_severe_storms">
+        <item quantity="one">%d severe storm</item>
+        <item quantity="other">%d severe storms</item>
+    </plurals>
+    <plurals name="earth_events_count_snow">
+        <item quantity="one">%d snow event</item>
+        <item quantity="other">%d snow events</item>
+    </plurals>
+    <plurals name="earth_events_count_temp_extremes">
+        <item quantity="one">%d temperature extreme</item>
+        <item quantity="other">%d temperature extremes</item>
+    </plurals>
+    <plurals name="earth_events_count_volcanoes">
+        <item quantity="one">%d active volcano</item>
+        <item quantity="other">%d active volcanoes</item>
+    </plurals>
+    <plurals name="earth_events_count_water_color">
+        <item quantity="one">%d water colour event</item>
+        <item quantity="other">%d water colour events</item>
+    </plurals>
+    <plurals name="earth_events_count_wildfires">
+        <item quantity="one">%d active wildfire</item>
+        <item quantity="other">%d active wildfires</item>
+    </plurals>
+    <plurals name="earth_events_count_others">
+        <item quantity="one">and %d other event</item>
+        <item quantity="other">and %d other events</item>
+    </plurals>
+</resources>

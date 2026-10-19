@@ -10,6 +10,7 @@ import com.radustavila.nasaexplorer.R
 import com.radustavila.nasaexplorer.feature.debug.debugScreen
 import com.radustavila.nasaexplorer.feature.details.detailsScreen
 import com.radustavila.nasaexplorer.feature.details.navigateToDetails
+import com.radustavila.nasaexplorer.feature.earthevents.earthEventsScreen
 import com.radustavila.nasaexplorer.feature.earthmap.earthMapScreen
 import com.radustavila.nasaexplorer.feature.favorites.FavoritesRoute
 import com.radustavila.nasaexplorer.feature.favorites.favoritesScreen
@@ -67,6 +68,7 @@ fun NasaNavHost(
                 )
             }
             earthMapScreen(onBackClick = navController::popBackStack)
+            earthEventsScreen(onBackClick = navController::popBackStack)
         }
 
         navigation<FavoritesGraph>(startDestination = FavoritesRoute) {
