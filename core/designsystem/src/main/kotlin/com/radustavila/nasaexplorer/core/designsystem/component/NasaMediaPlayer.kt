@@ -268,7 +268,9 @@ private fun PlayerStage(
                         this.player = player
                         useController = true
                         if (audioOnly) {
+                            // Let the artwork drawn behind the view show through.
                             setShutterBackgroundColor(android.graphics.Color.TRANSPARENT)
+                            setBackgroundColor(android.graphics.Color.TRANSPARENT)
                             controllerShowTimeoutMs = 0
                             controllerHideOnTouch = false
                         } else {
@@ -388,12 +390,15 @@ private fun Poster(url: String?, modifier: Modifier = Modifier) {
 @Composable
 private fun AudioArtwork(url: String?, modifier: Modifier = Modifier) {
     if (url == null) {
-        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        // Above the controls, which take the middle of the stage.
+        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
             Icon(
                 imageVector = Icons.Outlined.GraphicEq,
                 contentDescription = null,
                 tint = Color.White.copy(alpha = 0.6f),
-                modifier = Modifier.size(56.dp),
+                modifier = Modifier
+                    .padding(top = 24.dp)
+                    .size(48.dp),
             )
         }
     } else {

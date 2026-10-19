@@ -319,6 +319,12 @@ private fun ResultsGrid(
 ) {
     val gridState = rememberLazyGridState()
     val currentOnLoadMore by rememberUpdatedState(onLoadMore)
+    val focusManager = LocalFocusManager.current
+
+    // Browsing the results puts the keyboard away, as the search key does.
+    LaunchedEffect(gridState.isScrollInProgress) {
+        if (gridState.isScrollInProgress) focusManager.clearFocus()
+    }
 
     LaunchedEffect(gridState) {
         snapshotFlow {

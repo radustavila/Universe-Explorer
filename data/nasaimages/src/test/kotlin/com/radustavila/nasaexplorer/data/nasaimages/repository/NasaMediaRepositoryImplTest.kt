@@ -75,7 +75,20 @@ class NasaMediaRepositoryImplTest {
         val rails = repository.observeRails().first()
         assertEquals(GalleryRail.entries, rails.keys.toList())
         assertEquals("PIA26702", rails.getValue(GalleryRail.WEBB_GALAXIES).first().nasaId)
-        assertEquals(5, rails.getValue(GalleryRail.MILKY_WAY).size)
+        assertEquals(1, rails.getValue(GalleryRail.MILKY_WAY).size)
+    }
+
+    @Test
+    fun `untitled uploads stay off the rails`() = runTest {
+        // The recorded Webb galaxies page: one science image, four MSFC hardware photos titled by id.
+        enqueueEveryRail()
+
+        repository.refreshRails()
+
+        assertEquals(
+            listOf("PIA26702"),
+            repository.observeRails().first().getValue(GalleryRail.WEBB).map { it.nasaId },
+        )
     }
 
     @Test
@@ -186,7 +199,10 @@ class NasaMediaRepositoryImplTest {
         // A fresh repository has no memory of the search: the item comes from Room.
         val restarted = NasaMediaRepositoryImpl(
             localDataSource = RoomNasaImagesLocalDataSource(database.nasaMediaDao(), UnconfinedTestDispatcher()),
-            remoteDataSource = RetrofitNasaImagesRemoteDataSource(nasaImagesService(server), UnconfinedTestDispatcher()),
+            remoteDataSource = RetrofitNasaImagesRemoteDataSource(
+                nasaImagesService(server),
+                UnconfinedTestDispatcher(),
+            ),
             timeProvider = clock,
         )
         assertEquals(media, restarted.observeMedia(media.nasaId).first())
