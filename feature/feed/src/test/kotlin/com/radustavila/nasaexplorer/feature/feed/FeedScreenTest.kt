@@ -8,10 +8,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.getUnclippedBoundsInRoot
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onFirst
@@ -20,6 +19,9 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeUp
+import androidx.compose.ui.unit.dp
 import com.radustavila.nasaexplorer.core.designsystem.component.FAVORITE_BUTTON_TEST_TAG
 import com.radustavila.nasaexplorer.core.designsystem.component.LOADING_INDICATOR_TEST_TAG
 import com.radustavila.nasaexplorer.core.designsystem.component.OFFLINE_BANNER_TEST_TAG
@@ -446,5 +448,62 @@ class FeedScreenTest {
         )
 
         composeTestRule.onNodeWithTag(FEED_ON_THIS_DAY_TEST_TAG).assertIsDisplayed()
+    }
+
+    @Test
+    fun `a header and On this day arriving after the feed are shown at the top`() {
+        var uiState by mutableStateOf(FeedUiState(items = TestApods.feed(size = 5)))
+        var header: @Composable () -> Unit by mutableStateOf({})
+        composeTestRule.setContent {
+            FeedContent(
+                uiState = uiState,
+                areNotificationsOn = false,
+                onApodClick = {},
+                onToggleFavorite = {},
+                onRefresh = {},
+                onRetry = {},
+                onLoadMore = {},
+                onErrorDismissed = {},
+                onNotificationsClick = {},
+                header = header,
+            )
+        }
+        composeTestRule.onNodeWithText("Apod #0").assertIsDisplayed()
+
+        // Both load later than the feed, as on a first launch: launches first, then On this day.
+        header = { Text("Next launches", modifier = Modifier.height(120.dp)) }
+        composeTestRule.waitForIdle()
+        uiState = uiState.copy(
+            onThisDay = listOf(TestApods.image(date = LocalDate.of(2025, 9, 10), title = "A year ago")),
+        )
+
+        composeTestRule.onNodeWithText("Next launches").assertIsDisplayed()
+        composeTestRule.onNodeWithTag(FEED_ON_THIS_DAY_TEST_TAG).assertIsDisplayed()
+    }
+
+    @Test
+    fun `content arriving above the feed does not pull back a reader who has scrolled`() {
+        var uiState by mutableStateOf(FeedUiState(items = TestApods.feed(size = 8)))
+        composeTestRule.setContent {
+            FeedContent(
+                uiState = uiState,
+                areNotificationsOn = false,
+                onApodClick = {},
+                onToggleFavorite = {},
+                onRefresh = {},
+                onRetry = {},
+                onLoadMore = {},
+                onErrorDismissed = {},
+                onNotificationsClick = {},
+            )
+        }
+        composeTestRule.onNodeWithTag(FEED_LIST_TEST_TAG).performTouchInput { swipeUp() }
+        composeTestRule.waitForIdle()
+
+        uiState = uiState.copy(
+            onThisDay = listOf(TestApods.image(date = LocalDate.of(2025, 9, 10), title = "A year ago")),
+        )
+
+        composeTestRule.onNodeWithTag(FEED_ON_THIS_DAY_TEST_TAG).assertDoesNotExist()
     }
 }

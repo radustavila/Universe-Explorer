@@ -1,6 +1,7 @@
 package com.radustavila.nasaexplorer.feature.feed
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +43,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -50,6 +52,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -77,6 +80,8 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
 
 const val FEED_LIST_TEST_TAG = "feed-list"
 const val FEED_CALENDAR_BUTTON_TEST_TAG = "feed-calendar-button"
@@ -416,17 +421,19 @@ private fun FeedList(
     onToggleFavorite: (Apod) -> Unit,
     header: (@Composable () -> Unit)?,
 ) {
-    // "On this day" usually arrives after the feed (the sync worker fills it), and the list keeps
-    // its first card anchored when an item is inserted above it - which would leave the rail
-    // scrolled out of view. A reader still at the top is brought back up to see it.
-    val hasOnThisDay = uiState.onThisDay.isNotEmpty()
-    LaunchedEffect(hasOnThisDay) {
-        if (hasOnThisDay &&
-            listState.firstVisibleItemIndex <= 1 &&
-            listState.firstVisibleItemScrollOffset == 0
-        ) {
-            listState.scrollToItem(0)
-        }
+    // What sits above the first card - the Today header's cards and On this day - usually arrives
+    // after the feed, because the sync worker fetches it. The list keeps its first visible card
+    // anchored while content above it appears or grows, which would leave all of it scrolled out
+    // of view. Until the reader scrolls the list themselves, it is kept at its top.
+    var headerHeight by remember { mutableIntStateOf(0) }
+    var onThisDayHeight by remember { mutableIntStateOf(0) }
+    var hasReaderScrolled by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(listState) {
+        listState.interactionSource.interactions.filterIsInstance<DragInteraction.Start>().first()
+        hasReaderScrolled = true
+    }
+    LaunchedEffect(headerHeight, onThisDayHeight) {
+        if (!hasReaderScrolled) listState.scrollToItem(0)
     }
 
     LazyColumn(
@@ -447,13 +454,21 @@ private fun FeedList(
     ) {
         if (header != null) {
             item(key = FEED_HEADER_KEY) {
-                Column(modifier = Modifier.topGutterUnlessEmpty(FEED_GUTTER)) { header() }
+                Column(
+                    modifier = Modifier
+                        .topGutterUnlessEmpty(FEED_GUTTER)
+                        .onSizeChanged { size -> headerHeight = size.height },
+                ) { header() }
             }
         }
 
         if (uiState.onThisDay.isNotEmpty()) {
             item(key = "on-this-day") {
-                OnThisDayRail(entries = uiState.onThisDay, onApodClick = onApodClick)
+                OnThisDayRail(
+                    entries = uiState.onThisDay,
+                    onApodClick = onApodClick,
+                    modifier = Modifier.onSizeChanged { size -> onThisDayHeight = size.height },
+                )
             }
         }
 
