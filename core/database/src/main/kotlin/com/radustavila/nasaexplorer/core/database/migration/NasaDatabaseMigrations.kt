@@ -147,9 +147,38 @@ object NasaDatabaseMigrations {
             "VALUES (NEW.`rowid`, NEW.`title`, NEW.`explanation`); END",
     )
 
+    /**
+     * v5 -> v6: adds the EPIC (DSCOVR whole-Earth photo) cache.
+     *
+     * Two new tables and nothing else: existing tables are untouched, and both new tables start
+     * empty because the first EPIC sync fills them.
+     */
+    val MIGRATION_5_6 = object : Migration(5, 6) {
+        override fun migrate(connection: SQLiteConnection) {
+            connection.execSQL(
+                "CREATE TABLE IF NOT EXISTS `epic_images` (" +
+                    "`collection` TEXT NOT NULL, `identifier` TEXT NOT NULL, `date` TEXT NOT NULL, " +
+                    "`captured_at_epoch_millis` INTEGER NOT NULL, `caption` TEXT NOT NULL, " +
+                    "`centroid_latitude` REAL NOT NULL, `centroid_longitude` REAL NOT NULL, " +
+                    "`thumbnail_url` TEXT NOT NULL, `image_url` TEXT NOT NULL, " +
+                    "`cached_at_epoch_millis` INTEGER NOT NULL, " +
+                    "PRIMARY KEY(`collection`, `identifier`))",
+            )
+            connection.execSQL(
+                "CREATE INDEX IF NOT EXISTS `index_epic_images_collection_date` " +
+                    "ON `epic_images` (`collection`, `date`)",
+            )
+            connection.execSQL(
+                "CREATE TABLE IF NOT EXISTS `epic_available_dates` (" +
+                    "`collection` TEXT NOT NULL, `date` TEXT NOT NULL, " +
+                    "PRIMARY KEY(`collection`, `date`))",
+            )
+        }
+    }
+
     /** Every migration the database ships with, in order. */
     val ALL: Array<Migration> =
-        arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+        arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
 
     private class MigratedFavorite(
         val itemId: String,

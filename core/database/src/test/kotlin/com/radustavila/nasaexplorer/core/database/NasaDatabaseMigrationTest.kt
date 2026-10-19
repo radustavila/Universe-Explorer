@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.radustavila.nasaexplorer.core.database.entity.ApodEntity
+import com.radustavila.nasaexplorer.core.database.entity.EpicAvailableDateEntity
 import com.radustavila.nasaexplorer.core.database.entity.FavoriteEntity
 import com.radustavila.nasaexplorer.core.database.migration.NasaDatabaseMigrations
 import kotlinx.coroutines.flow.first
@@ -200,6 +201,27 @@ class NasaDatabaseMigrationTest {
         assertTrue(dao.observeSearch(match = "ngc*", limit = 10).first().isEmpty())
         assertTrue(database.favoriteDao().observeAll().first().any { it.itemId == "2026-09-10" })
     }
+
+    @Test
+    fun `migrating from 3 through 4 and 5 to 6 adds an empty EPIC cache and keeps rows and favourites`() =
+        runTest {
+            createVersion3Database()
+
+            val database = openWithMigrations()
+
+            assertEquals(5, database.apodDao().observeCount().first())
+            assertEquals(
+                setOf("2026-09-10", "2026-09-09", "2026-09-08", "2001-03-05"),
+                database.favoriteDao().observeAll().first().map(FavoriteEntity::itemId).toSet(),
+            )
+            val epicDao = database.epicDao()
+            assertTrue(epicDao.observeLatestDay("natural").first().isEmpty())
+            assertTrue(epicDao.observeAvailableDates("natural").first().isEmpty())
+
+            // The new tables take writes straight away.
+            epicDao.replaceAvailableDates("natural", listOf(EpicAvailableDateEntity("natural", "2026-10-16")))
+            assertEquals(listOf("2026-10-16"), epicDao.observeAvailableDates("natural").first())
+        }
 
     private fun openWithMigrations(): NasaDatabase =
         Room.databaseBuilder(context, NasaDatabase::class.java, TEST_DB_NAME)
