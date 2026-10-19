@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="earth_map_title">Satellite map</string>
+    <string name="earth_map_back">Back</string>
+    <string name="earth_map_mode_true_color">True colour</string>
+    <string name="earth_map_mode_night_lights">Night lights</string>
+    <string name="earth_map_mode_blue_marble">Blue Marble</string>
+    <string name="earth_map_previous_day">Previous day</string>
+    <string name="earth_map_next_day">Next day</string>
+    <string name="earth_map_date_slider">Imagery date</string>
+    <string name="earth_map_night_lights_caption">City lights at night, 2016 composite</string>
+    <string name="earth_map_blue_marble_caption">Cloud-free relief and ocean floor</string>
+    <string name="earth_map_tiles_failed">Can\'t load imagery right now. Showing cached tiles where available.</string>
+    <string name="earth_map_imagery_unavailable">No imagery for this day yet. Try an earlier date.</string>
+</resources>

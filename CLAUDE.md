@@ -49,7 +49,8 @@ Clean Architecture, dependencies pointing inward:
   once an hour.
 - **Presentation**: `:feature:*` (one screen each: Compose UI, ViewModel, immutable `UiState`, own type-safe
   `@Serializable` route + `NavGraphBuilder` extension), `:feature:widget` (Glance), `:core:notifications`,
-  `:core:designsystem` (theme, shared components like `ApodCard`/`NasaAsyncImage`, `AppError`→`UiError` mapping).
+  `:core:designsystem` (theme, shared components like `ApodCard`/`NasaAsyncImage`, `AppError`→`UiError` mapping),
+  `:core:map` (`SpaceMap` over MapLibre: GIBS imagery + MapLibre-free overlay API; the only module that sees MapLibre).
 - `:app` wires everything: nav host (one nested graph per tab: Today · Universe · Earth · Favourites · More) +
   bottom bar, the registries features add one line to (`TodayCards.kt`, `UniverseHub.kt`/`EarthHub.kt`/`MoreHub.kt`,
   `FavoriteNavigation.kt`), Hilt bindings for dispatchers/clock/HTTP config/`BuildConfig.DEBUG`,

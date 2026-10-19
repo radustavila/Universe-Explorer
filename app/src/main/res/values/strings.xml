@@ -8,6 +8,8 @@
     <string name="destination_more">More</string>
     <string name="hub_coming_soon_title">Coming soon</string>
     <string name="hub_coming_soon_description">Nothing here yet. New sections land in this tab as they are built.</string>
+    <string name="earth_satellite_map_title">Satellite map</string>
+    <string name="earth_satellite_map_description">Yesterday\'s Earth from orbit, night lights and Blue Marble, back to 2015</string>
     <string name="more_debug_title">Architecture</string>
     <string name="more_debug_description">Connectivity, cache, data sources and background sync</string>
 </resources>

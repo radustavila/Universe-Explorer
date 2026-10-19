@@ -180,6 +180,7 @@ flowchart BT
 | `:core:cache` | Android library | `CacheEvictor` contract and the daily `CacheEvictionWorker` that runs every registered evictor. |
 | `:core:datastore` | Android library | Preferences DataStore implementation of the per-source sync bookkeeping and of the user's preferences. |
 | `:core:designsystem` | Android library | Material 3 theme, typography, shared components (`ApodCard`, `NasaAsyncImage`, state views), `AppError`→`UiError` presentation mapping, bitmap loading and the details deep-link intent for out-of-app surfaces. |
+| `:core:map` | Android library | `SpaceMap` composable over MapLibre Native: NASA GIBS raster tiles (layer, date, matrix set) on a Blue Marble base, plus an overlay API (markers, lines, polygons, tap callbacks) that exposes no MapLibre types. |
 | `:core:notifications` | Android library | `NewApodNotifier` implementation: notification channel, big-picture notification, deep link into details. |
 | `:core:testing` | **Pure Kotlin** | Fakes for every domain contract, test data builders, `MainDispatcherRule`, `FixtureServer` (recorded JSON through MockWebServer). Shared by all test source sets. |
 | `:data:nasa` | Android library | NASA DTOs and endpoints, remote/local data sources, mappers, `ApodRepositoryImpl`, sync worker and scheduler, API key handling. |
@@ -235,6 +236,12 @@ next allowed refresh, which the Debug screen lists per source.
 **Cache eviction (`:core:cache`).** Contribute `@Binds @IntoSet CacheEvictor` per table you cache;
 the daily `CacheEvictionWorker` runs them all. An evictor owns its retention rule and must keep
 favourites (the `favorite` table) and any paging bookkeeping consistent — see `ApodCacheEvictor`.
+
+**Maps (`:core:map`).** `SpaceMap(imagery = GibsImagery(layer, date), overlays = …)` draws GIBS
+tiles over a Blue Marble base. A feature that puts things on the map passes `MapOverlay(id, shapes)`
+lists of `MapMarker`, `MapPolyline` and `MapPolygon` and gets taps back as `MapShapeClick(overlayId,
+shapeId)`; `SpaceMapState` holds the camera and the tile-loading status for an offline banner. Only
+`:core:map` sees MapLibre. A feature module that uses it adds `implementation(projects.core.map)`.
 
 **Test fixtures (`:core:testing`).** `FixtureServer` is a JUnit rule over MockWebServer: record a real
 response under `src/test/resources/fixtures/`, `enqueueFixture("source/response.json")`, and point
