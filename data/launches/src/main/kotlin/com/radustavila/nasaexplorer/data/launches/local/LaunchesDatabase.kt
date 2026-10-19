@@ -9,8 +9,9 @@ import androidx.room.RoomDatabase
  * (a schema change may simply rebuild it) and never competes with the APOD schema's versions.
  */
 @Database(
-    entities = [LaunchEntity::class, LaunchRefreshEntity::class],
-    version = 1,
+    entities = [LaunchEntity::class],
+    // 2: refresh bookkeeping moved to the shared per-source sync metadata.
+    version = 2,
     exportSchema = true,
 )
 abstract class LaunchesDatabase : RoomDatabase() {

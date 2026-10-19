@@ -3,27 +3,37 @@ package com.radustavila.nasaexplorer.core.domain.usecase
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
-import com.radustavila.nasaexplorer.core.domain.repository.LaunchRefreshOutcome
 import com.radustavila.nasaexplorer.core.domain.repository.LaunchRepository
+import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
+import com.radustavila.nasaexplorer.core.model.SyncSource
+import java.time.Duration
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 
 /**
  * Refreshes the upcoming-launches cache as part of the regular sync.
  *
- * Runs from the sync worker alongside [SynchronizeApodsUseCase], never from the UI. It is
- * best-effort: the repository throttles it to one Launch Library 2 call per refresh interval, and
- * its failures never decide whether the APOD sync is retried, since a retry would only spend more of
- * the small hourly budget.
+ * Runs from the sync worker alongside [SynchronizeApodsUseCase], never from the UI. Launch Library 2
+ * allows only 15 anonymous calls an hour, so the source is refreshed at most once per
+ * [MIN_REFRESH_INTERVAL] (and not before a 429's `Retry-After`), whatever triggered the sync. It is
+ * best-effort: its failures never decide whether the APOD sync is retried, since a retry would only
+ * spend more of that budget.
  */
 class SynchronizeUpcomingLaunchesUseCase @Inject constructor(
     private val launchRepository: LaunchRepository,
     private val networkMonitor: NetworkMonitor,
+    private val refreshSource: RefreshSourceUseCase,
 ) {
-    suspend operator fun invoke(): DataResult<LaunchRefreshOutcome> {
+    suspend operator fun invoke(): SourceRefreshResult<Int> {
         if (!networkMonitor.isOnline.first()) {
-            return DataResult.Failure(AppError.NoConnection)
+            return SourceRefreshResult.Completed(DataResult.Failure(AppError.NoConnection))
         }
-        return launchRepository.refreshUpcomingLaunches()
+        return refreshSource(SyncSource.LAUNCHES, minInterval = MIN_REFRESH_INTERVAL) {
+            launchRepository.refreshUpcomingLaunches()
+        }
+    }
+
+    companion object {
+        val MIN_REFRESH_INTERVAL: Duration = Duration.ofMinutes(60)
     }
 }

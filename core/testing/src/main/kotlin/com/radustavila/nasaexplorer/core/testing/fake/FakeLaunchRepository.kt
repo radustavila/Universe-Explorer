@@ -1,7 +1,6 @@
 package com.radustavila.nasaexplorer.core.testing.fake
 
 import com.radustavila.nasaexplorer.core.common.result.DataResult
-import com.radustavila.nasaexplorer.core.domain.repository.LaunchRefreshOutcome
 import com.radustavila.nasaexplorer.core.domain.repository.LaunchRepository
 import com.radustavila.nasaexplorer.core.model.Launch
 import kotlinx.coroutines.flow.Flow
@@ -12,8 +11,7 @@ class FakeLaunchRepository : LaunchRepository {
 
     private val launches = MutableStateFlow<List<Launch>>(emptyList())
 
-    var refreshResult: DataResult<LaunchRefreshOutcome> =
-        DataResult.Success(LaunchRefreshOutcome.REFRESHED)
+    var refreshResult: DataResult<Int> = DataResult.Success(0)
 
     var refreshCallCount: Int = 0
         private set
@@ -24,7 +22,7 @@ class FakeLaunchRepository : LaunchRepository {
 
     override fun observeUpcomingLaunches(): Flow<List<Launch>> = launches
 
-    override suspend fun refreshUpcomingLaunches(): DataResult<LaunchRefreshOutcome> {
+    override suspend fun refreshUpcomingLaunches(): DataResult<Int> {
         refreshCallCount++
         return refreshResult
     }

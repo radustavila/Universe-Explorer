@@ -154,6 +154,7 @@ class ApodSyncWorkerTest {
                         synchronizeUpcomingLaunches = SynchronizeUpcomingLaunchesUseCase(
                             launchRepository = launchRepository,
                             networkMonitor = networkMonitor,
+                            refreshSource = RefreshSourceUseCase(metadata, FakeTimeProvider()),
                         ),
                     )
                 },

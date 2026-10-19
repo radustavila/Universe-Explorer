@@ -3,40 +3,36 @@ package com.radustavila.nasaexplorer.data.launches.remote
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.network.http.RetrofitFactory
-import com.radustavila.nasaexplorer.data.launches.LaunchFixtures
+import com.radustavila.nasaexplorer.core.testing.http.FixtureServer
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import retrofit2.create
 
 class LaunchRemoteDataSourceTest {
 
-    private lateinit var server: MockWebServer
+    @get:Rule
+    val server = FixtureServer()
+
     private lateinit var remoteDataSource: LaunchRemoteDataSource
 
     @Before
     fun setUp() {
-        server = MockWebServer()
-        server.start()
         remoteDataSource = RetrofitLaunchRemoteDataSource(
             service = launchLibraryService(server),
             ioDispatcher = UnconfinedTestDispatcher(),
         )
     }
 
-    @After
-    fun tearDown() = server.shutdown()
-
     @Test
     fun `asks for a few upcoming launches with their livestreams in one call`() = runTest {
-        server.enqueue(MockResponse().setBody(LaunchFixtures.UPCOMING_DETAILED))
+        server.enqueueFixture(UPCOMING_FIXTURE)
 
         val result = remoteDataSource.fetchUpcoming()
 
@@ -51,11 +47,10 @@ class LaunchRemoteDataSourceTest {
 
     @Test
     fun `a 429 maps to RateLimited with its Retry-After`() = runTest {
-        server.enqueue(
-            MockResponse()
-                .setResponseCode(429)
-                .setHeader("Retry-After", "1834")
-                .setBody("""{"detail":"Request was throttled. Expected available in 1834 seconds."}"""),
+        server.enqueueJson(
+            body = """{"detail":"Request was throttled. Expected available in 1834 seconds."}""",
+            code = 429,
+            headers = mapOf("Retry-After" to "1834"),
         )
 
         val result = remoteDataSource.fetchUpcoming()
@@ -65,7 +60,7 @@ class LaunchRemoteDataSourceTest {
 
     @Test
     fun `a malformed body maps to a serialization error`() = runTest {
-        server.enqueue(MockResponse().setBody("""{"results": "nope"}"""))
+        server.enqueueJson("""{"results": "nope"}""")
 
         val result = remoteDataSource.fetchUpcoming()
 
@@ -73,8 +68,8 @@ class LaunchRemoteDataSourceTest {
     }
 }
 
-internal fun launchLibraryService(server: MockWebServer): LaunchLibraryService =
+internal fun launchLibraryService(server: FixtureServer): LaunchLibraryService =
     RetrofitFactory(
         json = Json { ignoreUnknownKeys = true; explicitNulls = false; coerceInputValues = true },
         callFactory = OkHttpClient(),
-    ).create(server.url("/").toString()).create(LaunchLibraryService::class.java)
+    ).create(server.baseUrl).create()
