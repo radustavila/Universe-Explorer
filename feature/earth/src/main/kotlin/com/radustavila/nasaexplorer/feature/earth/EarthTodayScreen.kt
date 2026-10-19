@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.feature.earth
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -54,12 +55,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -193,44 +193,50 @@ internal fun EarthTodayContent(
 
             // One scroll container for the rotation (or the state standing in for it) and whatever
             // the footer adds below, so the footer stays reachable whatever state the day is in.
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                val stateModifier = Modifier.height(STATE_HEIGHT)
-                when {
-                    uiState.isLoading && !uiState.hasContent -> LoadingState(modifier = stateModifier)
+            BoxWithConstraints(modifier = Modifier.weight(1f)) {
+                // Sized from the space left between the bars, not the window: in landscape a square
+                // as wide as the screen would push the time, centroid and controls out of view.
+                val discSize = minOf(MAX_DISC_WIDTH, maxHeight * DISC_HEIGHT_FRACTION)
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    val stateModifier = Modifier.height(STATE_HEIGHT)
+                    when {
+                        uiState.isLoading && !uiState.hasContent -> LoadingState(modifier = stateModifier)
 
-                    uiState.isOfflineEmpty -> OfflineState(
-                        title = stringResource(R.string.earth_today_offline_title),
-                        description = stringResource(R.string.earth_today_offline_description),
-                        onRetry = onRetry,
-                        modifier = stateModifier,
-                    )
-
-                    uiState.isEmpty -> EmptyState(
-                        title = errorMessage ?: stringResource(R.string.earth_today_empty_title),
-                        description = stringResource(R.string.earth_today_empty_description),
-                        onRetry = onRetry,
-                        modifier = stateModifier,
-                    )
-
-                    // Keyed by the day and set, so a new selection starts its rotation afresh.
-                    else -> key(uiState.collection, uiState.displayedDate) {
-                        EarthRotation(
-                            images = uiState.images,
-                            autoPlay = autoPlay,
-                            initialImageId = uiState.focusedImageId,
-                            isFavorite = uiState::isFavorite,
-                            onToggleFavorite = onToggleFavorite,
+                        uiState.isOfflineEmpty -> OfflineState(
+                            title = stringResource(R.string.earth_today_offline_title),
+                            description = stringResource(R.string.earth_today_offline_description),
+                            onRetry = onRetry,
+                            modifier = stateModifier,
                         )
-                    }
-                }
 
-                footer?.let { content ->
-                    Column(modifier = Modifier.padding(bottom = 16.dp)) { content() }
+                        uiState.isEmpty -> EmptyState(
+                            title = errorMessage ?: stringResource(R.string.earth_today_empty_title),
+                            description = stringResource(R.string.earth_today_empty_description),
+                            onRetry = onRetry,
+                            modifier = stateModifier,
+                        )
+
+                        // Keyed by the day and set, so a new selection starts its rotation afresh.
+                        else -> key(uiState.collection, uiState.displayedDate) {
+                            EarthRotation(
+                                images = uiState.images,
+                                autoPlay = autoPlay,
+                                discSize = discSize,
+                                initialImageId = uiState.focusedImageId,
+                                isFavorite = uiState::isFavorite,
+                                onToggleFavorite = onToggleFavorite,
+                            )
+                        }
+                    }
+
+                    footer?.let { content ->
+                        Column(modifier = Modifier.padding(bottom = 16.dp)) { content() }
+                    }
                 }
             }
         }
@@ -285,6 +291,7 @@ private fun CollectionToggle(
 private fun EarthRotation(
     images: List<EpicImage>,
     autoPlay: Boolean,
+    discSize: Dp,
     initialImageId: String?,
     isFavorite: (EpicImage) -> Boolean,
     onToggleFavorite: (EpicImage) -> Unit,
@@ -303,10 +310,6 @@ private fun EarthRotation(
     AutoAdvance(pagerState = pagerState, isPlaying = isPlaying && images.size > 1)
 
     val current = images[pagerState.currentPage.coerceIn(images.indices)]
-
-    // In landscape a full-width square would push the time, centroid and controls off screen.
-    val windowHeight = with(LocalDensity.current) { LocalWindowInfo.current.containerSize.height.toDp() }
-    val discSize = minOf(MAX_DISC_WIDTH, windowHeight * DISC_HEIGHT_FRACTION)
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         HorizontalPager(
@@ -520,7 +523,7 @@ internal fun GeoPoint.toCoordinateLabel(): String {
 }
 
 private val MAX_DISC_WIDTH = 480.dp
-private const val DISC_HEIGHT_FRACTION = 0.6f
+private const val DISC_HEIGHT_FRACTION = 0.8f
 private val STATE_HEIGHT = 360.dp
 private const val FRAME_DURATION_MILLIS = 1_000L
 
