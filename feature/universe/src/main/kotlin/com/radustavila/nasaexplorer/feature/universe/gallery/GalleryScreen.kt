@@ -237,9 +237,8 @@ private fun Rails(
         ) {
             if (uiState.isOffline) item(key = "offline") { OfflineBanner() }
             if (header != null) {
-                item(key = "header") {
-                    Box(modifier = Modifier.padding(horizontal = 16.dp)) { header() }
-                }
+                // The header draws its own side margins, so a rail in it can scroll edge to edge.
+                item(key = "header") { header() }
             }
             items(items = uiState.rails, key = { it.rail.key }) { rail ->
                 RailSection(rail = rail, onMediaClick = onMediaClick)

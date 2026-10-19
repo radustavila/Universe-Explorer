@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mars_rail_title">Mars</string>
+    <string name="mars_rail_subtitle">Latest raw photos from Curiosity and Perseverance</string>
+    <string name="mars_rail_see_all">See all</string>
+    <string name="mars_rail_syncing">Downloading the latest rover photos…</string>
+    <string name="mars_rail_failed">Could not download rover photos. Trying again later.</string>
+    <string name="mars_rail_waiting">Rover photos download in the background when you are online.</string>
+
+    <string name="mars_photo_sol">Sol %1$d</string>
+    <string name="mars_photo_rover_sol">%1$s · Sol %2$d</string>
+
+    <string name="mars_photos_title">Mars photos</string>
+    <string name="mars_photos_back">Back</string>
+    <string name="mars_photos_empty_title">No photos from %1$s yet</string>
+    <string name="mars_photos_empty_description">Pull down to check for new photos.</string>
+    <string name="mars_photos_offline_title">Rover photos not downloaded yet</string>
+    <string name="mars_photos_offline_description">Connect once and the newest photos stay available offline.</string>
+    <string name="mars_photos_failed_title">Could not download %1$s\'s photos</string>
+    <string name="mars_photos_failed_description">The rover feeds are sometimes slow to answer. Try again in a while.</string>
+    <string name="mars_photos_stale">Showing saved photos; the last download failed.</string>
+
+    <string name="mars_photo_missing_title">Photo no longer available</string>
+    <string name="mars_photo_missing_description">Rover photos are kept for two weeks unless you save them to Favourites.</string>
+    <string name="mars_photo_view_full_size">View full size</string>
+    <string name="mars_photo_taken">Taken %1$s</string>
+    <string name="mars_photo_credit">Credit: %1$s</string>
+    <string name="mars_photo_raw_note">Raw image, as received from Mars before any processing.</string>
+</resources>

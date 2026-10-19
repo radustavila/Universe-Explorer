@@ -6,20 +6,25 @@ import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
 import com.radustavila.nasaexplorer.core.domain.repository.FavoritesRepository
 import com.radustavila.nasaexplorer.core.domain.repository.LaunchRepository
+import com.radustavila.nasaexplorer.core.domain.repository.MarsPhotoRepository
 import com.radustavila.nasaexplorer.core.domain.repository.NasaMediaRepository
 import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepository
 import com.radustavila.nasaexplorer.core.domain.repository.UserPreferencesRepository
+import com.radustavila.nasaexplorer.core.domain.sync.MarsSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
 import com.radustavila.nasaexplorer.core.network.di.NetworkBindingModule
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeFavoritesRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsPhotoRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNasaMediaRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeUserPreferencesRepository
 import com.radustavila.nasaexplorer.data.launches.di.LaunchesDataModule
+import com.radustavila.nasaexplorer.data.mars.di.MarsDataModule
 import com.radustavila.nasaexplorer.data.nasa.di.NasaDataModule
 import com.radustavila.nasaexplorer.data.nasaimages.di.NasaImagesDataModule
 import dagger.Module
@@ -96,6 +101,29 @@ object TestNasaImagesDataModule {
 
     @Provides
     fun provideNasaMediaRepository(fake: FakeNasaMediaRepository): NasaMediaRepository = fake
+}
+
+/**
+ * Keeps the Mars rail off the network and off WorkManager: photos the test seeds, and sync requests
+ * that are only counted (nor the photo cache's evictor, which this module also contributes).
+ */
+@Module
+@TestInstallIn(components = [SingletonComponent::class], replaces = [MarsDataModule::class])
+object TestMarsDataModule {
+
+    @Provides
+    @Singleton
+    fun provideFakeMarsPhotoRepository(): FakeMarsPhotoRepository = FakeMarsPhotoRepository()
+
+    @Provides
+    fun provideMarsPhotoRepository(fake: FakeMarsPhotoRepository): MarsPhotoRepository = fake
+
+    @Provides
+    @Singleton
+    fun provideFakeMarsSyncScheduler(): FakeMarsSyncScheduler = FakeMarsSyncScheduler()
+
+    @Provides
+    fun provideMarsSyncScheduler(fake: FakeMarsSyncScheduler): MarsSyncScheduler = fake
 }
 
 /**

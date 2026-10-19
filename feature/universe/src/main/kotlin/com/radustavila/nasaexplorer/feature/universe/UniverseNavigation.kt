@@ -22,7 +22,7 @@ fun NavController.navigateToNasaMedia(nasaId: String, navOptions: NavOptions? = 
 
 /**
  * @param header what else the Universe tab offers (exoplanets, sky tonight, Mars...), drawn above
- * the rails; null while there is nothing else.
+ * the rails with its own side margins; null while there is nothing else.
  */
 fun NavGraphBuilder.galleryScreen(
     onMediaClick: (nasaId: String) -> Unit,

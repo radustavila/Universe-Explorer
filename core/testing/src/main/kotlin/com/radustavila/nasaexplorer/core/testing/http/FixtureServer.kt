@@ -1,5 +1,6 @@
 package com.radustavila.nasaexplorer.core.testing.http
 
+import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
@@ -65,6 +66,20 @@ class FixtureServer : ExternalResource() {
     fun enqueue(response: MockResponse) {
         server.enqueue(response)
     }
+
+    /**
+     * Answers every request with [responder] instead of in enqueue order, for a client that calls
+     * several endpoints concurrently (their order of arrival is not fixed).
+     */
+    fun route(responder: (RecordedRequest) -> MockResponse) {
+        server.dispatcher = object : Dispatcher() {
+            override fun dispatch(request: RecordedRequest): MockResponse = responder(request)
+        }
+    }
+
+    /** `fixtures/[path]` as a JSON response, for [route]. */
+    fun fixtureResponse(path: String, code: Int = HTTP_OK): MockResponse =
+        MockResponse().setResponseCode(code).setBody(Fixtures.read(path)).withHeaders(emptyMap())
 
     fun takeRequest(): RecordedRequest = server.takeRequest()
 
