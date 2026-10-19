@@ -56,6 +56,10 @@ fun List<ApodDto>.toEntities(cachedAt: Instant, isInFeed: Boolean = true): List<
         .values
         .toList()
 
+/**
+ * [Apod.isFavorite] is always `false` here: favourites live in their own table, and the repository
+ * marks them on the way out.
+ */
 fun ApodEntity.toDomain(): Apod = Apod(
     date = LocalDate.parse(date),
     title = title,
@@ -65,7 +69,6 @@ fun ApodEntity.toDomain(): Apod = Apod(
     hdUrl = hdUrl,
     thumbnailUrl = thumbnailUrl,
     copyright = copyright,
-    isFavorite = isFavorite,
     cachedAt = Instant.ofEpochMilli(cachedAtEpochMillis),
     lastSyncedAt = Instant.ofEpochMilli(lastSyncedAtEpochMillis),
 )

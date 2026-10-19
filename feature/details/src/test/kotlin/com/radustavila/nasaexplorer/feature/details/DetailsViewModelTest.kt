@@ -10,6 +10,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCa
 import com.radustavila.nasaexplorer.core.domain.usecase.ToggleFavoriteUseCase
 import com.radustavila.nasaexplorer.core.testing.data.TestApods
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
 import kotlinx.coroutines.test.runTest
@@ -150,7 +151,7 @@ class DetailsViewModelTest {
         savedStateHandle = SavedStateHandle(mapOf("date" to date)),
         observeApod = ObserveApodUseCase(repository),
         observeConnectivity = ObserveConnectivityUseCase(networkMonitor),
-        toggleFavorite = ToggleFavoriteUseCase(repository),
+        toggleFavorite = ToggleFavoriteUseCase(repository.favorites, FakeTimeProvider()),
         fetchApod = FetchApodUseCase(repository, networkMonitor),
     )
 }

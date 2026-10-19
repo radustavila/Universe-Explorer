@@ -7,6 +7,7 @@ import androidx.work.testing.TestListenableWorkerBuilder
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.usecase.AnnounceLatestApodUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RefreshSourceUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeApodsUseCase
 import com.radustavila.nasaexplorer.core.testing.data.TestApods
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
@@ -120,8 +121,8 @@ class ApodSyncWorkerTest {
                         workerParameters = workerParameters,
                         synchronizeApods = SynchronizeApodsUseCase(
                             apodRepository = repository,
-                            syncMetadataRepository = metadata,
                             networkMonitor = networkMonitor,
+                            refreshSource = RefreshSourceUseCase(metadata, FakeTimeProvider()),
                             timeProvider = FakeTimeProvider(),
                         ),
                         announceLatestApod = AnnounceLatestApodUseCase(

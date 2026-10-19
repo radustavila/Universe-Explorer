@@ -6,8 +6,10 @@ import com.radustavila.nasaexplorer.core.common.result.flatMap
 import com.radustavila.nasaexplorer.core.common.result.map
 import com.radustavila.nasaexplorer.core.common.time.TimeProvider
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
+import com.radustavila.nasaexplorer.core.domain.repository.FavoritesRepository
 import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepository
 import com.radustavila.nasaexplorer.core.model.Apod
+import com.radustavila.nasaexplorer.core.model.FavoriteSource
 import com.radustavila.nasaexplorer.data.nasa.local.ApodLocalDataSource
 import com.radustavila.nasaexplorer.data.nasa.mapper.toEntities
 import com.radustavila.nasaexplorer.data.nasa.remote.ApodRemoteDataSource
@@ -15,6 +17,7 @@ import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 
 /**
@@ -27,31 +30,43 @@ import kotlinx.coroutines.flow.first
  * Pagination is expressed as date windows because the APOD API has no page cursor: the newest window
  * is `[today - 6, today]`, and every "load more" walks one window further into the archive, bounded
  * by the first APOD ever published.
+ *
+ * Favourites are not stored on the entries: every read is combined with the [FavoriteSource.APOD]
+ * ids of the shared favourites table, so a heart toggled anywhere shows up everywhere.
  */
 @Singleton
 class ApodRepositoryImpl @Inject constructor(
     private val localDataSource: ApodLocalDataSource,
     private val remoteDataSource: ApodRemoteDataSource,
     private val syncMetadataRepository: SyncMetadataRepository,
+    private val favoritesRepository: FavoritesRepository,
     private val timeProvider: TimeProvider,
 ) : ApodRepository {
 
-    override fun observeFeed(): Flow<List<Apod>> = localDataSource.observeFeed()
+    private val favoriteDates: Flow<Set<String>> =
+        favoritesRepository.observeFavoriteIds(FavoriteSource.APOD)
 
-    override fun observeLatestApod(): Flow<Apod?> = localDataSource.observeLatest()
+    override fun observeFeed(): Flow<List<Apod>> =
+        combine(localDataSource.observeFeed(), favoriteDates) { feed, favorites ->
+            feed.map { apod -> apod.markFavorite(favorites) }
+        }
 
-    override fun observeApod(date: LocalDate): Flow<Apod?> = localDataSource.observeApod(date)
+    override fun observeLatestApod(): Flow<Apod?> =
+        combine(localDataSource.observeLatest(), favoriteDates) { apod, favorites ->
+            apod?.markFavorite(favorites)
+        }
 
-    override fun observeFavorites(): Flow<List<Apod>> = localDataSource.observeFavorites()
+    override fun observeApod(date: LocalDate): Flow<Apod?> =
+        combine(localDataSource.observeApod(date), favoriteDates) { apod, favorites ->
+            apod?.markFavorite(favorites)
+        }
 
     override fun observeCachedCount(): Flow<Int> = localDataSource.observeCount()
 
-    override fun observeFavoritesCount(): Flow<Int> = localDataSource.observeFavoritesCount()
-
     override fun observeOldestCachedDate(): Flow<LocalDate?> = localDataSource.observeOldestDate()
 
-    override suspend fun setFavorite(date: LocalDate, isFavorite: Boolean): DataResult<Unit> =
-        localDataSource.setFavorite(date = date, isFavorite = isFavorite)
+    private fun Apod.markFavorite(favoriteDates: Set<String>): Apod =
+        copy(isFavorite = date.toString() in favoriteDates)
 
     override suspend fun refreshRecent(): DataResult<Int> {
         val today = timeProvider.today()

@@ -2,6 +2,7 @@ package com.radustavila.nasaexplorer.core.domain.usecase
 
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.model.SyncSource
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
@@ -20,8 +21,8 @@ class SynchronizeApodsUseCaseTest {
 
     private val synchronizeApods = SynchronizeApodsUseCase(
         apodRepository = repository,
-        syncMetadataRepository = metadata,
         networkMonitor = networkMonitor,
+        refreshSource = RefreshSourceUseCase(metadata, timeProvider),
         timeProvider = timeProvider,
     )
 
@@ -47,12 +48,26 @@ class SynchronizeApodsUseCaseTest {
     }
 
     @Test
-    fun `leaves the last sync timestamp untouched when the refresh fails`() = runTest {
+    fun `records the failure and leaves the last sync timestamp untouched`() = runTest {
         repository.refreshResult = DataResult.Failure(AppError.Http(code = 500))
 
         val result = synchronizeApods()
 
         assertEquals(DataResult.Failure(AppError.Http(code = 500)), result)
         assertNull(metadata.currentLastSync)
+        assertEquals(timeProvider.currentInstant, metadata.statusOf(SyncSource.APOD).lastFailureAt)
     }
+
+    @Test
+    fun `while NASA is cooling down after a 429 the sync reports RateLimited without calling it`() =
+        runTest {
+            repository.refreshResult = DataResult.Failure(AppError.RateLimited(retryAfterSeconds = 120))
+            synchronizeApods()
+            timeProvider.currentInstant = timeProvider.currentInstant.plusSeconds(20)
+
+            val result = synchronizeApods()
+
+            assertEquals(DataResult.Failure(AppError.RateLimited(retryAfterSeconds = 100)), result)
+            assertEquals(1, repository.refreshCallCount)
+        }
 }

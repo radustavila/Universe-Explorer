@@ -35,13 +35,7 @@ class RoomApodLocalDataSource @Inject constructor(
             .map { entity -> entity?.toDomain() }
             .flowOn(ioDispatcher)
 
-    override fun observeFavorites(): Flow<List<Apod>> =
-        apodDao.observeFavorites().map { entities -> entities.toDomain() }.flowOn(ioDispatcher)
-
     override fun observeCount(): Flow<Int> = apodDao.observeCount().flowOn(ioDispatcher)
-
-    override fun observeFavoritesCount(): Flow<Int> =
-        apodDao.observeFavoritesCount().flowOn(ioDispatcher)
 
     override fun observeOldestDate(): Flow<LocalDate?> = apodDao.observeOldestDate()
         .map { raw -> raw?.let(LocalDate::parse) }
@@ -49,12 +43,6 @@ class RoomApodLocalDataSource @Inject constructor(
 
     override suspend fun upsertPreservingLocalState(entities: List<ApodEntity>): DataResult<Int> =
         runDatabaseCall { apodDao.upsertPreservingLocalState(entities) }
-
-    override suspend fun setFavorite(date: LocalDate, isFavorite: Boolean): DataResult<Unit> =
-        runDatabaseCall {
-            val updatedRows = apodDao.setFavorite(date = date.toString(), isFavorite = isFavorite)
-            check(updatedRows > 0) { "No cached APOD for $date" }
-        }
 
     private suspend fun <T> runDatabaseCall(block: suspend () -> T): DataResult<T> =
         withContext(ioDispatcher) {

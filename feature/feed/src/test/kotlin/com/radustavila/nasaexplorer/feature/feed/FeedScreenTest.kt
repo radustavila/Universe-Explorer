@@ -55,6 +55,27 @@ class FeedScreenTest {
     }
 
     @Test
+    fun `Today cards supplied by the app are shown above the entries`() {
+        composeTestRule.setContent {
+            FeedContent(
+                uiState = FeedUiState(items = TestApods.feed(size = 1)),
+                onApodClick = {},
+                onToggleFavorite = {},
+                onRefresh = {},
+                onRetry = {},
+                onLoadMore = {},
+                onErrorDismissed = {},
+                areNotificationsOn = false,
+                onNotificationsClick = {},
+                header = { androidx.compose.material3.Text("Next launch in 2 h") },
+            )
+        }
+
+        composeTestRule.onNodeWithText("Next launch in 2 h").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Apod #0").assertIsDisplayed()
+    }
+
+    @Test
     fun `the calendar action opens the date picker`() {
         val today = LocalDate.of(2026, 9, 10)
         composeTestRule.setContent {

@@ -18,7 +18,6 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "apods",
     indices = [
-        Index(value = ["is_favorite"]),
         Index(value = ["is_in_feed"]),
         Index(value = ["media_type"]),
     ],
@@ -41,6 +40,11 @@ data class ApodEntity(
     val thumbnailUrl: String?,
     @ColumnInfo(name = "copyright")
     val copyright: String?,
+    /**
+     * Legacy: favourites moved to the `favorite` table in schema v4 and this column is neither read
+     * nor written since. It stays because SQLite before 3.35 (API < 34) cannot drop a column without
+     * rebuilding the table.
+     */
     @ColumnInfo(name = "is_favorite", defaultValue = "0")
     val isFavorite: Boolean = false,
     /** When the row first entered the cache; never overwritten by a later sync. */
@@ -65,8 +69,8 @@ data class ApodEntity(
 /**
  * Partial-update projection used by [com.radustavila.nasaexplorer.core.database.dao.ApodDao].
  *
- * Remote payloads must never clobber `is_favorite`, which is local user state, nor
- * `cached_at_epoch_millis`, which records when the entry first entered the cache. Updating through
+ * Remote payloads must never clobber `cached_at_epoch_millis`, which records when the entry first
+ * entered the cache (nor the legacy `is_favorite`). Updating through
  * a projection that simply does not contain those columns makes that impossible rather than merely
  * unlikely.
  */

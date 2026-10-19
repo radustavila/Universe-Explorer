@@ -22,4 +22,11 @@
     <string name="debug_state_syncing">Running</string>
     <string name="debug_state_succeeded">Succeeded</string>
     <string name="debug_state_failed">Failed: %1$s</string>
+    <string name="debug_section_sources">Data sources</string>
+    <string name="debug_sources_none">No source has synced yet</string>
+    <string name="debug_source_last_success">Last success</string>
+    <string name="debug_source_last_error">Last error</string>
+    <string name="debug_source_error_at">%1$s (%2$s)</string>
+    <string name="debug_source_next_refresh">Next refresh allowed</string>
+    <string name="debug_source_any_time">Any time</string>
 </resources>

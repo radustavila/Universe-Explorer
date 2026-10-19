@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.designsystem.error.UiError
 import com.radustavila.nasaexplorer.core.designsystem.error.toUiError
-import com.radustavila.nasaexplorer.core.domain.usecase.ObserveFavoriteApodsUseCase
-import com.radustavila.nasaexplorer.core.domain.usecase.ToggleFavoriteUseCase
-import com.radustavila.nasaexplorer.core.model.Apod
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveFavoritesUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RemoveFavoriteUseCase
+import com.radustavila.nasaexplorer.core.model.FavoriteItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,8 +20,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    observeFavorites: ObserveFavoriteApodsUseCase,
-    private val toggleFavorite: ToggleFavoriteUseCase,
+    observeFavorites: ObserveFavoritesUseCase,
+    private val removeFavorite: RemoveFavoriteUseCase,
 ) : ViewModel() {
 
     private val transientError = MutableStateFlow<UiError?>(null)
@@ -37,9 +37,9 @@ class FavoritesViewModel @Inject constructor(
         initialValue = FavoritesUiState(),
     )
 
-    fun onToggleFavorite(apod: Apod) {
+    fun onRemoveFavorite(item: FavoriteItem) {
         viewModelScope.launch {
-            val result = toggleFavorite(apod)
+            val result = removeFavorite(item.source, item.itemId)
             if (result is DataResult.Failure) {
                 transientError.update { result.error.toUiError() }
             }

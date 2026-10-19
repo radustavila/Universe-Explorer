@@ -14,6 +14,8 @@ internal object SyncErrorCodec {
     private const val KEY_ERROR_TYPE = "error_type"
     private const val KEY_HTTP_CODE = "http_code"
     private const val KEY_MESSAGE = "error_message"
+    private const val KEY_RETRY_AFTER_SECONDS = "retry_after_seconds"
+    private const val NO_RETRY_AFTER = -1L
 
     fun encode(error: AppError): Data = when (error) {
         AppError.NoConnection -> workDataOf(KEY_ERROR_TYPE to Type.NO_CONNECTION)
@@ -24,7 +26,10 @@ internal object SyncErrorCodec {
             KEY_MESSAGE to error.message,
         )
 
-        is AppError.RateLimited -> workDataOf(KEY_ERROR_TYPE to Type.RATE_LIMITED)
+        is AppError.RateLimited -> workDataOf(
+            KEY_ERROR_TYPE to Type.RATE_LIMITED,
+            KEY_RETRY_AFTER_SECONDS to (error.retryAfterSeconds ?: NO_RETRY_AFTER),
+        )
         is AppError.Serialization -> workDataOf(
             KEY_ERROR_TYPE to Type.SERIALIZATION,
             KEY_MESSAGE to error.message,
@@ -48,7 +53,10 @@ internal object SyncErrorCodec {
             Type.NO_CONNECTION -> AppError.NoConnection
             Type.TIMEOUT -> AppError.Timeout
             Type.HTTP -> AppError.Http(code = data.getInt(KEY_HTTP_CODE, 0), message = message)
-            Type.RATE_LIMITED -> AppError.RateLimited()
+            Type.RATE_LIMITED -> AppError.RateLimited(
+                retryAfterSeconds = data.getLong(KEY_RETRY_AFTER_SECONDS, NO_RETRY_AFTER)
+                    .takeIf { it != NO_RETRY_AFTER },
+            )
             Type.SERIALIZATION -> AppError.Serialization(message)
             Type.DATABASE -> AppError.Database(message)
             Type.EMPTY -> AppError.EmptyResponse

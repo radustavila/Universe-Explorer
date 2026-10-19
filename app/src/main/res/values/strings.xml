@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">NASA Explorer</string>
-    <string name="destination_feed">Feed</string>
+    <string name="destination_today">Today</string>
+    <string name="destination_universe">Universe</string>
+    <string name="destination_earth">Earth</string>
     <string name="destination_favorites">Favorites</string>
-    <string name="destination_debug">Debug</string>
+    <string name="destination_more">More</string>
+    <string name="hub_coming_soon_title">Coming soon</string>
+    <string name="hub_coming_soon_description">Nothing here yet. New sections land in this tab as they are built.</string>
+    <string name="more_debug_title">Architecture</string>
+    <string name="more_debug_description">Connectivity, cache, data sources and background sync</string>
 </resources>

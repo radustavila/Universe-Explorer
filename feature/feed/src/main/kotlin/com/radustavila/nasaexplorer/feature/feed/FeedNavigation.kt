@@ -1,5 +1,6 @@
 package com.radustavila.nasaexplorer.feature.feed
 
+import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -16,8 +17,12 @@ data object FeedRoute
 
 fun NavController.navigateToFeed(navOptions: NavOptions? = null) = navigate(FeedRoute, navOptions)
 
-fun NavGraphBuilder.feedScreen(onApodClick: (LocalDate) -> Unit) {
+/** @param header the Today cards shown above the feed; see [FeedScreen]. */
+fun NavGraphBuilder.feedScreen(
+    onApodClick: (LocalDate) -> Unit,
+    header: (@Composable () -> Unit)? = null,
+) {
     composable<FeedRoute> {
-        FeedScreen(onApodClick = onApodClick)
+        FeedScreen(onApodClick = onApodClick, header = header)
     }
 }

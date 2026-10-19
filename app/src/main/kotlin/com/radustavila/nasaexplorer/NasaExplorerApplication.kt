@@ -6,6 +6,7 @@ import androidx.work.Configuration
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
+import com.radustavila.nasaexplorer.core.cache.CacheEvictionScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -23,6 +24,9 @@ class NasaExplorerApplication :
     lateinit var syncScheduler: SyncScheduler
 
     @Inject
+    lateinit var cacheEvictionScheduler: CacheEvictionScheduler
+
+    @Inject
     lateinit var imageLoader: dagger.Lazy<ImageLoader>
 
     override val workManagerConfiguration: Configuration
@@ -38,5 +42,6 @@ class NasaExplorerApplication :
         // Registering periodic sync is idempotent, so doing it on every start is safe and keeps the
         // schedule alive across app updates and reboots.
         syncScheduler.ensurePeriodicSync()
+        cacheEvictionScheduler.ensurePeriodicEviction()
     }
 }

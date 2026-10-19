@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import com.radustavila.nasaexplorer.core.database.entity.FavoriteEntity
 import com.radustavila.nasaexplorer.core.database.migration.NasaDatabaseMigrations
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -103,6 +104,41 @@ class NasaDatabaseMigrationTest {
             assertTrue(row.isFavorite)
         }
 
+    @Test
+    fun `a favourite from version 1 ends up in the favourite table`() = runTest {
+        createVersion1Database()
+
+        val favorites = openWithMigrations().favoriteDao().observeAll().first()
+
+        assertEquals(listOf("2026-09-10"), favorites.map(FavoriteEntity::itemId))
+        assertEquals("apod", favorites.single().source)
+    }
+
+    @Test
+    fun `migrating from 3 to 4 keeps every existing APOD favourite`() = runTest {
+        createVersion3Database()
+
+        val database = openWithMigrations()
+        val favorites = database.favoriteDao().observeAll().first().associateBy(FavoriteEntity::itemId)
+
+        assertEquals(setOf("2026-09-10", "2026-09-09", "2026-09-08", "2001-03-05"), favorites.keys)
+        assertTrue(favorites.values.all { it.source == "apod" })
+        assertEquals("Spiral Galaxy NGC 1300", favorites.getValue("2026-09-10").title)
+        assertEquals(CACHED_AT_MILLIS, favorites.getValue("2026-09-10").savedAtEpochMillis)
+        // The snapshot image is the entry's preview, whatever its media type.
+        assertEquals("https://apod.nasa.gov/apod/image/ngc1300.jpg", favorites.getValue("2026-09-10").imageUrl)
+        assertEquals(
+            "https://img.youtube.com/vi/abcdefghijk/hqdefault.jpg",
+            favorites.getValue("2026-09-09").imageUrl,
+        )
+        assertEquals("https://apod.nasa.gov/apod/image/aurora.mp4", favorites.getValue("2026-09-08").imageUrl)
+        assertEquals("https://apod.nasa.gov/apod/image/old_thumb.jpg", favorites.getValue("2001-03-05").imageUrl)
+
+        // Nothing else moved and no cached row was lost.
+        assertEquals(5, database.apodDao().observeCount().first())
+        assertEquals("2001-03-05", database.apodDao().findByDate("2001-03-05")?.date)
+    }
+
     private fun openWithMigrations(): NasaDatabase =
         Room.databaseBuilder(context, NasaDatabase::class.java, TEST_DB_NAME)
             .addMigrations(*NasaDatabaseMigrations.ALL)
@@ -160,11 +196,72 @@ class NasaDatabaseMigrationTest {
         }
     }
 
+    /** Writes a version-3 database (see `schemas/…/3.json`) with favourites of every media type. */
+    private fun createVersion3Database() {
+        val file = context.getDatabasePath(TEST_DB_NAME)
+        file.parentFile?.mkdirs()
+
+        val db = SQLiteDatabase.openOrCreateDatabase(file, null)
+        try {
+            db.execSQL(VERSION_3_CREATE_APODS)
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_apods_is_favorite` ON `apods` (`is_favorite`)")
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_apods_is_in_feed` ON `apods` (`is_in_feed`)")
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_apods_media_type` ON `apods` (`media_type`)")
+            db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)")
+            db.execSQL(
+                "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, ?)",
+                arrayOf(VERSION_3_IDENTITY_HASH),
+            )
+
+            listOf(
+                arrayOf<Any?>(
+                    "2026-09-10", "Spiral Galaxy NGC 1300", "image",
+                    "https://apod.nasa.gov/apod/image/ngc1300.jpg", null, 1, 1,
+                ),
+                arrayOf<Any?>(
+                    "2026-09-09", "Flight Through the Orion Nebula", "video",
+                    "https://www.youtube.com/embed/abcdefghijk", null, 1, 1,
+                ),
+                arrayOf<Any?>(
+                    "2026-09-08", "Aurora Timelapse", "video",
+                    "https://apod.nasa.gov/apod/image/aurora.mp4", null, 1, 1,
+                ),
+                arrayOf<Any?>("2026-09-07", "Not a favourite", "image", "https://apod.nasa.gov/x.jpg", null, 0, 1),
+                // Opened from the calendar and favourited: outside the feed window.
+                arrayOf<Any?>(
+                    "2001-03-05", "Interactive Moon", "other", "https://apod.nasa.gov/moon.html",
+                    "https://apod.nasa.gov/apod/image/old_thumb.jpg", 1, 0,
+                ),
+            ).forEach { row ->
+                db.execSQL(
+                    "INSERT INTO `apods` (`date`, `title`, `explanation`, `media_type`, `url`, " +
+                        "`thumbnail_url`, `is_favorite`, `is_in_feed`, `cached_at_epoch_millis`, " +
+                        "`last_synced_at_epoch_millis`) VALUES (?, ?, '', ?, ?, ?, ?, ?, ?, ?)",
+                    arrayOf(*row, CACHED_AT_MILLIS, CACHED_AT_MILLIS),
+                )
+            }
+
+            db.version = 3
+        } finally {
+            db.close()
+        }
+    }
+
     private companion object {
         const val TEST_DB_NAME = "migration-test.db"
         const val VERSION_1_IDENTITY_HASH = "507d38c1f18bed85a7a454240f1a6b55"
         const val CACHED_AT_MILLIS = 1_757_500_000_000L
         const val RESYNCED_AT_MILLIS = 1_760_000_000_000L
+
+        const val VERSION_3_IDENTITY_HASH = "543db70f10105a589d2b8b48f97d9a0c"
+
+        const val VERSION_3_CREATE_APODS = "CREATE TABLE IF NOT EXISTS `apods` (" +
+            "`date` TEXT NOT NULL, `title` TEXT NOT NULL, `explanation` TEXT NOT NULL, " +
+            "`media_type` TEXT NOT NULL, `url` TEXT NOT NULL, `hd_url` TEXT, " +
+            "`thumbnail_url` TEXT, `copyright` TEXT, `is_favorite` INTEGER NOT NULL DEFAULT 0, " +
+            "`cached_at_epoch_millis` INTEGER NOT NULL, " +
+            "`last_synced_at_epoch_millis` INTEGER NOT NULL DEFAULT 0, " +
+            "`is_in_feed` INTEGER NOT NULL DEFAULT 1, PRIMARY KEY(`date`))"
 
         const val VERSION_1_CREATE_APODS = "CREATE TABLE IF NOT EXISTS `apods` (" +
             "`date` TEXT NOT NULL, `title` TEXT NOT NULL, `explanation` TEXT NOT NULL, " +

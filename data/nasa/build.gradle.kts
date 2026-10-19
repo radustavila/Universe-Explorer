@@ -23,6 +23,7 @@ dependencies {
     implementation(projects.core.network)
     implementation(projects.core.database)
     implementation(projects.core.datastore)
+    implementation(projects.core.cache)
 
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)

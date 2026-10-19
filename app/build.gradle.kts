@@ -28,6 +28,7 @@ dependencies {
     implementation(projects.core.datastore)
     implementation(projects.core.network)
     implementation(projects.core.notifications)
+    implementation(projects.core.cache)
     implementation(projects.data.nasa)
 
     implementation(projects.feature.feed)
@@ -55,6 +56,7 @@ dependencies {
     androidTestImplementation(projects.core.testing)
     androidTestImplementation(projects.core.designsystem)
     androidTestImplementation(projects.core.network)
+    androidTestImplementation(projects.core.database)
     androidTestImplementation(projects.data.nasa)
     androidTestImplementation(projects.feature.feed)
     androidTestImplementation(projects.feature.details)

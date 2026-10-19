@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import java.time.LocalDate
+import com.radustavila.nasaexplorer.core.model.FavoriteItem
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -13,8 +13,12 @@ data object FavoritesRoute
 fun NavController.navigateToFavorites(navOptions: NavOptions? = null) =
     navigate(FavoritesRoute, navOptions)
 
-fun NavGraphBuilder.favoritesScreen(onApodClick: (LocalDate) -> Unit) {
+/**
+ * Favourites come from every source, and this module cannot know their screens: [onFavoriteClick]
+ * is resolved by `:app`, which routes on [FavoriteItem.source].
+ */
+fun NavGraphBuilder.favoritesScreen(onFavoriteClick: (FavoriteItem) -> Unit) {
     composable<FavoritesRoute> {
-        FavoritesScreen(onApodClick = onApodClick)
+        FavoritesScreen(onFavoriteClick = onFavoriteClick)
     }
 }

@@ -16,6 +16,7 @@ class SyncErrorCodecTest {
             AppError.Timeout,
             AppError.Http(code = 503, message = "Service Unavailable"),
             AppError.RateLimited(),
+            AppError.RateLimited(retryAfterSeconds = 120),
             AppError.Serialization("bad json"),
             AppError.Database("disk full"),
             AppError.EmptyResponse,

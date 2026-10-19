@@ -13,8 +13,8 @@ suite that runs the whole stack on a JVM with no emulator.
 | **UI** | Jetpack Compose, Material 3 |
 | **Min / Target / Compile SDK** | 26 / 37 / 37 |
 | **Build** | AGP 9.4.0 (built-in Kotlin), Gradle 9.7.1, convention plugins |
-| **Modules** | 15 Gradle modules + an included `build-logic` build |
-| **Tests** | 99 unit/Robolectric/Compose tests, no device required |
+| **Modules** | 16 Gradle modules + an included `build-logic` build |
+| **Tests** | 192 unit/Robolectric/Compose tests, no device required |
 
 ---
 
@@ -23,31 +23,36 @@ suite that runs the whole stack on a JVM with no emulator.
 1. [Screens](#screens)
 2. [Architecture](#architecture)
 3. [Module graph](#module-graph)
-4. [Offline-first strategy](#offline-first-strategy)
-5. [Room strategy](#room-strategy)
-6. [Synchronisation strategy](#synchronisation-strategy)
-7. [Pagination: date ranges instead of pages](#pagination-date-ranges-instead-of-pages)
-8. [Error handling](#error-handling)
-9. [Connectivity](#connectivity)
-10. [Dependency injection](#dependency-injection)
-11. [Testing strategy](#testing-strategy)
-12. [Setup](#setup)
-13. [Engineering highlights](#engineering-highlights)
-14. [Architectural decisions and trade-offs](#architectural-decisions-and-trade-offs)
-15. [Known limitations](#known-limitations)
+4. [Extension points for new data sources](#extension-points-for-new-data-sources)
+5. [Offline-first strategy](#offline-first-strategy)
+6. [Room strategy](#room-strategy)
+7. [Synchronisation strategy](#synchronisation-strategy)
+8. [Pagination: date ranges instead of pages](#pagination-date-ranges-instead-of-pages)
+9. [Error handling](#error-handling)
+10. [Connectivity](#connectivity)
+11. [Dependency injection](#dependency-injection)
+12. [Testing strategy](#testing-strategy)
+13. [Setup](#setup)
+14. [Engineering highlights](#engineering-highlights)
+15. [Architectural decisions and trade-offs](#architectural-decisions-and-trade-offs)
+16. [Known limitations](#known-limitations)
 
 ---
 
 ## Screens
 
+The bottom bar has five tabs: **Today · Universe · Earth · Favourites · More**. Today is the APOD feed
+(with room for other features' cards above it); Universe and Earth list what each tab offers and say
+"coming soon" until the roadmap's features land; More holds Debug (and, later, settings).
+
 | Screen | What it does |
 |---|---|
-| **Feed** | Chronological APOD feed with thumbnail, title, date, media-type badge and favourite state. Pull to refresh, infinite scroll backwards through the archive, offline banner, empty/offline/error states. |
+| **Today (feed)** | Chronological APOD feed with thumbnail, title, date, media-type badge and favourite state. Pull to refresh, infinite scroll backwards through the archive, offline banner, empty/offline/error states. |
 | **Details** | Full-size image (HD when available) or video still with a "watch video" action, title, date, explanation, copyright, favourite toggle. |
-| **Favorites** | Locally saved entries. Works with the network fully disabled. |
+| **Favorites** | Saved items of every source (APOD today; library images, rover and Earth photos as they land), drawn from a snapshot taken when saved. Works with the network fully disabled. |
 | **Home screen widget** | The latest picture with its title and date, re-rendered after every sync; tapping it opens that entry's details. |
 | **New-entry notification** | Opt-in from the bell on the feed's top bar. After a sync brings in a newer entry, posts its title and picture; tapping opens the details screen. |
-| **Debug** | Live view of the offline-first machinery: connectivity, cached entry count, favourites count, oldest cached date, oldest requested window, last successful sync, WorkManager sync state, plus buttons to trigger a sync and re-register the periodic one. |
+| **Debug** (More tab) | Live view of the offline-first machinery: connectivity, cached entry count, favourites count, oldest cached date, oldest requested window, last successful sync, WorkManager sync state, every data source's last success / last error / next allowed refresh, plus buttons to trigger a sync and re-register the periodic one. |
 
 ---
 
@@ -66,11 +71,11 @@ flowchart TB
 
     subgraph domain["Domain — :core:domain, :core:model, :core:common (pure Kotlin)"]
         UC["Use cases"]
-        CONTRACTS["Contracts:<br/>ApodRepository, SyncScheduler,<br/>NetworkMonitor, SyncMetadataRepository"]
-        MODELS["Domain models:<br/>Apod, MediaType, SyncState<br/>AppError, DataResult"]
+        CONTRACTS["Contracts:<br/>ApodRepository, FavoritesRepository,<br/>SyncScheduler, NetworkMonitor,<br/>SyncMetadataRepository"]
+        MODELS["Domain models:<br/>Apod, FavoriteItem, MediaType,<br/>SyncSource, SyncState,<br/>AppError, DataResult"]
     end
 
-    subgraph data["Data — :data:nasa, :core:network, :core:database, :core:datastore"]
+    subgraph data["Data — :data:nasa, :core:network, :core:database, :core:datastore, :core:cache"]
         REPO["ApodRepositoryImpl"]
         LOCAL["Room local data source<br/>(single source of truth)"]
         REMOTE["Retrofit remote data source"]
@@ -115,6 +120,7 @@ flowchart BT
     network[":core:network"]
     database[":core:database"]
     datastore[":core:datastore"]
+    cache[":core:cache"]
     designsystem[":core:designsystem"]
     notifications[":core:notifications"]
     domain[":core:domain"]
@@ -129,6 +135,7 @@ flowchart BT
     app --> widgetF
     app --> notifications
     app --> nasa
+    app --> cache
     app --> designsystem
 
     feedF --> domain
@@ -148,10 +155,12 @@ flowchart BT
     nasa --> network
     nasa --> database
     nasa --> datastore
+    nasa --> cache
 
     network --> domain
     datastore --> domain
-    database --> model
+    database --> domain
+    cache --> common
     designsystem --> model
     domain --> model
     model --> common
@@ -161,16 +170,17 @@ flowchart BT
 
 | Module | Type | Responsibility |
 |---|---|---|
-| `:app` | Android app | Entry point, navigation host, bottom bar, DI wiring of app-level choices (dispatchers, clock, HTTP config), WorkManager configuration. |
+| `:app` | Android app | Entry point, navigation host with one nested graph per tab, bottom bar, tab hubs, the Today-card and favourite-routing registries, DI wiring of app-level choices (dispatchers, clock, HTTP config), WorkManager configuration. |
 | `:core:common` | **Pure Kotlin** | `AppError`, `DataResult`, dispatcher qualifiers, `TimeProvider`. No project dependencies at all. |
-| `:core:model` | **Pure Kotlin** | `Apod`, `MediaType`, `SyncState`. |
+| `:core:model` | **Pure Kotlin** | `Apod`, `MediaType`, `SyncState`, `FavoriteItem`/`FavoriteSource`, `SyncSource`. |
 | `:core:domain` | **Pure Kotlin** | Use cases and repository/scheduler/monitor contracts. |
-| `:core:network` | Android library | OkHttp, JSON, `RetrofitFactory`, exception→`AppError` mapping, `ConnectivityManager`-backed `NetworkMonitor`. API-agnostic. |
-| `:core:database` | Android library | Room database, `ApodEntity`, `ApodDao`, exported schemas. |
-| `:core:datastore` | Android library | Preferences DataStore implementation of the sync bookkeeping contract. |
+| `:core:network` | Android library | OkHttp, JSON, `RetrofitFactory`, per-host rate limiting (`RateLimitInterceptor`), exception→`AppError` mapping, `ConnectivityManager`-backed `NetworkMonitor`. API-agnostic. |
+| `:core:database` | Android library | Room database, `ApodEntity`/`ApodDao`, the cross-source `favorite` table and its `FavoritesRepository` implementation, migrations, exported schemas. |
+| `:core:cache` | Android library | `CacheEvictor` contract and the daily `CacheEvictionWorker` that runs every registered evictor. |
+| `:core:datastore` | Android library | Preferences DataStore implementation of the per-source sync bookkeeping and of the user's preferences. |
 | `:core:designsystem` | Android library | Material 3 theme, typography, shared components (`ApodCard`, `NasaAsyncImage`, state views), `AppError`→`UiError` presentation mapping, bitmap loading and the details deep-link intent for out-of-app surfaces. |
 | `:core:notifications` | Android library | `NewApodNotifier` implementation: notification channel, big-picture notification, deep link into details. |
-| `:core:testing` | **Pure Kotlin** | Fakes for every domain contract, test data builders, `MainDispatcherRule`. Shared by all test source sets. |
+| `:core:testing` | **Pure Kotlin** | Fakes for every domain contract, test data builders, `MainDispatcherRule`, `FixtureServer` (recorded JSON through MockWebServer). Shared by all test source sets. |
 | `:data:nasa` | Android library | NASA DTOs and endpoints, remote/local data sources, mappers, `ApodRepositoryImpl`, sync worker and scheduler, API key handling. |
 | `:feature:*` | Android libraries | One screen each: Compose UI, ViewModel, UI state, and its own type-safe navigation contract. |
 | `:feature:widget` | Android library | Glance home screen widget for the latest entry and the `LatestApodWidgetUpdater` implementation. |
@@ -182,6 +192,50 @@ and `:core:designsystem`. `:app` is the only module that knows the full graph.
 Each feature owns its navigation route (`@Serializable data object FeedRoute`,
 `DetailsRoute(date)`, …) and exposes `NavGraphBuilder` extensions, so adding a screen does not mean
 editing a central route enum.
+
+---
+
+## Extension points for new data sources
+
+The roadmap adds a dozen APIs. The shared plumbing they need exists once, so each new source is a
+data module, a feature module and a few lines of wiring.
+
+**Navigation (`:app`).** `TopLevelDestination` fixes the five tabs; each tab is a nested graph
+(`TodayGraph`, `UniverseGraph`, `EarthGraph`, `FavoritesGraph`, `MoreGraph`). A feature registers its
+`NavGraphBuilder` extension inside the graph of its tab in `NasaNavHost`, which keeps that tab
+selected and the bar visible. Universe, Earth and More start on a hub screen whose entries are listed
+in `UniverseHub.kt`, `EarthHub.kt` and `MoreHub.kt` — one `HubEntry` per feature. A feature that
+should *be* a tab's first screen replaces the hub as that graph's `startDestination`.
+
+**Today cards (`:app`).** `TodayCards.kt` is the list of composables shown above the APOD feed (the
+feed's `header` slot). A feature exposes a card composable and adds one line there.
+
+**Favourites (`:core:model`, `:core:domain`).** `FavoriteSource` already lists APOD, EPIC,
+NASA_LIBRARY, MARS and EXOPLANET (persisted keys — never rename). Features save with
+`SaveFavoriteUseCase(source, itemId, title, imageUrl)`, remove with `RemoveFavoriteUseCase`, and drive
+a heart with `ObserveIsFavoriteUseCase`. The Favourites tab lists every source from the snapshot;
+tapping one is routed by `NavHostController.openFavorite` in `FavoriteNavigation.kt`, where a feature
+maps its source to its screen.
+
+**Rate limits (`:core:network`).** `RateLimitInterceptor` sits on the shared OkHttp client, so every
+Retrofit service and Coil go through it. A 429, or `X-RateLimit-Remaining: 0`, puts the host into a
+cooldown until `Retry-After` (or the host's budget window, or one minute); calls during a cooldown
+fail locally with `AppError.RateLimited` without touching the network. Hosts with a known quota have
+a sliding-window `HostRateBudget`: Launch Library 2 (15/hour) and api.nasa.gov (1,000/hour) are
+pre-registered; another module adds `@Provides @IntoSet HostRateBudget(host, maxRequests, window)`.
+
+**Sync bookkeeping (`:core:domain`).** `SyncSource` lists every roadmap API. Wrap a refresh in
+`RefreshSourceUseCase(source, minInterval) { repository.refresh() }`: it skips the call while the
+source is not due (its interval, or a rate-limit cooldown), and records last success, last error and
+next allowed refresh, which the Debug screen lists per source.
+
+**Cache eviction (`:core:cache`).** Contribute `@Binds @IntoSet CacheEvictor` per table you cache;
+the daily `CacheEvictionWorker` runs them all. An evictor owns its retention rule and must keep
+favourites (the `favorite` table) and any paging bookkeeping consistent — see `ApodCacheEvictor`.
+
+**Test fixtures (`:core:testing`).** `FixtureServer` is a JUnit rule over MockWebServer: record a real
+response under `src/test/resources/fixtures/`, `enqueueFixture("source/response.json")`, and point
+Retrofit at `server.baseUrl`.
 
 ---
 
@@ -241,8 +295,8 @@ Dates are stored as ISO-8601 `TEXT` and timestamps as epoch-millis `INTEGER`. IS
 chronologically in SQL, so `ORDER BY date DESC`, `MIN(date)` and `MAX(date)` all work without type
 converters.
 
-The interesting part is the merge. A naive `@Upsert` would replace whole rows and wipe the user's
-favourites on every sync. Instead:
+The interesting part is the merge. A naive `@Upsert` would replace whole rows and reset the
+locally owned columns on every sync. Instead:
 
 ```kotlin
 @Transaction
@@ -254,11 +308,26 @@ suspend fun upsertPreservingLocalState(entities: List<ApodEntity>): Int {
 }
 ```
 
-`ApodRemoteContent` is a partial-update projection that simply **does not contain the `is_favorite`
-column**, so the compiler — not a code review — guarantees that a sync cannot clobber local state.
+`ApodRemoteContent` is a partial-update projection that simply **does not contain the locally owned
+columns** (`cached_at_epoch_millis`), so the compiler — not a code review — guarantees that a sync
+cannot clobber local state.
 
-Schemas are exported to `core/database/schemas/` and checked in, so future migrations are reviewable
-and testable.
+**Favourites live in their own table** (schema v4): `favorite`, keyed by `(source, item_id)` with a
+snapshot of title and image, so items of any API can be saved and the Favourites tab renders even
+after the source's cache was trimmed. `ApodRepositoryImpl` marks `Apod.isFavorite` by combining its
+reads with the APOD favourite ids. Migration 3 → 4 copies every row flagged `is_favorite` into the
+new table (the preview image is computed by `Apod` itself, so video favourites get their still frame)
+and the old column stays unused, because SQLite before API 34 cannot drop a column without rebuilding
+the table.
+
+**Eviction.** `ApodCacheEvictor` keeps 90 days of feed below the newest cached entry (not below today,
+so a device that was offline for months keeps its last quarter), drops one-off calendar days not
+refreshed for 30 days, never deletes a favourite, and moves the paging cursor up to the new edge so
+"load more" re-fetches what was trimmed. Images are bounded separately by Coil's 128 MB LRU disk
+cache.
+
+Schemas are exported to `core/database/schemas/` and checked in; every version bump has a migration
+covered by `NasaDatabaseMigrationTest`.
 
 ---
 
@@ -299,8 +368,9 @@ flowchart LR
 * **Failure reasons survive the process boundary.** WorkManager can only carry primitives, so
   `SyncErrorCodec` encodes the `AppError` into output `Data` and decodes it back — the UI can say
   *"too many requests for this API key"* instead of *"sync failed"*.
-* **Bookkeeping.** The last successful sync timestamp is persisted in DataStore and shown on the
-  debug screen.
+* **Bookkeeping.** Every source records its last success, last error and next allowed refresh in
+  DataStore (`SyncSource`, `RefreshSourceUseCase`), shown on the debug screen. While a host is
+  cooling down after a 429 the sync reports `RateLimited` without calling it.
 * **Announcing new entries.** After a successful sync the worker hands over to
   `AnnounceLatestApodUseCase`: the home screen widget is re-rendered, and if the newest cached entry is
   later than the last one announced (persisted in DataStore) and the user opted in, a notification is
@@ -346,7 +416,7 @@ flowchart LR
     E1["UnknownHostException<br/>ConnectException<br/>IOException"] --> NC["AppError.NoConnection"]
     E2["SocketTimeoutException"] --> TO["AppError.Timeout"]
     E3["HttpException 4xx/5xx"] --> HT["AppError.Http(code)"]
-    E4["HTTP 429 / 403"] --> RL["AppError.RateLimited"]
+    E4["HTTP 429 / 403<br/>refused locally while cooling down"] --> RL["AppError.RateLimited"]
     E5["SerializationException"] --> SE["AppError.Serialization"]
     E6["SQLite failures"] --> DB["AppError.Database"]
     E7["Usable-entry count = 0"] --> EM["AppError.EmptyResponse"]
@@ -400,14 +470,16 @@ Hilt, constructor injection everywhere, KSP (no kapt).
 
 ## Testing strategy
 
-99 tests, all runnable with `./gradlew test testDebugUnitTest` — **no emulator required**. Robolectric
+192 tests, all runnable with `./gradlew test testDebugUnitTest` — **no emulator required**. Robolectric
 provides the Android runtime, including for Compose UI tests.
 
 | Area | Module | What is verified |
 |---|---|---|
 | Business rules | `:core:common`, `:core:model` | Retry classification per error type; preview/full media URL selection for image vs. video entries. |
 | Use cases | `:core:domain` | Sync short-circuits when offline and records the timestamp only on success; paging stops at the first APOD and refuses to run offline; favourite toggling flips state through the repository; a new entry is announced once, only when opted in, never on the first run. |
-| Room | `:core:database` | Real in-memory SQLite: ordering, duplicate prevention on re-sync, **favourites surviving a sync**, Flow emissions on every toggle, counts and archive bounds. |
+| Room | `:core:database` | Real in-memory SQLite: ordering, duplicate prevention on re-sync, counts and archive bounds, favourites keyed by source with snapshot refresh, eviction keeping favourites and the feed window contiguous, and **every migration — including 3 → 4 keeping each APOD favourite**. |
+| Rate limits | `:core:network` | Budgets per host on a fake clock, `Retry-After` in seconds and HTTP-date form, and end to end through OkHttp + Retrofit + `FixtureServer`: a 429 surfaces as `RateLimited` and further calls are refused without a round trip until `Retry-After`. |
+| Cache eviction | `:core:cache`, `:data:nasa` | `CacheEvictionWorker` through `TestListenableWorkerBuilder` (every evictor runs, one failure does not stop the others); `ApodCacheEvictor` against real Room. |
 | Mapping | `:data:nasa` | DTO→entity→domain, unknown media types, undated or media-less entries dropped, duplicate dates collapsed, blank titles normalised. |
 | Network | `:data:nasa`, `:core:network` | MockWebServer: success, query parameters, 500, 429 with `Retry-After`, malformed payload, stalled connection (timeout), dropped connection, empty array. Plus direct exception→`AppError` mapping and cancellation propagation. |
 | Repository | `:data:nasa` | Offline-first behaviour end to end against real Room: caching a window, the HTTP 400 "today not published yet" retry, failed refresh leaving the cache intact, paging windows, favourites preserved across re-sync. |
@@ -453,9 +525,10 @@ new site, `https://science.nasa.gov/wp-json/wp/v2/apod-basic`, and adapts its HT
 ## Engineering highlights
 
 **1. Favourites cannot be destroyed by a sync — by construction.**
-The DAO merges remote windows with insert-ignore plus a partial `@Update` through a projection that
-omits the `is_favorite` column. It is not a rule someone has to remember; the column is not reachable
-from the sync path.
+Favourites live in their own `favorite` table, keyed by source and item id with a snapshot of title
+and image; the sync path never writes to it, and cache eviction excludes every favourited row. The
+APOD merge itself is insert-ignore plus a partial `@Update` through a projection that omits the
+locally owned columns.
 
 **2. Pagination over an API without pages.**
 Date-window paging with a persisted `oldestRequestedDate`, clamped to the first APOD ever published
@@ -480,7 +553,7 @@ SDK levels, JVM targets, Compose setup, Hilt/KSP, Room schema export, lint polic
 are defined once.
 
 **7. The whole test pyramid runs on the JVM.**
-Room against real SQLite, HTTP against MockWebServer, Compose against Robolectric — 99 tests, no
+Room against real SQLite, HTTP against MockWebServer, Compose against Robolectric — 192 tests, no
 emulator, suitable for any CI runner. Production bytecode targets Java 17 while the test JVM is
 pinned to 21, because Robolectric's Android runtime requires it.
 
@@ -530,10 +603,8 @@ disk cache under an offline banner.
 * **Video entries are not played in-app** — the details screen shows NASA's still thumbnail and hands
   the URL to an external app.
 * **No search, filtering or date jumping.** Paging is strictly sequential and backwards.
-* **No cache eviction policy.** The cache grows as the user pages; a real product would trim old
-  non-favourite entries.
-* **Only one database version exists**, so no migration has been written yet; schemas are exported so
-  that the first migration can be reviewed and tested properly.
+* **Rate-limit state is in memory.** A process restart forgets a host's cooldown and budget, which at
+  worst costs one more 429.
 * **Instrumented (on-device) tests are not included.** The Compose flows are covered on Robolectric,
   and the modules are configured for `androidTest`, but no `androidTest` sources are checked in.
 * **No baseline profile or macrobenchmark module.** Both would be natural next steps for a
