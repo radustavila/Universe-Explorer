@@ -42,10 +42,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -309,12 +311,21 @@ private fun FeedList(
         modifier = Modifier
             .fillMaxSize()
             .testTag(FEED_LIST_TEST_TAG),
-        // The gutter matches the gap between cards, so the cards sit in an even 16dp frame.
-        contentPadding = PaddingValues(all = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        // The gutter matches the gap between cards, so the cards sit in an even 16dp frame. With a
+        // header, the top gutter comes from the header item, which collapses when its cards draw
+        // nothing (e.g. no launches cached yet).
+        contentPadding = PaddingValues(
+            start = FEED_GUTTER,
+            top = if (header == null) FEED_GUTTER else 0.dp,
+            end = FEED_GUTTER,
+            bottom = FEED_GUTTER,
+        ),
+        verticalArrangement = Arrangement.spacedBy(FEED_GUTTER),
     ) {
         if (header != null) {
-            item(key = FEED_HEADER_KEY) { header() }
+            item(key = FEED_HEADER_KEY) {
+                Column(modifier = Modifier.topGutterUnlessEmpty(FEED_GUTTER)) { header() }
+            }
         }
 
         items(items = uiState.items, key = { apod -> apod.date.toString() }) { apod ->
@@ -357,6 +368,22 @@ private fun FeedList(
         }
     }
 }
+
+/**
+ * Adds [gutter] above the content, or takes no space at all when the content draws nothing: the
+ * list's item spacing then supplies the gutter above the first entry instead.
+ */
+private fun Modifier.topGutterUnlessEmpty(gutter: Dp): Modifier = layout { measurable, constraints ->
+    val placeable = measurable.measure(constraints)
+    if (placeable.height == 0) {
+        layout(placeable.width, 0) {}
+    } else {
+        val top = gutter.roundToPx()
+        layout(placeable.width, placeable.height + top) { placeable.place(0, top) }
+    }
+}
+
+private val FEED_GUTTER = 16.dp
 
 /**
  * Date-range pagination trigger: when the user gets within [LOAD_MORE_THRESHOLD] items of the end,

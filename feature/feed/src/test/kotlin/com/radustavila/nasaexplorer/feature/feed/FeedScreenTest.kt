@@ -1,5 +1,15 @@
 package com.radustavila.nasaexplorer.feature.feed
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -33,6 +43,54 @@ class FeedScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    @Test
+    fun `renders the header slot above the cached entries`() {
+        composeTestRule.setContent {
+            FeedContent(
+                uiState = FeedUiState(items = TestApods.feed(size = 1)),
+                onApodClick = {},
+                onToggleFavorite = {},
+                onRefresh = {},
+                onRetry = {},
+                onLoadMore = {},
+                onErrorDismissed = {},
+                areNotificationsOn = false,
+                onNotificationsClick = {},
+                header = { Text("Next launches") },
+            )
+        }
+
+        composeTestRule.onNodeWithText("Next launches").assertIsDisplayed()
+    }
+
+    @Test
+    fun `an empty header leaves the usual gutter above the first entry`() {
+        val apod = TestApods.feed(size = 1).single()
+        var header: @Composable () -> Unit by mutableStateOf({})
+        composeTestRule.setContent {
+            FeedContent(
+                uiState = FeedUiState(items = listOf(apod)),
+                onApodClick = {},
+                onToggleFavorite = {},
+                onRefresh = {},
+                onRetry = {},
+                onLoadMore = {},
+                onErrorDismissed = {},
+                areNotificationsOn = false,
+                onNotificationsClick = {},
+                header = header,
+            )
+        }
+        val withoutHeader = composeTestRule.onNodeWithText(apod.title).getUnclippedBoundsInRoot().top
+
+        header = { Box(Modifier.height(100.dp)) }
+        val withHeader = composeTestRule.onNodeWithText(apod.title).getUnclippedBoundsInRoot().top
+
+        // A 100dp header adds itself, its 16dp top gutter and the 16dp gap below it; when empty it
+        // took no space, so the entry sat one 16dp gap below the top, as before the slot existed.
+        assertEquals(132.dp - 16.dp, withHeader - withoutHeader)
+    }
 
     @Test
     fun `renders cached entries`() {

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="launches_card_title">Next launches</string>
+    <string name="launches_open_livestream">Watch the livestream</string>
+    <string name="launches_open_page">Open launch details</string>
+    <string name="launches_watch_livestream">Watch the %1$s livestream</string>
+    <!-- "No earlier than", the launch industry's term for a not yet confirmed target date. -->
+    <string name="launches_net_date">NET %1$s</string>
+    <string name="launches_status_go">Go</string>
+    <string name="launches_status_tbd">TBD</string>
+    <string name="launches_status_tbc">TBC</string>
+    <string name="launches_status_hold">Hold</string>
+    <string name="launches_status_in_flight">In flight</string>
+    <string name="launches_status_success">Success</string>
+    <string name="launches_status_failure">Failure</string>
+    <string name="launches_status_partial_failure">Partial failure</string>
+    <string name="launches_status_unknown">Unknown</string>
+</resources>

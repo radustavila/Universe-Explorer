@@ -13,6 +13,7 @@ import androidx.work.workDataOf
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.usecase.AnnounceLatestApodUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeApodsUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeUpcomingLaunchesUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.time.Duration
@@ -26,6 +27,10 @@ import java.util.concurrent.TimeUnit
  * become `Result.retry()` so the exponential backoff policy applies; permanent failures do not burn
  * retries. A successful sync is handed to [AnnounceLatestApodUseCase], which refreshes the home
  * screen widget and posts the new-entry notification.
+ *
+ * The upcoming-launches cache rides along with every run through
+ * [SynchronizeUpcomingLaunchesUseCase]. It is throttled on its own and never affects the result: a
+ * retry for a launches failure would only spend more of Launch Library 2's small hourly budget.
  */
 @HiltWorker
 class ApodSyncWorker @AssistedInject constructor(
@@ -33,18 +38,24 @@ class ApodSyncWorker @AssistedInject constructor(
     @Assisted workerParameters: WorkerParameters,
     private val synchronizeApods: SynchronizeApodsUseCase,
     private val announceLatestApod: AnnounceLatestApodUseCase,
+    private val synchronizeUpcomingLaunches: SynchronizeUpcomingLaunchesUseCase,
 ) : CoroutineWorker(appContext, workerParameters) {
 
-    override suspend fun doWork(): Result = when (val result = synchronizeApods()) {
-        is DataResult.Success -> {
-            announceLatestApod()
-            Result.success(workDataOf(KEY_SYNCED_COUNT to result.data))
-        }
+    override suspend fun doWork(): Result {
+        val result = synchronizeApods()
+        synchronizeUpcomingLaunches()
 
-        is DataResult.Failure -> if (result.error.isRetryable && runAttemptCount < MAX_ATTEMPTS) {
-            Result.retry()
-        } else {
-            Result.failure(SyncErrorCodec.encode(result.error))
+        return when (result) {
+            is DataResult.Success -> {
+                announceLatestApod()
+                Result.success(workDataOf(KEY_SYNCED_COUNT to result.data))
+            }
+
+            is DataResult.Failure -> if (result.error.isRetryable && runAttemptCount < MAX_ATTEMPTS) {
+                Result.retry()
+            } else {
+                Result.failure(SyncErrorCodec.encode(result.error))
+            }
         }
     }
 
