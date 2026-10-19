@@ -1,0 +1,27 @@
+package com.radustavila.nasaexplorer.data.launches.remote
+
+import com.radustavila.nasaexplorer.core.common.dispatchers.AppDispatcher
+import com.radustavila.nasaexplorer.core.common.dispatchers.Dispatcher
+import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.network.http.safeNetworkCall
+import com.radustavila.nasaexplorer.data.launches.remote.dto.LaunchDto
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
+
+/** Remote boundary of the launches module. Returns [DataResult] instead of throwing. */
+interface LaunchRemoteDataSource {
+    suspend fun fetchUpcoming(): DataResult<List<LaunchDto>>
+}
+
+@Singleton
+class RetrofitLaunchRemoteDataSource @Inject constructor(
+    private val service: LaunchLibraryService,
+    @Dispatcher(AppDispatcher.IO) private val ioDispatcher: CoroutineDispatcher,
+) : LaunchRemoteDataSource {
+
+    override suspend fun fetchUpcoming(): DataResult<List<LaunchDto>> = withContext(ioDispatcher) {
+        safeNetworkCall { service.getUpcomingLaunches().results }
+    }
+}

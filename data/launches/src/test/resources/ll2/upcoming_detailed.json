@@ -1,0 +1,928 @@
+{
+  "count": 182,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "3b430f81-0ff1-4d85-8a1a-cef0de326198",
+      "url": "https://lldev.thespacedevs.com/2.3.0/launches/3b430f81-0ff1-4d85-8a1a-cef0de326198/",
+      "name": "Falcon 9 Block 5 | Bandwagon 5 (Dedicated Mid-Inclination Rideshare)",
+      "response_mode": "detailed",
+      "slug": "falcon-9-block-5-bandwagon-5-dedicated-mid-inclina",
+      "launch_designator": null,
+      "status": {
+        "id": 1,
+        "name": "Go for Launch",
+        "abbrev": "Go",
+        "description": "Current T-0 confirmed by official or reliable sources."
+      },
+      "last_updated": "2026-10-18T14:28:36Z",
+      "net": "2026-10-19T10:30:00Z",
+      "net_precision": {
+        "id": 1,
+        "name": "Minute",
+        "abbrev": "MIN",
+        "description": "The T-0 is accurate to the minute."
+      },
+      "window_end": "2026-10-19T11:30:00Z",
+      "window_start": "2026-10-19T10:30:00Z",
+      "image": {
+        "id": 2511,
+        "name": "Falcon 9 liftoff from SLC-40 (Bandwagon-4)",
+        "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon_9_liftof_image_20251102082912.jpg",
+        "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon_9_liftof_image_thumbnail_20251102082912.jpeg",
+        "credit": "SpaceX",
+        "license": {
+          "id": 1,
+          "name": "Unknown",
+          "priority": 9,
+          "link": null
+        },
+        "single_use": true,
+        "variants": []
+      },
+      "infographic": null,
+      "probability": 55,
+      "weather_concerns": "Liftoff Winds, Cumulus Cloud Rule",
+      "failreason": "",
+      "hashtag": null,
+      "rocket": {
+        "id": 9120,
+        "configuration": {
+          "response_mode": "detailed",
+          "id": 164,
+          "url": "https://lldev.thespacedevs.com/2.3.0/launcher_configurations/164/",
+          "name": "Falcon 9",
+          "full_name": "Falcon 9 Block 5",
+          "variant": "Block 5",
+          "active": true,
+          "is_placeholder": false,
+          "reusable": true,
+          "info_url": "https://www.spacex.com/vehicles/falcon-9/",
+          "wiki_url": "https://en.wikipedia.org/wiki/Falcon_9",
+          "alias": "",
+          "min_stage": 2,
+          "max_stage": 2,
+          "length": 70.0,
+          "diameter": 3.65,
+          "maiden_flight": "2018-05-11",
+          "launch_cost": 52000000,
+          "launch_mass": 549.0,
+          "leo_capacity": 22800.0,
+          "gto_capacity": 8300.0,
+          "geo_capacity": null,
+          "sso_capacity": null,
+          "to_thrust": 7607.0,
+          "apogee": 200.0,
+          "total_launch_count": 640,
+          "consecutive_successful_launches": 342,
+          "successful_launches": 639,
+          "failed_launches": 1,
+          "pending_launches": 119,
+          "attempted_landings": 630,
+          "successful_landings": 625,
+          "failed_landings": 5,
+          "consecutive_successful_landings": 325,
+          "fastest_turnaround": "PT38M31S"
+        }
+      },
+      "mission": {
+        "id": 7715,
+        "name": "Bandwagon 5 (Dedicated Mid-Inclination Rideshare)",
+        "type": "Dedicated Rideshare",
+        "description": "Dedicated rideshare flight to a mid-inclination orbit with dozens of small microsatellites and nanosatellites for commer",
+        "image": null,
+        "orbit": {
+          "id": 8,
+          "name": "Low Earth Orbit",
+          "abbrev": "LEO",
+          "celestial_body": {
+            "response_mode": "list",
+            "id": 1,
+            "name": "Earth"
+          }
+        }
+      },
+      "pad": {
+        "id": 80,
+        "url": "https://lldev.thespacedevs.com/2.3.0/pads/80/",
+        "active": true,
+        "name": "Space Launch Complex 40",
+        "image": {
+          "id": 2113,
+          "name": "F9 liftoff from SLC-40 (SES-24)",
+          "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/f9_liftoff_from_image_20240621050513.jpeg",
+          "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/f9_liftoff_from_image_thumbnail_20240621050514.jpeg",
+          "credit": "SpaceX",
+          "license": {
+            "id": 5,
+            "name": "CC BY-NC 2.0",
+            "priority": 1,
+            "link": "https://creativecommons.org/licenses/by-nc/2.0/"
+          },
+          "single_use": false,
+          "variants": []
+        },
+        "description": null,
+        "info_url": null,
+        "wiki_url": "https://en.wikipedia.org/wiki/Cape_Canaveral_Air_Force_Station_Space_Launch_Complex_40",
+        "map_url": "https://www.google.com/maps?q=28.56194122,-80.57735736",
+        "latitude": 28.56194122,
+        "longitude": -80.57735736,
+        "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/pad_80_20200803143323.jpg",
+        "total_launch_count": 403,
+        "orbital_launch_attempt_count": 403,
+        "fastest_turnaround": "P1DT21H",
+        "location": {
+          "response_mode": "normal",
+          "id": 12,
+          "url": "https://lldev.thespacedevs.com/2.3.0/locations/12/",
+          "name": "Cape Canaveral SFS, FL, USA",
+          "active": true,
+          "longitude": -80.577778,
+          "latitude": 28.488889,
+          "timezone_name": "America/New_York",
+          "total_launch_count": 1131,
+          "total_landing_count": 83
+        }
+      },
+      "webcast_live": false,
+      "orbital_launch_attempt_count": 7417,
+      "location_launch_attempt_count": 1132,
+      "pad_launch_attempt_count": 404,
+      "agency_launch_attempt_count": 740,
+      "orbital_launch_attempt_count_year": 244,
+      "location_launch_attempt_count_year": 56,
+      "pad_launch_attempt_count_year": 50,
+      "agency_launch_attempt_count_year": 121,
+      "info_urls": [
+        {
+          "priority": 10,
+          "source": "spacex.com",
+          "title": "SpaceX",
+          "description": "SpaceX designs, manufactures and launches advanced rockets and spacecraft. The c",
+          "feature_image": null,
+          "url": "https://www.spacex.com/launches/bandwagon5",
+          "type": {
+            "id": 1,
+            "name": "Official Page"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          }
+        }
+      ],
+      "vid_urls": [
+        {
+          "priority": 10,
+          "source": "x.com",
+          "publisher": "SpaceX",
+          "title": "Bandwagon-5 Mission",
+          "description": "Livestream on X",
+          "feature_image": "https://pbs.twimg.com/media/HUhnl7NWoAAts9l.jpg",
+          "url": "https://x.com/i/broadcasts/1nxeLMddZlEJX",
+          "type": {
+            "id": 1,
+            "name": "Official Webcast"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-10-19T10:13:00Z",
+          "end_time": "2026-10-20T10:13:00Z",
+          "live": false
+        }
+      ]
+    },
+    {
+      "id": "69ebbcd2-b257-4070-9ef9-21e7d1f8a883",
+      "url": "https://lldev.thespacedevs.com/2.3.0/launches/69ebbcd2-b257-4070-9ef9-21e7d1f8a883/",
+      "name": "H3-24 | Martian Moons eXploration (MMX)",
+      "response_mode": "detailed",
+      "slug": "h3-24-martian-moons-exploration-mmx",
+      "launch_designator": null,
+      "status": {
+        "id": 1,
+        "name": "Go for Launch",
+        "abbrev": "Go",
+        "description": "Current T-0 confirmed by official or reliable sources."
+      },
+      "last_updated": "2026-10-18T18:00:56Z",
+      "net": "2026-10-19T19:41:03Z",
+      "net_precision": {
+        "id": 0,
+        "name": "Second",
+        "abbrev": "SEC",
+        "description": "The T-0 is accurate to the second."
+      },
+      "window_end": "2026-10-19T19:41:03Z",
+      "window_start": "2026-10-19T19:41:03Z",
+      "image": {
+        "id": 2493,
+        "name": "H3-24 liftoff (HTV-X1)",
+        "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/h3-24_liftoff__image_20251028184029.jpeg",
+        "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/h3-24_liftoff__image_thumbnail_20251028184029.jpeg",
+        "credit": "Mitsubishi Heavy Industries",
+        "license": {
+          "id": 1,
+          "name": "Unknown",
+          "priority": 9,
+          "link": null
+        },
+        "single_use": false,
+        "variants": []
+      },
+      "infographic": null,
+      "probability": null,
+      "weather_concerns": null,
+      "failreason": "",
+      "hashtag": null,
+      "rocket": {
+        "id": 7769,
+        "configuration": {
+          "response_mode": "detailed",
+          "id": 204,
+          "url": "https://lldev.thespacedevs.com/2.3.0/launcher_configurations/204/",
+          "name": "H3-24",
+          "full_name": "H3-24",
+          "variant": "24",
+          "active": true,
+          "is_placeholder": false,
+          "reusable": false,
+          "info_url": "https://global.jaxa.jp/press/2015/07/20150702_h3.html",
+          "wiki_url": "https://en.wikipedia.org/wiki/H3_(rocket)",
+          "alias": "",
+          "min_stage": 2,
+          "max_stage": 2,
+          "length": 63.0,
+          "diameter": 5.27,
+          "maiden_flight": "2025-10-26",
+          "launch_cost": 50000000,
+          "launch_mass": null,
+          "leo_capacity": null,
+          "gto_capacity": 7900.0,
+          "geo_capacity": null,
+          "sso_capacity": null,
+          "to_thrust": 12142.0,
+          "apogee": null,
+          "total_launch_count": 1,
+          "consecutive_successful_launches": 1,
+          "successful_launches": 1,
+          "failed_launches": 0,
+          "pending_launches": 5,
+          "attempted_landings": 0,
+          "successful_landings": 0,
+          "failed_landings": 0,
+          "consecutive_successful_landings": 0,
+          "fastest_turnaround": null
+        }
+      },
+      "mission": {
+        "id": 6287,
+        "name": "Martian Moons eXploration (MMX)",
+        "type": "Planetary Science",
+        "description": "MMX is a Japanese scientific mission to land on Phobos, one of the two moons of Mars, to collect samples before bringing",
+        "image": null,
+        "orbit": {
+          "id": 19,
+          "name": "Mars Orbit",
+          "abbrev": "Mars",
+          "celestial_body": {
+            "response_mode": "list",
+            "id": 1,
+            "name": "Earth"
+          }
+        }
+      },
+      "pad": {
+        "id": 209,
+        "url": "https://lldev.thespacedevs.com/2.3.0/pads/209/",
+        "active": true,
+        "name": "Yoshinobu Launch Complex LP-2",
+        "image": {
+          "id": 1751,
+          "name": "H-IIB 304 liftoff from LP-2 (HTV-3)",
+          "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/h-iib_304_lifto_image_20240325125154.jpg",
+          "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/h-iib_304_lifto_image_thumbnail_20240325125154.jpeg",
+          "credit": "JAXA",
+          "license": {
+            "id": 9,
+            "name": "JAXA Image Usage Policy",
+            "priority": 8,
+            "link": "https://global.jaxa.jp/policy.html"
+          },
+          "single_use": false,
+          "variants": []
+        },
+        "description": null,
+        "info_url": null,
+        "wiki_url": "https://en.wikipedia.org/wiki/Yoshinobu_Launch_Complex",
+        "map_url": "https://www.google.com/maps?q=30.400938,130.97564",
+        "latitude": 30.400938,
+        "longitude": 130.97564,
+        "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/pad_yoshinobu_launch_complex_lp-2_20230707124715.jpg",
+        "total_launch_count": 18,
+        "orbital_launch_attempt_count": 18,
+        "fastest_turnaround": "P57DT1H51M15S",
+        "location": {
+          "response_mode": "normal",
+          "id": 26,
+          "url": "https://lldev.thespacedevs.com/2.3.0/locations/26/",
+          "name": "Tanegashima Space Center, Japan",
+          "active": true,
+          "longitude": 130.97,
+          "latitude": 30.4,
+          "timezone_name": "Asia/Tokyo",
+          "total_launch_count": 99,
+          "total_landing_count": 0
+        }
+      },
+      "webcast_live": false,
+      "orbital_launch_attempt_count": 7418,
+      "location_launch_attempt_count": 100,
+      "pad_launch_attempt_count": 19,
+      "agency_launch_attempt_count": 59,
+      "orbital_launch_attempt_count_year": 245,
+      "location_launch_attempt_count_year": 3,
+      "pad_launch_attempt_count_year": 3,
+      "agency_launch_attempt_count_year": 3,
+      "info_urls": [
+        {
+          "priority": 10,
+          "source": "mmx.jaxa.jp",
+          "title": "Request Rejected",
+          "description": "",
+          "feature_image": null,
+          "url": "https://www.mmx.jaxa.jp/en/",
+          "type": {
+            "id": 1,
+            "name": "Official Page"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          }
+        }
+      ],
+      "vid_urls": [
+        {
+          "priority": 10,
+          "source": "youtube.com",
+          "publisher": "JAXA | 宇宙航空研究開発機構",
+          "title": "Launch live streaming of Martian Moons eXploration (MMX)/H3 Launch Vehicle flight No.10(English)",
+          "description": "JAXA will livestream the launch of the Martian Moons eXploration (MMX) spacecraf",
+          "feature_image": "https://i.ytimg.com/vi/Fn6gzuGa-6c/maxresdefault_live.jpg",
+          "url": "https://www.youtube.com/watch?v=Fn6gzuGa-6c",
+          "type": {
+            "id": 1,
+            "name": "Official Webcast"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-10-19T18:45:00Z",
+          "end_time": null,
+          "live": false
+        },
+        {
+          "priority": 11,
+          "source": "youtube.com",
+          "publisher": "JAXA | 宇宙航空研究開発機構",
+          "title": "火星衛星探査機(MMX)/H3ロケット10号機打上げライブ中継",
+          "description": "火星衛星探査機(MMX)/H3ロケット10号機の打上げライブ中継です。 \n\n番組放送開始予定：2026年10月20日 3時45分頃 \n打上げ日時：2026年10",
+          "feature_image": "https://i.ytimg.com/vi/sZGyK9jfoy4/maxresdefault_live.jpg",
+          "url": "https://www.youtube.com/watch?v=sZGyK9jfoy4",
+          "type": {
+            "id": 1,
+            "name": "Official Webcast"
+          },
+          "language": {
+            "id": 6,
+            "name": "Japanese",
+            "code": "jp"
+          },
+          "start_time": "2026-10-19T18:45:00Z",
+          "end_time": null,
+          "live": false
+        }
+      ]
+    },
+    {
+      "id": "f6af629d-39b5-4f86-bc0c-f8776444a858",
+      "url": "https://lldev.thespacedevs.com/2.3.0/launches/f6af629d-39b5-4f86-bc0c-f8776444a858/",
+      "name": "Falcon 9 Block 5 | Starlink Group 15-15",
+      "response_mode": "detailed",
+      "slug": "falcon-9-block-5-starlink-group-15-15",
+      "launch_designator": null,
+      "status": {
+        "id": 1,
+        "name": "Go for Launch",
+        "abbrev": "Go",
+        "description": "Current T-0 confirmed by official or reliable sources."
+      },
+      "last_updated": "2026-10-16T16:02:43Z",
+      "net": "2026-10-20T22:14:00Z",
+      "net_precision": {
+        "id": 1,
+        "name": "Minute",
+        "abbrev": "MIN",
+        "description": "The T-0 is accurate to the minute."
+      },
+      "window_end": "2026-10-21T02:14:00Z",
+      "window_start": "2026-10-20T22:14:00Z",
+      "image": {
+        "id": 1296,
+        "name": "Starlink night fairing",
+        "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon2520925_image_20221009234147.png",
+        "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305192320.png",
+        "credit": "SpaceX",
+        "license": {
+          "id": 5,
+          "name": "CC BY-NC 2.0",
+          "priority": 1,
+          "link": "https://creativecommons.org/licenses/by-nc/2.0/"
+        },
+        "single_use": false,
+        "variants": []
+      },
+      "infographic": null,
+      "probability": null,
+      "weather_concerns": null,
+      "failreason": "",
+      "hashtag": null,
+      "rocket": {
+        "id": 9271,
+        "configuration": {
+          "response_mode": "detailed",
+          "id": 164,
+          "url": "https://lldev.thespacedevs.com/2.3.0/launcher_configurations/164/",
+          "name": "Falcon 9",
+          "full_name": "Falcon 9 Block 5",
+          "variant": "Block 5",
+          "active": true,
+          "is_placeholder": false,
+          "reusable": true,
+          "info_url": "https://www.spacex.com/vehicles/falcon-9/",
+          "wiki_url": "https://en.wikipedia.org/wiki/Falcon_9",
+          "alias": "",
+          "min_stage": 2,
+          "max_stage": 2,
+          "length": 70.0,
+          "diameter": 3.65,
+          "maiden_flight": "2018-05-11",
+          "launch_cost": 52000000,
+          "launch_mass": 549.0,
+          "leo_capacity": 22800.0,
+          "gto_capacity": 8300.0,
+          "geo_capacity": null,
+          "sso_capacity": null,
+          "to_thrust": 7607.0,
+          "apogee": 200.0,
+          "total_launch_count": 640,
+          "consecutive_successful_launches": 342,
+          "successful_launches": 639,
+          "failed_launches": 1,
+          "pending_launches": 119,
+          "attempted_landings": 630,
+          "successful_landings": 625,
+          "failed_landings": 5,
+          "consecutive_successful_landings": 325,
+          "fastest_turnaround": "PT38M31S"
+        }
+      },
+      "mission": {
+        "id": 7870,
+        "name": "Starlink Group 15-15",
+        "type": "Communications",
+        "description": "A batch of 27 satellites for the Starlink mega-constellation - SpaceX's project for space-based Internet communication s",
+        "image": null,
+        "orbit": {
+          "id": 8,
+          "name": "Low Earth Orbit",
+          "abbrev": "LEO",
+          "celestial_body": {
+            "response_mode": "list",
+            "id": 1,
+            "name": "Earth"
+          }
+        }
+      },
+      "pad": {
+        "id": 16,
+        "url": "https://lldev.thespacedevs.com/2.3.0/pads/16/",
+        "active": true,
+        "name": "Space Launch Complex 4E",
+        "image": {
+          "id": 1342,
+          "name": "Falcon 9 Block 5 | SARah 2 & 3 from SLC-4E",
+          "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon2520925_image_20231223073520.jpeg",
+          "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305192449.jpeg",
+          "credit": "SpaceX",
+          "license": {
+            "id": 5,
+            "name": "CC BY-NC 2.0",
+            "priority": 1,
+            "link": "https://creativecommons.org/licenses/by-nc/2.0/"
+          },
+          "single_use": false,
+          "variants": []
+        },
+        "description": "Space Launch Complex 4 East (SLC-4E) is a launch site at Vandenberg Space Force ",
+        "info_url": null,
+        "wiki_url": "https://en.wikipedia.org/wiki/Vandenberg_Space_Launch_Complex_4#SLC-4E",
+        "map_url": "https://www.google.com/maps?q=34.632,-120.611",
+        "latitude": 34.632,
+        "longitude": -120.611,
+        "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/pad_16_20200803143532.jpg",
+        "total_launch_count": 303,
+        "orbital_launch_attempt_count": 303,
+        "fastest_turnaround": "P2DT7H48M21S",
+        "location": {
+          "response_mode": "normal",
+          "id": 11,
+          "url": "https://lldev.thespacedevs.com/2.3.0/locations/11/",
+          "name": "Vandenberg SFB, CA, USA",
+          "active": true,
+          "longitude": -120.52023,
+          "latitude": 34.75133,
+          "timezone_name": "America/Los_Angeles",
+          "total_launch_count": 919,
+          "total_landing_count": 37
+        }
+      },
+      "webcast_live": false,
+      "orbital_launch_attempt_count": 7419,
+      "location_launch_attempt_count": 920,
+      "pad_launch_attempt_count": 304,
+      "agency_launch_attempt_count": 741,
+      "orbital_launch_attempt_count_year": 246,
+      "location_launch_attempt_count_year": 68,
+      "pad_launch_attempt_count_year": 66,
+      "agency_launch_attempt_count_year": 122,
+      "info_urls": [
+        {
+          "priority": 10,
+          "source": "spacex.com",
+          "title": "SpaceX",
+          "description": "SpaceX designs, manufactures and launches advanced rockets and spacecraft. The c",
+          "feature_image": null,
+          "url": "https://www.spacex.com/launches/sl-15-15",
+          "type": {
+            "id": 1,
+            "name": "Official Page"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          }
+        }
+      ],
+      "vid_urls": [
+        {
+          "priority": 10,
+          "source": "x.com",
+          "publisher": "SpaceX",
+          "title": "Starlink Mission",
+          "description": "Livestream on X",
+          "feature_image": "https://pbs.twimg.com/media/HUcCPBUbkAApWog.jpg",
+          "url": "https://x.com/i/broadcasts/1YGNrbnzdqLGw",
+          "type": {
+            "id": 1,
+            "name": "Official Webcast"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-10-20T22:04:00Z",
+          "end_time": "2026-10-21T22:04:00Z",
+          "live": false
+        }
+      ]
+    },
+    {
+      "id": "c6f8b6b0-6bae-460a-99bb-c12a3d29effd",
+      "url": "https://lldev.thespacedevs.com/2.3.0/launches/c6f8b6b0-6bae-460a-99bb-c12a3d29effd/",
+      "name": "Ceres-1S | Unknown Payload",
+      "response_mode": "detailed",
+      "slug": "ceres-1s-unknown-payload",
+      "launch_designator": null,
+      "status": {
+        "id": 1,
+        "name": "Go for Launch",
+        "abbrev": "Go",
+        "description": "Current T-0 confirmed by official or reliable sources."
+      },
+      "last_updated": "2026-10-15T21:06:22Z",
+      "net": "2026-10-21T03:35:00Z",
+      "net_precision": {
+        "id": 2,
+        "name": "Hour",
+        "abbrev": "HR",
+        "description": "The T-0 is accurate to the hour."
+      },
+      "window_end": "2026-10-21T03:50:00Z",
+      "window_start": "2026-10-21T03:29:00Z",
+      "image": {
+        "id": 1709,
+        "name": "[AUTO] Ceres-1S - image",
+        "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/ceres-1s_image_20230905114324.jpeg",
+        "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305193542.jpeg",
+        "credit": null,
+        "license": {
+          "id": 1,
+          "name": "Unknown",
+          "priority": 9,
+          "link": null
+        },
+        "single_use": true,
+        "variants": []
+      },
+      "infographic": null,
+      "probability": null,
+      "weather_concerns": null,
+      "failreason": "",
+      "hashtag": null,
+      "rocket": {
+        "id": 9276,
+        "configuration": {
+          "response_mode": "detailed",
+          "id": 500,
+          "url": "https://lldev.thespacedevs.com/2.3.0/launcher_configurations/500/",
+          "name": "Ceres-1S",
+          "full_name": "Ceres-1S",
+          "variant": "Ceres-1S",
+          "active": true,
+          "is_placeholder": false,
+          "reusable": false,
+          "info_url": "http://www.galactic-energy.cn/index.php/En/List/cid/14",
+          "wiki_url": null,
+          "description": "Ceres-1S is the sea launched version of Ceres-1 from Galactic Energy.",
+          "alias": "",
+          "min_stage": 3,
+          "max_stage": 4,
+          "length": null,
+          "diameter": null,
+          "maiden_flight": "2023-09-05",
+          "launch_cost": null,
+          "launch_mass": null,
+          "leo_capacity": 350.0,
+          "gto_capacity": null,
+          "geo_capacity": null,
+          "sso_capacity": 230.0,
+          "to_thrust": 598.0,
+          "apogee": null,
+          "total_launch_count": 6,
+          "consecutive_successful_launches": 6,
+          "successful_launches": 6,
+          "failed_launches": 0,
+          "pending_launches": 1,
+          "attempted_landings": 0,
+          "successful_landings": 0,
+          "failed_landings": 0,
+          "consecutive_successful_landings": 0,
+          "fastest_turnaround": "P91DT21H9M33S"
+        }
+      },
+      "mission": {
+        "id": 7876,
+        "name": "Unknown Payload",
+        "type": "Unknown",
+        "description": "Details TBD.",
+        "image": null,
+        "orbit": {
+          "id": 25,
+          "name": "Unknown",
+          "abbrev": "N/A",
+          "celestial_body": {
+            "response_mode": "list",
+            "id": 1,
+            "name": "Earth"
+          }
+        }
+      },
+      "pad": {
+        "id": 221,
+        "url": "https://lldev.thespacedevs.com/2.3.0/pads/221/",
+        "active": true,
+        "name": "Rizhao offshore launch location",
+        "image": {
+          "id": 2645,
+          "name": "Smart Dragon 3 Launch (Geely Constellation Group 06)",
+          "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/smart_dragon_3__image_20260116125655.jpg",
+          "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/smart_dragon_3__image_thumbnail_20260116125656.jpeg",
+          "credit": "CASC",
+          "license": {
+            "id": 1,
+            "name": "Unknown",
+            "priority": 9,
+            "link": null
+          },
+          "single_use": false,
+          "variants": []
+        },
+        "description": null,
+        "info_url": null,
+        "wiki_url": null,
+        "map_url": "https://www.google.com/maps?q=35.391667,119.598667",
+        "latitude": 35.391667,
+        "longitude": 119.598667,
+        "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/pad_oriental_spaceport_mobile_launch_ship_20240529085416.jpg",
+        "total_launch_count": 7,
+        "orbital_launch_attempt_count": 7,
+        "fastest_turnaround": "P15DT12H8M",
+        "location": {
+          "response_mode": "normal",
+          "id": 185,
+          "url": "https://lldev.thespacedevs.com/2.3.0/locations/185/",
+          "name": "Haiyang Oriental Spaceport",
+          "active": true,
+          "longitude": 121.235103,
+          "latitude": 36.676794,
+          "timezone_name": "Asia/Shanghai",
+          "total_launch_count": 28,
+          "total_landing_count": 0
+        }
+      },
+      "webcast_live": false,
+      "orbital_launch_attempt_count": 7420,
+      "location_launch_attempt_count": 29,
+      "pad_launch_attempt_count": 8,
+      "agency_launch_attempt_count": 26,
+      "orbital_launch_attempt_count_year": 247,
+      "location_launch_attempt_count_year": 8,
+      "pad_launch_attempt_count_year": 2,
+      "agency_launch_attempt_count_year": 4,
+      "info_urls": [],
+      "vid_urls": []
+    },
+    {
+      "id": "7766f3bb-674c-4c71-b986-963bd633fcfe",
+      "url": "https://lldev.thespacedevs.com/2.3.0/launches/7766f3bb-674c-4c71-b986-963bd633fcfe/",
+      "name": "Electron | We're Not Hawking Around (3x HawkEye 360)",
+      "response_mode": "detailed",
+      "slug": "electron-were-not-hawking-around-3x-hawkeye-360",
+      "launch_designator": null,
+      "status": {
+        "id": 8,
+        "name": "To Be Confirmed",
+        "abbrev": "TBC",
+        "description": "Awaiting official confirmation - current date is known with some certainty."
+      },
+      "last_updated": "2026-10-15T17:54:06Z",
+      "net": "2026-10-21T05:00:00Z",
+      "net_precision": {
+        "id": 2,
+        "name": "Hour",
+        "abbrev": "HR",
+        "description": "The T-0 is accurate to the hour."
+      },
+      "window_end": "2026-10-21T08:45:00Z",
+      "window_start": "2026-10-21T05:00:00Z",
+      "image": {
+        "id": 1727,
+        "name": "[AUTO] Electron - image",
+        "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/electron_image_20190705175640.jpeg",
+        "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305193613.jpeg",
+        "credit": null,
+        "license": {
+          "id": 1,
+          "name": "Unknown",
+          "priority": 9,
+          "link": null
+        },
+        "single_use": true,
+        "variants": []
+      },
+      "infographic": null,
+      "probability": null,
+      "weather_concerns": null,
+      "failreason": "",
+      "hashtag": null,
+      "rocket": {
+        "id": 7567,
+        "configuration": {
+          "response_mode": "detailed",
+          "id": 26,
+          "url": "https://lldev.thespacedevs.com/2.3.0/launcher_configurations/26/",
+          "name": "Electron",
+          "full_name": "Electron",
+          "variant": "",
+          "active": true,
+          "is_placeholder": false,
+          "reusable": false,
+          "info_url": "https://www.rocketlabusa.com/electron/",
+          "wiki_url": "https://en.wikipedia.org/wiki/Rocket_Lab_Electron",
+          "alias": "",
+          "min_stage": 2,
+          "max_stage": 3,
+          "length": 18.0,
+          "diameter": 1.2,
+          "maiden_flight": "2017-05-25",
+          "launch_cost": 6000000,
+          "launch_mass": 13.0,
+          "leo_capacity": 300.0,
+          "gto_capacity": null,
+          "geo_capacity": null,
+          "sso_capacity": 225.0,
+          "to_thrust": 162.0,
+          "apogee": null,
+          "total_launch_count": 97,
+          "consecutive_successful_launches": 56,
+          "successful_launches": 93,
+          "failed_launches": 4,
+          "pending_launches": 57,
+          "attempted_landings": 9,
+          "successful_landings": 7,
+          "failed_landings": 2,
+          "consecutive_successful_landings": 4,
+          "fastest_turnaround": "PT21H55M"
+        }
+      },
+      "mission": {
+        "id": 6792,
+        "name": "We're Not Hawking Around (3x HawkEye 360)",
+        "type": "Earth Science",
+        "description": "HawkEye 360 is a a space-based civil global intelligence satellite network using radio frequency (RF) technology to help",
+        "image": null,
+        "orbit": {
+          "id": 17,
+          "name": "Sun-Synchronous Orbit",
+          "abbrev": "SSO",
+          "celestial_body": {
+            "response_mode": "list",
+            "id": 1,
+            "name": "Earth"
+          }
+        }
+      },
+      "pad": {
+        "id": 210,
+        "url": "https://lldev.thespacedevs.com/2.3.0/pads/210/",
+        "active": true,
+        "name": "Unknown Pad",
+        "image": null,
+        "description": null,
+        "info_url": null,
+        "wiki_url": null,
+        "map_url": null,
+        "latitude": -39.260881,
+        "longitude": 177.865826,
+        "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/pad_210_20230819165718.jpg",
+        "total_launch_count": 0,
+        "orbital_launch_attempt_count": 0,
+        "fastest_turnaround": null,
+        "location": {
+          "response_mode": "normal",
+          "id": 10,
+          "url": "https://lldev.thespacedevs.com/2.3.0/locations/10/",
+          "name": "Rocket Lab Launch Complex 1, Mahia Peninsula, New Zealand",
+          "active": true,
+          "longitude": 177.86586,
+          "latitude": -39.26085,
+          "timezone_name": "Pacific/Auckland",
+          "total_launch_count": 84,
+          "total_landing_count": 17
+        }
+      },
+      "webcast_live": false,
+      "orbital_launch_attempt_count": 7421,
+      "location_launch_attempt_count": 85,
+      "pad_launch_attempt_count": 1,
+      "agency_launch_attempt_count": 98,
+      "orbital_launch_attempt_count_year": 248,
+      "location_launch_attempt_count_year": 16,
+      "pad_launch_attempt_count_year": 1,
+      "agency_launch_attempt_count_year": 19,
+      "info_urls": [
+        {
+          "priority": 10,
+          "source": "rocketlabcorp.com",
+          "title": "We're Not Hawking Around",
+          "description": "Rocket Lab will launch a dedicated mission on Electron for HawkEye 360, a conste",
+          "feature_image": null,
+          "url": "https://rocketlabcorp.com/missions/launches/hawkeye-360/",
+          "type": {
+            "id": 1,
+            "name": "Official Page"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          }
+        }
+      ],
+      "vid_urls": []
+    }
+  ]
+}

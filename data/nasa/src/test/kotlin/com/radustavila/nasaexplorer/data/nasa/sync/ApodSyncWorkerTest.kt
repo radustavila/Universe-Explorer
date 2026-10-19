@@ -9,8 +9,10 @@ import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.usecase.AnnounceLatestApodUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshSourceUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeApodsUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeUpcomingLaunchesUseCase
 import com.radustavila.nasaexplorer.core.testing.data.TestApods
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLatestApodWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNewApodNotifier
@@ -36,6 +38,7 @@ class ApodSyncWorkerTest {
     private val metadata = FakeSyncMetadataRepository()
     private val widgetUpdater = FakeLatestApodWidgetUpdater()
     private val notifier = FakeNewApodNotifier()
+    private val launchRepository = FakeLaunchRepository()
 
     @Test
     fun `a successful sync reports how many entries were written`() = runTest {
@@ -96,6 +99,22 @@ class ApodSyncWorkerTest {
     }
 
     @Test
+    fun `every sync also refreshes the upcoming launches`() = runTest {
+        buildWorker().doWork()
+
+        assertEquals(1, launchRepository.refreshCallCount)
+    }
+
+    @Test
+    fun `a launches failure neither fails nor retries the sync`() = runTest {
+        launchRepository.refreshResult = DataResult.Failure(AppError.RateLimited(retryAfterSeconds = 60))
+
+        val result = buildWorker().doWork()
+
+        assertTrue(result is ListenableWorker.Result.Success)
+    }
+
+    @Test
     fun `retries stop once the attempt budget is spent`() = runTest {
         networkMonitor.setOnline(false)
 
@@ -131,6 +150,10 @@ class ApodSyncWorkerTest {
                             userPreferencesRepository = FakeUserPreferencesRepository(notificationsEnabled),
                             widgetUpdater = widgetUpdater,
                             notifier = notifier,
+                        ),
+                        synchronizeUpcomingLaunches = SynchronizeUpcomingLaunchesUseCase(
+                            launchRepository = launchRepository,
+                            networkMonitor = networkMonitor,
                         ),
                     )
                 },

@@ -30,12 +30,14 @@ dependencies {
     implementation(projects.core.notifications)
     implementation(projects.core.cache)
     implementation(projects.data.nasa)
+    implementation(projects.data.launches)
 
     implementation(projects.feature.feed)
     implementation(projects.feature.details)
     implementation(projects.feature.favorites)
     implementation(projects.feature.debug)
     implementation(projects.feature.widget)
+    implementation(projects.feature.launches)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

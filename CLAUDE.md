@@ -45,6 +45,8 @@ Clean Architecture, dependencies pointing inward:
   `ApodSyncWorker`, `WorkManagerSyncScheduler`, `ApodCacheEvictor`) on top of the API-agnostic `:core:network`
   (incl. per-host `RateLimitInterceptor`), `:core:database` (incl. the cross-source `favorite` table and
   `RoomFavoritesRepository`), `:core:datastore`, `:core:cache` (`CacheEvictor` + daily `CacheEvictionWorker`).
+  `:data:launches` (Launch Library 2) keeps its own small `launches.db`, refreshed from `ApodSyncWorker` at most
+  once an hour.
 - **Presentation**: `:feature:*` (one screen each: Compose UI, ViewModel, immutable `UiState`, own type-safe
   `@Serializable` route + `NavGraphBuilder` extension), `:feature:widget` (Glance), `:core:notifications`,
   `:core:designsystem` (theme, shared components like `ApodCard`/`NasaAsyncImage`, `AppError`→`UiError` mapping).
