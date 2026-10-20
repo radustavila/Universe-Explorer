@@ -18,6 +18,16 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
+    buildTypes {
+        getByName("release") {
+            // MapLibre's native library is about 11 MB per ABI. 32-bit x86 devices are practically
+            // gone, so release APKs leave it out; debug builds keep every ABI for any emulator.
+            ndk {
+                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
+            }
+        }
+    }
 }
 
 // The profile is generated on a device by :baselineprofile and checked in under
