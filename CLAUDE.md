@@ -15,6 +15,8 @@ with convention plugins in the included `build-logic` build. `README.md` documen
 ./gradlew assembleDebug               # debug APK
 ./gradlew installDebug                # install on a connected device/emulator
 ./gradlew :app:connectedDebugAndroidTest   # instrumented end-to-end test (needs a device)
+ANDROID_SERIAL=<serial> ./gradlew :app:generateBaselineProfile   # regenerate the checked-in baseline profile
+ANDROID_SERIAL=<serial> ./gradlew :baselineprofile:connectedBenchmarkReleaseAndroidTest   # cold-start benchmark
 ```
 
 Single module / single test:
@@ -105,7 +107,7 @@ Malformed entries are dropped during mapping; a window with nothing usable becom
 
 Module `build.gradle.kts` files are short because `build-logic/convention` does the work. Plugin IDs:
 `nasaexplorer.android.application`, `.android.library`, `.android.compose`, `.android.feature`, `.android.hilt`,
-`.android.room`, `nasaexplorer.jvm.library`, `nasaexplorer.detekt` (applied automatically by the application/library/jvm
+`.android.room`, `.android.test`, `nasaexplorer.jvm.library`, `nasaexplorer.detekt` (applied automatically by the application/library/jvm
 plugins). Shared SDK levels, Java 17 target, lint settings and the JDK 21 test launcher are in `KotlinAndroid.kt`.
 Versions come from `gradle/libs.versions.toml`; project dependencies use type-safe accessors (`projects.core.domain`).
 A new module must be added to `settings.gradle.kts`.
@@ -118,6 +120,10 @@ A new module must be added to `settings.gradle.kts`.
   add its fake there.
 - Robolectric provides the Android runtime for Room (real in-memory SQLite), WorkManager, notifications and Compose UI
   tests; network tests use MockWebServer; ViewModel flows use Turbine.
+- `:baselineprofile` generates the release baseline/startup profile checked in under `app/src/release/generated`
+  (regenerate after big changes to startup or Today) and benchmarks cold start. Today reports itself fully drawn
+  (`ReportDrawnWhen` in `FeedScreen`) once cached rows are on screen; keep startup work off the main thread
+  (`NasaExplorerApplication` registers periodic jobs on the IO dispatcher, OkHttp's startup initializer is removed).
 - `app/src/androidTest` holds a Hilt end-to-end test (`NasaTestRunner` → `HiltTestApplication`, data modules swapped in
   `di/TestDataModules.kt`).
 
