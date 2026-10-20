@@ -7,6 +7,8 @@ import com.radustavila.nasaexplorer.core.model.SyncSource
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import java.time.Duration
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -71,4 +73,33 @@ class RefreshSourceUseCaseTest {
         refreshLaunches()
         assertEquals(3, calls)
     }
+
+    @Test
+    fun `two refreshes of one source at once fetch it once`() = runTest {
+        val first = async { refreshSlowly(SyncSource.LAUNCHES) }
+        val second = async { refreshSlowly(SyncSource.LAUNCHES) }
+
+        assertEquals(SourceRefreshResult.Completed(DataResult.Success(3)), first.await())
+        assertEquals(SourceRefreshResult.Skipped(clock.currentInstant.plus(Duration.ofHours(1))), second.await())
+        assertEquals(1, calls)
+    }
+
+    @Test
+    fun `different sources do not wait for each other`() = runTest {
+        val launches = async { refreshSlowly(SyncSource.LAUNCHES) }
+        val donki = async { refreshSlowly(SyncSource.DONKI) }
+        launches.await()
+        donki.await()
+
+        assertEquals(2, calls)
+        // Both ran during the same second of virtual time, not one after the other.
+        assertEquals(1_000, testScheduler.currentTime)
+    }
+
+    private suspend fun refreshSlowly(source: SyncSource) =
+        refreshSource(source, minInterval = Duration.ofHours(1)) {
+            calls++
+            delay(1_000)
+            DataResult.Success(3)
+        }
 }

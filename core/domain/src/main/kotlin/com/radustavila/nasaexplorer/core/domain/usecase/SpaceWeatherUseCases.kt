@@ -115,14 +115,13 @@ class ObserveSpaceWeatherSyncStatusUseCase @Inject constructor(
 }
 
 /**
- * Asks for a refresh with the aurora map, e.g. when the screen opens, and makes sure the 30-minute
- * background refresh exists from then on: nobody downloads space weather without having looked.
+ * Asks for a one-off refresh with the aurora map, e.g. when the screen opens. It registers no
+ * background refresh: only aurora alerts need one (see [ScheduleAuroraAlertRefreshUseCase]).
  */
 class RequestSpaceWeatherSyncUseCase @Inject constructor(
     private val scheduler: SpaceWeatherSyncScheduler,
 ) {
     operator fun invoke(force: Boolean = false) {
-        scheduler.ensurePeriodicSync()
         scheduler.requestSync(force = force, includeAuroraMap = true)
     }
 }

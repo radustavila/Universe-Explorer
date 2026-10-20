@@ -18,6 +18,7 @@ import java.time.LocalDate
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import okhttp3.mockwebserver.MockResponse
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -60,10 +61,31 @@ class SpaceWeatherRepositoryImplTest {
     @After
     fun tearDown() = database.close()
 
+    /** Calls of one refresh go out at once, so they are answered by path, not in order. */
+    private fun route(vararg answers: Pair<String, MockResponse>) {
+        server.route { request ->
+            answers.firstOrNull { (prefix, _) -> request.path.orEmpty().startsWith(prefix) }?.second
+                ?: MockResponse().setResponseCode(404)
+        }
+    }
+
+    private fun fixture(path: String) = server.fixtureResponse(path)
+
+    private fun json(body: String, code: Int = 200) =
+        MockResponse().setResponseCode(code).setBody(body).setHeader("Content-Type", "application/json")
+
+    private fun status(code: Int) = MockResponse().setResponseCode(code)
+
+    private fun routeKp(
+        forecast: MockResponse = fixture(SpaceWeatherFixtures.KP_FORECAST),
+        oneMinute: MockResponse = fixture(SpaceWeatherFixtures.KP_ONE_MINUTE),
+    ) = route(KP_FORECAST_PATH to forecast, KP_ONE_MINUTE_PATH to oneMinute)
+
+    private fun routeSolar(flares: MockResponse, cmes: MockResponse) = route("/get/FLR" to flares, "/get/CME" to cmes)
+
     @Test
     fun `Kp refresh caches the 3-hour slots and the latest 1-minute estimate`() = runTest {
-        server.enqueueFixture(SpaceWeatherFixtures.KP_FORECAST)
-        server.enqueueFixture(SpaceWeatherFixtures.KP_ONE_MINUTE)
+        routeKp()
 
         assertEquals(DataResult.Success(Unit), repository.refreshKp())
 
@@ -79,30 +101,27 @@ class SpaceWeatherRepositoryImplTest {
         assertEquals(Instant.parse("2026-10-19T14:16:00Z"), current?.time)
         assertEquals(0.33, current!!.kp, 0.0)
 
-        assertEquals("/products/noaa-planetary-k-index-forecast.json", server.takeRequest().path)
-        assertEquals("/json/planetary_k_index_1m.json", server.takeRequest().path)
+        assertEquals(setOf(KP_FORECAST_PATH, KP_ONE_MINUTE_PATH), List(2) { server.takeRequest().path }.toSet())
     }
 
     @Test
     fun `a failed forecast keeps the cache, a failed 1-minute estimate does not fail the refresh`() = runTest {
-        server.enqueueFixture(SpaceWeatherFixtures.KP_FORECAST)
-        server.enqueueFixture(SpaceWeatherFixtures.KP_ONE_MINUTE)
+        routeKp()
         repository.refreshKp()
 
-        server.enqueueStatus(503)
+        routeKp(forecast = status(503))
         val failed = repository.refreshKp()
         assertEquals(503, ((failed as DataResult.Failure).error as AppError.Http).code)
         assertEquals(81, repository.observeKpForecast().first().size)
 
-        server.enqueueFixture(SpaceWeatherFixtures.KP_FORECAST)
-        server.enqueueStatus(500)
+        routeKp(oneMinute = status(500))
         assertEquals(DataResult.Success(Unit), repository.refreshKp())
         assertEquals(0.33, repository.observeCurrentKp().first()!!.kp, 0.0)
     }
 
     @Test
     fun `an answer without a usable slot is an empty response`() = runTest {
-        server.enqueueJson("""[{"time_tag":"not a time","kp":3.0,"observed":"observed"}]""")
+        routeKp(forecast = json("""[{"time_tag":"not a time","kp":3.0,"observed":"observed"}]"""))
 
         assertEquals(DataResult.Failure(AppError.EmptyResponse), repository.refreshKp())
     }
@@ -126,8 +145,7 @@ class SpaceWeatherRepositoryImplTest {
 
     @Test
     fun `solar activity keeps the latest flare and CME, asking DONKI for both dates`() = runTest {
-        server.enqueueFixture(SpaceWeatherFixtures.FLARES)
-        server.enqueueFixture(SpaceWeatherFixtures.CMES)
+        routeSolar(flares = fixture(SpaceWeatherFixtures.FLARES), cmes = fixture(SpaceWeatherFixtures.CMES))
 
         assertEquals(DataResult.Success(Unit), repository.refreshSolarActivity())
 
@@ -141,14 +159,15 @@ class SpaceWeatherRepositoryImplTest {
         assertEquals(590.0, cme.speedKmPerSecond!!, 0.0)
         assertNull(cme.earthArrival)
 
-        assertEquals("/get/FLR?startDate=2026-09-19&endDate=2026-10-19", server.takeRequest().path)
-        assertEquals("/get/CME?startDate=2026-10-05&endDate=2026-10-19", server.takeRequest().path)
+        assertEquals(
+            setOf("/get/FLR?startDate=2026-09-19&endDate=2026-10-19", "/get/CME?startDate=2026-10-05&endDate=2026-10-19"),
+            List(2) { server.takeRequest().path }.toSet(),
+        )
     }
 
     @Test
     fun `a quiet Sun is not an error`() = runTest {
-        server.enqueueJson("[]")
-        server.enqueueJson("[]")
+        routeSolar(flares = json("[]"), cmes = json("[]"))
 
         assertEquals(DataResult.Success(Unit), repository.refreshSolarActivity())
         assertNull(repository.observeLatestFlare().first())
@@ -156,10 +175,17 @@ class SpaceWeatherRepositoryImplTest {
 
     @Test
     fun `a failed CME call stores nothing`() = runTest {
-        server.enqueueFixture(SpaceWeatherFixtures.FLARES)
-        server.enqueueJson("""{"status":400,"error":"Bad Request"}""", code = 400)
+        routeSolar(
+            flares = fixture(SpaceWeatherFixtures.FLARES),
+            cmes = json("""{"status":400,"error":"Bad Request"}""", code = 400),
+        )
 
         assertTrue(repository.refreshSolarActivity() is DataResult.Failure)
         assertNull(repository.observeLatestFlare().first())
+    }
+
+    private companion object {
+        const val KP_FORECAST_PATH = "/products/noaa-planetary-k-index-forecast.json"
+        const val KP_ONE_MINUTE_PATH = "/json/planetary_k_index_1m.json"
     }
 }

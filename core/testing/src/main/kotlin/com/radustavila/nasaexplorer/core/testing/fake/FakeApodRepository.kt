@@ -1,6 +1,8 @@
 package com.radustavila.nasaexplorer.core.testing.fake
 
+import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.domain.repository.ApodBatchResult
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
 import com.radustavila.nasaexplorer.core.model.Apod
 import com.radustavila.nasaexplorer.core.model.FavoriteItem
@@ -62,6 +64,10 @@ class FakeApodRepository(
     var loadOlderCallCount: Int = 0
         private set
     var fetchedDates: List<LocalDate> = emptyList()
+        private set
+
+    /** Every [fetchApods] call, as (dates, maxConcurrent). */
+    var batchRequests: List<Pair<List<LocalDate>, Int>> = emptyList()
         private set
 
     fun setEntries(apods: List<Apod>) {
@@ -130,6 +136,27 @@ class FakeApodRepository(
             }
         }
         return result
+    }
+
+    /**
+     * Requests the dates one after another (the outcome the real, concurrent batch reaches when the
+     * requests complete in order), stopping at the first retryable failure; downloads are cached
+     * like [fetchApod]'s.
+     */
+    override suspend fun fetchApods(dates: List<LocalDate>, maxConcurrent: Int): ApodBatchResult {
+        batchRequests = batchRequests + (dates to maxConcurrent)
+        val cached = mutableSetOf<LocalDate>()
+        val failed = mutableMapOf<LocalDate, AppError>()
+        for (date in dates) {
+            when (val result = fetchApod(date)) {
+                is DataResult.Success -> cached += date
+                is DataResult.Failure -> {
+                    failed[date] = result.error
+                    if (result.error.isRetryable) break
+                }
+            }
+        }
+        return ApodBatchResult(cached, failed)
     }
 
     private fun downloadedEntry(date: LocalDate) = Apod(

@@ -208,6 +208,7 @@ class ApodSyncWorkerTest {
                         ),
                         cacheOnThisDay = CacheOnThisDayUseCase(
                             apodRepository = repository,
+                            syncMetadataRepository = metadata,
                             networkMonitor = networkMonitor,
                             timeProvider = timeProvider,
                         ),

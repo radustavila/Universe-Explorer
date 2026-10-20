@@ -49,6 +49,10 @@ class WorkManagerSpaceWeatherSyncScheduler @Inject constructor(
         )
     }
 
+    override fun cancelPeriodicSync() {
+        workManager.cancelUniqueWork(PERIODIC_SYNC_WORK)
+    }
+
     companion object {
         const val ON_DEMAND_SYNC_WORK = "space-weather-sync-on-demand"
         const val PERIODIC_SYNC_WORK = "space-weather-sync-periodic"

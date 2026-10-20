@@ -66,11 +66,12 @@ class SpaceWeatherViewModelTest {
     }
 
     @Test
-    fun `opening the screen asks for a refresh with the aurora map and keeps the background job`() = runTest {
+    fun `opening the screen asks for one refresh with the aurora map and registers no background job`() = runTest {
         createViewModel()
 
         assertEquals(listOf(false to true), scheduler.requests)
-        assertEquals(1, scheduler.periodicSyncRegistrations)
+        assertEquals(0, scheduler.periodicSyncRegistrations)
+        assertFalse(scheduler.isPeriodicSyncScheduled)
     }
 
     @Test
@@ -131,16 +132,19 @@ class SpaceWeatherViewModelTest {
 
         assertEquals(AuroraAlertSettings(enabled = true, latitude = 59.3, longitude = 18.1), alerts.settings.first())
         assertEquals(1, notifier.notified.size)
+        assertTrue(scheduler.isPeriodicSyncScheduled)
     }
 
     @Test
-    fun `turning alerts off stops them`() = runTest {
+    fun `turning alerts off stops them and the background job`() = runTest {
         alerts.setEnabled(true)
+        scheduler.ensurePeriodicSync()
         val viewModel = createViewModel()
 
         viewModel.onAlertsEnabledChange(false)
 
         assertFalse(alerts.settings.first().enabled)
+        assertFalse(scheduler.isPeriodicSyncScheduled)
     }
 
     @Test

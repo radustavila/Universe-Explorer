@@ -15,6 +15,7 @@ import java.time.Instant
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import okhttp3.mockwebserver.MockResponse
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -55,15 +56,25 @@ class SmallBodiesRepositoryImplTest {
     @After
     fun tearDown() = database.close()
 
-    private fun enqueueRefresh() {
-        server.enqueueFixture(SmallBodiesFixtures.CAD)
-        server.enqueueFixture(SmallBodiesFixtures.SENTRY)
-        server.enqueueFixture(SmallBodiesFixtures.FIREBALLS)
+    /** The three refresh calls go out at once, so they are answered by path, not in order. */
+    private fun routeRefresh(
+        sentry: MockResponse = server.fixtureResponse(SmallBodiesFixtures.SENTRY),
+        fireballs: MockResponse = server.fixtureResponse(SmallBodiesFixtures.FIREBALLS),
+    ) {
+        server.route { request ->
+            val path = request.path.orEmpty()
+            when {
+                path.startsWith("/cad.api") -> server.fixtureResponse(SmallBodiesFixtures.CAD)
+                path.startsWith("/sentry.api") -> sentry
+                path.startsWith("/fireball.api") -> fireballs
+                else -> MockResponse().setResponseCode(404)
+            }
+        }
     }
 
     @Test
     fun `a refresh caches approaches with their Sentry badge, and fireballs`() = runTest {
-        enqueueRefresh()
+        routeRefresh()
 
         assertEquals(DataResult.Success(Unit), repository.refresh())
 
@@ -81,21 +92,32 @@ class SmallBodiesRepositoryImplTest {
         assertEquals(20, fireballs.size)
         assertEquals(Instant.parse("2026-10-04T03:14:45Z"), fireballs.first().time)
 
-        val cad = server.takeRequest().path!!
-        assertTrue(cad, cad.startsWith("/cad.api?"))
+        val paths = List(3) { server.takeRequest().path!! }
+        val cad = paths.single { it.startsWith("/cad.api?") }
         assertTrue(cad, "date-max=%2B30" in cad)
         assertTrue(cad, "dist-max=0.05" in cad && "diameter=true" in cad && "fullname=true" in cad)
-        assertEquals("/sentry.api", server.takeRequest().path)
-        assertEquals("/fireball.api?limit=20", server.takeRequest().path)
+        assertTrue(paths.toString(), "/sentry.api" in paths && "/fireball.api?limit=20" in paths)
+    }
+
+    @Test
+    fun `only the Sentry objects passing by are stored`() = runTest {
+        routeRefresh()
+
+        repository.refresh()
+
+        // The fixture lists six Sentry objects; one of them is in the close approach list.
+        val stored = database.query("SELECT designation FROM sentry_objects", null).use { cursor ->
+            List(cursor.count) { cursor.moveToNext(); cursor.getString(0) }
+        }
+        assertEquals(listOf("2025 UK9"), stored)
     }
 
     @Test
     fun `a failed call leaves yesterday's lists in place`() = runTest {
-        enqueueRefresh()
+        routeRefresh()
         repository.refresh()
 
-        server.enqueueFixture(SmallBodiesFixtures.CAD)
-        server.enqueueStatus(500)
+        routeRefresh(sentry = MockResponse().setResponseCode(500))
 
         assertTrue(repository.refresh() is DataResult.Failure)
         assertEquals(30, repository.observeCloseApproaches().first().size)
@@ -104,8 +126,7 @@ class SmallBodiesRepositoryImplTest {
 
     @Test
     fun `an empty Sentry list is treated as a broken answer`() = runTest {
-        server.enqueueFixture(SmallBodiesFixtures.CAD)
-        server.enqueueJson("""{"signature":{"version":"2.0"},"count":"0","data":[]}""")
+        routeRefresh(sentry = MockResponse().setHeader("Content-Type", "application/json").setBody("""{"signature":{"version":"2.0"},"count":"0","data":[]}"""))
 
         assertEquals(DataResult.Failure(AppError.EmptyResponse), repository.refresh())
     }

@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.domain.model.SourceSyncStatus
 import com.radustavila.nasaexplorer.core.model.SyncSource
@@ -45,6 +46,20 @@ class SyncMetadataDataSourceTest {
         assertEquals(SourceSyncStatus(SyncSource.APOD), syncMetadata.observeSourceStatus(SyncSource.APOD).first())
         assertNull(syncMetadata.oldestRequestedDate.first())
         assertNull(syncMetadata.lastAnnouncedApodDate.first())
+    }
+
+    @Test
+    fun `remembers the days without an entry across additions, ignoring garbage`() = runTest {
+        assertTrue(syncMetadata.apodDatesWithoutEntry.first().isEmpty())
+
+        syncMetadata.addApodDatesWithoutEntry(setOf(LocalDate.of(1995, 6, 21)))
+        syncMetadata.addApodDatesWithoutEntry(setOf(LocalDate.of(2010, 10, 19)))
+        dataStore.edit { it[stringSetPreferencesKey("apod_dates_without_entry")] = it[stringSetPreferencesKey("apod_dates_without_entry")].orEmpty() + "garbage" }
+
+        assertEquals(
+            setOf(LocalDate.of(1995, 6, 21), LocalDate.of(2010, 10, 19)),
+            syncMetadata.apodDatesWithoutEntry.first(),
+        )
     }
 
     @Test

@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.domain.model.SourceSyncStatus
 import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepository
@@ -95,6 +96,18 @@ class SyncMetadataDataSource @Inject constructor(
         }
     }
 
+    override val apodDatesWithoutEntry: Flow<Set<LocalDate>> = preferences
+        .map { preferences -> preferences[APOD_DATES_WITHOUT_ENTRY].orEmpty().mapNotNullTo(mutableSetOf(), ::parseDateOrNull) }
+        .distinctUntilChanged()
+
+    override suspend fun addApodDatesWithoutEntry(dates: Set<LocalDate>) {
+        if (dates.isEmpty()) return
+        editSafely { preferences ->
+            preferences[APOD_DATES_WITHOUT_ENTRY] =
+                preferences[APOD_DATES_WITHOUT_ENTRY].orEmpty() + dates.map(LocalDate::toString)
+        }
+    }
+
     private fun Preferences.statusOf(source: SyncSource): SourceSyncStatus {
         val keys = SourceKeys(source)
         return SourceSyncStatus(
@@ -107,12 +120,11 @@ class SyncMetadataDataSource @Inject constructor(
     }
 
     private fun observeDate(key: Preferences.Key<String>): Flow<LocalDate?> = preferences
-        .map { preferences ->
-            preferences[key]?.let { raw ->
-                runCatching { LocalDate.parse(raw) }
-                    .getOrElse { error -> if (error is DateTimeParseException) null else throw error }
-            }
-        }
+        .map { preferences -> preferences[key]?.let(::parseDateOrNull) }
+
+    private fun parseDateOrNull(raw: String): LocalDate? =
+        runCatching { LocalDate.parse(raw) }
+            .getOrElse { error -> if (error is DateTimeParseException) null else throw error }
 
     private suspend fun editSafely(block: (MutablePreferences) -> Unit) {
         try {
@@ -142,5 +154,6 @@ class SyncMetadataDataSource @Inject constructor(
         val OLDEST_REQUESTED_DATE = stringPreferencesKey("oldest_requested_date")
         val LAST_ANNOUNCED_APOD_DATE = stringPreferencesKey("last_announced_apod_date")
         val LAST_WALLPAPER_APOD_DATE = stringPreferencesKey("last_wallpaper_apod_date")
+        val APOD_DATES_WITHOUT_ENTRY = stringSetPreferencesKey("apod_dates_without_entry")
     }
 }

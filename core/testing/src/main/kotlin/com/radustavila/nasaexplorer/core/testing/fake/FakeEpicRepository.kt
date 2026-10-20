@@ -5,6 +5,7 @@ import com.radustavila.nasaexplorer.core.domain.repository.EpicRepository
 import com.radustavila.nasaexplorer.core.model.EpicCollection
 import com.radustavila.nasaexplorer.core.model.EpicImage
 import java.time.LocalDate
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -21,6 +22,9 @@ class FakeEpicRepository : EpicRepository {
 
     val refreshResults: MutableMap<EpicCollection, DataResult<Int>> = mutableMapOf()
     var fetchDayResult: DataResult<Int> = DataResult.Success(0)
+
+    /** How long each [refreshLatest] takes, in virtual time, to tell concurrent refreshes from serial ones. */
+    var refreshDelayMillis: Long = 0
 
     /** Stored by a successful [fetchDay], standing in for the downloaded day. */
     var fetchDayImages: List<EpicImage> = emptyList()
@@ -54,6 +58,7 @@ class FakeEpicRepository : EpicRepository {
 
     override suspend fun refreshLatest(collection: EpicCollection): DataResult<Int> {
         refreshedCollections += collection
+        delay(refreshDelayMillis)
         return refreshResults[collection] ?: DataResult.Success(0)
     }
 
