@@ -3,6 +3,7 @@ plugins {
     id("nasaexplorer.android.compose")
     id("nasaexplorer.android.hilt")
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -17,6 +18,13 @@ android {
     buildFeatures {
         buildConfig = true
     }
+}
+
+// The profile is generated on a device by :baselineprofile and checked in under
+// src/release/generated/baselineProfiles; release builds only pick it up.
+baselineProfile {
+    automaticGenerationDuringBuild = false
+    dexLayoutOptimization = true
 }
 
 dependencies {
@@ -70,6 +78,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+    // Installs the baseline profile on sideloaded builds too (Play installs it by itself).
+    implementation(libs.androidx.profileinstaller)
+    baselineProfile(projects.baselineprofile)
 
     testImplementation(projects.core.testing)
 
