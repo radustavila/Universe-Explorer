@@ -24,6 +24,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -93,6 +94,34 @@ class SkyUseCasesTest {
             cancelAndIgnoreRemainingEvents()
         }
         assertEquals(1, satellites.livePositionCallCount)
+    }
+
+    @Test
+    fun `the ground track window moves every five minutes, not on every poll`() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        satellites.setElements(TestSky.issElements(epoch = clock.currentInstant))
+        predictor.position = TestSky.position()
+        predictor.track = listOf(TestSky.position(), TestSky.position(longitude = 30.0))
+        val observe = ObserveIssTrackUseCase(satellites, predictor, network, clock, dispatcher)
+
+        observe().test {
+            val first = awaitItem()
+            clock.currentInstant = clock.currentInstant.plus(ObserveIssTrackUseCase.POLL_INTERVAL)
+            val second = awaitItem()
+            assertSame(first.groundTrack, second.groundTrack)
+            assertEquals(1, predictor.groundTrackRequests.size)
+
+            clock.currentInstant = Instant.parse("2026-10-19T20:05:00Z")
+            awaitItem()
+            assertEquals(
+                listOf(
+                    Instant.parse("2026-10-19T19:15:00Z"),
+                    Instant.parse("2026-10-19T19:20:00Z"),
+                ),
+                predictor.groundTrackRequests,
+            )
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test

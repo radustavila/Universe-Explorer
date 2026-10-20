@@ -202,7 +202,7 @@ private fun SolList(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         if (uiState.lastAttemptFailed && !uiState.isSyncing) {
-            item(key = "stale") {
+            item(key = "stale", contentType = "stale") {
                 Text(
                     text = stringResource(R.string.mars_photos_stale),
                     style = MaterialTheme.typography.bodySmall,
@@ -212,10 +212,11 @@ private fun SolList(
             }
         }
         uiState.sols.forEach { group ->
-            item(key = "${uiState.rover.key}-sol-${group.sol}") { SolHeader(group) }
+            item(key = "${uiState.rover.key}-sol-${group.sol}", contentType = "sol") { SolHeader(group) }
             items(
                 items = group.cameras,
                 key = { camera -> "${uiState.rover.key}-${group.sol}-${camera.cameraName}" },
+                contentType = { "camera" },
             ) { camera ->
                 CameraRow(camera = camera, onPhotoClick = onPhotoClick)
             }

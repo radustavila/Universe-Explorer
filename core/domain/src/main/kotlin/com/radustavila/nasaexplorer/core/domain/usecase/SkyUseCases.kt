@@ -19,6 +19,7 @@ import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.model.OrbitalElements
 import com.radustavila.nasaexplorer.core.model.OrbitalElements.Companion.ISS_NORAD_ID
 import com.radustavila.nasaexplorer.core.model.PersonInSpace
+import com.radustavila.nasaexplorer.core.model.SatellitePosition
 import com.radustavila.nasaexplorer.core.model.SkyTonight
 import com.radustavila.nasaexplorer.core.model.SyncSource
 import java.time.Duration
@@ -101,6 +102,8 @@ class ObserveIssTrackUseCase @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(): Flow<IssTrack> =
         satelliteRepository.observeElements(ISS_NORAD_ID).transformLatest { elements ->
+            var trackAnchor: Instant? = null
+            var groundTrack = emptyList<SatellitePosition>()
             while (true) {
                 val now = timeProvider.now()
                 val usable = elements?.takeUnless { it.isTooOldAt(now) }
@@ -109,12 +112,20 @@ class ObserveIssTrackUseCase @Inject constructor(
                 } else {
                     null
                 }
+                // The track window only moves every TRACK_REFRESH, so between those steps the same
+                // list is emitted again and the map redraws just the station's dot.
+                val anchor = now.truncatedToMultipleOf(TRACK_REFRESH)
+                if (usable == null) {
+                    groundTrack = emptyList()
+                    trackAnchor = null
+                } else if (anchor != trackAnchor) {
+                    groundTrack = predictor.groundTrack(usable, from = anchor.minus(TRACK_BEHIND), to = anchor.plus(TRACK_AHEAD))
+                    trackAnchor = anchor
+                }
                 emit(
                     IssTrack(
                         position = live ?: usable?.let { predictor.position(it, now) },
-                        groundTrack = usable?.let {
-                            predictor.groundTrack(it, from = now.minus(TRACK_BEHIND), to = now.plus(TRACK_AHEAD))
-                        }.orEmpty(),
+                        groundTrack = groundTrack,
                     ),
                 )
                 delay(POLL_INTERVAL.toMillis())
@@ -126,6 +137,9 @@ class ObserveIssTrackUseCase @Inject constructor(
         val POLL_INTERVAL: Duration = Duration.ofSeconds(5)
         val TRACK_BEHIND: Duration = Duration.ofMinutes(45)
         val TRACK_AHEAD: Duration = Duration.ofMinutes(90)
+
+        /** How often the ground track's window slides along; far less often than the dot moves. */
+        val TRACK_REFRESH: Duration = Duration.ofMinutes(5)
     }
 }
 
@@ -197,3 +211,6 @@ val ORBITAL_ELEMENTS_MAX_AGE: Duration = Duration.ofDays(14)
 
 internal fun OrbitalElements.isTooOldAt(now: Instant): Boolean =
     Duration.between(epoch, now) > ORBITAL_ELEMENTS_MAX_AGE
+
+private fun Instant.truncatedToMultipleOf(step: Duration): Instant =
+    Instant.ofEpochMilli(toEpochMilli() - Math.floorMod(toEpochMilli(), step.toMillis()))

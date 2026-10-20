@@ -453,7 +453,7 @@ private fun FeedList(
         verticalArrangement = Arrangement.spacedBy(FEED_GUTTER),
     ) {
         if (header != null) {
-            item(key = FEED_HEADER_KEY) {
+            item(key = FEED_HEADER_KEY, contentType = "header") {
                 Column(
                     modifier = Modifier
                         .topGutterUnlessEmpty(FEED_GUTTER)
@@ -463,7 +463,7 @@ private fun FeedList(
         }
 
         if (uiState.onThisDay.isNotEmpty()) {
-            item(key = "on-this-day") {
+            item(key = "on-this-day", contentType = "on-this-day") {
                 OnThisDayRail(
                     entries = uiState.onThisDay,
                     onApodClick = onApodClick,
@@ -472,7 +472,7 @@ private fun FeedList(
             }
         }
 
-        items(items = uiState.items, key = { apod -> apod.date.toString() }) { apod ->
+        items(items = uiState.items, key = { apod -> apod.date.toString() }, contentType = { "apod" }) { apod ->
             ApodCard(
                 apod = apod,
                 onClick = { onApodClick(apod.date) },
@@ -481,7 +481,7 @@ private fun FeedList(
         }
 
         if (uiState.isLoadingMore) {
-            item(key = "loading-more") {
+            item(key = "loading-more", contentType = "footer") {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -498,7 +498,7 @@ private fun FeedList(
         }
 
         if (uiState.hasReachedArchiveStart) {
-            item(key = "archive-start") {
+            item(key = "archive-start", contentType = "footer") {
                 Text(
                     text = stringResource(R.string.feed_archive_start),
                     style = MaterialTheme.typography.bodySmall,

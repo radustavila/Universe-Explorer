@@ -183,9 +183,15 @@ fun EarthEventsScreen(
             }
 
             BoxWithConstraints(Modifier.fillMaxWidth().weight(1f)) {
-                val overlays = remember(uiState.events, uiState.hiddenCategories, uiState.selectedEventId) {
-                    eventOverlays(uiState.events, uiState.hiddenCategories, uiState.selectedEventId)
+                // The selection lives in its own overlay, so picking an event leaves the (large) base
+                // overlays untouched and the map only redraws the highlight.
+                val baseOverlays = remember(uiState.events, uiState.hiddenCategories) {
+                    baseEventOverlays(uiState.events, uiState.hiddenCategories)
                 }
+                val selection = remember(uiState.events, uiState.hiddenCategories, uiState.selectedEventId) {
+                    selectionOverlay(uiState.events, uiState.hiddenCategories, uiState.selectedEventId)
+                }
+                val overlays = remember(baseOverlays, selection) { baseOverlays + selection }
                 map(uiState.imagery, overlays, onEventSelected, onEventDismissed, Modifier.fillMaxSize())
 
                 if (uiState.isLoaded && uiState.events.isEmpty()) {

@@ -23,11 +23,13 @@ import com.radustavila.nasaexplorer.core.model.SyncState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -43,7 +45,7 @@ import kotlinx.coroutines.launch
  * anything itself - it asks the domain layer to refresh and waits for Room to emit. Search and "On
  * this day" are read from the cache the same way; filling it is the sync worker's job.
  */
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class FeedViewModel @Inject constructor(
     observeApodFeed: ObserveApodFeedUseCase,
@@ -68,7 +70,11 @@ class FeedViewModel @Inject constructor(
     /** `null` while search is closed. */
     private val searchQuery = MutableStateFlow<String?>(null)
 
-    private val search: Flow<FeedSearchState?> = searchQuery.flatMapLatest { query ->
+    // Typing waits for a pause before querying Room; opening, clearing and closing search are
+    // reflected at once.
+    private val search: Flow<FeedSearchState?> = searchQuery.debounce { query ->
+        if (query.isNullOrBlank()) 0L else SEARCH_DEBOUNCE_MILLIS
+    }.flatMapLatest { query ->
         if (query == null) {
             flowOf(null)
         } else {
@@ -208,5 +214,6 @@ class FeedViewModel @Inject constructor(
 
     private companion object {
         const val STATE_TIMEOUT_MILLIS = 5_000L
+        const val SEARCH_DEBOUNCE_MILLIS = 300L
     }
 }

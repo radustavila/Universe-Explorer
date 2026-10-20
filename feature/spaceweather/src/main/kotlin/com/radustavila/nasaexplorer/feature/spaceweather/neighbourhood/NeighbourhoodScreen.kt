@@ -125,31 +125,33 @@ private fun NeighbourhoodList(uiState: NeighbourhoodUiState, onApproachClick: (S
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        if (uiState.isOffline) item(key = "offline") { OfflineBanner() }
-        item(key = "approaches-header") {
+        if (uiState.isOffline) item(key = "offline", contentType = "offline") { OfflineBanner() }
+        item(key = "approaches-header", contentType = "header") {
             Header(
                 title = stringResource(R.string.neighbourhood_approaches_title),
                 subtitle = stringResource(R.string.neighbourhood_approaches_subtitle),
             )
         }
         if (uiState.approaches.isEmpty()) {
-            item(key = "approaches-empty") { Note(stringResource(R.string.neighbourhood_approaches_empty)) }
+            item(key = "approaches-empty", contentType = "note") { Note(stringResource(R.string.neighbourhood_approaches_empty)) }
         }
-        items(uiState.approaches, key = { "${it.designation}-${it.time}" }) { approach ->
+        items(uiState.approaches, key = { "${it.designation}-${it.time}" }, contentType = { "approach" }) { approach ->
             CloseApproachRow(approach, onClick = { onApproachClick(approach.designation) })
         }
-        item(key = "fireballs-header") {
+        item(key = "fireballs-header", contentType = "header") {
             Header(
                 title = stringResource(R.string.neighbourhood_fireballs_title),
                 subtitle = stringResource(R.string.neighbourhood_fireballs_subtitle),
             )
         }
         if (uiState.fireballs.isEmpty()) {
-            item(key = "fireballs-empty") { Note(stringResource(R.string.neighbourhood_fireballs_empty)) }
+            item(key = "fireballs-empty", contentType = "note") { Note(stringResource(R.string.neighbourhood_fireballs_empty)) }
         }
-        items(uiState.fireballs, key = { "fireball-${it.time}" }) { fireball -> FireballRow(fireball) }
+        items(uiState.fireballs, key = { "fireball-${it.time}" }, contentType = { "fireball" }) { fireball ->
+            FireballRow(fireball)
+        }
         uiState.lastUpdatedAt?.let { updated ->
-            item(key = "updated") {
+            item(key = "updated", contentType = "note") {
                 Note(stringResource(R.string.neighbourhood_updated, updated.formatDateTime()))
             }
         }

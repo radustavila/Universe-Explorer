@@ -129,7 +129,7 @@ private fun ZoomableImage(
 
     // Double tap is the expected shortcut in a photo viewer, and animating the scale makes clear
     // that the same gesture undoes itself.
-    val animatedScale by animateFloatAsState(targetValue = scale, label = "zoom")
+    val animatedScale = animateFloatAsState(targetValue = scale, label = "zoom")
 
     Box(
         modifier = Modifier
@@ -154,12 +154,14 @@ private fun ZoomableImage(
             backgroundColor = Color.Transparent,
             modifier = Modifier
                 .fillMaxSize()
-                .graphicsLayer(
-                    scaleX = animatedScale,
-                    scaleY = animatedScale,
-                    translationX = offset.x,
-                    translationY = offset.y,
-                ),
+                // Lambda form: the zoom animation and pans update the layer only, with no
+                // recomposition or relayout per frame.
+                .graphicsLayer {
+                    scaleX = animatedScale.value
+                    scaleY = animatedScale.value
+                    translationX = offset.x
+                    translationY = offset.y
+                },
         )
     }
 }

@@ -7,31 +7,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.radustavila.nasaexplorer.core.map.gibs.GibsImagery
-import com.radustavila.nasaexplorer.core.map.internal.SpaceMapController
-import com.radustavila.nasaexplorer.core.map.internal.SpaceMapRuntime
-import com.radustavila.nasaexplorer.core.map.internal.TileLoadMonitor
+import com.radustavila.nasaexplorer.core.map.internal.SpaceMapHostEffects
 import com.radustavila.nasaexplorer.core.map.overlay.GeoPoint
 import com.radustavila.nasaexplorer.core.map.overlay.MapOverlay
 import com.radustavila.nasaexplorer.core.map.overlay.MapShapeClick
-import org.maplibre.android.maps.MapLibreMapOptions
-import org.maplibre.android.maps.MapView
 
 const val SPACE_MAP_TEST_TAG = "space-map"
 
@@ -84,62 +75,21 @@ private fun MapLibreView(
     onShapeClick: ((MapShapeClick) -> Unit)?,
     onMapClick: ((GeoPoint) -> Unit)?,
 ) {
-    val context = LocalContext.current
-    val mapView = remember(context) {
-        SpaceMapRuntime.ensureInitialized(context)
-        // TextureView so the map fades and slides with navigation transitions like any other view.
-        MapView(context, MapLibreMapOptions.createFromAttributes(context).textureMode(true))
-    }
-    val controller = remember(mapView, state) { SpaceMapController(mapView, state) }
-
-    MapViewLifecycle(mapView)
+    // A state built with the plain constructor owns no view yet; the map then lives as long as
+    // this composable does.
+    val ownsHost = remember(state) { state.host == null }
+    if (ownsHost) SpaceMapHostEffects(state)
+    val host = state.host ?: return
 
     SideEffect {
-        controller.onShapeClick = onShapeClick
-        controller.onMapClick = onMapClick
-        controller.setImagery(imagery)
-        controller.setOverlays(overlays)
+        host.controller.onShapeClick = onShapeClick
+        host.controller.onMapClick = onMapClick
+        host.controller.setImagery(imagery)
+        host.controller.setOverlays(overlays)
     }
 
-    val pendingMove = state.pendingMove
-    LaunchedEffect(pendingMove) {
-        if (pendingMove != null) {
-            controller.move(pendingMove)
-            state.pendingMove = null
-        }
-    }
-
-    LaunchedEffect(state) {
-        TileLoadMonitor.status.collect { state.tileStatus = it }
-    }
-
-    AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
-}
-
-/** Forwards the host lifecycle to the [MapView], which needs every callback to render and clean up. */
-@Composable
-private fun MapViewLifecycle(mapView: MapView) {
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
-    DisposableEffect(lifecycle, mapView) {
-        var started = false
-        var resumed = false
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_CREATE -> mapView.onCreate(null)
-                Lifecycle.Event.ON_START -> { mapView.onStart(); started = true }
-                Lifecycle.Event.ON_RESUME -> { mapView.onResume(); resumed = true }
-                Lifecycle.Event.ON_PAUSE -> { mapView.onPause(); resumed = false }
-                Lifecycle.Event.ON_STOP -> { mapView.onStop(); started = false }
-                else -> Unit
-            }
-        }
-        lifecycle.addObserver(observer)
-        onDispose {
-            lifecycle.removeObserver(observer)
-            if (resumed) mapView.onPause()
-            if (started) mapView.onStop()
-            mapView.onDestroy()
-        }
+    key(host) {
+        AndroidView(factory = { host.detachedMapView() }, modifier = Modifier.fillMaxSize())
     }
 }
 

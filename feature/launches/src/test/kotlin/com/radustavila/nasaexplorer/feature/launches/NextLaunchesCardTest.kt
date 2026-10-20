@@ -89,7 +89,7 @@ class NextLaunchesCardTest {
         onOpenUrl: (String) -> Unit = {},
     ) {
         composeTestRule.setContent {
-            NextLaunchesCardContent(launches = launches, now = now, onOpenUrl = onOpenUrl)
+            NextLaunchesCardContent(launches = launches, now = { now }, onOpenUrl = onOpenUrl)
         }
     }
 }

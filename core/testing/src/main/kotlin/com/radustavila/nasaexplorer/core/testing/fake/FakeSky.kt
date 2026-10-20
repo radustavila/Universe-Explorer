@@ -40,6 +40,9 @@ class FakeSatellitePassPredictor(
     var track: List<SatellitePosition> = emptyList(),
 ) : SatellitePassPredictor {
 
+    /** The `from` of every ground track asked for, oldest first. */
+    val groundTrackRequests = mutableListOf<Instant>()
+
     override fun passes(
         elements: OrbitalElements,
         observer: GeoCoordinate,
@@ -55,7 +58,10 @@ class FakeSatellitePassPredictor(
         from: Instant,
         to: Instant,
         step: Duration,
-    ): List<SatellitePosition> = track
+    ): List<SatellitePosition> {
+        groundTrackRequests += from
+        return track
+    }
 }
 
 class FakeSatelliteRepository : SatelliteRepository {
