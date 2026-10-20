@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.core.testing.fake
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.repository.LaunchRepository
 import com.radustavila.nasaexplorer.core.model.Launch
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -22,8 +23,12 @@ class FakeLaunchRepository : LaunchRepository {
 
     override fun observeUpcomingLaunches(): Flow<List<Launch>> = launches
 
+    /** How long a refresh takes, in virtual time. */
+    var refreshDelayMillis: Long = 0
+
     override suspend fun refreshUpcomingLaunches(): DataResult<Int> {
         refreshCallCount++
+        delay(refreshDelayMillis)
         return refreshResult
     }
 }

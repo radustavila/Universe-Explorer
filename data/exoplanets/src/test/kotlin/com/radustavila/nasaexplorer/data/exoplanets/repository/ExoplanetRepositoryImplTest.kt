@@ -8,6 +8,7 @@ import com.radustavila.nasaexplorer.core.model.DiscoveryMethod
 import com.radustavila.nasaexplorer.core.model.ExoplanetCatalogStats
 import com.radustavila.nasaexplorer.core.model.ExoplanetList
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
+import com.radustavila.nasaexplorer.core.testing.http.ConcurrencyGate
 import com.radustavila.nasaexplorer.core.testing.http.FixtureServer
 import com.radustavila.nasaexplorer.data.exoplanets.local.ExoplanetsDatabase
 import com.radustavila.nasaexplorer.data.exoplanets.local.RoomExoplanetLocalDataSource
@@ -67,8 +68,10 @@ class ExoplanetRepositoryImplTest {
     private fun enqueueRefresh(
         catalog: MockResponse = server.fixtureResponse(CATALOG_FIXTURE),
         count: MockResponse = server.fixtureResponse(COUNT_FIXTURE),
+        gate: ConcurrencyGate? = null,
     ) {
         server.route { request ->
+            gate?.awaitOthers()
             if (request.requestUrl?.queryParameter("query") == ExoplanetQueries.CONFIRMED_COUNT) count else catalog
         }
     }
@@ -83,6 +86,15 @@ class ExoplanetRepositoryImplTest {
         val queries = List(2) { server.takeRequest().requestUrl!!.queryParameter("query") }.toSet()
         assertEquals(setOf(ExoplanetQueries.catalog(2025), ExoplanetQueries.CONFIRMED_COUNT), queries)
         assertEquals(ExoplanetCatalogStats(confirmedPlanets = 6451), repository.observeCatalogStats().first())
+    }
+
+    @Test
+    fun `the catalogue and the count are asked together`() = runTest {
+        val gate = ConcurrencyGate(requests = 2)
+        enqueueRefresh(gate = gate)
+
+        assertEquals(DataResult.Success(24), repository.refresh())
+        assertTrue(gate.allArrivedTogether)
     }
 
     @Test

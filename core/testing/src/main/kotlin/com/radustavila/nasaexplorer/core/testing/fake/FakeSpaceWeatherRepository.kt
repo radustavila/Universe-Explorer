@@ -8,6 +8,7 @@ import com.radustavila.nasaexplorer.core.model.CurrentKp
 import com.radustavila.nasaexplorer.core.model.KpReading
 import com.radustavila.nasaexplorer.core.model.SolarFlare
 import java.time.Instant
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -45,18 +46,24 @@ class FakeSpaceWeatherRepository : SpaceWeatherRepository {
 
     override suspend fun auroraForecastFetchedAt(): Instant? = auroraFetchedAt
 
+    /** How long each refresh call takes, in virtual time. */
+    var refreshDelayMillis: Long = 0
+
     override suspend fun refreshKp(): DataResult<Unit> {
         kpRefreshCount++
+        delay(refreshDelayMillis)
         return kpRefreshResult
     }
 
     override suspend fun refreshAuroraForecast(): DataResult<Unit> {
         auroraRefreshCount++
+        delay(refreshDelayMillis)
         return auroraRefreshResult
     }
 
     override suspend fun refreshSolarActivity(): DataResult<Unit> {
         solarActivityRefreshCount++
+        delay(refreshDelayMillis)
         return solarActivityRefreshResult
     }
 }

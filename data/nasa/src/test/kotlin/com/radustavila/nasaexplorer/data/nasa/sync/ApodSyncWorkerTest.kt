@@ -112,6 +112,23 @@ class ApodSyncWorkerTest {
     }
 
     @Test
+    fun `the launches refresh runs alongside the sync, and the follow-ups alongside each other`() = runTest {
+        repository.setEntries(listOf(TestApods.image(date = TODAY)))
+        repository.refreshDelayMillis = 1_000
+        launchRepository.refreshDelayMillis = 1_000
+        wallpaperSetter.delayMillis = 500
+        repository.batchDelayMillis = 500
+
+        assertTrue(buildWorker(wallpaperEnabled = true).doWork() is ListenableWorker.Result.Success)
+
+        // One after another this would take 3 seconds.
+        assertEquals(1_500, testScheduler.currentTime)
+        assertEquals(1, launchRepository.refreshCallCount)
+        assertEquals(1, wallpaperSetter.applied.size)
+        assertEquals(1, repository.batchRequests.size)
+    }
+
+    @Test
     fun `a launches failure neither fails nor retries the sync`() = runTest {
         launchRepository.refreshResult = DataResult.Failure(AppError.RateLimited(retryAfterSeconds = 60))
 

@@ -1,5 +1,6 @@
 package com.radustavila.nasaexplorer.data.nasa.repository
 
+import com.radustavila.nasaexplorer.core.common.concurrency.mapConcurrently
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.common.result.flatMap
@@ -20,14 +21,9 @@ import java.time.LocalDate
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 
 /**
  * Offline-first APOD repository.
@@ -108,20 +104,13 @@ class ApodRepositoryImpl @Inject constructor(
             .map { }
 
     override suspend fun fetchApods(dates: List<LocalDate>, maxConcurrent: Int): ApodBatchResult {
-        val gate = Semaphore(maxConcurrent)
         val stopped = AtomicBoolean(false)
-        val outcomes = coroutineScope {
-            dates.map { date ->
-                async {
-                    gate.withPermit {
-                        if (stopped.get()) return@withPermit null
-                        val result = remoteDataSource.fetchSingle(date)
-                        if (result is DataResult.Failure && result.error.isRetryable) stopped.set(true)
-                        date to result
-                    }
-                }
-            }.awaitAll().filterNotNull()
-        }
+        val outcomes = dates.mapConcurrently(maxConcurrent) { date ->
+            if (stopped.get()) return@mapConcurrently null
+            val result = remoteDataSource.fetchSingle(date)
+            if (result is DataResult.Failure && result.error.isRetryable) stopped.set(true)
+            date to result
+        }.filterNotNull()
 
         val cachedAt = timeProvider.now()
         val failed = mutableMapOf<LocalDate, AppError>()

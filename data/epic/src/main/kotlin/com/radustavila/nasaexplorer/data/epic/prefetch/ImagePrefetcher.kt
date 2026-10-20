@@ -4,6 +4,7 @@ import android.content.Context
 import coil3.ImageLoader
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
+import com.radustavila.nasaexplorer.core.common.concurrency.mapConcurrently
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,7 +18,7 @@ interface ImagePrefetcher {
  * Downloads into the app's shared Coil disk cache, under the same keys the screens request, so a
  * later `AsyncImage(url)` is served from disk even with no connection. The disk cache holds the
  * downloaded bytes whatever size is decoded, so each image is decoded as a thumbnail rather than a
- * full 2048 px bitmap, and the memory cache is skipped: nothing is about to be drawn.
+ * full 2048 px bitmap, a few at a time, and the memory cache is skipped: nothing is about to be drawn.
  */
 @Singleton
 class CoilImagePrefetcher @Inject constructor(
@@ -26,12 +27,15 @@ class CoilImagePrefetcher @Inject constructor(
 ) : ImagePrefetcher {
 
     override suspend fun prefetch(urls: List<String>) {
-        urls.forEach { url -> imageLoader.execute(prefetchRequest(context, url)) }
+        urls.mapConcurrently(MAX_CONCURRENT_DOWNLOADS) { url -> imageLoader.execute(prefetchRequest(context, url)) }
     }
 
     internal companion object {
         /** Small enough to decode in a few milliseconds and a few kilobytes. */
         const val DECODE_SIZE_PX = 64
+
+        /** A day is about 13 photos per collection; EPIC's archive host has no published quota. */
+        const val MAX_CONCURRENT_DOWNLOADS = 4
 
         fun prefetchRequest(context: Context, url: String): ImageRequest = ImageRequest.Builder(context)
             .data(url)

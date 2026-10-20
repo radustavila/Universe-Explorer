@@ -9,6 +9,7 @@ import com.radustavila.nasaexplorer.core.model.FavoriteItem
 import com.radustavila.nasaexplorer.core.model.FavoriteSource
 import com.radustavila.nasaexplorer.core.model.MediaType
 import java.time.LocalDate
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -37,6 +38,10 @@ class FakeApodRepository(
     private val outsideFeed = MutableStateFlow<Set<LocalDate>>(emptySet())
 
     var refreshResult: DataResult<Int> = DataResult.Success(0)
+
+    /** How long [refreshRecent] and a whole [fetchApods] batch take, in virtual time. */
+    var refreshDelayMillis: Long = 0
+    var batchDelayMillis: Long = 0
     var loadOlderResult: DataResult<Int> = DataResult.Success(0)
 
     /** Forces the outcome of favourite writes, which go through [favorites]. */
@@ -122,6 +127,7 @@ class FakeApodRepository(
 
     override suspend fun refreshRecent(): DataResult<Int> {
         refreshCallCount++
+        delay(refreshDelayMillis)
         return refreshResult
     }
 
@@ -145,6 +151,7 @@ class FakeApodRepository(
      */
     override suspend fun fetchApods(dates: List<LocalDate>, maxConcurrent: Int): ApodBatchResult {
         batchRequests = batchRequests + (dates to maxConcurrent)
+        delay(batchDelayMillis)
         val cached = mutableSetOf<LocalDate>()
         val failed = mutableMapOf<LocalDate, AppError>()
         for (date in dates) {

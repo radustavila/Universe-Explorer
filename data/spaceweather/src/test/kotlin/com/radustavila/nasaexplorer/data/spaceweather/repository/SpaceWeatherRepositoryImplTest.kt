@@ -6,6 +6,7 @@ import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.model.KpKind
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
+import com.radustavila.nasaexplorer.core.testing.http.ConcurrencyGate
 import com.radustavila.nasaexplorer.core.testing.http.FixtureServer
 import com.radustavila.nasaexplorer.data.spaceweather.SpaceWeatherFixtures
 import com.radustavila.nasaexplorer.data.spaceweather.donkiService
@@ -62,8 +63,9 @@ class SpaceWeatherRepositoryImplTest {
     fun tearDown() = database.close()
 
     /** Calls of one refresh go out at once, so they are answered by path, not in order. */
-    private fun route(vararg answers: Pair<String, MockResponse>) {
+    private fun route(vararg answers: Pair<String, MockResponse>, gate: ConcurrencyGate? = null) {
         server.route { request ->
+            gate?.awaitOthers()
             answers.firstOrNull { (prefix, _) -> request.path.orEmpty().startsWith(prefix) }?.second
                 ?: MockResponse().setResponseCode(404)
         }
@@ -79,9 +81,25 @@ class SpaceWeatherRepositoryImplTest {
     private fun routeKp(
         forecast: MockResponse = fixture(SpaceWeatherFixtures.KP_FORECAST),
         oneMinute: MockResponse = fixture(SpaceWeatherFixtures.KP_ONE_MINUTE),
-    ) = route(KP_FORECAST_PATH to forecast, KP_ONE_MINUTE_PATH to oneMinute)
+        gate: ConcurrencyGate? = null,
+    ) = route(KP_FORECAST_PATH to forecast, KP_ONE_MINUTE_PATH to oneMinute, gate = gate)
 
-    private fun routeSolar(flares: MockResponse, cmes: MockResponse) = route("/get/FLR" to flares, "/get/CME" to cmes)
+    private fun routeSolar(flares: MockResponse, cmes: MockResponse, gate: ConcurrencyGate? = null) =
+        route("/get/FLR" to flares, "/get/CME" to cmes, gate = gate)
+
+    @Test
+    fun `the forecast and the 1-minute estimate are asked together, and so are flares and CMEs`() = runTest {
+        val kpGate = ConcurrencyGate(requests = 2)
+        routeKp(gate = kpGate)
+        assertEquals(DataResult.Success(Unit), repository.refreshKp())
+
+        val solarGate = ConcurrencyGate(requests = 2)
+        routeSolar(fixture(SpaceWeatherFixtures.FLARES), fixture(SpaceWeatherFixtures.CMES), gate = solarGate)
+        assertEquals(DataResult.Success(Unit), repository.refreshSolarActivity())
+
+        assertTrue(kpGate.allArrivedTogether)
+        assertTrue(solarGate.allArrivedTogether)
+    }
 
     @Test
     fun `Kp refresh caches the 3-hour slots and the latest 1-minute estimate`() = runTest {

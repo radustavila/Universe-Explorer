@@ -20,6 +20,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.time.Duration
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 /**
  * Background synchronisation.
@@ -30,11 +32,11 @@ import java.util.concurrent.TimeUnit
  * retries. A successful sync is followed by the work that depends on fresh data:
  * [AnnounceLatestApodUseCase] refreshes the home screen widget and posts the new-entry notification,
  * [ApplyDailyWallpaperUseCase] updates the opted-in wallpaper, and [CacheOnThisDayUseCase] downloads
- * the "On this day" entries. Those are best effort: their failures never turn a successful sync into
+ * the "On this day" entries, all three at once. Those are best effort: their failures never turn a successful sync into
  * a failed or retried one, and the next sync simply tries again.
  *
  * The upcoming-launches cache rides along with every run through
- * [SynchronizeUpcomingLaunchesUseCase]. It is throttled on its own and never affects the result: a
+ * [SynchronizeUpcomingLaunchesUseCase], concurrently with the APOD sync. It is throttled on its own and never affects the result: a
  * retry for a launches failure would only spend more of Launch Library 2's small hourly budget.
  */
 @HiltWorker
@@ -49,14 +51,20 @@ class ApodSyncWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParameters) {
 
     override suspend fun doWork(): Result {
-        val result = synchronizeApods()
-        synchronizeUpcomingLaunches()
+        // Different hosts, independent outcomes: the launches refresh runs alongside the APOD sync.
+        val result = coroutineScope {
+            launch { synchronizeUpcomingLaunches() }
+            synchronizeApods()
+        }
 
         return when (result) {
             is DataResult.Success -> {
-                announceLatestApod()
-                applyDailyWallpaper()
-                cacheOnThisDay()
+                // Each reads the fresh cache on its own and reports nothing back, so they run together.
+                coroutineScope {
+                    launch { announceLatestApod() }
+                    launch { applyDailyWallpaper() }
+                    launch { cacheOnThisDay() }
+                }
                 Result.success(workDataOf(KEY_SYNCED_COUNT to result.data))
             }
 

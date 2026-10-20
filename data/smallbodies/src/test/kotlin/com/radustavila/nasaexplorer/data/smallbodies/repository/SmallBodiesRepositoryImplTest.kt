@@ -5,6 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
+import com.radustavila.nasaexplorer.core.testing.http.ConcurrencyGate
 import com.radustavila.nasaexplorer.core.testing.http.FixtureServer
 import com.radustavila.nasaexplorer.data.smallbodies.SmallBodiesFixtures
 import com.radustavila.nasaexplorer.data.smallbodies.jplSsdService
@@ -60,8 +61,10 @@ class SmallBodiesRepositoryImplTest {
     private fun routeRefresh(
         sentry: MockResponse = server.fixtureResponse(SmallBodiesFixtures.SENTRY),
         fireballs: MockResponse = server.fixtureResponse(SmallBodiesFixtures.FIREBALLS),
+        gate: ConcurrencyGate? = null,
     ) {
         server.route { request ->
+            gate?.awaitOthers()
             val path = request.path.orEmpty()
             when {
                 path.startsWith("/cad.api") -> server.fixtureResponse(SmallBodiesFixtures.CAD)
@@ -97,6 +100,15 @@ class SmallBodiesRepositoryImplTest {
         assertTrue(cad, "date-max=%2B30" in cad)
         assertTrue(cad, "dist-max=0.05" in cad && "diameter=true" in cad && "fullname=true" in cad)
         assertTrue(paths.toString(), "/sentry.api" in paths && "/fireball.api?limit=20" in paths)
+    }
+
+    @Test
+    fun `the three JPL calls are sent together`() = runTest {
+        val gate = ConcurrencyGate(requests = 3)
+        routeRefresh(gate = gate)
+
+        assertEquals(DataResult.Success(Unit), repository.refresh())
+        assertTrue(gate.allArrivedTogether)
     }
 
     @Test

@@ -82,6 +82,29 @@ class SynchronizeSpaceWeatherUseCaseTest {
     }
 
     @Test
+    fun `Kp, the aurora map and solar activity are fetched side by side`() = runTest {
+        repository.refreshDelayMillis = 1_000
+
+        synchronize(includeAuroraMap = true)
+
+        assertEquals(1, repository.kpRefreshCount)
+        assertEquals(1, repository.auroraRefreshCount)
+        assertEquals(1, repository.solarActivityRefreshCount)
+        assertEquals(1_000, testScheduler.currentTime)
+    }
+
+    @Test
+    fun `a DONKI failure does not touch the NOAA outcome or its bookkeeping`() = runTest {
+        repository.solarActivityRefreshResult = DataResult.Failure(AppError.Http(code = 503))
+
+        val result = synchronize()
+
+        assertEquals(SourceRefreshResult.Completed(DataResult.Success(Unit)), result)
+        assertTrue(metadata.statusOf(SyncSource.DONKI).isFailing)
+        assertTrue(!metadata.statusOf(SyncSource.SPACE_WEATHER).isFailing)
+    }
+
+    @Test
     fun `a Kp failure is reported even when the map succeeded`() = runTest {
         repository.kpRefreshResult = DataResult.Failure(AppError.Timeout)
 
