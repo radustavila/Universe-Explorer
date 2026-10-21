@@ -1,6 +1,7 @@
 package com.radustavila.nasaexplorer.feature.feed
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,6 +50,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
@@ -103,6 +105,10 @@ fun FeedScreen(
     viewModel: FeedViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    // Today is the start screen: the app is fully drawn once cached entries are on screen, or once
+    // there is nothing to wait for (empty or offline state). Feeds startup metrics and the
+    // baseline profile's time-to-full-display.
+    ReportDrawnWhen { uiState.hasContent || !uiState.isLoading }
     val snackbarHostState = remember { SnackbarHostState() }
     val notificationToggle = rememberNewApodNotificationToggle(
         isEnabled = uiState.areNewApodNotificationsEnabled,
@@ -421,6 +427,16 @@ private fun FeedList(
     onToggleFavorite: (Apod) -> Unit,
     header: (@Composable () -> Unit)?,
 ) {
+    // The header's cards each build a ViewModel and a data source of their own. Composed together
+    // with the first cached entries, they held back the frame that shows them; one frame later,
+    // the entries are already on screen. The cards fill in when their data arrives anyway.
+    var isHeaderReady by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        withFrameNanos { }
+        isHeaderReady = true
+    }
+    val shownHeader = header?.takeIf { isHeaderReady }
+
     // What sits above the first card - the Today header's cards and On this day - usually arrives
     // after the feed, because the sync worker fetches it. The list keeps its first visible card
     // anchored while content above it appears or grows, which would leave all of it scrolled out
@@ -432,7 +448,7 @@ private fun FeedList(
         listState.interactionSource.interactions.filterIsInstance<DragInteraction.Start>().first()
         hasReaderScrolled = true
     }
-    LaunchedEffect(headerHeight, onThisDayHeight) {
+    LaunchedEffect(shownHeader != null, headerHeight, onThisDayHeight) {
         if (!hasReaderScrolled) listState.scrollToItem(0)
     }
 
@@ -446,19 +462,19 @@ private fun FeedList(
         // nothing (e.g. no launches cached yet).
         contentPadding = PaddingValues(
             start = FEED_GUTTER,
-            top = if (header == null) FEED_GUTTER else 0.dp,
+            top = if (shownHeader == null) FEED_GUTTER else 0.dp,
             end = FEED_GUTTER,
             bottom = FEED_GUTTER,
         ),
         verticalArrangement = Arrangement.spacedBy(FEED_GUTTER),
     ) {
-        if (header != null) {
+        if (shownHeader != null) {
             item(key = FEED_HEADER_KEY, contentType = "header") {
                 Column(
                     modifier = Modifier
                         .topGutterUnlessEmpty(FEED_GUTTER)
                         .onSizeChanged { size -> headerHeight = size.height },
-                ) { header() }
+                ) { shownHeader() }
             }
         }
 

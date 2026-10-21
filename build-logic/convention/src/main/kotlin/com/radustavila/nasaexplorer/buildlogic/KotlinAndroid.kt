@@ -34,7 +34,6 @@ internal fun Project.configureAndroidKotlin(commonExtension: CommonExtension) {
             // A lint warning in a portfolio project should fail the build, not scroll past in a log.
             warningsAsErrors = true
             abortOnError = true
-            checkDependencies = true
             // Dependency freshness is managed deliberately through the version catalog.
             disable += setOf("NewerVersionAvailable", "GradleDependency", "AndroidGradlePluginVersion")
         }

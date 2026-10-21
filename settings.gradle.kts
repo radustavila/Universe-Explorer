@@ -24,6 +24,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "nasa-explorer"
 
 include(":app")
+include(":baselineprofile")
 
 include(":core:common")
 include(":core:model")

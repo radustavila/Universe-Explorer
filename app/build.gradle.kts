@@ -3,6 +3,7 @@ plugins {
     id("nasaexplorer.android.compose")
     id("nasaexplorer.android.hilt")
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -17,6 +18,27 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
+    buildTypes {
+        getByName("release") {
+            // No release keystore yet: release builds are signed with the debug key so they can be
+            // installed and checked (CI builds them too). The baseline profile plugin derives
+            // benchmarkRelease (debug-signed, profileable, minified like release) for benchmarks.
+            signingConfig = signingConfigs.getByName("debug")
+            // MapLibre's native library is about 11 MB per ABI. 32-bit x86 devices are practically
+            // gone, so release APKs leave it out; debug builds keep every ABI for any emulator.
+            ndk {
+                abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
+            }
+        }
+    }
+}
+
+// The profile is generated on a device by :baselineprofile and checked in under
+// src/release/generated/baselineProfiles; release builds only pick it up.
+baselineProfile {
+    automaticGenerationDuringBuild = false
+    dexLayoutOptimization = true
 }
 
 dependencies {
@@ -70,6 +92,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+    // Installs the baseline profile on sideloaded builds too (Play installs it by itself).
+    implementation(libs.androidx.profileinstaller)
+    baselineProfile(projects.baselineprofile)
 
     testImplementation(projects.core.testing)
 
