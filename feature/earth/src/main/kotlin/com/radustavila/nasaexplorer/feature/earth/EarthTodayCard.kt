@@ -72,7 +72,7 @@ internal fun EarthTodayCardContent(
             .fillMaxWidth()
             .testTag(EARTH_TODAY_CARD_TEST_TAG),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
