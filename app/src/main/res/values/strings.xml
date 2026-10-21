@@ -25,4 +25,18 @@
     <string name="universe_exoplanets_description">The newest worlds beyond the Solar System, their size and distance</string>
     <string name="universe_sky_title">Sky tonight</string>
     <string name="universe_sky_description">Moon, planets and ISS passes above you, and who is in space</string>
+    <string name="universe_search_title">Search everything</string>
+    <string name="universe_search_description">Pictures, planets, asteroids, events and favourites saved on this device</string>
+
+    <!-- Launcher shortcuts (res/xml/shortcuts.xml). Short labels stay under about 10 characters. -->
+    <string name="shortcut_search_short">Search</string>
+    <string name="shortcut_search_long">Search everything</string>
+    <string name="shortcut_today_short">Today</string>
+    <string name="shortcut_today_long">Today\'s picture of the day</string>
+    <string name="shortcut_sky_short">Sky tonight</string>
+    <string name="shortcut_sky_long">What is in the sky tonight</string>
+    <string name="shortcut_space_weather_short">Aurora</string>
+    <string name="shortcut_space_weather_long">Space weather and aurora</string>
+    <string name="shortcut_earth_map_short">Earth map</string>
+    <string name="shortcut_earth_map_long">Satellite map of Earth</string>
 </resources>

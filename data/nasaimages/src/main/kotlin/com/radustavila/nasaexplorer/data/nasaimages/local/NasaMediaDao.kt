@@ -59,6 +59,22 @@ abstract class NasaMediaDao {
     )
     abstract suspend fun evictUnreferenced(beforeMillis: Long, keepIds: List<String>): Int
 
+    /**
+     * Items whose title, description or keywords contain [term], newest first: the candidates of a
+     * local search, which then checks its other terms.
+     */
+    @Query(
+        """
+        SELECT * FROM nasa_media
+        WHERE title LIKE '%' || :term || '%'
+        OR description LIKE '%' || :term || '%'
+        OR keywords LIKE '%' || :term || '%'
+        ORDER BY date_created IS NULL, date_created DESC, nasa_id
+        LIMIT :limit
+        """,
+    )
+    abstract suspend fun searchCandidates(term: String, limit: Int): List<NasaMediaEntity>
+
     @Query("SELECT COUNT(*) FROM nasa_media")
     abstract suspend fun count(): Int
 }
