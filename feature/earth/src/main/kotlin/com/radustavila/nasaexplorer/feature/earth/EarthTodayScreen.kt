@@ -228,7 +228,7 @@ internal fun EarthTodayContent(
                                 autoPlay = autoPlay,
                                 discSize = discSize,
                                 initialImageId = uiState.focusedImageId,
-                                isFavorite = uiState::isFavorite,
+                                favoriteIds = uiState.favoriteIds,
                                 onToggleFavorite = onToggleFavorite,
                             )
                         }
@@ -293,7 +293,7 @@ private fun EarthRotation(
     autoPlay: Boolean,
     discSize: Dp,
     initialImageId: String?,
-    isFavorite: (EpicImage) -> Boolean,
+    favoriteIds: Set<String>,
     onToggleFavorite: (EpicImage) -> Unit,
 ) {
     val initialPage = images.indexOfFirst { it.identifier == initialImageId }
@@ -309,12 +309,12 @@ private fun EarthRotation(
 
     AutoAdvance(pagerState = pagerState, isPlaying = isPlaying && images.size > 1)
 
-    val current = images[pagerState.currentPage.coerceIn(images.indices)]
-
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         HorizontalPager(
             state = pagerState,
             key = { page -> images[page].identifier },
+            // The next frame is composed and its image requested before it slides in.
+            beyondViewportPageCount = PRELOADED_FRAMES,
             modifier = Modifier
                 .widthIn(max = discSize)
                 .fillMaxWidth()
@@ -333,6 +333,9 @@ private fun EarthRotation(
                 contentDescription = description,
                 contentScale = ContentScale.Fit,
                 backgroundColor = Color.Black,
+                // Frames replace each other every fraction of a second; fading each in would blur
+                // the rotation into a flicker.
+                crossfade = false,
                 modifier = Modifier
                     .fillMaxSize()
                     .clickable {
@@ -342,14 +345,13 @@ private fun EarthRotation(
             )
         }
 
-        FrameDetails(
-            image = current,
-            frameNumber = pagerState.currentPage + 1,
-            frameCount = images.size,
+        CurrentFrameDetails(
+            pagerState = pagerState,
+            images = images,
             isPlaying = isPlaying,
             onPlayPause = { isPlaying = !isPlaying },
-            isFavorite = isFavorite(current),
-            onToggleFavorite = { onToggleFavorite(current) },
+            favoriteIds = favoriteIds,
+            onToggleFavorite = onToggleFavorite,
         )
     }
 
@@ -361,6 +363,32 @@ private fun EarthRotation(
             onDismiss = { zoomedImage = null },
         )
     }
+}
+
+/**
+ * [FrameDetails] for the pager's current frame. The page is read here, not in [EarthRotation], so
+ * each turn of the rotation recomposes only these details rather than the pager around them.
+ */
+@Composable
+private fun CurrentFrameDetails(
+    pagerState: PagerState,
+    images: List<EpicImage>,
+    isPlaying: Boolean,
+    onPlayPause: () -> Unit,
+    favoriteIds: Set<String>,
+    onToggleFavorite: (EpicImage) -> Unit,
+) {
+    val page = pagerState.currentPage.coerceIn(images.indices)
+    val current = images[page]
+    FrameDetails(
+        image = current,
+        frameNumber = page + 1,
+        frameCount = images.size,
+        isPlaying = isPlaying,
+        onPlayPause = onPlayPause,
+        isFavorite = current.ref.favoriteId in favoriteIds,
+        onToggleFavorite = { onToggleFavorite(current) },
+    )
 }
 
 @Composable
@@ -526,6 +554,7 @@ private val MAX_DISC_WIDTH = 480.dp
 private const val DISC_HEIGHT_FRACTION = 0.8f
 private val STATE_HEIGHT = 360.dp
 private const val FRAME_DURATION_MILLIS = 1_000L
+private const val PRELOADED_FRAMES = 1
 
 @Preview
 @Composable
