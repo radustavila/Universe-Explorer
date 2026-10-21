@@ -234,7 +234,7 @@ private fun LaunchRow(
 @Composable
 private fun CountdownText(net: Instant, now: () -> Instant) {
     Text(
-        text = countdownText(net = net, now = now()),
+        text = countdown(net = net, now = now()).text(),
         style = MaterialTheme.typography.labelLarge,
         fontFamily = FontFamily.Monospace,
     )

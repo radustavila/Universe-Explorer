@@ -11,8 +11,6 @@ import com.radustavila.nasaexplorer.core.model.Planet
 import com.radustavila.nasaexplorer.feature.sky.R
 import java.text.NumberFormat
 import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.abs
 
@@ -23,8 +21,8 @@ import kotlin.math.abs
 @Composable
 internal fun Instant.formatTime(): String = formatClockTime()
 
-internal fun Instant.formatDay(zone: ZoneId = ZoneId.systemDefault(), locale: Locale = Locale.getDefault()): String =
-    DateTimeFormatter.ofPattern("EEE d MMM", locale).format(atZone(zone))
+@Composable
+internal fun Instant.formatDay(): String = rememberUnitFormatter().day(this)
 
 @Composable
 internal fun Instant.formatDayAndTime(): String = rememberUnitFormatter().dayAndTime(this)

@@ -8,4 +8,7 @@
     <string name="favorites_source_nasa_library">NASA Image Library</string>
     <string name="favorites_source_mars">Mars rover</string>
     <string name="favorites_source_exoplanet">Exoplanet</string>
+    <!-- A saved photo of Earth; %1$s is when it was taken, e.g. "16 Oct 2026, 02:10". -->
+    <string name="favorites_epic_title">Earth, %1$s</string>
+    <string name="favorites_epic_title_enhanced">Earth (enhanced), %1$s</string>
 </resources>

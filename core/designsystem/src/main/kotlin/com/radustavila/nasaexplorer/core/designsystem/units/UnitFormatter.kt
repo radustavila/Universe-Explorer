@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.platform.LocalResources
 import com.radustavila.nasaexplorer.core.designsystem.R
 import com.radustavila.nasaexplorer.core.model.MeasurementSystem
 import com.radustavila.nasaexplorer.core.model.UnitPreferences
@@ -49,6 +50,7 @@ class UnitFormatter(
     private val timeFormat by lazy { dateFormat(if (is24Hour) "Hm" else "hm") }
     private val dateTimeFormat by lazy { dateFormat(if (is24Hour) "yMMMdHm" else "yMMMdhm") }
     private val dayAndTimeFormat by lazy { dateFormat(if (is24Hour) "EEEdMMMHm" else "EEEdMMMhm") }
+    private val dayFormat by lazy { dateFormat("EEEdMMM") }
 
     /** "21:30" or "9:30 PM", in the device's time zone. */
     fun time(instant: Instant): String = timeFormat.format(Date.from(instant))
@@ -58,6 +60,9 @@ class UnitFormatter(
 
     /** "Tue 21 Oct, 21:30": for times within the next days. */
     fun dayAndTime(instant: Instant): String = dayAndTimeFormat.format(Date.from(instant))
+
+    /** "Tue 21 Oct" or "Tue, Oct 21": a day within the coming weeks, without the year. */
+    fun day(instant: Instant): String = dayFormat.format(Date.from(instant))
 
     /** "408 km" or "254 mi": distances and altitudes given in kilometres. */
     fun distance(km: Double, fractionDigits: Int = 0): String {
@@ -193,13 +198,14 @@ class UnitFormatter(
 @Composable
 fun rememberUnitFormatter(): UnitFormatter {
     val context = LocalContext.current
+    val resources = LocalResources.current
     val locale = LocalLocale.current.platformLocale
     val preferences = LocalUnitPreferences.current
     // Read on every composition: the user may flip the system clock setting while the app is open.
     val systemIs24Hour = android.text.format.DateFormat.is24HourFormat(context)
-    return remember(context, locale, preferences, systemIs24Hour) {
+    return remember(resources, locale, preferences, systemIs24Hour) {
         UnitFormatter(
-            resources = context.resources,
+            resources = resources,
             locale = locale,
             system = preferences.measurementSystem.resolve(locale),
             is24Hour = preferences.timeFormat.is24Hour(systemIs24Hour),

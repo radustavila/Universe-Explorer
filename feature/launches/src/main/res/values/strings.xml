@@ -15,4 +15,13 @@
     <string name="launches_status_failure">Failure</string>
     <string name="launches_status_partial_failure">Partial failure</string>
     <string name="launches_status_unknown">Unknown</string>
+    <!--
+      Mission control's countdown: "T" stays as is, %1$s is "-" before lift-off and "+" after,
+      the clock is hh:mm:ss. Days are abbreviated to keep the countdown short.
+    -->
+    <string name="launches_countdown">T%1$s%2$s</string>
+    <plurals name="launches_countdown_days">
+        <item quantity="one">T%1$s%2$dd %3$s</item>
+        <item quantity="other">T%1$s%2$dd %3$s</item>
+    </plurals>
 </resources>

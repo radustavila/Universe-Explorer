@@ -1,5 +1,6 @@
 package com.radustavila.nasaexplorer.feature.launches
 
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -7,15 +8,20 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.radustavila.nasaexplorer.core.designsystem.units.LocalUnitPreferences
 import com.radustavila.nasaexplorer.core.model.LaunchStatus
+import com.radustavila.nasaexplorer.core.model.TimeFormat
+import com.radustavila.nasaexplorer.core.model.UnitPreferences
 import com.radustavila.nasaexplorer.core.testing.data.TestLaunches
-import java.time.Duration
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.time.Duration
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @RunWith(RobolectricTestRunner::class)
 @Config(qualifiers = "w400dp-h800dp")
@@ -35,6 +41,17 @@ class NextLaunchesCardTest {
         composeTestRule.onNodeWithText("Bandwagon 5").assertExists()
         composeTestRule.onNodeWithText("T-01:02:03").assertExists()
         composeTestRule.onNodeWithText("Go").assertExists()
+    }
+
+    @Test
+    fun `launches further away count whole days and show the lift-off time in the user's clock`() {
+        val net = now + Duration.parse("P2DT3H4M5S")
+        val local = net.atZone(ZoneId.systemDefault())
+
+        setCard(listOf(TestLaunches.launch(net = net, status = LaunchStatus.GO)), timeFormat = TimeFormat.TWENTY_FOUR_HOUR)
+
+        composeTestRule.onNodeWithText("T-2d 03:04:05").assertExists()
+        composeTestRule.onNodeWithText(local.format(DateTimeFormatter.ofPattern("HH:mm")), substring = true).assertExists()
     }
 
     @Test
@@ -87,9 +104,12 @@ class NextLaunchesCardTest {
     private fun setCard(
         launches: List<com.radustavila.nasaexplorer.core.model.Launch>,
         onOpenUrl: (String) -> Unit = {},
+        timeFormat: TimeFormat = TimeFormat.SYSTEM,
     ) {
         composeTestRule.setContent {
-            NextLaunchesCardContent(launches = launches, now = { now }, onOpenUrl = onOpenUrl)
+            CompositionLocalProvider(LocalUnitPreferences provides UnitPreferences(timeFormat = timeFormat)) {
+                NextLaunchesCardContent(launches = launches, now = { now }, onOpenUrl = onOpenUrl)
+            }
         }
     }
 }
