@@ -40,6 +40,7 @@ include(":core:map")
 include(":core:wallpaper")
 include(":core:astro")
 include(":core:location")
+include(":core:offline")
 
 include(":data:nasa")
 include(":data:launches")

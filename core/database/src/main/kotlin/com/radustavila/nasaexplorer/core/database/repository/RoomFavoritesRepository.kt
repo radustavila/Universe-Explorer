@@ -6,6 +6,7 @@ import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.database.dao.FavoriteDao
 import com.radustavila.nasaexplorer.core.database.entity.FavoriteEntity
+import com.radustavila.nasaexplorer.core.domain.offline.OfflineFavoriteImages
 import com.radustavila.nasaexplorer.core.domain.repository.FavoritesRepository
 import com.radustavila.nasaexplorer.core.model.FavoriteItem
 import com.radustavila.nasaexplorer.core.model.FavoriteSource
@@ -23,10 +24,14 @@ import kotlinx.coroutines.withContext
 /**
  * Room-backed favourites of every source. Lives next to the database rather than in a data module
  * because it belongs to no single API: every feature saves through it.
+ *
+ * Saving queues an offline copy of the snapshot image and removing deletes it (see
+ * [OfflineFavoriteImages]), so no screen has to remember to.
  */
 @Singleton
 class RoomFavoritesRepository @Inject constructor(
     private val favoriteDao: FavoriteDao,
+    private val offlineImages: OfflineFavoriteImages,
     @Dispatcher(AppDispatcher.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : FavoritesRepository {
 
@@ -56,10 +61,16 @@ class RoomFavoritesRepository @Inject constructor(
                 savedAtEpochMillis = item.savedAt.toEpochMilli(),
             ),
         )
+    }.also { result ->
+        if (result is DataResult.Success && item.imageUrl != null) {
+            offlineImages.requestDownload(item.source, item.itemId)
+        }
     }
 
     override suspend fun remove(source: FavoriteSource, itemId: String): DataResult<Unit> =
-        runDatabaseCall { favoriteDao.delete(source.key, itemId) }
+        runDatabaseCall { favoriteDao.delete(source.key, itemId) }.also { result ->
+            if (result is DataResult.Success) offlineImages.discard(source, itemId)
+        }
 
     private suspend fun runDatabaseCall(block: suspend () -> Unit): DataResult<Unit> =
         withContext(ioDispatcher) {

@@ -10,6 +10,8 @@ import com.radustavila.nasaexplorer.core.database.entity.FavoriteEntity
 import com.radustavila.nasaexplorer.core.database.migration.NasaDatabaseMigrations
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
+import java.io.File
+import org.json.JSONObject
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -223,6 +225,48 @@ class NasaDatabaseMigrationTest {
             assertEquals(listOf("2026-10-16"), epicDao.observeAvailableDates("natural").first())
         }
 
+    @Test
+    fun `migrating from 6 to 7 keeps every favourite, none of them with an offline copy yet`() = runTest {
+        createDatabaseFromExportedSchema(version = 6)
+        SQLiteDatabase.openDatabase(context.getDatabasePath(TEST_DB_NAME).path, null, 0).use { db ->
+            db.execSQL(
+                "INSERT INTO `favorite` (`source`, `item_id`, `title`, `image_url`, `saved_at_epoch_millis`) " +
+                    "VALUES ('apod', '2026-09-10', 'Spiral Galaxy NGC 1300', ?, ?), " +
+                    "('epic', 'natural/2026-10-16/epic_1b', 'Earth', ?, ?), " +
+                    "('exoplanet', 'Kepler-22 b', 'Kepler-22 b', NULL, ?)",
+                arrayOf<Any>(
+                    "https://apod.nasa.gov/apod/image/ngc1300.jpg", CACHED_AT_MILLIS,
+                    "https://epic.gsfc.nasa.gov/epic_1b.jpg", CACHED_AT_MILLIS + 1,
+                    CACHED_AT_MILLIS + 2,
+                ),
+            )
+        }
+
+        val dao = openWithMigrations().favoriteDao()
+
+        val favorites = dao.observeAll().first()
+        assertEquals(listOf("Kepler-22 b", "natural/2026-10-16/epic_1b", "2026-09-10"), favorites.map { it.itemId })
+        assertEquals("https://apod.nasa.gov/apod/image/ngc1300.jpg", favorites.last().imageUrl)
+        assertTrue(favorites.all { it.localImagePath == null && it.localImageBytes == 0L })
+        // Exactly the favourites with a picture are waiting for the one-off backfill.
+        assertEquals(
+            setOf("2026-09-10", "natural/2026-10-16/epic_1b"),
+            dao.findWithoutLocalImage().map { it.itemId }.toSet(),
+        )
+        assertEquals(0L, dao.observeLocalImageBytes().first())
+
+        // The new columns take writes straight away.
+        dao.setLocalImage(
+            source = "apod",
+            itemId = "2026-09-10",
+            imageUrl = "https://apod.nasa.gov/apod/image/ngc1300.jpg",
+            localImagePath = "apod/2026-09-10.jpg",
+            localImageBytes = 2048,
+        )
+        assertEquals("apod/2026-09-10.jpg", dao.find("apod", "2026-09-10")?.localImagePath)
+        assertEquals(2048L, dao.observeLocalImageBytes().first())
+    }
+
     private fun openWithMigrations(): NasaDatabase =
         Room.databaseBuilder(context, NasaDatabase::class.java, TEST_DB_NAME)
             .addMigrations(*NasaDatabaseMigrations.ALL)
@@ -331,7 +375,39 @@ class NasaDatabaseMigrationTest {
         }
     }
 
+    /**
+     * Writes an empty database exactly as [version] shipped it, replaying the statements Room
+     * exported to `schemas/…/<version>.json` (tables, indices, FTS triggers and the identity row).
+     */
+    private fun createDatabaseFromExportedSchema(version: Int) {
+        val schema = JSONObject(File(SCHEMA_DIRECTORY, "$version.json").readText()).getJSONObject("database")
+        val file = context.getDatabasePath(TEST_DB_NAME)
+        file.parentFile?.mkdirs()
+
+        SQLiteDatabase.openOrCreateDatabase(file, null).use { db ->
+            val entities = schema.getJSONArray("entities")
+            for (index in 0 until entities.length()) {
+                val entity = entities.getJSONObject(index)
+                val table = entity.getString("tableName")
+                db.execSQL(entity.getString("createSql").replace("\${TABLE_NAME}", table))
+                entity.optJSONArray("indices")?.let { indices ->
+                    for (i in 0 until indices.length()) {
+                        db.execSQL(indices.getJSONObject(i).getString("createSql").replace("\${TABLE_NAME}", table))
+                    }
+                }
+                entity.optJSONArray("contentSyncTriggers")?.let { triggers ->
+                    for (i in 0 until triggers.length()) db.execSQL(triggers.getString(i))
+                }
+            }
+            val setup = schema.getJSONArray("setupQueries")
+            for (index in 0 until setup.length()) db.execSQL(setup.getString(index))
+            db.version = version
+        }
+    }
+
     private companion object {
+        /** Room's exported schemas, relative to the module directory tests run in. */
+        const val SCHEMA_DIRECTORY = "schemas/com.radustavila.nasaexplorer.core.database.NasaDatabase"
         const val TEST_DB_NAME = "migration-test.db"
         const val VERSION_1_IDENTITY_HASH = "507d38c1f18bed85a7a454240f1a6b55"
         const val CACHED_AT_MILLIS = 1_757_500_000_000L

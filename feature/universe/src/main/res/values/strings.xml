@@ -39,6 +39,7 @@
 
     <string name="media_details_back">Back</string>
     <string name="media_details_share">Share</string>
+    <string name="media_details_share_source">NASA Image and Video Library</string>
     <string name="media_details_view_full_size">View full size</string>
     <string name="media_details_download">Download original</string>
     <string name="media_details_download_started">Downloading to Downloads…</string>
