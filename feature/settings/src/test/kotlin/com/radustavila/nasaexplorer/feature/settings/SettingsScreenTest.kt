@@ -140,6 +140,7 @@ class SettingsScreenTest {
         scrollTo(SETTINGS_CLEAR_CACHE_TEST_TAG)
         composeTestRule.onNodeWithText("Image cache").assertExists()
         composeTestRule.onNodeWithText("Network cache").assertExists()
+        composeTestRule.onNodeWithText("Offline favourites").assertExists()
         composeTestRule.onNodeWithTag(SETTINGS_CLEAR_CACHE_TEST_TAG).performClick()
         composeTestRule.onNodeWithText("Your favourites and their offline copies are kept", substring = true).assertExists()
         composeTestRule.onNodeWithTag(SETTINGS_CLEAR_CACHE_CONFIRM_TEST_TAG).performClick()

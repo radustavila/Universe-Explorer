@@ -53,10 +53,11 @@ class SettingsViewModelTest {
                     StorageEntry(StorageKind.IMAGE_CACHE, 40_000_000),
                     StorageEntry(StorageKind.HTTP_CACHE, 1_000_000),
                     StorageEntry(StorageKind.CACHED_DATA, 900_000),
+                    StorageEntry(StorageKind.OFFLINE_FAVORITES, 3_000_000),
                 ),
                 state.storage.entries,
             )
-            assertEquals(41_900_000L, state.storage.totalBytes)
+            assertEquals(44_900_000L, state.storage.totalBytes)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -145,7 +146,9 @@ class SettingsViewModelTest {
 
             val state = awaitUntil { it.message == SettingsMessage.CACHE_CLEARED && !it.storage.isClearing }
             assertEquals(listOf(1, 1, 1), listOf(images.clearCount, http.clearCount, feeds.clearCount))
-            assertEquals(200_000L, state.storage.totalBytes)
+            // Offline favourites are untouched; the feeds keep their favourite rows.
+            assertEquals(0, fixture.offlineFavorites.clearCount)
+            assertEquals(3_200_000L, state.storage.totalBytes)
             cancelAndIgnoreRemainingEvents()
         }
     }

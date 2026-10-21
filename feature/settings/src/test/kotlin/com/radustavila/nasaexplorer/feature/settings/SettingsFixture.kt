@@ -47,6 +47,9 @@ internal class SettingsFixture {
     val http = FakeCacheStorage(StorageKind.HTTP_CACHE, bytes = 1_000_000)
     val feeds = FakeCacheStorage(StorageKind.CACHED_DATA, bytes = 900_000, keptBytes = 200_000)
 
+    /** Measured, never a cleaner: "Clear cache" must not reach offline favourites. */
+    val offlineFavorites = FakeCacheStorage(StorageKind.OFFLINE_FAVORITES, bytes = 3_000_000)
+
     fun createViewModel(): SettingsViewModel {
         val checkAurora = CheckAuroraAlertUseCase(aurora, FakeSpaceWeatherRepository(), FakeAuroraAlertNotifier(), clock)
         val reschedule = RescheduleIssPassReminderUseCase(
@@ -71,7 +74,7 @@ internal class SettingsFixture {
             setAuroraAlertLocation = SetAuroraAlertLocationUseCase(aurora, checkAurora),
             setIssReminders = SetIssPassRemindersEnabledUseCase(skyPreferences, reschedule),
             setDailyWallpaper = SetDailyWallpaperEnabledUseCase(preferences, metadata, syncScheduler),
-            measureStorage = MeasureStorageUseCase(setOf(images, http, feeds)),
+            measureStorage = MeasureStorageUseCase(setOf(images, http, feeds, offlineFavorites)),
             clearCache = ClearCacheUseCase(setOf(images, http, feeds), metadata),
         )
     }

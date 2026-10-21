@@ -73,6 +73,10 @@ interface FavoriteDao {
     @Query("SELECT * FROM favorite WHERE image_url IS NOT NULL AND local_image_path IS NULL")
     suspend fun findWithoutLocalImage(): List<FavoriteEntity>
 
+    /** Favourites recorded as having an offline copy; the file itself may be gone (restored backup). */
+    @Query("SELECT * FROM favorite WHERE image_url IS NOT NULL AND local_image_path IS NOT NULL")
+    suspend fun findWithLocalImage(): List<FavoriteEntity>
+
     /** Every recorded offline copy, by the remote image it stands in for. */
     @Query(
         "SELECT image_url, local_image_path FROM favorite " +

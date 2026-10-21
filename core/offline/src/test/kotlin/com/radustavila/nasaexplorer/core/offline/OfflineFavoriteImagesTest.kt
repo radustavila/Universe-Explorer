@@ -116,6 +116,7 @@ class OfflineFavoriteImagesTest {
         favoriteDao.save(entity(FavoriteSource.EXOPLANET, "Kepler-22 b", imageUrl = null))
         favoriteDao.save(entity(FavoriteSource.MARS, "done", "https://example.org/c.jpg"))
         favoriteDao.setLocalImage("mars", "done", "https://example.org/c.jpg", "mars/done.jpg", 3)
+        files.resolve("mars/done.jpg").apply { parentFile?.mkdirs() }.writeBytes(ByteArray(3))
 
         offlineImages.backfillOnce()
 
@@ -129,6 +130,16 @@ class OfflineFavoriteImagesTest {
         offlineImages.backfillOnce()
         assertTrue(workInfos(FavoriteSource.NASA_LIBRARY, "later").isEmpty())
         assertTrue(files.backfillMarker.exists())
+    }
+
+    @Test
+    fun `after a restore from backup, copies recorded in the database but missing on disk are queued again`() = runTest {
+        favoriteDao.save(entity(FavoriteSource.MARS, "restored", "https://example.org/c.jpg"))
+        favoriteDao.setLocalImage("mars", "restored", "https://example.org/c.jpg", "mars/restored.jpg", 3)
+
+        offlineImages.backfillOnce()
+
+        assertEquals(1, workInfos(FavoriteSource.MARS, "restored").size)
     }
 
     @Test
