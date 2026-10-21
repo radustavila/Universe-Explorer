@@ -123,7 +123,8 @@ A new module must be added to `settings.gradle.kts`.
 - `:baselineprofile` generates the release baseline/startup profile checked in under `app/src/release/generated`
   (regenerate after big changes to startup or Today) and benchmarks cold start. Today reports itself fully drawn
   (`ReportDrawnWhen` in `FeedScreen`) once cached rows are on screen; keep startup work off the main thread
-  (`NasaExplorerApplication` registers periodic jobs on the IO dispatcher, OkHttp's startup initializer is removed).
+  (`NasaExplorerApplication` registers periodic jobs on the IO dispatcher once per installed APK, OkHttp's startup
+  initializer is removed). Debug builds run StrictMode (log only).
 - `app/src/androidTest` holds a Hilt end-to-end test (`NasaTestRunner` → `HiltTestApplication`, data modules swapped in
   `di/TestDataModules.kt`).
 
@@ -135,7 +136,8 @@ the repo.
 
 ## Repo notes
 
-- Main/integration branch is `develop`; CI (`.github/workflows/ci.yml`) runs unit tests, lint and `assembleDebug` on JDK 21.
+- Main/integration branch is `develop`; CI (`.github/workflows/ci.yml`) runs unit tests, lint, `assembleDebug` and
+  `assembleRelease` (R8-minified, debug-signed) on JDK 21, for PRs and pushes to `develop`/`main`.
 - `LEARNING_GUIDE.md` is a Romanian step-by-step study log for guided review sessions; when the user is working through
   it, explain code rather than change it unless asked.
 - Some README sections are stale (e.g. "only one database version" — there are now three schema versions and
