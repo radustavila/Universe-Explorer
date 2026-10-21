@@ -30,6 +30,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.domain.sky.IssPassForecast
 import com.radustavila.nasaexplorer.core.domain.sky.IssTrack
 import com.radustavila.nasaexplorer.core.map.overlay.GeoPoint
@@ -160,15 +161,14 @@ internal fun IssTrackCard(
     SkySection(title = stringResource(R.string.sky_track_title), modifier = modifier.testTag(SKY_TRACK_CARD_TEST_TAG)) {
         val position = track?.position
         val colors = MaterialTheme.colorScheme
-        val overlays = remember(track, observer, colors) {
-            issTrackOverlays(
-                track = track?.groundTrack.orEmpty(),
-                position = position,
-                observer = observer,
-                trackColor = colors.primary,
-                stationColor = colors.tertiary,
-                observerColor = colors.secondary,
-            )
+        // Remembered apart: the dot moves every few seconds, the track only every few minutes, so
+        // only the dot's overlay is rebuilt (and re-sent to the map) on most updates.
+        val groundTrack = track?.groundTrack.orEmpty()
+        val trackOverlay = remember(groundTrack, colors.primary) { groundTrackOverlay(groundTrack, colors.primary) }
+        val observerOverlay = remember(observer, colors.secondary) { observerOverlay(observer, colors.secondary) }
+        val stationOverlay = remember(position, colors.tertiary) { stationOverlay(position, colors.tertiary) }
+        val overlays = remember(trackOverlay, observerOverlay, stationOverlay) {
+            listOf(trackOverlay, observerOverlay, stationOverlay)
         }
         val description = stringResource(R.string.sky_track_map_description)
         map(
@@ -184,11 +184,12 @@ internal fun IssTrackCard(
             Text(stringResource(R.string.sky_track_unavailable), style = MaterialTheme.typography.bodyMedium)
             return@SkySection
         }
+        val units = rememberUnitFormatter()
         Text(
             text = if (position.isLive) {
-                stringResource(R.string.sky_track_live, position.altitudeKm.formatWhole(), position.speedKmPerHour.formatWhole())
+                stringResource(R.string.sky_track_live, units.distance(position.altitudeKm), units.speedPerHour(position.speedKmPerHour))
             } else {
-                stringResource(R.string.sky_track_estimated, position.altitudeKm.formatWhole())
+                stringResource(R.string.sky_track_estimated, units.distance(position.altitudeKm))
             },
             style = MaterialTheme.typography.bodyMedium,
         )

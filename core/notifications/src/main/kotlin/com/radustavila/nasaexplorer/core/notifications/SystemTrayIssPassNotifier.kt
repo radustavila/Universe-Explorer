@@ -6,17 +6,17 @@ import android.content.Intent
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.radustavila.nasaexplorer.core.designsystem.units.UnitFormatter
+import com.radustavila.nasaexplorer.core.domain.repository.UserPreferencesRepository
 import com.radustavila.nasaexplorer.core.domain.sky.IssPassNotifier
 import com.radustavila.nasaexplorer.core.model.SatellitePass
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.Duration
 import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.roundToInt
+import kotlinx.coroutines.flow.first
 
 /**
  * Posts the opt-in "ISS overhead soon" reminder: when, where to look, how high it climbs. Unlike
@@ -26,6 +26,7 @@ import kotlin.math.roundToInt
 @Singleton
 class SystemTrayIssPassNotifier @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val userPreferences: UserPreferencesRepository,
 ) : IssPassNotifier {
 
     private val notificationManager = NotificationManagerCompat.from(context)
@@ -34,8 +35,7 @@ class SystemTrayIssPassNotifier @Inject constructor(
         if (!notificationManager.areNotificationsEnabled()) return
         ensureChannel()
 
-        val start = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
-            .format(pass.start.atZone(ZoneId.systemDefault()))
+        val start = UnitFormatter.create(context, userPreferences.unitPreferences.first()).time(pass.start)
         val minutes = Duration.between(pass.start, pass.end).toMinutes().coerceAtLeast(1).toInt()
         val text = context.getString(
             R.string.iss_pass_notification_text,

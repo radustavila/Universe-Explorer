@@ -28,6 +28,7 @@
     <string name="sky_coordinates_invalid">Enter a latitude from −90 to 90 and a longitude from −180 to 180.</string>
     <string name="sky_use_coordinates">Use coordinates</string>
     <string name="sky_cancel">Cancel</string>
+    <string name="sky_location_clear">Forget this location</string>
 
     <!-- Night -->
     <string name="sky_night_title">Tonight</string>
@@ -78,13 +79,13 @@
     <string name="sky_iss_visible">Visible</string>
     <string name="sky_iss_reminders">Remind me 10 minutes before visible passes</string>
     <string name="sky_iss_notifications_blocked">Notifications are blocked for this app.</string>
-    <string name="sky_iss_open_settings">Settings</string>
     <string name="sky_iss_elements_from">Orbit data from %1$s</string>
 
     <!-- ISS track -->
     <string name="sky_track_title">Where the ISS is now</string>
-    <string name="sky_track_live">Live · %1$s km up · %2$s km/h</string>
-    <string name="sky_track_estimated">Estimated from orbit data · %1$s km up</string>
+    <!-- %1$s is an altitude with its unit ("408 km"), %2$s a speed with its unit ("27,600 km/h"). -->
+    <string name="sky_track_live">Live · %1$s up · %2$s</string>
+    <string name="sky_track_estimated">Estimated from orbit data · %1$s up</string>
     <string name="sky_track_sunlit">In sunlight</string>
     <string name="sky_track_eclipsed">In Earth\'s shadow</string>
     <string name="sky_track_unavailable">The station\'s position is not available offline until orbit data has been downloaded.</string>

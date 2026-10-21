@@ -1,20 +1,30 @@
 package com.radustavila.nasaexplorer.feature.earth
 
+import android.content.Context
+import android.provider.Settings
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertTouchHeightIsEqualTo
+import androidx.compose.ui.test.assertTouchWidthIsEqualTo
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeDown
+import androidx.compose.ui.unit.dp
+import androidx.test.core.app.ApplicationProvider
 import com.radustavila.nasaexplorer.core.designsystem.component.RETRY_BUTTON_TEST_TAG
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.EpicCollection
 import com.radustavila.nasaexplorer.core.model.EpicImage
 import com.radustavila.nasaexplorer.core.testing.data.TestEpicImages
+import java.time.Instant
 import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -130,6 +140,70 @@ class EarthTodayScreenTest {
     }
 
     @Test
+    fun `with system animations removed the rotation starts paused`() {
+        Settings.Global.putFloat(
+            ApplicationProvider.getApplicationContext<Context>().contentResolver,
+            Settings.Global.ANIMATOR_DURATION_SCALE,
+            0f,
+        )
+        // Should the rotation start anyway, a frozen clock keeps it from spinning the test forever.
+        composeTestRule.mainClock.autoAdvance = false
+        setContent(EarthTodayUiState(images = TestEpicImages.day(size = 3)), autoPlayOverride = true)
+        composeTestRule.mainClock.advanceTimeByFrame()
+
+        composeTestRule.onNodeWithContentDescription("Play rotation").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Photo 1 of 3").assertIsDisplayed()
+    }
+
+    @Test
+    fun `the play button and the heart are 48 dp to touch`() {
+        setContent(EarthTodayUiState(images = TestEpicImages.day(size = 3)))
+
+        composeTestRule.onNodeWithTag(EARTH_PLAY_BUTTON_TEST_TAG).assertTouchHeightIsEqualTo(48.dp)
+            .assertTouchWidthIsEqualTo(48.dp)
+        composeTestRule.onNodeWithContentDescription("Add to favorites").assertTouchHeightIsEqualTo(48.dp)
+            .assertTouchWidthIsEqualTo(48.dp)
+    }
+
+    @Test
+    fun `pulling down the photos asks for a refresh`() {
+        var refreshes = 0
+        setContent(EarthTodayUiState(images = TestEpicImages.day(size = 3)), onRefresh = { refreshes++ })
+
+        composeTestRule.onNodeWithTag(EARTH_PULL_TO_REFRESH_TEST_TAG).performTouchInput {
+            swipeDown(startY = top + 10f, endY = bottom, durationMillis = 500)
+        }
+        composeTestRule.waitForIdle()
+
+        assertEquals(1, refreshes)
+    }
+
+    @Test
+    fun `without photos there is nothing to pull`() {
+        var refreshes = 0
+        setContent(EarthTodayUiState(isOffline = true), onRefresh = { refreshes++ })
+
+        composeTestRule.onNodeWithTag(EARTH_PULL_TO_REFRESH_TEST_TAG).performTouchInput {
+            swipeDown(startY = top + 10f, endY = bottom, durationMillis = 500)
+        }
+        composeTestRule.waitForIdle()
+
+        assertEquals(0, refreshes)
+    }
+
+    @Test
+    fun `the photos say when EPIC was last updated`() {
+        setContent(
+            EarthTodayUiState(
+                images = TestEpicImages.day(size = 3),
+                freshness = DataFreshness(lastUpdatedAt = Instant.now().minusSeconds(5)),
+            ),
+        )
+
+        composeTestRule.onNodeWithText("Updated just now").assertIsDisplayed()
+    }
+
+    @Test
     fun `the footer sits below the rotation, and below an empty state too`() {
         setContent(EarthTodayUiState(isOffline = true), footer = { Text("Satellite map") })
 
@@ -141,6 +215,7 @@ class EarthTodayScreenTest {
         onBackClick: (() -> Unit)? = null,
         onCollectionSelected: (EpicCollection) -> Unit = {},
         onDateSelected: (LocalDate?) -> Unit = {},
+        onRefresh: () -> Unit = {},
         onRetry: () -> Unit = {},
         onToggleFavorite: (EpicImage) -> Unit = {},
         footer: (@Composable () -> Unit)? = null,
@@ -153,6 +228,7 @@ class EarthTodayScreenTest {
                 onBackClick = onBackClick,
                 onCollectionSelected = onCollectionSelected,
                 onDateSelected = onDateSelected,
+                onRefresh = onRefresh,
                 onRetry = onRetry,
                 onErrorDismissed = {},
                 onToggleFavorite = onToggleFavorite,

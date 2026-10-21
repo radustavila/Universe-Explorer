@@ -1,6 +1,7 @@
 package com.radustavila.nasaexplorer.feature.earth
 
 import com.radustavila.nasaexplorer.core.designsystem.error.UiError
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.EpicCollection
 import com.radustavila.nasaexplorer.core.model.EpicImage
 import java.time.LocalDate
@@ -22,6 +23,8 @@ data class EarthTodayUiState(
     val isRefreshing: Boolean = false,
     val isOffline: Boolean = false,
     val error: UiError? = null,
+    /** When EPIC last synced, for the "Updated …" line. */
+    val freshness: DataFreshness = DataFreshness(),
 ) {
     val hasContent: Boolean get() = images.isNotEmpty()
 

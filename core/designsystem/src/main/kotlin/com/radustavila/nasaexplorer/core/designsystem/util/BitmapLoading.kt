@@ -6,6 +6,7 @@ import coil3.SingletonImageLoader
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.request.allowHardware
+import coil3.request.bitmapConfig
 import coil3.toBitmap
 
 /**
@@ -16,12 +17,16 @@ import coil3.toBitmap
  * bitmap rather than a Composable. Hardware bitmaps cannot be parcelled across that boundary, and
  * the size bound keeps the payload under the platform's limit. Goes through the application's image
  * loader, so the disk cache and the video frame decoder apply exactly as they do in-app.
+ *
+ * [opaque] decodes to RGB_565, half the bytes of ARGB_8888, for photos without transparency: a home
+ * screen widget's bitmaps travel through a binder transaction of about a megabyte.
  */
-suspend fun Context.loadBitmap(url: String, maxSizePx: Int): Bitmap? {
+suspend fun Context.loadBitmap(url: String, maxSizePx: Int, opaque: Boolean = false): Bitmap? {
     val request = ImageRequest.Builder(this)
         .data(url)
         .size(maxSizePx)
         .allowHardware(false)
+        .apply { if (opaque) bitmapConfig(Bitmap.Config.RGB_565) }
         .build()
 
     val result = SingletonImageLoader.get(this).execute(request)

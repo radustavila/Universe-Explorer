@@ -5,7 +5,11 @@ import android.app.Notification
 import android.app.NotificationManager
 import androidx.test.core.app.ApplicationProvider
 import com.radustavila.nasaexplorer.core.model.AuroraAlert
+import com.radustavila.nasaexplorer.core.model.TimeFormat
+import com.radustavila.nasaexplorer.core.testing.fake.FakeUserPreferencesRepository
 import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -19,7 +23,8 @@ class SystemTrayAuroraAlertNotifierTest {
 
     private val context: Application = ApplicationProvider.getApplicationContext()
     private val notificationManager = context.getSystemService(NotificationManager::class.java)
-    private val notifier = SystemTrayAuroraAlertNotifier(context)
+    private val preferences = FakeUserPreferencesRepository()
+    private val notifier = SystemTrayAuroraAlertNotifier(context, preferences)
 
     private val alert = AuroraAlert(startsAt = Instant.parse("2026-10-19T21:00:00Z"), expectedKp = 5.67, threshold = 5)
 
@@ -33,6 +38,22 @@ class SystemTrayAuroraAlertNotifierTest {
         assertTrue(text, text.endsWith("at Kp 5 or more."))
         assertEquals("aurora_alerts", posted.channelId)
         assertEquals(NotificationManager.IMPORTANCE_HIGH, notificationManager.getNotificationChannel("aurora_alerts").importance)
+    }
+
+    @Test
+    fun `the start time follows the user's time format`() = runTest {
+        val local = alert.startsAt.atZone(ZoneId.systemDefault())
+
+        preferences.setTimeFormat(TimeFormat.TWENTY_FOUR_HOUR)
+        notifier.notifyAuroraAlert(alert)
+        val twentyFour = shadowOf(notificationManager).allNotifications.single().extras.getCharSequence(Notification.EXTRA_TEXT).toString()
+
+        preferences.setTimeFormat(TimeFormat.TWELVE_HOUR)
+        notifier.notifyAuroraAlert(alert)
+        val twelve = shadowOf(notificationManager).allNotifications.single().extras.getCharSequence(Notification.EXTRA_TEXT).toString()
+
+        assertTrue(twentyFour, twentyFour.contains(local.format(DateTimeFormatter.ofPattern("HH:mm"))))
+        assertTrue(twelve, twelve.contains(local.format(DateTimeFormatter.ofPattern("h:mm"))))
     }
 
     @Test

@@ -20,6 +20,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.radustavila.nasaexplorer.core.designsystem.component.FavoriteButton
 import com.radustavila.nasaexplorer.core.designsystem.component.NasaAsyncImage
+import com.radustavila.nasaexplorer.core.designsystem.units.formatLocalDateTime
+import com.radustavila.nasaexplorer.core.model.EpicCollection
+import com.radustavila.nasaexplorer.core.model.EpicImage
+import com.radustavila.nasaexplorer.core.model.EpicPhotoRef
 import com.radustavila.nasaexplorer.core.model.FavoriteItem
 import com.radustavila.nasaexplorer.core.model.FavoriteSource
 
@@ -34,15 +38,16 @@ internal fun FavoriteCard(
     onRemove: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val title = item.displayTitle()
     Card(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
     ) {
         NasaAsyncImage(
             url = item.imageUrl,
-            contentDescription = item.title,
+            contentDescription = title,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(16f / 9f),
@@ -56,7 +61,7 @@ internal fun FavoriteCard(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = item.title,
+                    text = title,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
@@ -70,6 +75,21 @@ internal fun FavoriteCard(
             FavoriteButton(isFavorite = true, onToggle = onRemove)
         }
     }
+}
+
+/**
+ * The snapshot's title, worded here when the source stores raw data: an EPIC favourite keeps its
+ * capture time, shown in the user's language, time zone and clock format.
+ */
+@Composable
+internal fun FavoriteItem.displayTitle(): String {
+    if (source != FavoriteSource.EPIC) return title
+    val capturedAt = EpicImage.capturedAtOfFavoriteTitle(title) ?: return title
+    val enhanced = EpicPhotoRef.fromFavoriteId(itemId)?.collection == EpicCollection.ENHANCED
+    return stringResource(
+        if (enhanced) R.string.favorites_epic_title_enhanced else R.string.favorites_epic_title,
+        capturedAt.formatLocalDateTime(),
+    )
 }
 
 @get:StringRes

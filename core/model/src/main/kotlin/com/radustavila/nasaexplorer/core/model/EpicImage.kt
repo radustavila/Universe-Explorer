@@ -34,6 +34,22 @@ data class EpicImage(
     companion object {
         /** DSCOVR's first EPIC images; the archive holds nothing older. */
         val FIRST_CAPTURE_DATE: LocalDate = LocalDate.of(2015, 6, 13)
+
+        /**
+         * The title an EPIC favourite's snapshot stores: the capture instant in ISO-8601, raw data
+         * the UI words in the user's language and clock. See [capturedAtOfFavoriteTitle].
+         */
+        fun favoriteTitle(capturedAt: Instant): String = capturedAt.toString()
+
+        /**
+         * Inverse of [favoriteTitle]; null for a title saved by older versions, which stored an
+         * English sentence and are shown as they are.
+         */
+        fun capturedAtOfFavoriteTitle(title: String): Instant? = try {
+            Instant.parse(title)
+        } catch (_: DateTimeParseException) {
+            null
+        }
     }
 }
 

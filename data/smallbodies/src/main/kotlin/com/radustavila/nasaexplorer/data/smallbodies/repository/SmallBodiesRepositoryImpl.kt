@@ -7,6 +7,7 @@ import com.radustavila.nasaexplorer.core.domain.repository.SmallBodiesRepository
 import com.radustavila.nasaexplorer.core.model.CloseApproach
 import com.radustavila.nasaexplorer.core.model.Fireball
 import com.radustavila.nasaexplorer.core.model.SmallBodyDetails
+import com.radustavila.nasaexplorer.data.smallbodies.local.CloseApproachEntity
 import com.radustavila.nasaexplorer.data.smallbodies.local.SmallBodiesLocalDataSource
 import com.radustavila.nasaexplorer.data.smallbodies.mapper.toCloseApproachEntities
 import com.radustavila.nasaexplorer.data.smallbodies.mapper.toDomain
@@ -16,6 +17,8 @@ import com.radustavila.nasaexplorer.data.smallbodies.mapper.toSentryEntities
 import com.radustavila.nasaexplorer.data.smallbodies.remote.SmallBodiesRemoteDataSource
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -43,22 +46,32 @@ class SmallBodiesRepositoryImpl @Inject constructor(
         local.observeDetails(designation).map { it?.toDomain() }
 
     override suspend fun refresh(): DataResult<Unit> {
-        val approaches = when (val result = remote.fetchCloseApproaches()) {
-            is DataResult.Success -> result.data.toCloseApproachEntities()
-            is DataResult.Failure -> return result
+        // Three independent JPL APIs: asked at once, then checked in order.
+        val (approachesResult, sentryResult, fireballsResult) = coroutineScope {
+            val approaches = async { remote.fetchCloseApproaches() }
+            val sentry = async { remote.fetchSentryList() }
+            val fireballs = async { remote.fetchFireballs() }
+            Triple(approaches.await(), sentry.await(), fireballs.await())
         }
-        val sentry = when (val result = remote.fetchSentryList()) {
-            is DataResult.Success -> result.data.data.toSentryEntities()
-            is DataResult.Failure -> return result
+        val approaches = when (approachesResult) {
+            is DataResult.Success -> approachesResult.data.toCloseApproachEntities()
+            is DataResult.Failure -> return approachesResult
+        }
+        val sentry = when (sentryResult) {
+            is DataResult.Success -> sentryResult.data.data.toSentryEntities()
+            is DataResult.Failure -> return sentryResult
         }
         // An empty Sentry list means a broken answer, not a safe sky: keep the cached one.
         if (sentry.isEmpty()) return DataResult.Failure(AppError.EmptyResponse)
-        val fireballs = when (val result = remote.fetchFireballs()) {
-            is DataResult.Success -> result.data.toFireballEntities()
-            is DataResult.Failure -> return result
+        val fireballs = when (fireballsResult) {
+            is DataResult.Success -> fireballsResult.data.toFireballEntities()
+            is DataResult.Failure -> return fireballsResult
         }
+        // Only the risk of an object passing by is ever shown, so the rest of Sentry's ~2,000
+        // objects is not stored.
+        val approaching = approaches.mapTo(mutableSetOf(), CloseApproachEntity::designation)
         // No close approach in 30 days is possible (if rare), so an empty CAD answer is stored as is.
-        return local.replaceAll(approaches, sentry, fireballs)
+        return local.replaceAll(approaches, sentry.filter { it.designation in approaching }, fireballs)
     }
 
     override suspend fun fetchDetails(designation: String): DataResult<SmallBodyDetails> =

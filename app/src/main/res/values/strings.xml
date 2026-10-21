@@ -6,6 +6,7 @@
     <string name="destination_earth">Earth</string>
     <string name="destination_favorites">Favorites</string>
     <string name="destination_more">More</string>
+    <string name="detail_pane_placeholder">Pick something from the list to see it here</string>
     <string name="hub_coming_soon_title">Coming soon</string>
     <string name="hub_coming_soon_description">Nothing here yet. New sections land in this tab as they are built.</string>
     <string name="earth_satellite_map_title">Satellite map</string>
@@ -16,6 +17,10 @@
     <string name="earth_space_weather_description">Kp index, 3-day forecast, the aurora oval on the map, solar flares, aurora alerts</string>
     <string name="earth_neighbourhood_title">Earth\'s neighbourhood</string>
     <string name="earth_neighbourhood_description">Asteroids passing close this month and recent fireballs</string>
+    <string name="more_settings_title">Settings</string>
+    <string name="more_settings_description">Units, notifications, location, wallpaper and storage</string>
+    <string name="more_about_title">About</string>
+    <string name="more_about_description">Version, data sources and open-source licences</string>
     <string name="more_debug_title">Architecture</string>
     <string name="more_debug_description">Connectivity, cache, data sources and background sync</string>
     <string name="universe_mars_title">Mars photos</string>
@@ -24,4 +29,18 @@
     <string name="universe_exoplanets_description">The newest worlds beyond the Solar System, their size and distance</string>
     <string name="universe_sky_title">Sky tonight</string>
     <string name="universe_sky_description">Moon, planets and ISS passes above you, and who is in space</string>
+    <string name="universe_search_title">Search everything</string>
+    <string name="universe_search_description">Pictures, planets, asteroids, events and favourites saved on this device</string>
+
+    <!-- Launcher shortcuts (res/xml/shortcuts.xml). Short labels stay under about 10 characters. -->
+    <string name="shortcut_search_short">Search</string>
+    <string name="shortcut_search_long">Search everything</string>
+    <string name="shortcut_today_short">Today</string>
+    <string name="shortcut_today_long">Today\'s picture of the day</string>
+    <string name="shortcut_sky_short">Sky tonight</string>
+    <string name="shortcut_sky_long">What is in the sky tonight</string>
+    <string name="shortcut_space_weather_short">Aurora</string>
+    <string name="shortcut_space_weather_long">Space weather and aurora</string>
+    <string name="shortcut_earth_map_short">Earth map</string>
+    <string name="shortcut_earth_map_long">Satellite map of Earth</string>
 </resources>

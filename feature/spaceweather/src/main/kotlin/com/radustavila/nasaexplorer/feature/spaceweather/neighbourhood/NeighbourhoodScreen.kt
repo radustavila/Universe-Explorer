@@ -38,15 +38,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
-import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
+import com.radustavila.nasaexplorer.core.designsystem.units.formatLocalDateTime
+import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.model.CloseApproach
 import com.radustavila.nasaexplorer.core.model.Fireball
 import com.radustavila.nasaexplorer.feature.spaceweather.R
 import com.radustavila.nasaexplorer.feature.spaceweather.components.currentLocale
-import com.radustavila.nasaexplorer.feature.spaceweather.components.formatPlace
 import java.util.Locale
 
 const val NEIGHBOURHOOD_LIST_TEST_TAG = "neighbourhood-list"
@@ -125,33 +127,40 @@ private fun NeighbourhoodList(uiState: NeighbourhoodUiState, onApproachClick: (S
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        if (uiState.isOffline) item(key = "offline") { OfflineBanner() }
-        item(key = "approaches-header") {
+        if (uiState.isOffline) item(key = "offline", contentType = "offline") { OfflineBanner() }
+        // Always an item (see SkyTonightScreen): the list keeps it, not the first row, in place.
+        item(key = "freshness", contentType = "freshness") {
+            FreshnessLabel(
+                uiState.freshness,
+                modifier = Modifier.widthIn(max = CONTENT_MAX_WIDTH).fillMaxWidth().padding(horizontal = 16.dp),
+            )
+        }
+        item(key = "approaches-header", contentType = "header") {
             Header(
                 title = stringResource(R.string.neighbourhood_approaches_title),
                 subtitle = stringResource(R.string.neighbourhood_approaches_subtitle),
             )
         }
         if (uiState.approaches.isEmpty()) {
-            item(key = "approaches-empty") { Note(stringResource(R.string.neighbourhood_approaches_empty)) }
+            item(key = "approaches-empty", contentType = "note") { Note(stringResource(R.string.neighbourhood_approaches_empty)) }
         }
-        items(uiState.approaches, key = { "${it.designation}-${it.time}" }) { approach ->
+        items(uiState.approaches, key = { "${it.designation}-${it.time}" }, contentType = { "approach" }) { approach ->
             CloseApproachRow(approach, onClick = { onApproachClick(approach.designation) })
         }
-        item(key = "fireballs-header") {
+        item(key = "fireballs-header", contentType = "header") {
             Header(
                 title = stringResource(R.string.neighbourhood_fireballs_title),
                 subtitle = stringResource(R.string.neighbourhood_fireballs_subtitle),
             )
         }
         if (uiState.fireballs.isEmpty()) {
-            item(key = "fireballs-empty") { Note(stringResource(R.string.neighbourhood_fireballs_empty)) }
+            item(key = "fireballs-empty", contentType = "note") { Note(stringResource(R.string.neighbourhood_fireballs_empty)) }
         }
-        items(uiState.fireballs, key = { "fireball-${it.time}" }) { fireball -> FireballRow(fireball) }
-        uiState.lastUpdatedAt?.let { updated ->
-            item(key = "updated") {
-                Note(stringResource(R.string.neighbourhood_updated, updated.formatDateTime()))
-            }
+        items(uiState.fireballs, key = { "fireball-${it.time}" }, contentType = { "fireball" }) { fireball ->
+            FireballRow(fireball)
+        }
+        item(key = "lunar-distance", contentType = "note") {
+            Note(stringResource(R.string.neighbourhood_lunar_distance_note))
         }
     }
 }
@@ -177,12 +186,13 @@ private fun CloseApproachRow(approach: CloseApproach, onClick: () -> Unit) {
                 )
                 if (approach.sentry != null) SentryBadge()
             }
-            Text(approach.time.formatDateTime(), style = MaterialTheme.typography.bodyMedium)
+            Text(approach.time.formatLocalDateTime(), style = MaterialTheme.typography.bodyMedium)
+            val units = rememberUnitFormatter()
             Text(
                 text = listOfNotNull(
-                    stringResource(R.string.neighbourhood_distance_ld, formatLunarDistance(approach.distanceLunar, currentLocale())),
-                    stringResource(R.string.neighbourhood_speed, String.format(currentLocale(), "%.1f", approach.relativeVelocityKmPerSecond)),
-                    approach.size?.let { stringResource(R.string.neighbourhood_size, formatSize(it, currentLocale())) },
+                    stringResource(R.string.neighbourhood_distance_ld, formatLunarDistance(approach.distanceLunar, units.locale)),
+                    units.speedPerSecond(approach.relativeVelocityKmPerSecond),
+                    approach.size?.let { stringResource(R.string.neighbourhood_size, it.format(units)) },
                 ).joinToString(" · "),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -215,17 +225,18 @@ internal fun SentryBadge(modifier: Modifier = Modifier) {
 private fun FireballRow(fireball: Fireball) {
     Card(Modifier.widthIn(max = CONTENT_MAX_WIDTH).fillMaxWidth().padding(horizontal = 16.dp)) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(fireball.time.formatDateTime(), style = MaterialTheme.typography.titleSmall)
+            Text(fireball.time.formatLocalDateTime(), style = MaterialTheme.typography.titleSmall)
             Text(
                 text = stringResource(R.string.neighbourhood_fireball_energy, formatKilotons(fireball.impactEnergyKilotons, currentLocale())),
                 style = MaterialTheme.typography.bodyMedium,
             )
             val latitude = fireball.latitude
             val longitude = fireball.longitude
+            val units = rememberUnitFormatter()
             val details = listOfNotNull(
-                if (latitude != null && longitude != null) formatPlace(latitude, longitude, currentLocale()) else null,
-                fireball.altitudeKm?.let { stringResource(R.string.neighbourhood_fireball_altitude, String.format(currentLocale(), "%.0f", it)) },
-                fireball.velocityKmPerSecond?.let { stringResource(R.string.neighbourhood_speed, String.format(currentLocale(), "%.1f", it)) },
+                if (latitude != null && longitude != null) units.coordinate(latitude, longitude) else null,
+                fireball.altitudeKm?.let { stringResource(R.string.neighbourhood_fireball_altitude, units.distance(it)) },
+                fireball.velocityKmPerSecond?.let { units.speedPerSecond(it) },
             ).joinToString(" · ")
             if (details.isNotEmpty()) {
                 Text(details, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -240,7 +251,7 @@ private fun formatKilotons(kilotons: Double, locale: Locale): String =
 @Composable
 private fun Header(title: String, subtitle: String) {
     Column(Modifier.widthIn(max = CONTENT_MAX_WIDTH).fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp)) {
-        Text(title, style = MaterialTheme.typography.titleLarge)
+        SectionTitle(title, style = MaterialTheme.typography.titleLarge)
         Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

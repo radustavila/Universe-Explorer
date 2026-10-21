@@ -2,8 +2,10 @@ package com.radustavila.nasaexplorer.core.domain.usecase
 
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidget
 import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
 import com.radustavila.nasaexplorer.core.model.SyncSource
+import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
@@ -21,11 +23,13 @@ class SynchronizeUpcomingLaunchesUseCaseTest {
     private val networkMonitor = FakeNetworkMonitor()
     private val metadata = FakeSyncMetadataRepository()
     private val clock = FakeTimeProvider()
+    private val widgets = FakeHomeWidgetUpdater()
 
     private val synchronizeLaunches = SynchronizeUpcomingLaunchesUseCase(
         launchRepository = repository,
         networkMonitor = networkMonitor,
         refreshSource = RefreshSourceUseCase(metadata, clock),
+        widgetUpdater = widgets,
     )
 
     @Test
@@ -71,6 +75,19 @@ class SynchronizeUpcomingLaunchesUseCaseTest {
 
         assertEquals(SourceRefreshResult.Completed(DataResult.Failure(AppError.NoConnection)), result)
         assertEquals(0, repository.refreshCallCount)
+    }
+
+
+    @Test
+    fun `the next-launch widget is re-rendered after a successful refresh only`() = runTest {
+        synchronizeLaunches()
+        synchronizeLaunches()
+        assertEquals(listOf(HomeWidget.NEXT_LAUNCH), widgets.updated)
+
+        clock.advanceBy(Duration.ofMinutes(61))
+        repository.refreshResult = DataResult.Failure(AppError.Timeout)
+        synchronizeLaunches()
+        assertEquals(1, widgets.updated.size)
     }
 
     private fun FakeTimeProvider.advanceBy(duration: Duration) {

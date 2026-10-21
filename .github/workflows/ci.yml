@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ develop, main ]
   pull_request:
 
 concurrency:
@@ -33,6 +33,10 @@ jobs:
 
       - name: Assemble debug
         run: ./gradlew assembleDebug --stacktrace
+
+      # Minified with R8 and debug-signed: catches keep rules that only break the shrunk build.
+      - name: Assemble release
+        run: ./gradlew assembleRelease --stacktrace
 
       - name: Upload test reports
         if: always()

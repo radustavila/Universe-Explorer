@@ -24,6 +24,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "nasa-explorer"
 
 include(":app")
+include(":baselineprofile")
 
 include(":core:common")
 include(":core:model")
@@ -39,6 +40,7 @@ include(":core:map")
 include(":core:wallpaper")
 include(":core:astro")
 include(":core:location")
+include(":core:offline")
 
 include(":data:nasa")
 include(":data:launches")
@@ -65,3 +67,5 @@ include(":feature:spaceweather")
 include(":feature:exoplanets")
 include(":feature:sky")
 include(":feature:earth")
+include(":feature:search")
+include(":feature:settings")

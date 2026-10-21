@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.feature.earth
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,7 +31,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
@@ -42,6 +42,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -65,27 +68,29 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
 import com.radustavila.nasaexplorer.core.designsystem.component.FavoriteButton
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.NasaAsyncImage
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
 import com.radustavila.nasaexplorer.core.designsystem.component.ZoomableImageDialog
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
+import com.radustavila.nasaexplorer.core.designsystem.motion.rememberReducedMotion
 import com.radustavila.nasaexplorer.core.designsystem.theme.NasaTheme
-import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
+import com.radustavila.nasaexplorer.core.designsystem.units.formatLocalDateTime
+import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.model.EpicCollection
 import com.radustavila.nasaexplorer.core.model.EpicImage
 import com.radustavila.nasaexplorer.core.model.GeoPoint
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
-import java.util.Locale
-import kotlin.math.abs
 import kotlinx.coroutines.delay
 
 const val EARTH_PAGER_TEST_TAG = "earth-pager"
 const val EARTH_CALENDAR_BUTTON_TEST_TAG = "earth-calendar-button"
 const val EARTH_PLAY_BUTTON_TEST_TAG = "earth-play-button"
+const val EARTH_PULL_TO_REFRESH_TEST_TAG = "earth-pull-to-refresh"
 
 @Composable
 fun EarthTodayScreen(
@@ -101,6 +106,7 @@ fun EarthTodayScreen(
         onBackClick = onBackClick,
         onCollectionSelected = viewModel::onCollectionSelected,
         onDateSelected = viewModel::onDateSelected,
+        onRefresh = viewModel::onRefresh,
         onRetry = viewModel::onRetry,
         onErrorDismissed = viewModel::onErrorDismissed,
         onToggleFavorite = viewModel::onToggleFavorite,
@@ -116,6 +122,7 @@ internal fun EarthTodayContent(
     onBackClick: (() -> Unit)?,
     onCollectionSelected: (EpicCollection) -> Unit,
     onDateSelected: (LocalDate?) -> Unit,
+    onRefresh: () -> Unit,
     onRetry: () -> Unit,
     onErrorDismissed: () -> Unit,
     onToggleFavorite: (EpicImage) -> Unit,
@@ -181,7 +188,6 @@ internal fun EarthTodayContent(
                 .padding(padding),
         ) {
             if (uiState.isOffline && uiState.hasContent) OfflineBanner()
-            if (uiState.isRefreshing) LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
 
             CollectionToggle(
                 selected = uiState.collection,
@@ -193,49 +199,66 @@ internal fun EarthTodayContent(
 
             // One scroll container for the rotation (or the state standing in for it) and whatever
             // the footer adds below, so the footer stays reachable whatever state the day is in.
-            BoxWithConstraints(modifier = Modifier.weight(1f)) {
-                // Sized from the space left between the bars, not the window: in landscape a square
-                // as wide as the screen would push the time, centroid and controls out of view.
-                val discSize = minOf(MAX_DISC_WIDTH, maxHeight * DISC_HEIGHT_FRACTION)
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    val stateModifier = Modifier.height(STATE_HEIGHT)
-                    when {
-                        uiState.isLoading && !uiState.hasContent -> LoadingState(modifier = stateModifier)
-
-                        uiState.isOfflineEmpty -> OfflineState(
-                            title = stringResource(R.string.earth_today_offline_title),
-                            description = stringResource(R.string.earth_today_offline_description),
-                            onRetry = onRetry,
-                            modifier = stateModifier,
-                        )
-
-                        uiState.isEmpty -> EmptyState(
-                            title = errorMessage ?: stringResource(R.string.earth_today_empty_title),
-                            description = stringResource(R.string.earth_today_empty_description),
-                            onRetry = onRetry,
-                            modifier = stateModifier,
-                        )
-
-                        // Keyed by the day and set, so a new selection starts its rotation afresh.
-                        else -> key(uiState.collection, uiState.displayedDate) {
-                            EarthRotation(
-                                images = uiState.images,
-                                autoPlay = autoPlay,
-                                discSize = discSize,
-                                initialImageId = uiState.focusedImageId,
-                                isFavorite = uiState::isFavorite,
-                                onToggleFavorite = onToggleFavorite,
+            // Pulled down while photos are shown, it asks the sync job for the newest ones.
+            RefreshableWhen(
+                enabled = uiState.hasContent,
+                isRefreshing = uiState.isRefreshing,
+                onRefresh = onRefresh,
+                modifier = Modifier.weight(1f),
+            ) {
+                BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                    // Sized from the space left between the bars, not the window: in landscape a square
+                    // as wide as the screen would push the time, centroid and controls out of view.
+                    val discSize = minOf(MAX_DISC_WIDTH, maxHeight * DISC_HEIGHT_FRACTION)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        val stateModifier = Modifier.height(STATE_HEIGHT)
+                        if (uiState.hasContent) {
+                            FreshnessLabel(
+                                freshness = uiState.freshness,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
+                                    .padding(bottom = 8.dp),
                             )
                         }
-                    }
+                        when {
+                            uiState.isLoading && !uiState.hasContent -> LoadingState(modifier = stateModifier)
 
-                    footer?.let { content ->
-                        Column(modifier = Modifier.padding(bottom = 16.dp)) { content() }
+                            uiState.isOfflineEmpty -> OfflineState(
+                                title = stringResource(R.string.earth_today_offline_title),
+                                description = stringResource(R.string.earth_today_offline_description),
+                                onRetry = onRetry,
+                                modifier = stateModifier,
+                            )
+
+                            uiState.isEmpty -> EmptyState(
+                                title = errorMessage ?: stringResource(R.string.earth_today_empty_title),
+                                description = stringResource(R.string.earth_today_empty_description),
+                                onRetry = onRetry,
+                                modifier = stateModifier,
+                            )
+
+                            // Keyed by the day and set, so a new selection starts its rotation afresh.
+                            else -> key(uiState.collection, uiState.displayedDate) {
+                                EarthRotation(
+                                    images = uiState.images,
+                                    autoPlay = autoPlay,
+                                    discSize = discSize,
+                                    initialImageId = uiState.focusedImageId,
+                                    favoriteIds = uiState.favoriteIds,
+                                    onToggleFavorite = onToggleFavorite,
+                                )
+                            }
+                        }
+
+                        footer?.let { content ->
+                            Column(modifier = Modifier.padding(bottom = 16.dp)) { content() }
+                        }
                     }
                 }
             }
@@ -251,6 +274,34 @@ internal fun EarthTodayContent(
                 onDateSelected(date)
             },
             onDismiss = { isDatePickerOpen = false },
+        )
+    }
+}
+
+/**
+ * [content] under a pull-to-refresh that only answers while [enabled]. One container either way,
+ * so the content keeps its scroll position when the photos come and go.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RefreshableWhen(
+    enabled: Boolean,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    val state = rememberPullToRefreshState()
+    Box(
+        modifier = modifier
+            .pullToRefresh(isRefreshing = isRefreshing, state = state, enabled = enabled, onRefresh = onRefresh)
+            .testTag(EARTH_PULL_TO_REFRESH_TEST_TAG),
+    ) {
+        content()
+        PullToRefreshDefaults.Indicator(
+            state = state,
+            isRefreshing = isRefreshing,
+            modifier = Modifier.align(Alignment.TopCenter),
         )
     }
 }
@@ -286,6 +337,7 @@ private fun CollectionToggle(
  * over its thumbnail; tapping it opens the zoomable full-size view.
  *
  * Opened for one photo ([initialImageId], a favourite), it starts on that frame and holds still.
+ * With reduced motion (system animations removed) it also starts paused; play still works.
  */
 @Composable
 private fun EarthRotation(
@@ -293,12 +345,13 @@ private fun EarthRotation(
     autoPlay: Boolean,
     discSize: Dp,
     initialImageId: String?,
-    isFavorite: (EpicImage) -> Boolean,
+    favoriteIds: Set<String>,
     onToggleFavorite: (EpicImage) -> Unit,
 ) {
     val initialPage = images.indexOfFirst { it.identifier == initialImageId }
     val pagerState = rememberPagerState(initialPage = initialPage.coerceAtLeast(0), pageCount = { images.size })
-    var isPlaying by rememberSaveable { mutableStateOf(autoPlay && initialPage < 0) }
+    val reducedMotion = rememberReducedMotion()
+    var isPlaying by rememberSaveable { mutableStateOf(autoPlay && initialPage < 0 && !reducedMotion) }
     var zoomedImage by remember { mutableStateOf<EpicImage?>(null) }
     val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
 
@@ -309,12 +362,12 @@ private fun EarthRotation(
 
     AutoAdvance(pagerState = pagerState, isPlaying = isPlaying && images.size > 1)
 
-    val current = images[pagerState.currentPage.coerceIn(images.indices)]
-
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         HorizontalPager(
             state = pagerState,
             key = { page -> images[page].identifier },
+            // The next frame is composed and its image requested before it slides in.
+            beyondViewportPageCount = PRELOADED_FRAMES,
             modifier = Modifier
                 .widthIn(max = discSize)
                 .fillMaxWidth()
@@ -324,7 +377,7 @@ private fun EarthRotation(
             val image = images[page]
             val description = stringResource(
                 R.string.earth_today_image_description,
-                image.capturedAt.formatDateTime(),
+                image.capturedAt.formatLocalDateTime(),
                 image.centroid.toCoordinateLabel(),
             )
             NasaAsyncImage(
@@ -333,6 +386,9 @@ private fun EarthRotation(
                 contentDescription = description,
                 contentScale = ContentScale.Fit,
                 backgroundColor = Color.Black,
+                // Frames replace each other every fraction of a second; fading each in would blur
+                // the rotation into a flicker.
+                crossfade = false,
                 modifier = Modifier
                     .fillMaxSize()
                     .clickable {
@@ -342,14 +398,13 @@ private fun EarthRotation(
             )
         }
 
-        FrameDetails(
-            image = current,
-            frameNumber = pagerState.currentPage + 1,
-            frameCount = images.size,
+        CurrentFrameDetails(
+            pagerState = pagerState,
+            images = images,
             isPlaying = isPlaying,
             onPlayPause = { isPlaying = !isPlaying },
-            isFavorite = isFavorite(current),
-            onToggleFavorite = { onToggleFavorite(current) },
+            favoriteIds = favoriteIds,
+            onToggleFavorite = onToggleFavorite,
         )
     }
 
@@ -361,6 +416,32 @@ private fun EarthRotation(
             onDismiss = { zoomedImage = null },
         )
     }
+}
+
+/**
+ * [FrameDetails] for the pager's current frame. The page is read here, not in [EarthRotation], so
+ * each turn of the rotation recomposes only these details rather than the pager around them.
+ */
+@Composable
+private fun CurrentFrameDetails(
+    pagerState: PagerState,
+    images: List<EpicImage>,
+    isPlaying: Boolean,
+    onPlayPause: () -> Unit,
+    favoriteIds: Set<String>,
+    onToggleFavorite: (EpicImage) -> Unit,
+) {
+    val page = pagerState.currentPage.coerceIn(images.indices)
+    val current = images[page]
+    FrameDetails(
+        image = current,
+        frameNumber = page + 1,
+        frameCount = images.size,
+        isPlaying = isPlaying,
+        onPlayPause = onPlayPause,
+        isFavorite = current.ref.favoriteId in favoriteIds,
+        onToggleFavorite = { onToggleFavorite(current) },
+    )
 }
 
 @Composable
@@ -416,7 +497,7 @@ private fun FrameDetails(
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = image.capturedAt.formatDateTime(),
+                    text = image.capturedAt.formatLocalDateTime(),
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
@@ -510,22 +591,14 @@ internal fun LocalDate.toUtcMillis(): Long = atStartOfDay(ZoneOffset.UTC).toInst
 internal fun Long.toUtcLocalDate(): LocalDate = Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDate()
 
 /** `0.7° N, 163.7° E`: compass letters rather than signs, which read naturally under a photo. */
-internal fun GeoPoint.toCoordinateLabel(): String {
-    val latitudeHemisphere = if (latitude < 0) "S" else "N"
-    val longitudeHemisphere = if (longitude < 0) "W" else "E"
-    return "%.1f° %s, %.1f° %s".format(
-        Locale.ROOT,
-        abs(latitude),
-        latitudeHemisphere,
-        abs(longitude),
-        longitudeHemisphere,
-    )
-}
+@Composable
+internal fun GeoPoint.toCoordinateLabel(): String = rememberUnitFormatter().coordinate(latitude, longitude)
 
 private val MAX_DISC_WIDTH = 480.dp
 private const val DISC_HEIGHT_FRACTION = 0.8f
 private val STATE_HEIGHT = 360.dp
 private const val FRAME_DURATION_MILLIS = 1_000L
+private const val PRELOADED_FRAMES = 1
 
 @Preview
 @Composable
@@ -550,6 +623,7 @@ private fun EarthTodayPreview() {
             onBackClick = {},
             onCollectionSelected = {},
             onDateSelected = {},
+            onRefresh = {},
             onRetry = {},
             onErrorDismissed = {},
             onToggleFavorite = {},

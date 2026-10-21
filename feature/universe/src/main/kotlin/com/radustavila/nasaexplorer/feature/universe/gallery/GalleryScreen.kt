@@ -54,10 +54,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.MessageState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
 import com.radustavila.nasaexplorer.core.model.GalleryRail
 import com.radustavila.nasaexplorer.core.model.NasaMediaType
@@ -240,6 +242,10 @@ private fun Rails(
                 // The header draws its own side margins, so a rail in it can scroll edge to edge.
                 item(key = "header") { header() }
             }
+            // Always an item (see SkyTonightScreen): the list keeps it, not the first rail, in place.
+            item(key = "freshness") {
+                FreshnessLabel(uiState.freshness, modifier = Modifier.padding(horizontal = 16.dp))
+            }
             items(items = uiState.rails, key = { it.rail.key }) { rail ->
                 RailSection(rail = rail, onMediaClick = onMediaClick)
             }
@@ -254,7 +260,7 @@ private fun RailSection(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.testTag(galleryRailTestTag(rail.rail))) {
-        Text(
+        SectionTitle(
             text = stringResource(rail.rail.titleRes),
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),

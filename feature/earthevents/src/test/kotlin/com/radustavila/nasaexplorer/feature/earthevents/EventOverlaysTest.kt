@@ -10,12 +10,10 @@ import com.radustavila.nasaexplorer.core.model.EarthEventCategory
 import com.radustavila.nasaexplorer.core.model.EarthEventGeometry
 import com.radustavila.nasaexplorer.core.model.EarthEventShape
 import com.radustavila.nasaexplorer.core.model.EventImageryLayer
-import com.radustavila.nasaexplorer.core.model.EventMagnitude
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.testing.data.TestEarthEvents
 import java.time.Duration
 import java.time.LocalDate
-import java.util.Locale
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -152,12 +150,5 @@ class EventOverlaysTest {
             GibsLayer.ViirsSnppTrueColor,
             EventImagery("E1", layer.copy(tileMatrixSet = "unknown"), date).toGibsImagery().layer,
         )
-    }
-
-    @Test
-    fun `magnitudes read naturally`() {
-        assertEquals("55 kts", EventMagnitude(55.0, "kts").formatted(Locale.US))
-        assertEquals("3,000 acres", EventMagnitude(3000.0, "acres").formatted(Locale.US))
-        assertEquals("12.5 NM²", EventMagnitude(12.5, "NM^2").formatted(Locale.US))
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.radustavila.nasaexplorer.core.cache.CacheEvictor
 import com.radustavila.nasaexplorer.core.domain.repository.SmallBodiesRepository
+import com.radustavila.nasaexplorer.core.domain.search.SearchableSource
 import com.radustavila.nasaexplorer.core.domain.sync.SmallBodiesSyncScheduler
 import com.radustavila.nasaexplorer.core.network.http.RetrofitFactory
 import com.radustavila.nasaexplorer.core.network.ratelimit.HostRateBudget
@@ -17,6 +18,7 @@ import com.radustavila.nasaexplorer.data.smallbodies.remote.JplSsdService
 import com.radustavila.nasaexplorer.data.smallbodies.remote.RetrofitSmallBodiesRemoteDataSource
 import com.radustavila.nasaexplorer.data.smallbodies.remote.SmallBodiesRemoteDataSource
 import com.radustavila.nasaexplorer.data.smallbodies.repository.SmallBodiesRepositoryImpl
+import com.radustavila.nasaexplorer.data.smallbodies.search.SmallBodySearchableSource
 import com.radustavila.nasaexplorer.data.smallbodies.sync.WorkManagerSmallBodiesSyncScheduler
 import dagger.Binds
 import dagger.Module
@@ -55,6 +57,10 @@ interface SmallBodiesDataModule {
     @Binds
     @IntoSet
     fun bindSmallBodiesCacheEvictor(impl: SmallBodiesCacheEvictor): CacheEvictor
+
+    @Binds
+    @IntoSet
+    fun bindSmallBodySearchableSource(impl: SmallBodySearchableSource): SearchableSource
 }
 
 @Module

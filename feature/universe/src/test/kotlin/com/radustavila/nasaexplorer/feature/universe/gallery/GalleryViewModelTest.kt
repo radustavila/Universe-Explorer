@@ -5,6 +5,7 @@ import app.cash.turbine.test
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDataFreshnessUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveGalleryRailsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshGalleryUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshSourceUseCase
@@ -40,6 +41,7 @@ class GalleryViewModelTest {
         savedStateHandle = savedStateHandle,
         observeRails = ObserveGalleryRailsUseCase(repository),
         observeConnectivity = ObserveConnectivityUseCase(networkMonitor),
+        observeDataFreshness = ObserveDataFreshnessUseCase(metadata, networkMonitor),
         refreshGallery = RefreshGalleryUseCase(repository, RefreshSourceUseCase(metadata, clock)),
         searchMedia = SearchNasaMediaUseCase(repository),
     )
@@ -69,6 +71,8 @@ class GalleryViewModelTest {
             while (state.rails.isEmpty()) state = awaitItem()
 
             assertEquals(GalleryRail.NEBULAE, state.rails.single().rail)
+            while (state.freshness.lastUpdatedAt == null) state = awaitItem()
+            assertEquals(clock.currentInstant, state.freshness.lastUpdatedAt)
         }
         assertEquals(1, repository.refreshCount)
     }

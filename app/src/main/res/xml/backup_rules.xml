@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Auto Backup on Android 11 and older: the same files as data_extraction_rules.xml. Including only
+  these leaves every cache, mirror database and offline image out.
+-->
+<full-backup-content>
+    <include domain="database" path="nasa-explorer.db" />
+    <include domain="database" path="nasa-explorer.db-wal" />
+    <include domain="file" path="datastore/user_preferences.preferences_pb" />
+    <include domain="file" path="datastore/observer_location.preferences_pb" />
+    <include domain="file" path="datastore/sky_preferences.preferences_pb" />
+    <include domain="file" path="datastore/aurora_alerts.preferences_pb" />
+</full-backup-content>

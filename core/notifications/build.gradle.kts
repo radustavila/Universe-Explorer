@@ -12,4 +12,6 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.designsystem)
     implementation(libs.androidx.core.ktx)
+
+    testImplementation(projects.core.testing)
 }

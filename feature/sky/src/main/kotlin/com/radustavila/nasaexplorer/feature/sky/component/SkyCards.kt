@@ -27,6 +27,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.radustavila.nasaexplorer.core.designsystem.component.NasaAsyncImage
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.model.MoonTonight
 import com.radustavila.nasaexplorer.core.model.NightWindow
 import com.radustavila.nasaexplorer.core.model.PersonInSpace
@@ -53,7 +54,7 @@ internal fun SkySection(
     Card(modifier = modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(title, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                SectionTitle(title, modifier = Modifier.weight(1f))
                 trailing?.invoke()
             }
             content()

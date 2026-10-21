@@ -24,12 +24,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -40,9 +43,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.NasaAsyncImage
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.theme.NasaTheme
+import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.Launch
 import com.radustavila.nasaexplorer.core.model.LaunchStatus
 import java.time.Duration
@@ -71,25 +81,34 @@ fun NextLaunchesCard(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     if (uiState.launches.isEmpty()) return
 
-    val now = rememberTickingNow()
+    // Which launches are listed changes on the scale of minutes; only the countdowns tick each
+    // second, and they read the clock themselves so the rest of the card stays put.
+    val minute by rememberTickingClock(MILLIS_PER_MINUTE)
+    val second = rememberTickingClock(MILLIS_PER_SECOND)
+    val launches = remember(uiState.launches, minute) { uiState.launches.nextLaunches(minute) }
     val context = LocalContext.current
 
     NextLaunchesCardContent(
-        launches = uiState.launches.nextLaunches(now),
-        now = now,
+        launches = launches,
+        now = { second.value },
         onOpenUrl = context::openUrl,
         modifier = modifier,
+        freshness = uiState.freshness,
     )
 }
 
 @Composable
 internal fun NextLaunchesCardContent(
     launches: List<Launch>,
-    now: Instant,
+    now: () -> Instant,
     onOpenUrl: (String) -> Unit,
     modifier: Modifier = Modifier,
+    freshness: DataFreshness = DataFreshness(),
 ) {
     if (launches.isEmpty()) return
+
+    val locale = LocalConfiguration.current.locales[0]
+    val dateFormatter = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale) }
 
     Card(modifier = modifier.fillMaxWidth().testTag(NEXT_LAUNCHES_CARD_TEST_TAG)) {
         Row(
@@ -103,16 +122,14 @@ internal fun NextLaunchesCardContent(
                 modifier = Modifier.size(20.dp),
             )
             Spacer(Modifier.width(8.dp))
-            Text(
-                text = stringResource(R.string.launches_card_title),
-                style = MaterialTheme.typography.titleMedium,
-            )
+            SectionTitle(text = stringResource(R.string.launches_card_title))
         }
 
         launches.forEachIndexed { index, launch ->
             if (index > 0) HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-            LaunchRow(launch = launch, now = now, onOpenUrl = onOpenUrl)
+            LaunchRow(launch = launch, now = now, dateFormatter = dateFormatter, onOpenUrl = onOpenUrl)
         }
+        FreshnessLabel(freshness, modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
         Spacer(Modifier.size(8.dp))
     }
 }
@@ -120,7 +137,8 @@ internal fun NextLaunchesCardContent(
 @Composable
 private fun LaunchRow(
     launch: Launch,
-    now: Instant,
+    now: () -> Instant,
+    dateFormatter: DateTimeFormatter,
     onOpenUrl: (String) -> Unit,
 ) {
     Row(
@@ -172,16 +190,28 @@ private fun LaunchRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 StatusChip(status = launch.status)
-                Text(
-                    text = if (launch.status == LaunchStatus.TBD) {
-                        // A TBD launch has only a rough date; a ticking clock would be false precision.
-                        stringResource(R.string.launches_net_date, launch.net.toLocalDateText())
-                    } else {
-                        countdownText(net = launch.net, now = now)
-                    },
-                    style = MaterialTheme.typography.labelLarge,
-                    fontFamily = FontFamily.Monospace,
-                )
+                if (launch.status == LaunchStatus.TBD) {
+                    // A TBD launch has only a rough date; a ticking clock would be false precision.
+                    Text(
+                        text = stringResource(
+                            R.string.launches_net_date,
+                            dateFormatter.format(launch.net.atZone(ZoneId.systemDefault())),
+                        ),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontFamily = FontFamily.Monospace,
+                    )
+                } else {
+                    CountdownText(net = launch.net, now = now)
+                    // When it lifts off in the user's own clock, beside mission control's.
+                    Text(
+                        text = rememberUnitFormatter().dayAndTime(launch.net),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false),
+                    )
+                }
             }
         }
         val livestreamUrl = launch.livestreamUrl
@@ -201,6 +231,16 @@ private fun LaunchRow(
             }
         }
     }
+}
+
+/** The ticking `T-` clock; the only part of the card that recomposes every second. */
+@Composable
+private fun CountdownText(net: Instant, now: () -> Instant) {
+    Text(
+        text = countdown(net = net, now = now()).text(),
+        style = MaterialTheme.typography.labelLarge,
+        fontFamily = FontFamily.Monospace,
+    )
 }
 
 @Composable
@@ -245,20 +285,22 @@ private val LaunchStatus.labelRes: Int
         LaunchStatus.UNKNOWN -> R.string.launches_status_unknown
     }
 
-/** The current time, updated on every second boundary while the card is on screen. */
+/**
+ * The current time, updated on every [periodMillis] boundary while the card is on screen and the
+ * app is at least started: no ticking behind another app or a locked screen.
+ */
 @Composable
-private fun rememberTickingNow(): Instant {
-    val now by produceState(initialValue = Instant.now()) {
-        while (true) {
-            delay(MILLIS_PER_SECOND - System.currentTimeMillis() % MILLIS_PER_SECOND)
-            value = Instant.now()
+private fun rememberTickingClock(periodMillis: Long): State<Instant> {
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    return produceState(initialValue = Instant.now(), lifecycle, periodMillis) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            while (true) {
+                value = Instant.now()
+                delay(periodMillis - System.currentTimeMillis() % periodMillis)
+            }
         }
     }
-    return now
 }
-
-private fun Instant.toLocalDateText(): String =
-    DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(atZone(ZoneId.systemDefault()))
 
 private fun Context.openUrl(url: String) {
     try {
@@ -269,6 +311,7 @@ private fun Context.openUrl(url: String) {
 }
 
 private const val MILLIS_PER_SECOND = 1_000L
+private const val MILLIS_PER_MINUTE = 60_000L
 
 @Preview
 @Composable
@@ -297,7 +340,7 @@ private fun NextLaunchesCardPreview() {
                     pageUrl = "https://ll.thespacedevs.com/2.3.0/launches/2/",
                 ),
             ),
-            now = now,
+            now = { now },
             onOpenUrl = {},
         )
     }

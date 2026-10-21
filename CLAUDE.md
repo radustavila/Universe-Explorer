@@ -15,6 +15,8 @@ with convention plugins in the included `build-logic` build. `README.md` documen
 ./gradlew assembleDebug               # debug APK
 ./gradlew installDebug                # install on a connected device/emulator
 ./gradlew :app:connectedDebugAndroidTest   # instrumented end-to-end test (needs a device)
+ANDROID_SERIAL=<serial> ./gradlew :app:generateBaselineProfile   # regenerate the checked-in baseline profile
+ANDROID_SERIAL=<serial> ./gradlew :baselineprofile:connectedBenchmarkReleaseAndroidTest   # cold-start benchmark
 ```
 
 Single module / single test:
@@ -53,7 +55,8 @@ Clean Architecture, dependencies pointing inward:
   `:core:designsystem` (theme, shared components like `ApodCard`/`NasaAsyncImage`, `AppError`→`UiError` mapping),
   `:core:map` (`SpaceMap` over MapLibre: GIBS imagery + MapLibre-free overlay API; the only module that sees MapLibre).
 - `:app` wires everything: nav host (one nested graph per tab: Today · Universe · Earth · Favourites · More) +
-  bottom bar, the registries features add one line to (`TodayCards.kt`, `UniverseHub.kt`/`EarthHub.kt`/`MoreHub.kt`,
+  `NavigationSuiteScaffold` (bar on compact width, rail from medium width or a landscape phone, drawer from 1600dp),
+  list-detail panes on expanded windows (`ListDetail.kt`, see below), the registries features add one line to (`TodayCards.kt`, `UniverseHub.kt`/`EarthHub.kt`/`MoreHub.kt`,
   `FavoriteNavigation.kt`), Hilt bindings for dispatchers/clock/HTTP config/`BuildConfig.DEBUG`,
   WorkManager `Configuration.Provider` (default initializer removed in the manifest).
 
@@ -64,9 +67,25 @@ Boundary rules the code relies on:
 - DTOs and Room entities stay in the data layer; only domain models cross upward. Exceptions stay in the data layer;
   only `AppError` crosses upward (via `safeNetworkCall { }` / the local data source wrapper — both must rethrow
   `CancellationException`). The UI only sees `UiError`.
+- Window size: `:app` computes `WindowAdaptiveInfo` once and provides `LocalWindowAdaptiveInfo` (`:core:designsystem`);
+  features read it there. Grids use `GridCells.Adaptive` with the widths in `designsystem/adaptive/AdaptiveLayout.kt`.
+- List-detail: a list destination takes a `ListDetailHost` (`:core:designsystem`) from its nav extension; `:app`
+  passes `listDetail(...)`, which opens items full screen while one pane fits and in a detail pane (its own nested
+  `NavHost` with the feature's type-safe detail routes) on expanded windows. Pane graphs must not declare deep links.
 - Contracts live in `:core:domain`; Hilt bindings live next to their implementations (`NasaDataModule`,
   `NotificationsModule`, `WidgetModule`, …). Inject dispatchers via `@Dispatcher(AppDispatcher.IO)`, never hardcode
   `Dispatchers.IO`. The Glance widget reads use cases through a Hilt `@EntryPoint`.
+- When a feature needs another feature's UI (Settings shows Sky tonight's `ObserverLocationSection`), `:app` passes it
+  in as a composable slot, as with `todayHeader`/`earthFooter`.
+- Distances, speeds, temperatures, coordinates and clock times go through `UnitFormatter` (`rememberUnitFormatter()`,
+  `formatLocalDateTime()`; `:core:designsystem` `units/`), which follows the user's metric/imperial and 12/24 h choice
+  (`LocalUnitPreferences`, provided in `MainActivity`). No unit labels or English in Kotlin: store raw data, word it
+  with string resources and plurals in the UI. Astronomical units (LD, light-years, Earth radii) are not converted.
+- Notification switches use `rememberNotificationPermissionToggle` (`:core:designsystem` `notification/`).
+- Settings measures storage through `@IntoSet StorageUsageSource` and "Clear cache" runs every `@IntoSet CacheCleaner`
+  (contracts in `:core:domain` `storage/`); neither may touch favourites or their offline copies.
+- Backups include only the favourites database and the user-choice DataStores (`app/src/main/res/xml/`); a new
+  DataStore holding user choices goes into both rule files and `BackupRulesTest`.
 
 ### Data flow (offline-first)
 
@@ -78,6 +97,10 @@ Boundary rules the code relies on:
 - Favourites of every source live in the `favorite` table keyed by `(source, item_id)` with a title/image snapshot
   (schema v4); `ApodEntity.is_favorite` is a dead legacy column. `ApodRepositoryImpl` sets `Apod.isFavorite` by
   combining reads with the APOD favourite ids. Cache evictors must never delete a favourite.
+- `:core:offline` keeps an offline copy of each favourite's snapshot image in `filesDir/favorites/<source>/<id>.<ext>`
+  (path and size on the `favorite` row, schema v7): `RoomFavoritesRepository` queues a `FavoriteImageDownloadWorker`
+  on save and deletes the copy on remove, and `OfflineFavoriteImageInterceptor` makes the Coil loader serve the copy
+  for the remote URL, so screens keep passing URLs. Not a cache: no evictor may touch it.
 - Room schemas are exported to `core/database/schemas/` and checked in; bump the version, add a migration in
   `NasaDatabaseMigrations`, and cover it in `NasaDatabaseMigrationTest`.
 - Every remote source records last success / last error / next allowed refresh per `SyncSource`; wrap refreshes in
@@ -90,6 +113,13 @@ Boundary rules the code relies on:
   `AppError.isRetryable`; `SyncErrorCodec` round-trips the `AppError` through WorkManager `Data`, and `WorkInfo` is
   mapped to `SyncState`. After success, `AnnounceLatestApodUseCase` refreshes the widget and posts the opt-in new-entry
   notification.
+- **Universal search is local-only.** `UniversalSearchUseCase` asks every `SearchableSource` (Hilt `@IntoSet`, one per
+  data module, fakes in `:core:testing`) concurrently, each with a time limit; a failing source only lands in
+  `failedSources`. `SearchText` holds the shared matching/ranking/highlight rules. `:app`'s `SearchNavigation.kt` maps
+  each `SearchTarget` to a route; online library search goes through the gallery (`GallerySearchRoute`).
+- `apod.nasa.gov/apod/apYYMMDD.html` and `astropix.html` open the app (unverified intent filter); `MainActivity`
+  rewrites them to `nasaexplorer://apod/{date}` and hands other pages back to the browser. Launcher shortcuts
+  (`res/xml/shortcuts.xml`) use the features' `nasaexplorer://` deep links.
 - **Pagination is by 7-day date windows**, not pages. `oldestRequestedDate` is persisted in DataStore; windows are
   clamped to `Apod.FIRST_PUBLICATION_DATE` (1995-06-16).
 
@@ -105,7 +135,7 @@ Malformed entries are dropped during mapping; a window with nothing usable becom
 
 Module `build.gradle.kts` files are short because `build-logic/convention` does the work. Plugin IDs:
 `nasaexplorer.android.application`, `.android.library`, `.android.compose`, `.android.feature`, `.android.hilt`,
-`.android.room`, `nasaexplorer.jvm.library`, `nasaexplorer.detekt` (applied automatically by the application/library/jvm
+`.android.room`, `.android.test`, `nasaexplorer.jvm.library`, `nasaexplorer.detekt` (applied automatically by the application/library/jvm
 plugins). Shared SDK levels, Java 17 target, lint settings and the JDK 21 test launcher are in `KotlinAndroid.kt`.
 Versions come from `gradle/libs.versions.toml`; project dependencies use type-safe accessors (`projects.core.domain`).
 A new module must be added to `settings.gradle.kts`.
@@ -118,6 +148,11 @@ A new module must be added to `settings.gradle.kts`.
   add its fake there.
 - Robolectric provides the Android runtime for Room (real in-memory SQLite), WorkManager, notifications and Compose UI
   tests; network tests use MockWebServer; ViewModel flows use Turbine.
+- `:baselineprofile` generates the release baseline/startup profile checked in under `app/src/release/generated`
+  (regenerate after big changes to startup or Today) and benchmarks cold start. Today reports itself fully drawn
+  (`ReportDrawnWhen` in `FeedScreen`) once cached rows are on screen; keep startup work off the main thread
+  (`NasaExplorerApplication` registers periodic jobs on the IO dispatcher once per installed APK, OkHttp's startup
+  initializer is removed). Debug builds run StrictMode (log only).
 - `app/src/androidTest` holds a Hilt end-to-end test (`NasaTestRunner` → `HiltTestApplication`, data modules swapped in
   `di/TestDataModules.kt`).
 
@@ -129,7 +164,8 @@ the repo.
 
 ## Repo notes
 
-- Main/integration branch is `develop`; CI (`.github/workflows/ci.yml`) runs unit tests, lint and `assembleDebug` on JDK 21.
+- Main/integration branch is `develop`; CI (`.github/workflows/ci.yml`) runs unit tests, lint, `assembleDebug` and
+  `assembleRelease` (R8-minified, debug-signed) on JDK 21, for PRs and pushes to `develop`/`main`.
 - `LEARNING_GUIDE.md` is a Romanian step-by-step study log for guided review sessions; when the user is working through
   it, explain code rather than change it unless asked.
 - Some README sections are stale (e.g. "only one database version" — there are now three schema versions and

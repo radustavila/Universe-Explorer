@@ -7,17 +7,17 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
+import com.radustavila.nasaexplorer.core.designsystem.units.UnitFormatter
 import com.radustavila.nasaexplorer.core.domain.announcement.AuroraAlertNotifier
+import com.radustavila.nasaexplorer.core.domain.repository.UserPreferencesRepository
 import com.radustavila.nasaexplorer.core.model.AuroraAlert
 import com.radustavila.nasaexplorer.core.model.GeomagneticStorm
 import com.radustavila.nasaexplorer.core.model.Kp
 import com.radustavila.nasaexplorer.core.model.SpaceWeatherDeepLink
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.first
 
 /**
  * Posts the aurora alert: when the storm starts, how strong it is expected to be, and a tap that
@@ -29,6 +29,7 @@ import javax.inject.Singleton
 @Singleton
 class SystemTrayAuroraAlertNotifier @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val userPreferences: UserPreferencesRepository,
 ) : AuroraAlertNotifier {
 
     private val notificationManager = NotificationManagerCompat.from(context)
@@ -41,7 +42,7 @@ class SystemTrayAuroraAlertNotifier @Inject constructor(
         val strength = GeomagneticStorm.forLevel(level)
             ?.let { storm -> context.getString(R.string.aurora_alert_strength_storm, level, storm.name) }
             ?: context.getString(R.string.aurora_alert_strength, level)
-        val startsAt = alert.startsAt.atZone(ZoneId.systemDefault()).format(TIME_FORMAT)
+        val startsAt = UnitFormatter.create(context, userPreferences.unitPreferences.first()).dayAndTime(alert.startsAt)
         val text = context.getString(R.string.aurora_alert_text, strength, startsAt, alert.threshold)
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
@@ -87,6 +88,5 @@ class SystemTrayAuroraAlertNotifier @Inject constructor(
         const val CHANNEL_ID = "aurora_alerts"
         const val NOTIFICATION_ID = 2
         const val REQUEST_CODE = 1
-        val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
     }
 }

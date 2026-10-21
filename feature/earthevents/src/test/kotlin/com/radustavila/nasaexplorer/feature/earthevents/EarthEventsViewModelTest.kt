@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.usecase.GetEventImageryLayerUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDataFreshnessUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveOpenEarthEventsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEarthEventsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshSourceUseCase
@@ -55,7 +56,7 @@ class EarthEventsViewModelTest {
             refreshEarthEvents = RefreshEarthEventsUseCase(repository, RefreshSourceUseCase(metadata, clock)),
             getEventImageryLayer = GetEventImageryLayerUseCase(repository),
             timeProvider = clock,
-            networkMonitor = networkMonitor,
+            observeDataFreshness = ObserveDataFreshnessUseCase(metadata, networkMonitor),
         )
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
         return viewModel
@@ -82,6 +83,13 @@ class EarthEventsViewModelTest {
         createViewModel()
 
         assertEquals(1, repository.refreshCallCount)
+    }
+
+    @Test
+    fun `the refresh on open feeds the freshness line`() = runTest {
+        val viewModel = createViewModel()
+
+        assertEquals(clock.currentInstant, viewModel.uiState.value.freshness.lastUpdatedAt)
     }
 
     @Test

@@ -30,12 +30,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,11 +44,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
-import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
-import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
+import com.radustavila.nasaexplorer.core.designsystem.motion.rememberReducedMotion
+import com.radustavila.nasaexplorer.core.designsystem.units.formatLocalDateTime
+import com.radustavila.nasaexplorer.core.map.MapCamera
 import com.radustavila.nasaexplorer.core.map.SpaceMap
 import com.radustavila.nasaexplorer.core.map.SpaceMapState
 import com.radustavila.nasaexplorer.core.map.overlay.GeoPoint
@@ -75,6 +78,7 @@ internal fun SpaceWeatherScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val initialCamera = remember { uiState.hemisphere.camera(uiState.alerts.longitude) }
     val mapState = rememberSpaceMapState(initialCamera)
+    val reducedMotion = rememberReducedMotion()
 
     SpaceWeatherContent(
         uiState = uiState,
@@ -82,7 +86,12 @@ internal fun SpaceWeatherScreen(
         onRefresh = viewModel::onRefresh,
         onHemisphereSelected = { hemisphere ->
             viewModel.onHemisphereSelected(hemisphere)
-            mapState.animateTo(hemisphere.camera(uiState.alerts.longitude).center, mapState.camera.zoom)
+            val center = hemisphere.camera(uiState.alerts.longitude).center
+            if (reducedMotion) {
+                mapState.moveTo(MapCamera(center, mapState.camera.zoom))
+            } else {
+                mapState.animateTo(center, mapState.camera.zoom)
+            }
         },
         onAlertsEnabledChange = viewModel::onAlertsEnabledChange,
         onAlertLocationChange = viewModel::onAlertLocationChange,
@@ -209,7 +218,7 @@ private fun SpaceWeatherList(
                 modifier = Modifier.padding(horizontal = 16.dp).widthIn(max = CONTENT_MAX_WIDTH),
             ) {
                 KpGauge(kp = uiState.currentKp, modifier = Modifier.widthIn(max = GAUGE_MAX_WIDTH).fillMaxWidth(GAUGE_WIDTH_FRACTION))
-                UpdatedLine(uiState)
+                FreshnessLabel(uiState.freshness)
             }
         }
         if (uiState.forecast.isNotEmpty()) {
@@ -252,7 +261,7 @@ private fun SpaceWeatherList(
                         .testTag(AURORA_MAP_TEST_TAG),
                 )
                 Caption(
-                    uiState.aurora?.let { stringResource(R.string.space_weather_aurora_caption, it.forecastFor.formatDateTime()) }
+                    uiState.aurora?.let { stringResource(R.string.space_weather_aurora_caption, it.forecastFor.formatLocalDateTime()) }
                         ?: stringResource(R.string.space_weather_aurora_missing),
                 )
             }
@@ -274,17 +283,6 @@ private fun auroraOverlays(uiState: SpaceWeatherUiState): List<MapOverlay> {
         }
         bands + MapOverlay(id = "place", shapes = place)
     }
-}
-
-@Composable
-private fun UpdatedLine(uiState: SpaceWeatherUiState) {
-    val time = uiState.currentKpTime ?: uiState.lastUpdatedAt
-    val text = when {
-        uiState.lastRefreshFailed && time != null -> stringResource(R.string.space_weather_updated_failed, time.formatDateTime())
-        time != null -> stringResource(R.string.space_weather_updated, time.formatDateTime())
-        else -> return
-    }
-    Caption(text)
 }
 
 @Composable
@@ -314,7 +312,7 @@ private fun Section(title: String?, content: @Composable () -> Unit) {
         modifier = Modifier.widthIn(max = CONTENT_MAX_WIDTH).fillMaxWidth().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        if (title != null) Text(title, style = MaterialTheme.typography.titleLarge)
+        if (title != null) SectionTitle(title, style = MaterialTheme.typography.titleLarge)
         content()
     }
 }

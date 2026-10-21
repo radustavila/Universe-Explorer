@@ -11,6 +11,7 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import java.time.Duration
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -104,7 +105,33 @@ class CheckAuroraAlertUseCaseTest {
         SetAuroraAlertEnabledUseCase(alerts, scheduler, checkAlert)(enabled = true)
 
         assertEquals(1, notifier.notified.size)
-        assertEquals(1, scheduler.periodicSyncRegistrations)
+        assertTrue(scheduler.isPeriodicSyncScheduled)
+    }
+
+    @Test
+    fun `turning alerts off cancels the background refresh`() = runTest {
+        val scheduler = FakeSpaceWeatherSyncScheduler()
+        SetAuroraAlertEnabledUseCase(alerts, scheduler, checkAlert)(enabled = true)
+
+        SetAuroraAlertEnabledUseCase(alerts, scheduler, checkAlert)(enabled = false)
+
+        assertFalse(scheduler.isPeriodicSyncScheduled)
+        assertEquals(1, scheduler.periodicSyncCancellations)
+    }
+
+    @Test
+    fun `at start the background refresh follows the alert setting`() = runTest {
+        // An install upgraded from a version that registered the job whenever the screen opened.
+        val scheduler = FakeSpaceWeatherSyncScheduler().apply { ensurePeriodicSync() }
+        val schedule = ScheduleAuroraAlertRefreshUseCase(alerts, scheduler)
+
+        alerts.setEnabled(false)
+        schedule()
+        assertFalse(scheduler.isPeriodicSyncScheduled)
+
+        alerts.setEnabled(true)
+        schedule()
+        assertTrue(scheduler.isPeriodicSyncScheduled)
     }
 
     @Test

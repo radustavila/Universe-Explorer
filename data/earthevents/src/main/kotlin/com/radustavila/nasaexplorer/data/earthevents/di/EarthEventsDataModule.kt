@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.radustavila.nasaexplorer.core.cache.CacheEvictor
 import com.radustavila.nasaexplorer.core.domain.repository.EarthEventRepository
+import com.radustavila.nasaexplorer.core.domain.search.SearchableSource
 import com.radustavila.nasaexplorer.core.network.http.RetrofitFactory
 import com.radustavila.nasaexplorer.core.network.ratelimit.HostRateBudget
 import com.radustavila.nasaexplorer.data.earthevents.BuildConfig
@@ -16,6 +17,7 @@ import com.radustavila.nasaexplorer.data.earthevents.remote.EonetRemoteDataSourc
 import com.radustavila.nasaexplorer.data.earthevents.remote.EonetService
 import com.radustavila.nasaexplorer.data.earthevents.remote.RetrofitEonetRemoteDataSource
 import com.radustavila.nasaexplorer.data.earthevents.repository.EarthEventRepositoryImpl
+import com.radustavila.nasaexplorer.data.earthevents.search.EarthEventSearchableSource
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -50,6 +52,10 @@ interface EarthEventsDataModule {
     @Binds
     @IntoSet
     fun bindEarthEventsCacheEvictor(impl: EarthEventsCacheEvictor): CacheEvictor
+
+    @Binds
+    @IntoSet
+    fun bindEarthEventSearchableSource(impl: EarthEventSearchableSource): SearchableSource
 }
 
 @Module

@@ -18,7 +18,6 @@
     <string name="mars_photos_offline_description">Connect once and the newest photos stay available offline.</string>
     <string name="mars_photos_failed_title">Could not download %1$s\'s photos</string>
     <string name="mars_photos_failed_description">The rover feeds are sometimes slow to answer. Try again in a while.</string>
-    <string name="mars_photos_stale">Showing saved photos; the last download failed.</string>
 
     <string name="mars_photo_missing_title">Photo no longer available</string>
     <string name="mars_photo_missing_description">Rover photos are kept for two weeks unless you save them to Favourites.</string>

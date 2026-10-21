@@ -6,12 +6,15 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.radustavila.nasaexplorer.core.designsystem.component.FRESHNESS_LABEL_TEST_TAG
 import com.radustavila.nasaexplorer.core.designsystem.component.OFFLINE_BANNER_TEST_TAG
 import com.radustavila.nasaexplorer.core.designsystem.component.RETRY_BUTTON_TEST_TAG
 import com.radustavila.nasaexplorer.core.model.ExoplanetList
 import com.radustavila.nasaexplorer.core.testing.data.TestExoplanets
 import com.radustavila.nasaexplorer.feature.exoplanets.details.ExoplanetDetailsContent
 import com.radustavila.nasaexplorer.feature.exoplanets.details.ExoplanetDetailsUiState
+import java.time.Duration
+import java.time.Instant
 import java.util.Locale
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -125,6 +128,7 @@ class ExoplanetsScreenTest {
                     isLoading = false,
                     neverSynced = false,
                     lastRefreshFailed = true,
+                    lastUpdatedAt = Instant.now().minus(Duration.ofDays(2)),
                 ),
                 onBackClick = {},
                 onExoplanetClick = {},
@@ -133,7 +137,8 @@ class ExoplanetsScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithTag(EXOPLANET_REFRESH_FAILED_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(FRESHNESS_LABEL_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithText("The last refresh failed.", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithText("TOI-789 c").assertIsDisplayed()
     }
 
@@ -159,7 +164,8 @@ class ExoplanetsScreenTest {
                 "One of the Sun's nearest neighbours: Proxima Centauri, the closest star, is 4.2 light-years away",
             )
             .assertExists()
-        composeTestRule.onNodeWithText("234 K (-39 °C)").assertExists()
+        // Fahrenheit: Robolectric's default region is the United States.
+        composeTestRule.onNodeWithText("234 K (-38 °F)").assertExists()
         composeTestRule.onNodeWithText("Radial velocity").assertExists()
         composeTestRule
             .onNodeWithText("The planet's pull made its star wobble, shifting the colour of its light back and forth.")

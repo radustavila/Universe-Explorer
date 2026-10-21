@@ -1,6 +1,9 @@
 package com.radustavila.nasaexplorer.feature.spaceweather
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.hasTestTag
@@ -34,6 +37,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.time.Instant
 
 @RunWith(RobolectricTestRunner::class)
 @Config(qualifiers = "w400dp-h900dp")
@@ -92,13 +96,28 @@ class SpaceWeatherScreenTest {
     }
 
     @Test
+    fun `the gauge says when the data was updated and that the last refresh failed`() {
+        setContent(content.copy(lastUpdatedAt = Instant.now().minusSeconds(5), lastRefreshFailed = true))
+
+        composeTestRule.onNodeWithText("Updated just now. The last refresh failed.").assertIsDisplayed()
+    }
+
+    @Test
+    fun `section titles are headings TalkBack can jump to`() {
+        setContent(content)
+
+        composeTestRule.onNodeWithText("Next 3 days").assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading))
+    }
+
+    @Test
     fun `the latest flare and CME are listed`() {
         setContent(content)
 
         composeTestRule.onNodeWithTag(SPACE_WEATHER_LIST_TEST_TAG).performScrollToNode(hasTestTag(CME_TEST_TAG))
         composeTestRule.onNodeWithTag(SOLAR_FLARE_TEST_TAG).assertIsDisplayed()
         composeTestRule.onNodeWithText("Class M1.6").assertIsDisplayed()
-        composeTestRule.onNodeWithText("590 km/s").assertIsDisplayed()
+        // Miles: Robolectric's default region is the United States.
+        composeTestRule.onNodeWithText("367 mi/s").assertIsDisplayed()
         composeTestRule.onNodeWithText("Not expected to reach Earth.").assertIsDisplayed()
     }
 

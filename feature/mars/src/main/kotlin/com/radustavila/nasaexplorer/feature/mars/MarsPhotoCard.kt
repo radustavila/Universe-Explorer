@@ -31,7 +31,7 @@ internal fun MarsPhotoCard(
         onClick = onClick,
         modifier = modifier.testTag(marsPhotoTestTag(photo.id)),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
     ) {
         NasaAsyncImage(
             url = photo.previewUrl,

@@ -15,34 +15,29 @@ const val ISS_POSITION_OVERLAY_ID = "iss-position"
 const val OBSERVER_OVERLAY_ID = "observer"
 
 /**
- * What the shared map draws for the ISS: its ground track, the station, and the observer, bottom
- * to top. The track is cut where it crosses the antimeridian, so no line spans the whole map.
+ * The ISS ground track, the bottom of what the shared map draws for the ISS (then the observer,
+ * then the station). Each overlay is built on its own, because the station's dot moves far more
+ * often than the rest. The track is cut where it crosses the antimeridian, so no line spans the
+ * whole map.
  */
-internal fun issTrackOverlays(
-    track: List<SatellitePosition>,
-    position: SatellitePosition?,
-    observer: GeoCoordinate?,
-    trackColor: Color,
-    stationColor: Color,
-    observerColor: Color,
-): List<MapOverlay> = listOf(
-    MapOverlay(
-        id = ISS_TRACK_OVERLAY_ID,
-        shapes = track.splitAtAntimeridian().mapIndexed { index, segment ->
-            MapPolyline(id = "track-$index", points = segment, color = trackColor, width = 2.dp)
-        },
+internal fun groundTrackOverlay(track: List<SatellitePosition>, color: Color): MapOverlay = MapOverlay(
+    id = ISS_TRACK_OVERLAY_ID,
+    shapes = track.splitAtAntimeridian().mapIndexed { index, segment ->
+        MapPolyline(id = "track-$index", points = segment, color = color, width = 2.dp)
+    },
+)
+
+internal fun observerOverlay(observer: GeoCoordinate?, color: Color): MapOverlay = MapOverlay(
+    id = OBSERVER_OVERLAY_ID,
+    shapes = listOfNotNull(
+        observer?.let { MapMarker(id = "observer", position = it.toGeoPoint(), color = color, radius = 5.dp) },
     ),
-    MapOverlay(
-        id = OBSERVER_OVERLAY_ID,
-        shapes = listOfNotNull(
-            observer?.let { MapMarker(id = "observer", position = it.toGeoPoint(), color = observerColor, radius = 5.dp) },
-        ),
-    ),
-    MapOverlay(
-        id = ISS_POSITION_OVERLAY_ID,
-        shapes = listOfNotNull(
-            position?.let { MapMarker(id = "iss", position = it.coordinate.toGeoPoint(), color = stationColor, radius = 8.dp) },
-        ),
+)
+
+internal fun stationOverlay(position: SatellitePosition?, color: Color): MapOverlay = MapOverlay(
+    id = ISS_POSITION_OVERLAY_ID,
+    shapes = listOfNotNull(
+        position?.let { MapMarker(id = "iss", position = it.coordinate.toGeoPoint(), color = color, radius = 8.dp) },
     ),
 )
 

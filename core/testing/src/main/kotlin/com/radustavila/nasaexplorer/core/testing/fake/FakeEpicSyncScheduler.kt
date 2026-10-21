@@ -13,6 +13,10 @@ class FakeEpicSyncScheduler(initialState: SyncState = SyncState.Idle) : EpicSync
 
     var requestSyncCallCount: Int = 0
         private set
+
+    /** How many of [requestSyncCallCount] asked to ignore the refresh interval. */
+    var forcedSyncCallCount: Int = 0
+        private set
     var periodicSyncCallCount: Int = 0
         private set
 
@@ -20,8 +24,11 @@ class FakeEpicSyncScheduler(initialState: SyncState = SyncState.Idle) : EpicSync
         state.value = syncState
     }
 
-    override fun requestSync() {
+    override fun requestSync() = requestSync(force = false)
+
+    override fun requestSync(force: Boolean) {
         requestSyncCallCount++
+        if (force) forcedSyncCallCount++
     }
 
     override fun ensurePeriodicSync() {

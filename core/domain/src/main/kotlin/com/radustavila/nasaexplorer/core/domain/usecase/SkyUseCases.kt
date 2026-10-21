@@ -6,6 +6,8 @@ import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.common.result.getOrNull
 import com.radustavila.nasaexplorer.core.common.time.TimeProvider
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidget
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
 import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepository
 import com.radustavila.nasaexplorer.core.domain.sky.IssPassForecast
@@ -15,10 +17,12 @@ import com.radustavila.nasaexplorer.core.domain.sky.SatellitePassPredictor
 import com.radustavila.nasaexplorer.core.domain.sky.SatelliteRepository
 import com.radustavila.nasaexplorer.core.domain.sky.SkyCalculator
 import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
+import com.radustavila.nasaexplorer.core.domain.sync.succeeded
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.model.OrbitalElements
 import com.radustavila.nasaexplorer.core.model.OrbitalElements.Companion.ISS_NORAD_ID
 import com.radustavila.nasaexplorer.core.model.PersonInSpace
+import com.radustavila.nasaexplorer.core.model.SatellitePosition
 import com.radustavila.nasaexplorer.core.model.SkyTonight
 import com.radustavila.nasaexplorer.core.model.SyncSource
 import java.time.Duration
@@ -101,6 +105,8 @@ class ObserveIssTrackUseCase @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(): Flow<IssTrack> =
         satelliteRepository.observeElements(ISS_NORAD_ID).transformLatest { elements ->
+            var trackAnchor: Instant? = null
+            var groundTrack = emptyList<SatellitePosition>()
             while (true) {
                 val now = timeProvider.now()
                 val usable = elements?.takeUnless { it.isTooOldAt(now) }
@@ -109,12 +115,20 @@ class ObserveIssTrackUseCase @Inject constructor(
                 } else {
                     null
                 }
+                // The track window only moves every TRACK_REFRESH, so between those steps the same
+                // list is emitted again and the map redraws just the station's dot.
+                val anchor = now.truncatedToMultipleOf(TRACK_REFRESH)
+                if (usable == null) {
+                    groundTrack = emptyList()
+                    trackAnchor = null
+                } else if (anchor != trackAnchor) {
+                    groundTrack = predictor.groundTrack(usable, from = anchor.minus(TRACK_BEHIND), to = anchor.plus(TRACK_AHEAD))
+                    trackAnchor = anchor
+                }
                 emit(
                     IssTrack(
                         position = live ?: usable?.let { predictor.position(it, now) },
-                        groundTrack = usable?.let {
-                            predictor.groundTrack(it, from = now.minus(TRACK_BEHIND), to = now.plus(TRACK_AHEAD))
-                        }.orEmpty(),
+                        groundTrack = groundTrack,
                     ),
                 )
                 delay(POLL_INTERVAL.toMillis())
@@ -126,11 +140,15 @@ class ObserveIssTrackUseCase @Inject constructor(
         val POLL_INTERVAL: Duration = Duration.ofSeconds(5)
         val TRACK_BEHIND: Duration = Duration.ofMinutes(45)
         val TRACK_AHEAD: Duration = Duration.ofMinutes(90)
+
+        /** How often the ground track's window slides along; far less often than the dot moves. */
+        val TRACK_REFRESH: Duration = Duration.ofMinutes(5)
     }
 }
 
 /**
  * Refreshes the cached ISS elements at most once per [MIN_REFRESH_INTERVAL], as CelesTrak asks.
+ * New elements move the next pass, so a successful refresh re-renders the sky tonight widget.
  *
  * There is no connectivity pre-check: the monitor's first value can briefly read offline while a
  * second network reports in, which silently skipped the refresh. Offline, the call fails fast at
@@ -139,11 +157,12 @@ class ObserveIssTrackUseCase @Inject constructor(
 class RefreshOrbitalElementsUseCase @Inject constructor(
     private val satelliteRepository: SatelliteRepository,
     private val refreshSource: RefreshSourceUseCase,
+    private val widgetUpdater: HomeWidgetUpdater,
 ) {
     suspend operator fun invoke(force: Boolean = false): SourceRefreshResult<Unit> {
         return refreshSource(SyncSource.CELESTRAK, minInterval = MIN_REFRESH_INTERVAL, force = force) {
             satelliteRepository.refreshElements()
-        }
+        }.also { outcome -> if (outcome.succeeded()) widgetUpdater.update(HomeWidget.SKY_TONIGHT) }
     }
 
     companion object {
@@ -197,3 +216,6 @@ val ORBITAL_ELEMENTS_MAX_AGE: Duration = Duration.ofDays(14)
 
 internal fun OrbitalElements.isTooOldAt(now: Instant): Boolean =
     Duration.between(epoch, now) > ORBITAL_ELEMENTS_MAX_AGE
+
+private fun Instant.truncatedToMultipleOf(step: Duration): Instant =
+    Instant.ofEpochMilli(toEpochMilli() - Math.floorMod(toEpochMilli(), step.toMillis()))

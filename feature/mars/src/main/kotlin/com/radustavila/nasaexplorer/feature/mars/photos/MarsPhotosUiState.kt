@@ -1,5 +1,6 @@
 package com.radustavila.nasaexplorer.feature.mars.photos
 
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.MarsPhoto
 import com.radustavila.nasaexplorer.core.model.MarsRover
 import java.time.Instant
@@ -13,7 +14,12 @@ data class MarsPhotosUiState(
     val isOffline: Boolean = false,
     /** False until the cache has been read once. */
     val isLoaded: Boolean = false,
-)
+    /** When the rover photos last synced. */
+    val lastUpdatedAt: Instant? = null,
+) {
+    val freshness: DataFreshness
+        get() = DataFreshness(lastUpdatedAt = lastUpdatedAt, isOffline = isOffline, lastRefreshFailed = lastAttemptFailed)
+}
 
 /** One sol's photos, by camera. */
 data class SolGroup(

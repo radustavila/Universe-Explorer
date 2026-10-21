@@ -10,6 +10,7 @@ import com.radustavila.nasaexplorer.core.domain.sky.IssTrack
 import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
 import com.radustavila.nasaexplorer.core.domain.usecase.LocateDeviceUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDataFreshnessUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveIssPassRemindersEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveIssPassesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveIssTrackUseCase
@@ -27,6 +28,7 @@ import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.model.ObserverLocation
 import com.radustavila.nasaexplorer.core.model.PersonInSpace
 import com.radustavila.nasaexplorer.core.model.SkyTonight
+import com.radustavila.nasaexplorer.core.model.SyncSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -65,6 +67,7 @@ class SkyTonightViewModel @Inject constructor(
     observePeople: ObservePeopleInSpaceUseCase,
     observeReminders: ObserveIssPassRemindersEnabledUseCase,
     observeConnectivity: ObserveConnectivityUseCase,
+    observeDataFreshness: ObserveDataFreshnessUseCase,
     private val locateDevice: LocateDeviceUseCase,
     private val setManualLocation: SetManualLocationUseCase,
     private val searchCities: SearchCitiesUseCase,
@@ -95,10 +98,11 @@ class SkyTonightViewModel @Inject constructor(
     val uiState: StateFlow<SkyTonightUiState> = combine(
         computed,
         observeReminders(),
-        isOnline,
+        // Carries connectivity as well, so going offline emits one state.
+        observeDataFreshness(SyncSource.CELESTRAK, SyncSource.PEOPLE_IN_SPACE),
         citySearch.onStart { emit(CitySearchUiState()) },
         transient,
-    ) { computed, reminders, online, search, transient ->
+    ) { computed, reminders, freshness, search, transient ->
         SkyTonightUiState(
             isLocationLoaded = computed.location != null,
             location = computed.location?.value,
@@ -109,9 +113,10 @@ class SkyTonightViewModel @Inject constructor(
             remindersEnabled = reminders,
             isLocating = transient.isLocating,
             isRefreshing = transient.isRefreshing,
-            isOffline = !online,
+            isOffline = freshness.isOffline,
             citySearch = search,
             message = transient.message,
+            freshness = freshness,
         )
     }.stateIn(
         scope = viewModelScope,

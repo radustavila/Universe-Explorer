@@ -39,6 +39,17 @@ interface ExoplanetDao {
     )
     fun observeByRadius(minRadius: Double, maxRadius: Double): Flow<List<ExoplanetEntity>>
 
+    /** Planets whose name or host star contains [term], by name: the candidates of a local search. */
+    @Query(
+        """
+        SELECT * FROM exoplanets
+        WHERE name LIKE '%' || :term || '%' OR host_name LIKE '%' || :term || '%'
+        ORDER BY name
+        LIMIT :limit
+        """,
+    )
+    suspend fun searchCandidates(term: String, limit: Int): List<ExoplanetEntity>
+
     @Query("SELECT * FROM exoplanets WHERE name = :name")
     fun observe(name: String): Flow<ExoplanetEntity?>
 

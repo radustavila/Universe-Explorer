@@ -2,6 +2,7 @@ package com.radustavila.nasaexplorer.feature.feed
 
 import com.radustavila.nasaexplorer.core.designsystem.error.UiError
 import com.radustavila.nasaexplorer.core.model.Apod
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import java.time.LocalDate
 
 /**
@@ -25,6 +26,8 @@ data class FeedUiState(
     val onThisDay: List<Apod> = emptyList(),
     /** `null` while the feed is shown; the search over the local cache otherwise. */
     val search: FeedSearchState? = null,
+    /** When the APOD entries last synced, for the "Updated …" line above them. */
+    val freshness: DataFreshness = DataFreshness(),
 ) {
     val hasContent: Boolean get() = items.isNotEmpty()
 

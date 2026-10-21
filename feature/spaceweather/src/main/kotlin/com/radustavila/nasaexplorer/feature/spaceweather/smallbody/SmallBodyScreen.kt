@@ -27,13 +27,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
-import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
+import com.radustavila.nasaexplorer.core.designsystem.units.formatLocalDateTime
+import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.model.CloseApproach
 import com.radustavila.nasaexplorer.core.model.SentryRisk
 import com.radustavila.nasaexplorer.core.model.SizeEstimate
@@ -43,11 +46,11 @@ import com.radustavila.nasaexplorer.feature.spaceweather.R
 import com.radustavila.nasaexplorer.feature.spaceweather.components.currentLocale
 import com.radustavila.nasaexplorer.feature.spaceweather.neighbourhood.SENTRY_COLOR
 import com.radustavila.nasaexplorer.feature.spaceweather.neighbourhood.SentryBadge
-import com.radustavila.nasaexplorer.feature.spaceweather.neighbourhood.formatKilometres
+import com.radustavila.nasaexplorer.feature.spaceweather.neighbourhood.format
 import com.radustavila.nasaexplorer.feature.spaceweather.neighbourhood.formatLunarDistance
 import com.radustavila.nasaexplorer.feature.spaceweather.neighbourhood.formatOdds
-import com.radustavila.nasaexplorer.feature.spaceweather.neighbourhood.formatSize
-import java.util.Locale
+import java.text.NumberFormat
+import kotlin.math.roundToLong
 
 const val SMALL_BODY_DETAILS_TEST_TAG = "small-body-details"
 const val SMALL_BODY_SENTRY_TEST_TAG = "small-body-sentry"
@@ -122,23 +125,21 @@ private fun ApproachCard(approach: CloseApproach, modifier: Modifier) {
     Card(modifier) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(stringResource(R.string.small_body_approach_title), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                SectionTitle(stringResource(R.string.small_body_approach_title), modifier = Modifier.weight(1f))
                 if (approach.sentry != null) SentryBadge()
             }
-            Fact(stringResource(R.string.small_body_closest), approach.time.formatDateTime())
+            val units = rememberUnitFormatter()
+            Fact(stringResource(R.string.small_body_closest), approach.time.formatLocalDateTime())
             Fact(
                 stringResource(R.string.small_body_distance),
                 stringResource(
                     R.string.small_body_distance_value,
-                    formatLunarDistance(approach.distanceLunar, currentLocale()),
-                    formatKilometres(approach.distanceKm, currentLocale()),
+                    formatLunarDistance(approach.distanceLunar, units.locale),
+                    units.largeDistance(approach.distanceKm),
                 ),
             )
-            Fact(
-                stringResource(R.string.small_body_speed),
-                stringResource(R.string.neighbourhood_speed, String.format(currentLocale(), "%.1f", approach.relativeVelocityKmPerSecond)),
-            )
-            approach.size?.let { Fact(stringResource(sizeLabel(it)), formatSize(it, currentLocale())) }
+            Fact(stringResource(R.string.small_body_speed), units.speedPerSecond(approach.relativeVelocityKmPerSecond))
+            approach.size?.let { Fact(stringResource(sizeLabel(it)), it.format(units)) }
         }
     }
 }
@@ -147,7 +148,7 @@ private fun ApproachCard(approach: CloseApproach, modifier: Modifier) {
 private fun SentryCard(sentry: SentryRisk, modifier: Modifier) {
     Card(modifier.testTag(SMALL_BODY_SENTRY_TEST_TAG)) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(stringResource(R.string.small_body_sentry_title), style = MaterialTheme.typography.titleMedium, color = SENTRY_COLOR)
+            SectionTitle(stringResource(R.string.small_body_sentry_title), color = SENTRY_COLOR)
             Text(stringResource(R.string.small_body_sentry_explanation), style = MaterialTheme.typography.bodySmall)
             Fact(stringResource(R.string.small_body_sentry_odds), formatOdds(sentry.impactProbability, currentLocale()))
             sentry.yearRange?.let { Fact(stringResource(R.string.small_body_sentry_years), it) }
@@ -162,7 +163,7 @@ private fun SentryCard(sentry: SentryRisk, modifier: Modifier) {
 private fun DetailsCard(details: SmallBodyDetails, modifier: Modifier) {
     Card(modifier.testTag(SMALL_BODY_DETAILS_TEST_TAG)) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(stringResource(R.string.small_body_orbit_title), style = MaterialTheme.typography.titleMedium)
+            SectionTitle(stringResource(R.string.small_body_orbit_title))
             details.orbitClass?.let { Fact(stringResource(R.string.small_body_orbit_class), it) }
             Fact(
                 stringResource(R.string.small_body_hazardous),
@@ -175,20 +176,30 @@ private fun DetailsCard(details: SmallBodyDetails, modifier: Modifier) {
                 )
             }
             details.orbitalPeriodDays?.let {
-                Fact(stringResource(R.string.small_body_period), stringResource(R.string.small_body_days, String.format(currentLocale(), "%.0f", it)))
+                val days = it.roundToLong().toInt()
+                Fact(
+                    stringResource(R.string.small_body_period),
+                    pluralStringResource(R.plurals.small_body_days, days, NumberFormat.getIntegerInstance(currentLocale()).format(days)),
+                )
             }
-            details.semiMajorAxisAu?.let { Fact(stringResource(R.string.small_body_semi_major_axis), au(it, currentLocale())) }
+            details.semiMajorAxisAu?.let { Fact(stringResource(R.string.small_body_semi_major_axis), au(it)) }
             if (details.perihelionAu != null && details.aphelionAu != null) {
-                Fact(stringResource(R.string.small_body_sun_distance), "${au(details.perihelionAu!!, currentLocale())} – ${au(details.aphelionAu!!, currentLocale())}")
+                Fact(
+                    stringResource(R.string.small_body_sun_distance),
+                    stringResource(R.string.small_body_range, au(details.perihelionAu!!), au(details.aphelionAu!!)),
+                )
             }
             details.eccentricity?.let { Fact(stringResource(R.string.small_body_eccentricity), String.format(currentLocale(), "%.3f", it)) }
             details.inclinationDegrees?.let { Fact(stringResource(R.string.small_body_inclination), String.format(currentLocale(), "%.1f°", it)) }
             details.absoluteMagnitude?.let { Fact(stringResource(R.string.small_body_magnitude), String.format(currentLocale(), "%.1f", it)) }
             val size = details.diameterKm?.let { SizeEstimate(it * 1_000, it * 1_000) }
                 ?: details.absoluteMagnitude?.let(SizeEstimate::fromAbsoluteMagnitude)
-            size?.let { Fact(stringResource(sizeLabel(it)), formatSize(it, currentLocale())) }
+            size?.let { Fact(stringResource(sizeLabel(it)), it.format(rememberUnitFormatter())) }
             if (details.firstObserved != null && details.lastObserved != null) {
-                Fact(stringResource(R.string.small_body_observed), "${details.firstObserved} – ${details.lastObserved}")
+                Fact(
+                    stringResource(R.string.small_body_observed),
+                    stringResource(R.string.small_body_range, details.firstObserved!!, details.lastObserved!!),
+                )
             }
             details.observationsUsed?.let { Fact(stringResource(R.string.small_body_observations), it.toString()) }
         }
@@ -198,7 +209,8 @@ private fun DetailsCard(details: SmallBodyDetails, modifier: Modifier) {
 private fun sizeLabel(size: SizeEstimate): Int =
     if (size.isRange) R.string.small_body_size_estimated else R.string.small_body_size
 
-private fun au(value: Double, locale: Locale): String = String.format(locale, "%.2f au", value)
+@Composable
+private fun au(value: Double): String = stringResource(R.string.small_body_au, String.format(currentLocale(), "%.2f", value))
 
 @Composable
 private fun Fact(label: String, value: String) {

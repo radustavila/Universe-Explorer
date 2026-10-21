@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
-import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
+import com.radustavila.nasaexplorer.core.designsystem.units.formatLocalDateTime
 import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
 import com.radustavila.nasaexplorer.core.domain.model.DebugInfo
 import com.radustavila.nasaexplorer.core.domain.model.SourceSyncStatus
@@ -110,7 +110,7 @@ internal fun DebugContent(
             DebugSection(title = stringResource(R.string.debug_section_sync)) {
                 DebugRow(
                     label = stringResource(R.string.debug_last_sync),
-                    value = info.lastSuccessfulSync?.formatDateTime()
+                    value = info.lastSuccessfulSync?.formatLocalDateTime()
                         ?: stringResource(R.string.debug_never),
                 )
                 DebugRow(
@@ -177,7 +177,7 @@ private fun SourceRows(status: SourceSyncStatus) {
     )
     DebugRow(
         label = stringResource(R.string.debug_source_last_success),
-        value = status.lastSuccessAt?.formatDateTime() ?: stringResource(R.string.debug_never),
+        value = status.lastSuccessAt?.formatLocalDateTime() ?: stringResource(R.string.debug_never),
     )
     DebugRow(
         label = stringResource(R.string.debug_source_last_error),
@@ -185,13 +185,13 @@ private fun SourceRows(status: SourceSyncStatus) {
             stringResource(
                 R.string.debug_source_error_at,
                 status.lastErrorDescription ?: none,
-                failedAt.formatDateTime(),
+                failedAt.formatLocalDateTime(),
             )
         } ?: none,
     )
     DebugRow(
         label = stringResource(R.string.debug_source_next_refresh),
-        value = status.nextAllowedRefreshAt?.formatDateTime()
+        value = status.nextAllowedRefreshAt?.formatLocalDateTime()
             ?: stringResource(R.string.debug_source_any_time),
     )
 }

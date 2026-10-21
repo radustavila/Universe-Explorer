@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -40,7 +41,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.radustavila.nasaexplorer.core.designsystem.adaptive.centeringPadding
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.MessageState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
@@ -51,7 +54,6 @@ import com.radustavila.nasaexplorer.core.model.ExoplanetUnits
 import kotlin.math.ln
 
 const val EXOPLANET_LIST_TEST_TAG = "exoplanet-list"
-const val EXOPLANET_REFRESH_FAILED_TEST_TAG = "exoplanet-refresh-failed"
 
 @Composable
 fun ExoplanetsScreen(
@@ -186,19 +188,24 @@ private fun PlanetList(
         ExoplanetList.NEAREST -> rememberLazyListState()
         ExoplanetList.EARTH_SIZED -> rememberLazyListState()
     }
-    LazyColumn(
-        state = listState,
-        modifier = Modifier
-            .fillMaxSize()
-            .testTag(EXOPLANET_LIST_TEST_TAG),
-        contentPadding = PaddingValues(bottom = 16.dp),
-    ) {
-        item(key = "header") {
-            ListHeader(uiState)
-        }
-        items(items = uiState.planets, key = Exoplanet::name) { planet ->
-            ExoplanetRow(planet = planet, onClick = { onExoplanetClick(planet.name) })
-            HorizontalDivider()
+    // Rows stop growing at a readable width and are centred on wider windows; the list itself
+    // still spans the window, so it scrolls from anywhere across it.
+    BoxWithConstraints {
+        val sidePadding = centeringPadding(containerWidth = maxWidth)
+        LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag(EXOPLANET_LIST_TEST_TAG),
+            contentPadding = PaddingValues(start = sidePadding, end = sidePadding, bottom = 16.dp),
+        ) {
+            item(key = "header") {
+                ListHeader(uiState)
+            }
+            items(items = uiState.planets, key = Exoplanet::name) { planet ->
+                ExoplanetRow(planet = planet, onClick = { onExoplanetClick(planet.name) })
+                HorizontalDivider()
+            }
         }
     }
 }
@@ -206,16 +213,7 @@ private fun PlanetList(
 @Composable
 private fun ListHeader(uiState: ExoplanetsUiState) {
     Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
-        if (uiState.lastRefreshFailed && !uiState.isOffline) {
-            Text(
-                text = stringResource(R.string.exoplanets_refresh_failed),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier
-                    .padding(bottom = 8.dp)
-                    .testTag(EXOPLANET_REFRESH_FAILED_TEST_TAG),
-            )
-        }
+        FreshnessLabel(uiState.freshness, modifier = Modifier.padding(bottom = 8.dp))
         val description = when (uiState.selectedList) {
             ExoplanetList.NEWEST ->
                 stringResource(R.string.exoplanets_list_newest_description, uiState.newestSinceYear)

@@ -1,12 +1,15 @@
 package com.radustavila.nasaexplorer.core.testing.fake
 
+import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.domain.repository.ApodBatchResult
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
 import com.radustavila.nasaexplorer.core.model.Apod
 import com.radustavila.nasaexplorer.core.model.FavoriteItem
 import com.radustavila.nasaexplorer.core.model.FavoriteSource
 import com.radustavila.nasaexplorer.core.model.MediaType
 import java.time.LocalDate
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -35,6 +38,10 @@ class FakeApodRepository(
     private val outsideFeed = MutableStateFlow<Set<LocalDate>>(emptySet())
 
     var refreshResult: DataResult<Int> = DataResult.Success(0)
+
+    /** How long [refreshRecent] and a whole [fetchApods] batch take, in virtual time. */
+    var refreshDelayMillis: Long = 0
+    var batchDelayMillis: Long = 0
     var loadOlderResult: DataResult<Int> = DataResult.Success(0)
 
     /** Forces the outcome of favourite writes, which go through [favorites]. */
@@ -62,6 +69,10 @@ class FakeApodRepository(
     var loadOlderCallCount: Int = 0
         private set
     var fetchedDates: List<LocalDate> = emptyList()
+        private set
+
+    /** Every [fetchApods] call, as (dates, maxConcurrent). */
+    var batchRequests: List<Pair<List<LocalDate>, Int>> = emptyList()
         private set
 
     fun setEntries(apods: List<Apod>) {
@@ -116,6 +127,7 @@ class FakeApodRepository(
 
     override suspend fun refreshRecent(): DataResult<Int> {
         refreshCallCount++
+        delay(refreshDelayMillis)
         return refreshResult
     }
 
@@ -130,6 +142,28 @@ class FakeApodRepository(
             }
         }
         return result
+    }
+
+    /**
+     * Requests the dates one after another (the outcome the real, concurrent batch reaches when the
+     * requests complete in order), stopping at the first retryable failure; downloads are cached
+     * like [fetchApod]'s.
+     */
+    override suspend fun fetchApods(dates: List<LocalDate>, maxConcurrent: Int): ApodBatchResult {
+        batchRequests = batchRequests + (dates to maxConcurrent)
+        delay(batchDelayMillis)
+        val cached = mutableSetOf<LocalDate>()
+        val failed = mutableMapOf<LocalDate, AppError>()
+        for (date in dates) {
+            when (val result = fetchApod(date)) {
+                is DataResult.Success -> cached += date
+                is DataResult.Failure -> {
+                    failed[date] = result.error
+                    if (result.error.isRetryable) break
+                }
+            }
+        }
+        return ApodBatchResult(cached, failed)
     }
 
     private fun downloadedEntry(date: LocalDate) = Apod(

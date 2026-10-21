@@ -47,6 +47,7 @@ class MarsPhotosViewModel @Inject constructor(
             lastAttemptFailed = status.lastAttemptFailed,
             isOffline = !online,
             isLoaded = true,
+            lastUpdatedAt = status.lastSuccessAt,
         )
     }.stateIn(
         scope = viewModelScope,
