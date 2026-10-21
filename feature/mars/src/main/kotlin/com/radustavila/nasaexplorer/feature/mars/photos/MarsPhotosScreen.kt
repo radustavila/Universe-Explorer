@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
@@ -202,14 +203,9 @@ private fun SolList(
         contentPadding = PaddingValues(vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        if (uiState.lastAttemptFailed && !uiState.isSyncing) {
-            item(key = "stale", contentType = "stale") {
-                Text(
-                    text = stringResource(R.string.mars_photos_stale),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                )
+        if (uiState.lastUpdatedAt != null) {
+            item(key = "freshness", contentType = "freshness") {
+                FreshnessLabel(uiState.freshness, modifier = Modifier.padding(horizontal = 16.dp))
             }
         }
         uiState.sols.forEach { group ->

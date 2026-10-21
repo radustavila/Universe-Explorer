@@ -45,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
@@ -218,7 +219,7 @@ private fun SpaceWeatherList(
                 modifier = Modifier.padding(horizontal = 16.dp).widthIn(max = CONTENT_MAX_WIDTH),
             ) {
                 KpGauge(kp = uiState.currentKp, modifier = Modifier.widthIn(max = GAUGE_MAX_WIDTH).fillMaxWidth(GAUGE_WIDTH_FRACTION))
-                UpdatedLine(uiState)
+                FreshnessLabel(uiState.freshness)
             }
         }
         if (uiState.forecast.isNotEmpty()) {
@@ -283,17 +284,6 @@ private fun auroraOverlays(uiState: SpaceWeatherUiState): List<MapOverlay> {
         }
         bands + MapOverlay(id = "place", shapes = place)
     }
-}
-
-@Composable
-private fun UpdatedLine(uiState: SpaceWeatherUiState) {
-    val time = uiState.currentKpTime ?: uiState.lastUpdatedAt
-    val text = when {
-        uiState.lastRefreshFailed && time != null -> stringResource(R.string.space_weather_updated_failed, time.formatDateTime())
-        time != null -> stringResource(R.string.space_weather_updated, time.formatDateTime())
-        else -> return
-    }
-    Caption(text)
 }
 
 @Composable

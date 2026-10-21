@@ -50,6 +50,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.motion.rememberReducedMotion
 import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
@@ -189,6 +190,7 @@ fun EarthEventsScreen(
                     onCategoryToggled = onCategoryToggled,
                 )
             }
+            FreshnessLabel(uiState.freshness, modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
 
             BoxWithConstraints(Modifier.fillMaxWidth().weight(1f)) {
                 // The selection lives in its own overlay, so picking an event leaves the (large) base

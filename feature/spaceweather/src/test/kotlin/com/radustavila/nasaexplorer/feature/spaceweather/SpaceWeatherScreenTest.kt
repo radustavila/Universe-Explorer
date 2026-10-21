@@ -37,6 +37,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.time.Instant
 
 @RunWith(RobolectricTestRunner::class)
 @Config(qualifiers = "w400dp-h900dp")
@@ -92,6 +93,13 @@ class SpaceWeatherScreenTest {
         composeTestRule.onNodeWithTag(AURORA_MAP_TEST_TAG).assertIsDisplayed()
         assertEquals(listOf("aurora-5", "aurora-20", "aurora-50", "place"), mapOverlays.map { it.id })
         assertEquals(1, mapOverlays.last().shapes.size)
+    }
+
+    @Test
+    fun `the gauge says when the data was updated and that the last refresh failed`() {
+        setContent(content.copy(lastUpdatedAt = Instant.now().minusSeconds(5), lastRefreshFailed = true))
+
+        composeTestRule.onNodeWithText("Updated just now. The last refresh failed.").assertIsDisplayed()
     }
 
     @Test
