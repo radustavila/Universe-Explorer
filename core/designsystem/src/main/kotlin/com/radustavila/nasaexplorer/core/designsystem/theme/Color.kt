@@ -11,6 +11,14 @@ internal val DeepSpaceElevated = Color(0xFF101018)
 internal val DeepSpaceCard = Color(0xFF16161F)
 
 /**
+ * `surfaceVariant`: image placeholders, gauge tracks, neutral chips. Deliberately not
+ * [DeepSpaceCard]: Material resolves a container's content colour by matching it against the
+ * scheme, and `surfaceVariant` is matched before `surfaceContainerHighest`, so if the two were equal
+ * every card's text would fall back to the dim `onSurfaceVariant`.
+ */
+internal val DeepSpaceVariant = Color(0xFF13131B)
+
+/**
  * Borders of text fields, segmented buttons and other controls: at least 3:1 against every
  * surface it sits on (WCAG 1.4.11), about 3.6:1 even on [DeepSpaceCard].
  */

@@ -53,7 +53,7 @@ private fun OnThisDayCard(apod: Apod, onClick: () -> Unit) {
         onClick = onClick,
         modifier = Modifier.width(CARD_WIDTH),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
     ) {
         val mediaModifier = Modifier
             .fillMaxWidth()
