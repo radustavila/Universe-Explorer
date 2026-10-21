@@ -80,6 +80,10 @@ Boundary rules the code relies on:
 - Favourites of every source live in the `favorite` table keyed by `(source, item_id)` with a title/image snapshot
   (schema v4); `ApodEntity.is_favorite` is a dead legacy column. `ApodRepositoryImpl` sets `Apod.isFavorite` by
   combining reads with the APOD favourite ids. Cache evictors must never delete a favourite.
+- `:core:offline` keeps an offline copy of each favourite's snapshot image in `filesDir/favorites/<source>/<id>.<ext>`
+  (path and size on the `favorite` row, schema v7): `RoomFavoritesRepository` queues a `FavoriteImageDownloadWorker`
+  on save and deletes the copy on remove, and `OfflineFavoriteImageInterceptor` makes the Coil loader serve the copy
+  for the remote URL, so screens keep passing URLs. Not a cache: no evictor may touch it.
 - Room schemas are exported to `core/database/schemas/` and checked in; bump the version, add a migration in
   `NasaDatabaseMigrations`, and cover it in `NasaDatabaseMigrationTest`.
 - Every remote source records last success / last error / next allowed refresh per `SyncSource`; wrap refreshes in

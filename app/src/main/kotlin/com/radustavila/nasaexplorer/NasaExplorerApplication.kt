@@ -14,6 +14,7 @@ import com.radustavila.nasaexplorer.core.cache.CacheEvictionScheduler
 import com.radustavila.nasaexplorer.core.common.dispatchers.AppDispatcher
 import com.radustavila.nasaexplorer.core.common.dispatchers.ApplicationScope
 import com.radustavila.nasaexplorer.core.common.dispatchers.Dispatcher
+import com.radustavila.nasaexplorer.core.domain.offline.OfflineFavoriteImages
 import com.radustavila.nasaexplorer.core.domain.sync.EpicSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.ExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
@@ -54,6 +55,9 @@ class NasaExplorerApplication :
     lateinit var epicSyncScheduler: Lazy<EpicSyncScheduler>
 
     @Inject
+    lateinit var offlineFavoriteImages: Lazy<OfflineFavoriteImages>
+
+    @Inject
     lateinit var scheduleAuroraAlertRefresh: Lazy<ScheduleAuroraAlertRefreshUseCase>
 
     @Inject
@@ -79,6 +83,8 @@ class NasaExplorerApplication :
         if (BuildConfig.DEBUG) enableStrictMode()
         super.onCreate()
         applicationScope.launch(ioDispatcher) { registerPeriodicWorkOncePerApk() }
+        // Favourites saved before offline copies existed get theirs; it guards itself to run once.
+        applicationScope.launch(ioDispatcher) { offlineFavoriteImages.get().backfillOnce() }
     }
 
     /**

@@ -52,6 +52,7 @@ dependencies {
     implementation(projects.core.notifications)
     implementation(projects.core.cache)
     implementation(projects.core.wallpaper)
+    implementation(projects.core.offline)
     implementation(projects.data.nasa)
     implementation(projects.data.launches)
     implementation(projects.data.nasaimages)
