@@ -1,7 +1,9 @@
 package com.radustavila.nasaexplorer.feature.exoplanets
 
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.Exoplanet
 import com.radustavila.nasaexplorer.core.model.ExoplanetList
+import java.time.Instant
 
 data class ExoplanetsUiState(
     val selectedList: ExoplanetList = ExoplanetList.NEWEST,
@@ -13,7 +15,12 @@ data class ExoplanetsUiState(
     /** No refresh has ever succeeded, so an empty list means "not downloaded yet". */
     val neverSynced: Boolean = true,
     val lastRefreshFailed: Boolean = false,
+    /** When the catalogue last synced. */
+    val lastUpdatedAt: Instant? = null,
     val confirmedPlanets: Int? = null,
     /** First discovery year of the "newest" list. */
     val newestSinceYear: Int = 0,
-)
+) {
+    val freshness: DataFreshness
+        get() = DataFreshness(lastUpdatedAt = lastUpdatedAt, isOffline = isOffline, lastRefreshFailed = lastRefreshFailed)
+}
