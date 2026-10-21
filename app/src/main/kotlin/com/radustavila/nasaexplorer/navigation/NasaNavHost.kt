@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.radustavila.nasaexplorer.R
 import com.radustavila.nasaexplorer.feature.debug.debugScreen
+import com.radustavila.nasaexplorer.feature.details.detailsPane
 import com.radustavila.nasaexplorer.feature.details.detailsScreen
 import com.radustavila.nasaexplorer.feature.details.navigateToDetails
 import com.radustavila.nasaexplorer.feature.earth.EarthTodayRoute
@@ -40,6 +41,8 @@ import com.radustavila.nasaexplorer.ui.hub.HubScreen
  *
  * Adding a feature screen means registering its `NavGraphBuilder` extension inside the graph of
  * the tab it belongs to (so that tab stays selected), or at the root for a full-screen detail.
+ * A list whose items have a detail screen also gets a [listDetail] host: on a window with room for
+ * two panes, the item opens beside the list instead of full screen.
  */
 @Composable
 fun NasaNavHost(
@@ -55,6 +58,11 @@ fun NasaNavHost(
             feedScreen(
                 onApodClick = navController::navigateToDetails,
                 header = todayHeader(navController),
+                listDetail = listDetail(
+                    openInPane = { date, navOptions -> navigateToDetails(date, navOptions) },
+                ) { pane, onBackClick ->
+                    detailsPane(onBackClick = onBackClick, onApodClick = pane::navigateToDetails)
+                },
             )
         }
 
@@ -63,6 +71,11 @@ fun NasaNavHost(
             galleryScreen(
                 onMediaClick = navController::navigateToNasaMedia,
                 header = universeHeader(navController),
+                listDetail = listDetail(
+                    openInPane = { nasaId, navOptions -> navigateToNasaMedia(nasaId, navOptions) },
+                ) { _, onBackClick ->
+                    nasaMediaDetailsScreen(onBackClick = onBackClick)
+                },
             )
             marsPhotosScreen(
                 onBackClick = navController::popBackStack,
@@ -71,6 +84,11 @@ fun NasaNavHost(
             exoplanetsScreen(
                 onBackClick = navController::popBackStack,
                 onExoplanetClick = navController::navigateToExoplanetDetails,
+                listDetail = listDetail(
+                    openInPane = { name, navOptions -> navigateToExoplanetDetails(name, navOptions) },
+                ) { _, onBackClick ->
+                    exoplanetDetailsScreen(onBackClick = onBackClick)
+                },
             )
             skyTonightScreen(onBackClick = navController::popBackStack)
         }
@@ -92,7 +110,19 @@ fun NasaNavHost(
         }
 
         navigation<FavoritesGraph>(startDestination = FavoritesRoute) {
-            favoritesScreen(onFavoriteClick = navController::openFavorite)
+            favoritesScreen(
+                onFavoriteClick = navController::openFavorite,
+                listDetail = listDetail(
+                    openInPane = { item, navOptions -> openFavorite(item, navOptions) },
+                    opensInPane = ::opensInFavoritesPane,
+                ) { pane, onBackClick ->
+                    // The pane hosts every screen a favourite opens in, except EPIC's.
+                    detailsPane(onBackClick = onBackClick, onApodClick = pane::navigateToDetails)
+                    nasaMediaDetailsScreen(onBackClick = onBackClick)
+                    exoplanetDetailsScreen(onBackClick = onBackClick)
+                    marsPhotoScreen(onBackClick = onBackClick)
+                },
+            )
         }
 
         navigation<MoreGraph>(startDestination = MoreHomeRoute) {

@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,6 +51,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.radustavila.nasaexplorer.core.designsystem.adaptive.PanelColumnMinWidth
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
@@ -227,15 +230,19 @@ private fun SkyList(
     onRemindersClick: () -> Unit,
 ) {
     val location = uiState.location
-    LazyColumn(
+    // One column on a phone held upright; side by side on wider windows (a phone in landscape
+    // included), each card as tall as it needs. The location spans the full width above them.
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(minSize = PanelColumnMinWidth),
         modifier = Modifier
             .fillMaxSize()
             .testTag(SKY_LIST_TEST_TAG),
         contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalItemSpacing = 12.dp,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         if (location == null) {
-            item(key = "prompt") {
+            item(key = "prompt", span = StaggeredGridItemSpan.FullLine) {
                 LocationPrompt(
                     isLocating = uiState.isLocating,
                     onUseMyLocation = onUseMyLocation,
@@ -243,7 +250,7 @@ private fun SkyList(
                 )
             }
         } else {
-            item(key = "location") {
+            item(key = "location", span = StaggeredGridItemSpan.FullLine) {
                 LocationHeader(
                     location = location,
                     isLocating = uiState.isLocating,
@@ -253,7 +260,7 @@ private fun SkyList(
             }
             val sky = uiState.sky
             if (sky == null) {
-                item(key = "computing") { Box(Modifier.padding(24.dp)) { LoadingState() } }
+                item(key = "computing", span = StaggeredGridItemSpan.FullLine) { Box(Modifier.padding(24.dp)) { LoadingState() } }
             } else {
                 item(key = "night") { NightCard(sky.night) }
                 item(key = "moon") { MoonCard(sky.moon, southernHemisphere = location.coordinate.latitude < 0) }

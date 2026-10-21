@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -36,6 +38,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.radustavila.nasaexplorer.core.designsystem.adaptive.CardColumnMinWidth
 import com.radustavila.nasaexplorer.core.designsystem.component.ApodCard
 import com.radustavila.nasaexplorer.core.model.Apod
 import java.time.LocalDate
@@ -111,21 +114,24 @@ internal fun SearchResults(
     onToggleFavorite: (Apod) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(
+    // Laid out like the feed: as many columns of cards as the width allows.
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = CardColumnMinWidth),
         modifier = modifier
             .fillMaxSize()
             .testTag(FEED_SEARCH_RESULTS_TEST_TAG),
         contentPadding = PaddingValues(all = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        item(key = "scope") { SearchScopeNotice() }
+        item(key = "scope", span = { GridItemSpan(maxLineSpan) }) { SearchScopeNotice() }
 
         when {
-            search.isBlank -> item(key = "hint") {
+            search.isBlank -> item(key = "hint", span = { GridItemSpan(maxLineSpan) }) {
                 SearchMessage(stringResource(R.string.feed_search_hint))
             }
 
-            search.hasNoResults -> item(key = "no-results") {
+            search.hasNoResults -> item(key = "no-results", span = { GridItemSpan(maxLineSpan) }) {
                 SearchMessage(stringResource(R.string.feed_search_no_results, search.query.trim()))
             }
 

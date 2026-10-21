@@ -55,7 +55,8 @@ Clean Architecture, dependencies pointing inward:
   `:core:designsystem` (theme, shared components like `ApodCard`/`NasaAsyncImage`, `AppError`→`UiError` mapping),
   `:core:map` (`SpaceMap` over MapLibre: GIBS imagery + MapLibre-free overlay API; the only module that sees MapLibre).
 - `:app` wires everything: nav host (one nested graph per tab: Today · Universe · Earth · Favourites · More) +
-  bottom bar, the registries features add one line to (`TodayCards.kt`, `UniverseHub.kt`/`EarthHub.kt`/`MoreHub.kt`,
+  `NavigationSuiteScaffold` (bar on compact width, rail from medium width or a landscape phone, drawer from 1600dp),
+  list-detail panes on expanded windows (`ListDetail.kt`, see below), the registries features add one line to (`TodayCards.kt`, `UniverseHub.kt`/`EarthHub.kt`/`MoreHub.kt`,
   `FavoriteNavigation.kt`), Hilt bindings for dispatchers/clock/HTTP config/`BuildConfig.DEBUG`,
   WorkManager `Configuration.Provider` (default initializer removed in the manifest).
 
@@ -66,6 +67,11 @@ Boundary rules the code relies on:
 - DTOs and Room entities stay in the data layer; only domain models cross upward. Exceptions stay in the data layer;
   only `AppError` crosses upward (via `safeNetworkCall { }` / the local data source wrapper — both must rethrow
   `CancellationException`). The UI only sees `UiError`.
+- Window size: `:app` computes `WindowAdaptiveInfo` once and provides `LocalWindowAdaptiveInfo` (`:core:designsystem`);
+  features read it there. Grids use `GridCells.Adaptive` with the widths in `designsystem/adaptive/AdaptiveLayout.kt`.
+- List-detail: a list destination takes a `ListDetailHost` (`:core:designsystem`) from its nav extension; `:app`
+  passes `listDetail(...)`, which opens items full screen while one pane fits and in a detail pane (its own nested
+  `NavHost` with the feature's type-safe detail routes) on expanded windows. Pane graphs must not declare deep links.
 - Contracts live in `:core:domain`; Hilt bindings live next to their implementations (`NasaDataModule`,
   `NotificationsModule`, `WidgetModule`, …). Inject dispatchers via `@Dispatcher(AppDispatcher.IO)`, never hardcode
   `Dispatchers.IO`. The Glance widget reads use cases through a Hilt `@EntryPoint`.
