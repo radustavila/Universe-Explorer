@@ -21,6 +21,10 @@ android {
 
     buildTypes {
         getByName("release") {
+            // No release keystore yet: release builds are signed with the debug key so they can be
+            // installed and checked (CI builds them too). The baseline profile plugin derives
+            // benchmarkRelease (debug-signed, profileable, minified like release) for benchmarks.
+            signingConfig = signingConfigs.getByName("debug")
             // MapLibre's native library is about 11 MB per ABI. 32-bit x86 devices are practically
             // gone, so release APKs leave it out; debug builds keep every ABI for any emulator.
             ndk {

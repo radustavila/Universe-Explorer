@@ -21,6 +21,11 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
             }
 
+            // :app's lint also analyses the modules it depends on, so cross-module issues (unused
+            // resources, missing translations) are judged against the whole app. Library modules
+            // only lint themselves.
+            lint.checkDependencies = true
+
             buildTypes {
                 getByName("release") {
                     isMinifyEnabled = true
