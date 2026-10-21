@@ -6,6 +6,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 import androidx.work.testing.TestListenableWorkerBuilder
+import androidx.work.workDataOf
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshSourceUseCase
@@ -50,6 +51,15 @@ class EpicSyncWorkerTest {
     }
 
     @Test
+    fun `a forced run downloads again while EPIC is fresh`() = runTest {
+        buildWorker().doWork()
+
+        buildWorker(force = true).doWork()
+
+        assertEquals(EpicCollection.entries + EpicCollection.entries, repository.refreshedCollections)
+    }
+
+    @Test
     fun `a transient failure asks WorkManager to retry`() = runTest {
         networkMonitor.setOnline(false)
 
@@ -75,9 +85,10 @@ class EpicSyncWorkerTest {
         assertTrue(buildWorker(runAttemptCount = 3).doWork() is ListenableWorker.Result.Failure)
     }
 
-    private fun buildWorker(runAttemptCount: Int = 0): EpicSyncWorker =
+    private fun buildWorker(runAttemptCount: Int = 0, force: Boolean = false): EpicSyncWorker =
         TestListenableWorkerBuilder<EpicSyncWorker>(ApplicationProvider.getApplicationContext())
             .setRunAttemptCount(runAttemptCount)
+            .setInputData(workDataOf(EpicSyncWorker.KEY_FORCE to force))
             .setWorkerFactory(
                 object : WorkerFactory() {
                     override fun createWorker(
