@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.MessageState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
@@ -240,6 +241,11 @@ private fun Rails(
             if (header != null) {
                 // The header draws its own side margins, so a rail in it can scroll edge to edge.
                 item(key = "header") { header() }
+            }
+            if (uiState.freshness.lastUpdatedAt != null) {
+                item(key = "freshness") {
+                    FreshnessLabel(uiState.freshness, modifier = Modifier.padding(horizontal = 16.dp))
+                }
             }
             items(items = uiState.rails, key = { it.rail.key }) { rail ->
                 RailSection(rail = rail, onMediaClick = onMediaClick)

@@ -11,6 +11,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.radustavila.nasaexplorer.core.designsystem.error.UiError
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.GalleryRail
 import com.radustavila.nasaexplorer.core.testing.data.TestNasaMedia
 import org.junit.Assert.assertEquals
@@ -19,6 +20,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.time.Instant
 
 @RunWith(RobolectricTestRunner::class)
 @Config(qualifiers = "w400dp-h800dp")
@@ -67,6 +69,18 @@ class GalleryScreenTest {
             .assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading))
         composeTestRule.onNodeWithText("Webb #0").assertIsDisplayed().performClick()
         assertEquals("Webb-0", opened)
+    }
+
+    @Test
+    fun `the rails say when they were last updated`() {
+        setContent(
+            GalleryUiState(
+                rails = listOf(RailUi(GalleryRail.NEBULAE, webb)),
+                freshness = DataFreshness(lastUpdatedAt = Instant.now().minusSeconds(5)),
+            ),
+        )
+
+        composeTestRule.onNodeWithText("Updated just now").assertIsDisplayed()
     }
 
     @Test
