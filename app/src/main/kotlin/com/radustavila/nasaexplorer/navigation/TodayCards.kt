@@ -9,6 +9,8 @@ import com.radustavila.nasaexplorer.feature.earth.EarthTodayCard
 import com.radustavila.nasaexplorer.feature.earthevents.RightNowOnEarthCard
 import com.radustavila.nasaexplorer.feature.earthevents.navigateToEarthEvents
 import com.radustavila.nasaexplorer.feature.launches.NextLaunchesCard
+import com.radustavila.nasaexplorer.feature.search.SearchLauncher
+import com.radustavila.nasaexplorer.feature.search.navigateToSearch
 import com.radustavila.nasaexplorer.ui.navigateToTopLevel
 
 /**
@@ -23,6 +25,7 @@ import com.radustavila.nasaexplorer.ui.navigateToTopLevel
  * they sit inside the feed's list.
  */
 internal fun todayCards(navController: NavHostController): List<@Composable () -> Unit> = listOf(
+    { SearchLauncher(onClick = { navController.navigateToSearch() }) }, // Universal search
     // Opens the Earth tab, whose first screen is Earth today, as if its tab had been tapped.
     { EarthTodayCard(onClick = { navController.navigateToTopLevel(TopLevelDestination.EARTH) }) }, // F4
     { RightNowOnEarthCard(onClick = { navController.navigateToEarthEvents() }) }, // F9

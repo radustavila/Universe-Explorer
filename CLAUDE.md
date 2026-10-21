@@ -102,6 +102,13 @@ Boundary rules the code relies on:
   `AppError.isRetryable`; `SyncErrorCodec` round-trips the `AppError` through WorkManager `Data`, and `WorkInfo` is
   mapped to `SyncState`. After success, `AnnounceLatestApodUseCase` refreshes the widget and posts the opt-in new-entry
   notification.
+- **Universal search is local-only.** `UniversalSearchUseCase` asks every `SearchableSource` (Hilt `@IntoSet`, one per
+  data module, fakes in `:core:testing`) concurrently, each with a time limit; a failing source only lands in
+  `failedSources`. `SearchText` holds the shared matching/ranking/highlight rules. `:app`'s `SearchNavigation.kt` maps
+  each `SearchTarget` to a route; online library search goes through the gallery (`GallerySearchRoute`).
+- `apod.nasa.gov/apod/apYYMMDD.html` and `astropix.html` open the app (unverified intent filter); `MainActivity`
+  rewrites them to `nasaexplorer://apod/{date}` and hands other pages back to the browser. Launcher shortcuts
+  (`res/xml/shortcuts.xml`) use the features' `nasaexplorer://` deep links.
 - **Pagination is by 7-day date windows**, not pages. `oldestRequestedDate` is persisted in DataStore; windows are
   clamped to `Apod.FIRST_PUBLICATION_DATE` (1995-06-16).
 

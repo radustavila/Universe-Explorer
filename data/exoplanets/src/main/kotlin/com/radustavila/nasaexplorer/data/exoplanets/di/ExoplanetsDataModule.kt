@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.radustavila.nasaexplorer.core.cache.CacheEvictor
 import com.radustavila.nasaexplorer.core.domain.repository.ExoplanetRepository
+import com.radustavila.nasaexplorer.core.domain.search.SearchableSource
 import com.radustavila.nasaexplorer.core.domain.sync.ExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.network.http.RetrofitFactory
 import com.radustavila.nasaexplorer.core.network.ratelimit.HostRateBudget
@@ -17,6 +18,7 @@ import com.radustavila.nasaexplorer.data.exoplanets.remote.ExoplanetArchiveServi
 import com.radustavila.nasaexplorer.data.exoplanets.remote.ExoplanetRemoteDataSource
 import com.radustavila.nasaexplorer.data.exoplanets.remote.RetrofitExoplanetRemoteDataSource
 import com.radustavila.nasaexplorer.data.exoplanets.repository.ExoplanetRepositoryImpl
+import com.radustavila.nasaexplorer.data.exoplanets.search.ExoplanetSearchableSource
 import com.radustavila.nasaexplorer.data.exoplanets.sync.WorkManagerExoplanetSyncScheduler
 import dagger.Binds
 import dagger.Module
@@ -56,6 +58,10 @@ interface ExoplanetsDataModule {
     @Binds
     @IntoSet
     fun bindExoplanetCacheEvictor(impl: ExoplanetCacheEvictor): CacheEvictor
+
+    @Binds
+    @IntoSet
+    fun bindExoplanetSearchableSource(impl: ExoplanetSearchableSource): SearchableSource
 }
 
 @Module

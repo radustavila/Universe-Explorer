@@ -25,14 +25,17 @@ import com.radustavila.nasaexplorer.feature.feed.feedScreen
 import com.radustavila.nasaexplorer.feature.mars.marsPhotoScreen
 import com.radustavila.nasaexplorer.feature.mars.marsPhotosScreen
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
+import com.radustavila.nasaexplorer.feature.search.searchScreen
 import com.radustavila.nasaexplorer.feature.sky.skyTonightScreen
 import com.radustavila.nasaexplorer.feature.spaceweather.navigateToSmallBody
 import com.radustavila.nasaexplorer.feature.spaceweather.neighbourhoodScreen
 import com.radustavila.nasaexplorer.feature.spaceweather.smallBodyScreen
 import com.radustavila.nasaexplorer.feature.spaceweather.spaceWeatherScreen
 import com.radustavila.nasaexplorer.feature.universe.GalleryRoute
+import com.radustavila.nasaexplorer.feature.universe.gallerySearchScreen
 import com.radustavila.nasaexplorer.feature.universe.galleryScreen
 import com.radustavila.nasaexplorer.feature.universe.nasaMediaDetailsScreen
+import com.radustavila.nasaexplorer.feature.universe.navigateToGallerySearch
 import com.radustavila.nasaexplorer.feature.universe.navigateToNasaMedia
 import com.radustavila.nasaexplorer.ui.hub.HubScreen
 
@@ -91,6 +94,14 @@ fun NasaNavHost(
                 },
             )
             skyTonightScreen(onBackClick = navController::popBackStack)
+            gallerySearchScreen(
+                onMediaClick = navController::navigateToNasaMedia,
+                listDetail = listDetail(
+                    openInPane = { nasaId, navOptions -> navigateToNasaMedia(nasaId, navOptions) },
+                ) { _, onBackClick ->
+                    nasaMediaDetailsScreen(onBackClick = onBackClick)
+                },
+            )
         }
 
         // Earth today is the tab's home; the tab's other features are listed below the rotation.
@@ -143,5 +154,10 @@ fun NasaNavHost(
         nasaMediaDetailsScreen(onBackClick = navController::popBackStack)
         marsPhotoScreen(onBackClick = navController::popBackStack)
         exoplanetDetailsScreen(onBackClick = navController::popBackStack)
+        searchScreen(
+            onBackClick = navController::popBackStack,
+            onResultClick = navController::openSearchTarget,
+            onSearchOnline = navController::navigateToGallerySearch,
+        )
     }
 }

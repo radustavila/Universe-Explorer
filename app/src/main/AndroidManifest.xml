@@ -24,6 +24,25 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!--
+              Pages of NASA's APOD site open on their day's details (MainActivity rewrites them to
+              the in-app deep link). The domain is not ours, so nothing can be verified; users opt
+              in under "Open by default". The pattern is broader than the two pages the app
+              shows, and anything else under it is handed straight back to the browser.
+            -->
+            <intent-filter android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+                <data android:scheme="http" />
+                <data android:host="apod.nasa.gov" />
+                <data android:path="/apod/astropix.html" />
+                <data android:pathPattern="/apod/ap.*\\.html" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
 
         <!--

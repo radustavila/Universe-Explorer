@@ -79,6 +79,7 @@ dependencies {
     implementation(projects.feature.exoplanets)
     implementation(projects.feature.sky)
     implementation(projects.feature.earth)
+    implementation(projects.feature.search)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
