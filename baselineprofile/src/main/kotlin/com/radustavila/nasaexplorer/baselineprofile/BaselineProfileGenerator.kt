@@ -13,8 +13,8 @@ import org.junit.runner.RunWith
  * ANDROID_SERIAL=emulator-5554 ./gradlew :app:generateBaselineProfile
  * ```
  *
- * The journey is a cold start to Today's cached feed, a scroll through it, and the other tabs'
- * first screens.
+ * The journey is a cold start to Today's cached feed, an entry's details, a scroll through the
+ * feed, and every other tab's first screen.
  */
 @RunWith(AndroidJUnit4::class)
 class BaselineProfileGenerator {
@@ -27,10 +27,12 @@ class BaselineProfileGenerator {
         pressHome()
         startActivityAndWait()
         waitForToday()
+        openDetails()
         scrollToday()
         openTab("Universe")
         openTab("Earth")
         openTab("Favorites")
+        openTab("More")
         openTab("Today")
     }
 }

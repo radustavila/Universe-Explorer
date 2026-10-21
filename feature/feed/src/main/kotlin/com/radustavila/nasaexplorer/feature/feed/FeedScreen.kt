@@ -86,6 +86,7 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 
 const val FEED_LIST_TEST_TAG = "feed-list"
+const val FEED_APOD_CARD_TEST_TAG = "feed-apod-card"
 const val FEED_CALENDAR_BUTTON_TEST_TAG = "feed-calendar-button"
 const val FEED_NOTIFICATIONS_BUTTON_TEST_TAG = "feed-notifications-button"
 const val FEED_SEARCH_BUTTON_TEST_TAG = "feed-search-button"
@@ -493,6 +494,7 @@ private fun FeedList(
                 apod = apod,
                 onClick = { onApodClick(apod.date) },
                 onToggleFavorite = { onToggleFavorite(apod) },
+                modifier = Modifier.testTag(FEED_APOD_CARD_TEST_TAG),
             )
         }
 
