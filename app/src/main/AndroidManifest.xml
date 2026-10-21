@@ -39,6 +39,20 @@
                 android:name="androidx.work.WorkManagerInitializer"
                 android:value="androidx.startup"
                 tools:node="remove" />
+            <!--
+              Both ran before the first frame of every cold start. OkHttp's set up its platform on
+              the main thread; NetworkModule hands it the context when the client is first built.
+              EmojiCompat downloaded and parsed an emoji font in the background while the first
+              screens composed; the system font draws the app's emoji.
+            -->
+            <meta-data
+                android:name="okhttp3.internal.platform.PlatformInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+            <meta-data
+                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
         </provider>
 
     </application>

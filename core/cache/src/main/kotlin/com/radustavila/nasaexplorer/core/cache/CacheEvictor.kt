@@ -14,7 +14,8 @@ import java.time.Instant
  *
  * Implementations own their retention rule ("rows older than N days") and must never delete a row
  * that is a favourite (see the `favorite` table), nor leave paging bookkeeping pointing at rows
- * they removed.
+ * they removed. The offline copies of favourite images under `filesDir/favorites` are not a cache
+ * and are off limits: they are deleted only with their favourite.
  */
 interface CacheEvictor {
 

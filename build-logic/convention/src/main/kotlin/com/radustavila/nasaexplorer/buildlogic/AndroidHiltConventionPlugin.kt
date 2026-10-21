@@ -10,7 +10,7 @@ class AndroidHiltConventionPlugin : Plugin<Project> {
 
         dependency("implementation", "hilt-android")
         dependency("ksp", "hilt-compiler")
-        dependency("testImplementation", "hilt-android-testing")
-        dependency("kspTest", "hilt-compiler")
+        // No unit test uses Hilt; a module whose tests need it adds hilt-android-testing and
+        // kspTest/kspAndroidTest itself (as :app does for its instrumented test).
     }
 }

@@ -51,6 +51,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -86,9 +87,12 @@ import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
 import com.radustavila.nasaexplorer.core.designsystem.component.VideoPlaceholder
 import com.radustavila.nasaexplorer.core.designsystem.component.ZoomableImageDialog
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
+import com.radustavila.nasaexplorer.core.designsystem.util.ShareContent
 import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
+import com.radustavila.nasaexplorer.core.designsystem.util.shareImageCard
 import com.radustavila.nasaexplorer.core.model.Apod
 import java.time.LocalDate
+import kotlinx.coroutines.launch
 
 const val DETAILS_CONTENT_TEST_TAG = "details-content"
 
@@ -200,7 +204,10 @@ private fun ApodDetails(
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
+    val scope = rememberCoroutineScope()
     val shareLabel = stringResource(R.string.details_share)
+    val shareCredit = apod.copyright?.let { stringResource(R.string.details_copyright, it) }
+    val shareSource = stringResource(R.string.details_share_source)
     val streamUrl = apod.streamUrl
 
     // A still image can be opened at full resolution; a player already shows its media at its
@@ -291,7 +298,9 @@ private fun ApodDetails(
             isFavorite = apod.isFavorite,
             onBackClick = onBackClick,
             onToggleFavorite = onToggleFavorite,
-            onShareClick = { context.shareApod(apod, shareLabel) },
+            onShareClick = {
+                scope.launch { context.shareImageCard(apod.shareContent(shareCredit, shareSource), shareLabel) }
+            },
         )
 
         ActionBar(
@@ -638,17 +647,16 @@ private fun Context.openUrl(url: String) {
     }
 }
 
-private fun Context.shareApod(apod: Apod, chooserTitle: String) {
-    val intent = Intent(Intent.ACTION_SEND).apply {
-        type = "text/plain"
-        putExtra(Intent.EXTRA_SUBJECT, apod.title)
-        putExtra(Intent.EXTRA_TEXT, "${apod.title}\n${apod.webPageUrl}")
-    }
-    try {
-        startActivity(Intent.createChooser(intent, chooserTitle))
-    } catch (_: ActivityNotFoundException) {
-        // No share targets installed.
-    }
+/** The picture as an image card, captioned with its title, date, credit and NASA page. */
+private fun Apod.shareContent(credit: String?, source: String): ShareContent {
+    val publishedOn = date.formatMedium()
+    return ShareContent(
+        title = title,
+        details = listOfNotNull(publishedOn, credit),
+        link = webPageUrl,
+        imageUrl = previewImageUrl,
+        cardSubtitle = "$publishedOn · $source",
+    )
 }
 
 private val SCRIM_COLOR = Color.Black.copy(alpha = 0.45f)

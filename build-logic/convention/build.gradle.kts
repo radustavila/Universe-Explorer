@@ -27,6 +27,10 @@ gradlePlugin {
             id = "nasaexplorer.android.library"
             implementationClass = "com.radustavila.nasaexplorer.buildlogic.AndroidLibraryConventionPlugin"
         }
+        register("androidTest") {
+            id = "nasaexplorer.android.test"
+            implementationClass = "com.radustavila.nasaexplorer.buildlogic.AndroidTestConventionPlugin"
+        }
         register("androidCompose") {
             id = "nasaexplorer.android.compose"
             implementationClass = "com.radustavila.nasaexplorer.buildlogic.AndroidComposeConventionPlugin"

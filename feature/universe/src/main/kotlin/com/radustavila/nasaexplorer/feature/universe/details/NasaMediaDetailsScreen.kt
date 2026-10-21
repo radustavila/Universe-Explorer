@@ -67,6 +67,7 @@ import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.component.ZoomableImageDialog
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
 import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
+import com.radustavila.nasaexplorer.core.designsystem.util.shareImageCard
 import com.radustavila.nasaexplorer.core.model.NasaMedia
 import com.radustavila.nasaexplorer.core.model.NasaMediaType
 import com.radustavila.nasaexplorer.feature.universe.R
@@ -111,6 +112,9 @@ internal fun NasaMediaDetailsContent(
     val errorMessage = (uiState as? NasaMediaDetailsUiState.Content)?.error?.asText()
     val downloadStarted = stringResource(R.string.media_details_download_started)
     val shareLabel = stringResource(R.string.media_details_share)
+    val shareSource = stringResource(R.string.media_details_share_source)
+    val shareCredit = (uiState as? NasaMediaDetailsUiState.Content)?.media?.creator
+        ?.let { stringResource(R.string.media_details_credit, it) }
 
     LaunchedEffect(errorMessage) {
         if (errorMessage != null) {
@@ -134,7 +138,12 @@ internal fun NasaMediaDetailsContent(
                 },
                 actions = {
                     if (uiState is NasaMediaDetailsUiState.Content) {
-                        IconButton(onClick = { context.shareNasaMedia(uiState.media, shareLabel) }) {
+                        IconButton(
+                            onClick = {
+                                val content = uiState.media.shareContent(shareCredit, shareSource)
+                                scope.launch { context.shareImageCard(content, shareLabel) }
+                            },
+                        ) {
                             Icon(Icons.Outlined.Share, contentDescription = shareLabel)
                         }
                         FavoriteButton(isFavorite = uiState.isFavorite, onToggle = onToggleFavorite)
