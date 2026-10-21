@@ -71,6 +71,7 @@ import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
 import com.radustavila.nasaexplorer.core.designsystem.component.ZoomableImageDialog
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
+import com.radustavila.nasaexplorer.core.designsystem.motion.rememberReducedMotion
 import com.radustavila.nasaexplorer.core.designsystem.theme.NasaTheme
 import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
 import com.radustavila.nasaexplorer.core.model.EpicCollection
@@ -286,6 +287,7 @@ private fun CollectionToggle(
  * over its thumbnail; tapping it opens the zoomable full-size view.
  *
  * Opened for one photo ([initialImageId], a favourite), it starts on that frame and holds still.
+ * With reduced motion (system animations removed) it also starts paused; play still works.
  */
 @Composable
 private fun EarthRotation(
@@ -298,7 +300,8 @@ private fun EarthRotation(
 ) {
     val initialPage = images.indexOfFirst { it.identifier == initialImageId }
     val pagerState = rememberPagerState(initialPage = initialPage.coerceAtLeast(0), pageCount = { images.size })
-    var isPlaying by rememberSaveable { mutableStateOf(autoPlay && initialPage < 0) }
+    val reducedMotion = rememberReducedMotion()
+    var isPlaying by rememberSaveable { mutableStateOf(autoPlay && initialPage < 0 && !reducedMotion) }
     var zoomedImage by remember { mutableStateOf<EpicImage?>(null) }
     val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
 

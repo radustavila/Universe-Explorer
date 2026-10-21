@@ -1,5 +1,7 @@
 package com.radustavila.nasaexplorer.feature.earth
 
+import android.content.Context
+import android.provider.Settings
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
@@ -11,6 +13,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.test.core.app.ApplicationProvider
 import com.radustavila.nasaexplorer.core.designsystem.component.RETRY_BUTTON_TEST_TAG
 import com.radustavila.nasaexplorer.core.model.EpicCollection
 import com.radustavila.nasaexplorer.core.model.EpicImage
@@ -127,6 +130,22 @@ class EarthTodayScreenTest {
         composeTestRule.onNodeWithText("Photo 3 of 3").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Play rotation").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Remove from favorites").assertIsDisplayed()
+    }
+
+    @Test
+    fun `with system animations removed the rotation starts paused`() {
+        Settings.Global.putFloat(
+            ApplicationProvider.getApplicationContext<Context>().contentResolver,
+            Settings.Global.ANIMATOR_DURATION_SCALE,
+            0f,
+        )
+        // Should the rotation start anyway, a frozen clock keeps it from spinning the test forever.
+        composeTestRule.mainClock.autoAdvance = false
+        setContent(EarthTodayUiState(images = TestEpicImages.day(size = 3)), autoPlayOverride = true)
+        composeTestRule.mainClock.advanceTimeByFrame()
+
+        composeTestRule.onNodeWithContentDescription("Play rotation").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Photo 1 of 3").assertIsDisplayed()
     }
 
     @Test

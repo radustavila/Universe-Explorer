@@ -51,7 +51,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
+import com.radustavila.nasaexplorer.core.designsystem.motion.rememberReducedMotion
 import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
+import com.radustavila.nasaexplorer.core.map.MapCamera
 import com.radustavila.nasaexplorer.core.map.SpaceMap
 import com.radustavila.nasaexplorer.core.map.TileLoadStatus
 import com.radustavila.nasaexplorer.core.map.gibs.GibsImagery
@@ -84,6 +86,7 @@ internal fun EarthEventsRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val mapState = rememberSpaceMapState()
     val context = LocalContext.current
+    val reducedMotion = rememberReducedMotion()
 
     EarthEventsScreen(
         uiState = uiState,
@@ -95,7 +98,12 @@ internal fun EarthEventsRoute(
         onEventDismissed = viewModel::onEventDismissed,
         onShowImagery = {
             uiState.selectedEvent?.let { event ->
-                mapState.animateTo(event.position, zoom = maxOf(mapState.camera.zoom, EVENT_IMAGERY_ZOOM))
+                val zoom = maxOf(mapState.camera.zoom, EVENT_IMAGERY_ZOOM)
+                if (reducedMotion) {
+                    mapState.moveTo(MapCamera(event.position, zoom))
+                } else {
+                    mapState.animateTo(event.position, zoom)
+                }
             }
             viewModel.onShowImagery()
         },

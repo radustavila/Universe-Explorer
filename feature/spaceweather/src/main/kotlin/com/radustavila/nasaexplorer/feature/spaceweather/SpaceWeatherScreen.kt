@@ -49,7 +49,9 @@ import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
+import com.radustavila.nasaexplorer.core.designsystem.motion.rememberReducedMotion
 import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
+import com.radustavila.nasaexplorer.core.map.MapCamera
 import com.radustavila.nasaexplorer.core.map.SpaceMap
 import com.radustavila.nasaexplorer.core.map.SpaceMapState
 import com.radustavila.nasaexplorer.core.map.overlay.GeoPoint
@@ -75,6 +77,7 @@ internal fun SpaceWeatherScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val initialCamera = remember { uiState.hemisphere.camera(uiState.alerts.longitude) }
     val mapState = rememberSpaceMapState(initialCamera)
+    val reducedMotion = rememberReducedMotion()
 
     SpaceWeatherContent(
         uiState = uiState,
@@ -82,7 +85,12 @@ internal fun SpaceWeatherScreen(
         onRefresh = viewModel::onRefresh,
         onHemisphereSelected = { hemisphere ->
             viewModel.onHemisphereSelected(hemisphere)
-            mapState.animateTo(hemisphere.camera(uiState.alerts.longitude).center, mapState.camera.zoom)
+            val center = hemisphere.camera(uiState.alerts.longitude).center
+            if (reducedMotion) {
+                mapState.moveTo(MapCamera(center, mapState.camera.zoom))
+            } else {
+                mapState.animateTo(center, mapState.camera.zoom)
+            }
         },
         onAlertsEnabledChange = viewModel::onAlertsEnabledChange,
         onAlertLocationChange = viewModel::onAlertLocationChange,
