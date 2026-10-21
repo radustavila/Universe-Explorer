@@ -29,8 +29,8 @@ import com.radustavila.nasaexplorer.feature.widget.widgetText
 @Composable
 internal fun SkyTonightWidgetContent(state: SkyTonightWidgetState, title: String, moon: Bitmap, openIntent: Intent?) {
     val size = LocalSize.current
-    val roomy = size.width >= WidgetSizes.Wide.width
-    val tall = size.height >= WidgetSizes.Large.height
+    val roomy = WidgetSizes.isWide(size)
+    val tall = WidgetSizes.isTall(size)
 
     Column(
         modifier = widgetFrame(openIntent)
@@ -45,7 +45,7 @@ internal fun SkyTonightWidgetContent(state: SkyTonightWidgetState, title: String
                 provider = ImageProvider(moon),
                 // The phase is spelled out next to it and in the widget's description.
                 contentDescription = null,
-                modifier = GlanceModifier.size(if (tall) 56.dp else 40.dp),
+                modifier = GlanceModifier.size(if (roomy) 56.dp else 44.dp),
             )
             Spacer(GlanceModifier.width(10.dp))
             Column {
@@ -55,14 +55,16 @@ internal fun SkyTonightWidgetContent(state: SkyTonightWidgetState, title: String
                     maxLines = 1,
                     style = widgetText(color = WidgetColors.SecondaryText, fontSize = 12.sp),
                 )
-                if (roomy || tall) {
-                    Text(
-                        text = state.nextFullMoon,
-                        maxLines = 1,
-                        style = widgetText(color = WidgetColors.SecondaryText, fontSize = 12.sp),
-                    )
-                }
             }
+        }
+        // Its own line, as wide as the widget: beside the Moon it would not fit a 2x2 square.
+        if (roomy || tall) {
+            Text(
+                text = state.nextFullMoon,
+                maxLines = 1,
+                style = widgetText(color = WidgetColors.SecondaryText, fontSize = 12.sp),
+                modifier = GlanceModifier.padding(top = 4.dp),
+            )
         }
         Spacer(GlanceModifier.height(if (tall) 12.dp else 6.dp))
         Text(

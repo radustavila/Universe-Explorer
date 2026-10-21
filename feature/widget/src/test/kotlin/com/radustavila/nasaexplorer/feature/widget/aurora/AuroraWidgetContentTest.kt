@@ -41,6 +41,16 @@ class AuroraWidgetContentTest {
     }
 
     @Test
+    fun `a 2x2 square has room for the peak and the local outlook`() = runGlanceAppWidgetUnitTest {
+        setAppWidgetSize(WidgetSizes.Square)
+        setContext(testContext)
+        provideComposable { AuroraWidgetContent(state, title = "Aurora · Kp", openIntent = null) }
+
+        onNode(hasText("Peak Kp 6 · 18:00")).assertExists()
+        onNode(hasText("40% aurora chance here")).assertExists()
+    }
+
+    @Test
     fun `the large widget adds the peak and the local outlook`() = runGlanceAppWidgetUnitTest {
         setAppWidgetSize(WidgetSizes.Large)
         setContext(testContext)

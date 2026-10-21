@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.data.launches.mapper
 import com.radustavila.nasaexplorer.core.model.Launch
 import com.radustavila.nasaexplorer.core.model.LaunchStatus
 import com.radustavila.nasaexplorer.data.launches.local.LaunchEntity
+import com.radustavila.nasaexplorer.data.launches.remote.dto.AgencyDto
 import com.radustavila.nasaexplorer.data.launches.remote.dto.LaunchDto
 import java.time.Instant
 import java.time.format.DateTimeParseException
@@ -27,7 +28,7 @@ fun LaunchDto.toEntityOrNull(): LaunchEntity? {
             .map(String::trim)
             .filter(String::isNotEmpty)
             .joinToString(separator = ", "),
-        provider = launchServiceProvider?.name?.trim()?.takeIf(String::isNotEmpty),
+        provider = launchServiceProvider?.displayName(),
         imageUrl = (image?.thumbnailUrl ?: image?.imageUrl)?.takeIf(String::isNotBlank),
         // LL2 lists the streams in its own priority order; the first one is the official webcast.
         livestreamUrl = vidUrls.firstNotNullOfOrNull { video -> video.url?.takeIf(String::isNotBlank) },
@@ -47,6 +48,18 @@ fun LaunchEntity.toDomain(): Launch = Launch(
     livestreamUrl = livestreamUrl,
     pageUrl = pageUrl,
 )
+
+/**
+ * The provider as a widget line can hold it: its name, or its abbreviation when the name is long
+ * ("China Aerospace Science and Technology Corporation" becomes "CASC").
+ */
+private fun AgencyDto.displayName(): String? {
+    val name = name?.trim()?.takeIf(String::isNotEmpty)
+    val abbrev = abbrev?.trim()?.takeIf(String::isNotEmpty)
+    return if (name != null && name.length > MAX_PROVIDER_NAME_LENGTH && abbrev != null) abbrev else name ?: abbrev
+}
+
+private const val MAX_PROVIDER_NAME_LENGTH = 24
 
 /**
  * A page for people: Space Launch Now, The Space Devs' own site on top of Launch Library 2. The API

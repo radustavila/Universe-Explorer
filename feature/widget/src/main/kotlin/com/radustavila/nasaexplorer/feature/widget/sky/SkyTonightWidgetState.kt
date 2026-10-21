@@ -58,7 +58,7 @@ internal fun skyTonightWidgetState(
         nextPass == null -> resources.getString(R.string.sky_widget_iss_no_visible)
         else -> resources.getString(
             R.string.sky_widget_iss_pass,
-            format.dayAndTime(nextPass.start, now),
+            format.weekdayAndTime(nextPass.start, now),
             nextPass.maxElevationDegrees.roundToInt(),
         )
     }

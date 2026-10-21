@@ -24,6 +24,7 @@ internal class WidgetFormat(
 ) {
     private val timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale)
     private val dayFormatter = DateTimeFormatter.ofPattern("EEE d MMM", locale)
+    private val weekdayFormatter = DateTimeFormatter.ofPattern("EEE", locale)
 
     fun time(instant: Instant): String = timeFormatter.format(instant.atZone(zone))
 
@@ -35,6 +36,17 @@ internal class WidgetFormat(
             time(instant)
         } else {
             "${day(instant)} ${time(instant)}"
+        }
+
+    /**
+     * Shorter, for times within the coming week that a small widget must fit on one line: just the
+     * time on [now]'s day, the weekday and time otherwise ("Thu 05:13").
+     */
+    fun weekdayAndTime(instant: Instant, now: Instant): String =
+        if (instant.atZone(zone).toLocalDate() == now.atZone(zone).toLocalDate()) {
+            time(instant)
+        } else {
+            "${weekdayFormatter.format(instant.atZone(zone))} ${time(instant)}"
         }
 
     fun decimal(value: Double, fractionDigits: Int): String = NumberFormat.getNumberInstance(locale).apply {

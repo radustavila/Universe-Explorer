@@ -45,6 +45,7 @@
     <string name="next_launch_widget_title">Next launch</string>
     <string name="next_launch_widget_empty">No launches yet. Open NASA Explorer online to load upcoming launches.</string>
     <string name="next_launch_widget_liftoff_time">Lift-off time</string>
+    <string name="next_launch_widget_t_minus" translatable="false">T−</string>
     <string name="next_launch_widget_net_description">Target %1$s, %2$s</string>
     <string name="next_launch_widget_status_go">Go</string>
     <string name="next_launch_widget_status_tbc">TBC</string>

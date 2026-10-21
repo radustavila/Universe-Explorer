@@ -4,6 +4,7 @@ import com.radustavila.nasaexplorer.core.model.LaunchStatus
 import com.radustavila.nasaexplorer.core.testing.http.Fixtures
 import com.radustavila.nasaexplorer.data.launches.mapper.toDomain
 import com.radustavila.nasaexplorer.data.launches.mapper.toEntityOrNull
+import com.radustavila.nasaexplorer.data.launches.remote.dto.AgencyDto
 import com.radustavila.nasaexplorer.data.launches.remote.dto.LaunchDto
 import com.radustavila.nasaexplorer.data.launches.remote.dto.LaunchListDto
 import java.time.Instant
@@ -60,6 +61,16 @@ class LaunchDtoTest {
 
         assertNull(noStream.livestreamUrl)
         assertEquals(noStream.pageUrl, noStream.linkUrl)
+    }
+
+    @Test
+    fun `a long provider name gives way to its abbreviation`() {
+        val dto = LaunchDto(id = "a", url = "https://ll/a/", name = "Rocket | Mission", net = "2026-10-19T10:30:00Z")
+        val casc = AgencyDto(name = "China Aerospace Science and Technology Corporation", abbrev = "CASC")
+
+        assertEquals("CASC", dto.copy(launchServiceProvider = casc).toEntityOrNull()?.provider)
+        assertEquals("SpaceX", dto.copy(launchServiceProvider = AgencyDto("SpaceX", "SpX")).toEntityOrNull()?.provider)
+        assertEquals(casc.name, dto.copy(launchServiceProvider = casc.copy(abbrev = null)).toEntityOrNull()?.provider)
     }
 
     @Test

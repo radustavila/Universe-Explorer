@@ -42,11 +42,11 @@ class SkyTonightWidgetStateTest {
         assertEquals("58% lit", state.illumination)
         assertEquals("Full moon Mon 26 Oct", state.nextFullMoon)
         assertEquals("Bucharest", state.placeName)
-        assertEquals("ISS Tue 20 Oct 02:07 · up to 62°", state.iss)
+        assertEquals("ISS Tue 02:07 · up to 62°", state.iss)
         assertTrue(state.hasIssPass)
         assertFalse(state.southernHemisphere)
         assertEquals(
-            "First quarter. 58% lit. Full moon Mon 26 Oct. ISS Tue 20 Oct 02:07 · up to 62°",
+            "First quarter. 58% lit. Full moon Mon 26 Oct. ISS Tue 02:07 · up to 62°",
             state.contentDescription,
         )
     }

@@ -41,7 +41,7 @@ internal fun NextLaunchWidgetContent(
     openIntent: Intent?,
     liveCountdown: Boolean = true,
 ) {
-    val tall = LocalSize.current.height >= WidgetSizes.Large.height
+    val tall = WidgetSizes.isTall(LocalSize.current)
 
     Column(
         modifier = widgetFrame(openIntent)
@@ -90,7 +90,11 @@ internal fun NextLaunchWidgetContent(
     }
 }
 
-/** A countdown to [target] that the launcher ticks every second; Glance cannot redraw that often. */
+/**
+ * "T−" and a countdown to [target] that the launcher ticks every second; Glance cannot redraw that
+ * often. The embedded views get an explicit height: left to themselves they take the rest of the
+ * column and push the lines below out of the widget.
+ */
 @Composable
 private fun LiveCountdown(target: Instant) {
     val context = LocalContext.current
@@ -100,5 +104,14 @@ private fun LiveCountdown(target: Instant) {
         setChronometer(R.id.next_launch_countdown, base, null, true)
         setChronometerCountDown(R.id.next_launch_countdown, true)
     }
-    AndroidRemoteViews(remoteViews = countdown)
+    Row(modifier = GlanceModifier.height(COUNTDOWN_HEIGHT), verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = context.getString(R.string.next_launch_widget_t_minus),
+            maxLines = 1,
+            style = widgetText(color = WidgetColors.Accent, fontSize = 22.sp, bold = true),
+        )
+        AndroidRemoteViews(remoteViews = countdown, modifier = GlanceModifier.height(COUNTDOWN_HEIGHT))
+    }
 }
+
+private val COUNTDOWN_HEIGHT = 32.dp

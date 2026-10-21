@@ -35,8 +35,8 @@ import com.radustavila.nasaexplorer.feature.widget.widgetText
 @Composable
 internal fun AuroraWidgetContent(state: AuroraWidgetState, title: String, openIntent: Intent?) {
     val size = LocalSize.current
-    val roomy = size.width >= WidgetSizes.Wide.width
-    val tall = size.height >= WidgetSizes.Large.height
+    val roomy = WidgetSizes.isWide(size)
+    val tall = WidgetSizes.isTall(size)
     val numberColor = if (state.isStale) WidgetColors.SecondaryText else kpColor(state.level)
 
     Column(
@@ -75,22 +75,29 @@ internal fun AuroraWidgetContent(state: AuroraWidgetState, title: String, openIn
     }
 }
 
-/** Ten segments, Kp 0 to 9, lit in their colours up to the current level. */
+/**
+ * Ten segments, Kp 0 to 9, lit in their colours up to the current level.
+ *
+ * Glance drops a Row's children past the tenth, so the gaps are each segment's padding rather than
+ * spacers between them: the padding belongs to an outer box, since a background covers its own
+ * view's padding.
+ */
 @Composable
 private fun KpScale(level: Int, availableWidth: Dp) {
     val gap = 2.dp
     val segment = ((availableWidth - gap * Kp.MAX) / (Kp.MAX + 1)).coerceIn(6.dp, 22.dp)
     Row(modifier = GlanceModifier.fillMaxWidth()) {
         for (kp in 0..Kp.MAX) {
-            if (kp > 0) Spacer(GlanceModifier.width(gap))
-            Box(
-                modifier = GlanceModifier
-                    .width(segment)
-                    .height(6.dp)
-                    .cornerRadius(3.dp)
-                    .background(if (kp <= level) kpColor(kp) else WidgetColors.Outline),
-                content = {},
-            )
+            Box(modifier = GlanceModifier.padding(end = if (kp < Kp.MAX) gap else 0.dp)) {
+                Box(
+                    modifier = GlanceModifier
+                        .width(segment)
+                        .height(6.dp)
+                        .cornerRadius(3.dp)
+                        .background(if (kp <= level) kpColor(kp) else WidgetColors.Outline),
+                    content = {},
+                )
+            }
         }
     }
 }

@@ -20,6 +20,12 @@ class WidgetFormatTest {
     }
 
     @Test
+    fun `times within the week can drop the date`() {
+        assertEquals("21:43", format.weekdayAndTime(Instant.parse("2026-10-19T21:43:00Z"), now))
+        assertEquals("Tue 02:07", format.weekdayAndTime(Instant.parse("2026-10-20T02:07:31Z"), now))
+    }
+
+    @Test
     fun `the countdown has minutes under a day and hours beyond`() {
         assertEquals("in 7 m", format.timeUntil(now.plus(Duration.ofMinutes(7)), now))
         assertEquals("in 3 h 20 m", format.timeUntil(now.plus(Duration.ofMinutes(200)), now))

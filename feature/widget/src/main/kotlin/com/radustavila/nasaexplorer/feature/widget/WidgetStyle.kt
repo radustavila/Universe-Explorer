@@ -40,15 +40,22 @@ internal object WidgetColors {
 }
 
 /**
- * The size buckets the data widgets lay themselves out for (see `SizeMode.Responsive`): a 2x2 cell
- * square, the same stretched wide, and wide with room for extra lines.
+ * The size buckets the data widgets lay themselves out for (see `SizeMode.Responsive`): the
+ * smallest square, a roomier square (a 2x2 cell widget on most phones), wide, and wide with room
+ * for extra lines. Content asks [isTall] and [isWide] rather than comparing sizes itself.
  */
 internal object WidgetSizes {
     val Small = DpSize(110.dp, 110.dp)
+    val Square = DpSize(150.dp, 150.dp)
     val Wide = DpSize(220.dp, 110.dp)
     val Large = DpSize(220.dp, 180.dp)
 
-    val all = setOf(Small, Wide, Large)
+    val all = setOf(Small, Square, Wide, Large)
+
+    /** Room for the extra lines below the main reading. */
+    fun isTall(size: DpSize): Boolean = size.height >= Square.height
+
+    fun isWide(size: DpSize): Boolean = size.width >= Wide.width
 }
 
 internal fun widgetText(

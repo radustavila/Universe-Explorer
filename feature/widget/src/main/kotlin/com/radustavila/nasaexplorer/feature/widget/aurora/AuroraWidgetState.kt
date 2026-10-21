@@ -70,7 +70,7 @@ internal fun auroraWidgetState(
         .maxByOrNull { it.kp }
     val peak = peakSlot?.let { slot ->
         val time = if (slot.start.isAfter(now)) {
-            format.dayAndTime(slot.start, now)
+            format.weekdayAndTime(slot.start, now)
         } else {
             resources.getString(R.string.aurora_widget_now)
         }
