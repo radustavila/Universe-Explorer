@@ -68,6 +68,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.ApodCard
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
@@ -427,12 +428,13 @@ private fun FeedList(
     // of view. Until the reader scrolls the list themselves, it is kept at its top.
     var headerHeight by remember { mutableIntStateOf(0) }
     var onThisDayHeight by remember { mutableIntStateOf(0) }
+    var freshnessHeight by remember { mutableIntStateOf(0) }
     var hasReaderScrolled by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(listState) {
         listState.interactionSource.interactions.filterIsInstance<DragInteraction.Start>().first()
         hasReaderScrolled = true
     }
-    LaunchedEffect(headerHeight, onThisDayHeight) {
+    LaunchedEffect(headerHeight, onThisDayHeight, freshnessHeight) {
         if (!hasReaderScrolled) listState.scrollToItem(0)
     }
 
@@ -468,6 +470,15 @@ private fun FeedList(
                     entries = uiState.onThisDay,
                     onApodClick = onApodClick,
                     modifier = Modifier.onSizeChanged { size -> onThisDayHeight = size.height },
+                )
+            }
+        }
+
+        if (uiState.freshness.lastUpdatedAt != null) {
+            item(key = "freshness", contentType = "freshness") {
+                FreshnessLabel(
+                    freshness = uiState.freshness,
+                    modifier = Modifier.onSizeChanged { size -> freshnessHeight = size.height },
                 )
             }
         }
