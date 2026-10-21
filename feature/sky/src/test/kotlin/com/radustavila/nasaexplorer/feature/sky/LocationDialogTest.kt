@@ -2,6 +2,7 @@ package com.radustavila.nasaexplorer.feature.sky
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -11,6 +12,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
 import com.radustavila.nasaexplorer.core.model.City
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
@@ -70,7 +72,7 @@ class LocationDialogTest {
         val city = City("Bucharest", "Romania", TestSky.BUCHAREST)
         setDialog(CitySearchUiState(query = "", results = listOf(city)))
 
-        composeTestRule.onNodeWithText("Bucharest").performClick()
+        composeTestRule.onNodeWithText("Bucharest").assertHeightIsAtLeast(48.dp).performClick()
 
         assertEquals(listOf(city), picked)
     }

@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertTouchHeightIsEqualTo
+import androidx.compose.ui.test.assertTouchWidthIsEqualTo
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -15,6 +17,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeDown
+import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider
 import com.radustavila.nasaexplorer.core.designsystem.component.RETRY_BUTTON_TEST_TAG
 import com.radustavila.nasaexplorer.core.model.DataFreshness
@@ -150,6 +153,16 @@ class EarthTodayScreenTest {
 
         composeTestRule.onNodeWithContentDescription("Play rotation").assertIsDisplayed()
         composeTestRule.onNodeWithText("Photo 1 of 3").assertIsDisplayed()
+    }
+
+    @Test
+    fun `the play button and the heart are 48 dp to touch`() {
+        setContent(EarthTodayUiState(images = TestEpicImages.day(size = 3)))
+
+        composeTestRule.onNodeWithTag(EARTH_PLAY_BUTTON_TEST_TAG).assertTouchHeightIsEqualTo(48.dp)
+            .assertTouchWidthIsEqualTo(48.dp)
+        composeTestRule.onNodeWithContentDescription("Add to favorites").assertTouchHeightIsEqualTo(48.dp)
+            .assertTouchWidthIsEqualTo(48.dp)
     }
 
     @Test
