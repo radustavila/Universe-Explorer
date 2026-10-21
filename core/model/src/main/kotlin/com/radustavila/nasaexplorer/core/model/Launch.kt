@@ -17,6 +17,8 @@ data class Launch(
     val status: LaunchStatus,
     val rocket: String,
     val pad: String,
+    /** Who flies it, e.g. "SpaceX"; null when Launch Library 2 does not say. */
+    val provider: String? = null,
     val imageUrl: String? = null,
     /** First livestream listed for the launch, if any is announced yet. */
     val livestreamUrl: String? = null,

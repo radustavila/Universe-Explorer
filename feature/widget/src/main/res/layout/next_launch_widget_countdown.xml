@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The launcher ticks this countdown by itself every second, which Glance composables cannot do.
+  NextLaunchWidgetContent embeds it through AndroidRemoteViews and sets its base; the widget's own
+  content description already reads the countdown, so the ticking text is hidden from TalkBack.
+-->
+<Chronometer xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/next_launch_countdown"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:importantForAccessibility="no"
+    android:singleLine="true"
+    android:textColor="#FFCFC2FF"
+    android:textSize="22sp"
+    android:textStyle="bold" />

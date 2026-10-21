@@ -12,3 +12,6 @@ sealed interface SourceRefreshResult<out T> {
     /** The source was not due (its interval or a rate-limit cooldown); nothing was called. */
     data class Skipped(val nextAllowedRefreshAt: Instant) : SourceRefreshResult<Nothing>
 }
+
+/** The refresh ran and succeeded, i.e. the cache holds new data. */
+fun SourceRefreshResult<*>.succeeded(): Boolean = this is SourceRefreshResult.Completed && result.isSuccess

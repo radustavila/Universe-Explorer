@@ -28,6 +28,7 @@ data class LaunchDto(
     val image: LaunchImageDto? = null,
     val rocket: RocketDto? = null,
     val pad: PadDto? = null,
+    @SerialName("launch_service_provider") val launchServiceProvider: AgencyDto? = null,
     /** Only present in `detailed` mode, which is why the app asks for it. */
     @SerialName("vid_urls") val vidUrls: List<VidUrlDto> = emptyList(),
 )
@@ -65,6 +66,12 @@ data class PadDto(
 @Serializable
 data class PadLocationDto(
     val name: String? = null,
+)
+
+@Serializable
+data class AgencyDto(
+    val name: String? = null,
+    val abbrev: String? = null,
 )
 
 @Serializable

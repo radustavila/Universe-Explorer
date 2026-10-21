@@ -146,6 +146,13 @@
           "total_landing_count": 83
         }
       },
+      "launch_service_provider": {
+        "response_mode": "list",
+        "id": 121,
+        "url": "https://lldev.thespacedevs.com/2.3.0/agencies/121/",
+        "name": "SpaceX",
+        "abbrev": "SpX"
+      },
       "webcast_live": false,
       "orbital_launch_attempt_count": 7417,
       "location_launch_attempt_count": 1132,

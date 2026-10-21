@@ -17,6 +17,8 @@ data class LaunchEntity(
     @ColumnInfo(name = "status_id") val statusId: Int,
     val rocket: String,
     val pad: String,
+    /** Launch service provider's name; null when the API omits it. */
+    val provider: String?,
     @ColumnInfo(name = "image_url") val imageUrl: String?,
     @ColumnInfo(name = "livestream_url") val livestreamUrl: String?,
     @ColumnInfo(name = "page_url") val pageUrl: String,

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The Kp 0–9 colour scale lit up to Kp 4, as AuroraWidgetContent draws it. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="148dp"
+    android:height="6dp"
+    android:viewportWidth="148"
+    android:viewportHeight="6">
+    <path android:fillColor="#FF4CAF50" android:pathData="M3,0h7a3,3 0,0 1,0 6h-7a3,3 0,0 1,0 -6z" />
+    <path android:fillColor="#FF4CAF50" android:pathData="M18,0h7a3,3 0,0 1,0 6h-7a3,3 0,0 1,0 -6z" />
+    <path android:fillColor="#FF4CAF50" android:pathData="M33,0h7a3,3 0,0 1,0 6h-7a3,3 0,0 1,0 -6z" />
+    <path android:fillColor="#FF8BC34A" android:pathData="M48,0h7a3,3 0,0 1,0 6h-7a3,3 0,0 1,0 -6z" />
+    <path android:fillColor="#FFCDDC39" android:pathData="M63,0h7a3,3 0,0 1,0 6h-7a3,3 0,0 1,0 -6z" />
+    <path android:fillColor="#FF2B2B38" android:pathData="M78,0h7a3,3 0,0 1,0 6h-7a3,3 0,0 1,0 -6z" />
+    <path android:fillColor="#FF2B2B38" android:pathData="M93,0h7a3,3 0,0 1,0 6h-7a3,3 0,0 1,0 -6z" />
+    <path android:fillColor="#FF2B2B38" android:pathData="M108,0h7a3,3 0,0 1,0 6h-7a3,3 0,0 1,0 -6z" />
+    <path android:fillColor="#FF2B2B38" android:pathData="M123,0h7a3,3 0,0 1,0 6h-7a3,3 0,0 1,0 -6z" />
+    <path android:fillColor="#FF2B2B38" android:pathData="M138,0h7a3,3 0,0 1,0 6h-7a3,3 0,0 1,0 -6z" />
+</vector>

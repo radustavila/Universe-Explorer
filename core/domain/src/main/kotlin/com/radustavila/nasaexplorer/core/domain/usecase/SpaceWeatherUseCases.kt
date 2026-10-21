@@ -2,10 +2,13 @@ package com.radustavila.nasaexplorer.core.domain.usecase
 
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.common.time.TimeProvider
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidget
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.domain.repository.SpaceWeatherRepository
 import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepository
 import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
 import com.radustavila.nasaexplorer.core.domain.sync.SpaceWeatherSyncScheduler
+import com.radustavila.nasaexplorer.core.domain.sync.succeeded
 import com.radustavila.nasaexplorer.core.model.AuroraForecast
 import com.radustavila.nasaexplorer.core.model.CoronalMassEjection
 import com.radustavila.nasaexplorer.core.model.CurrentKp
@@ -55,6 +58,8 @@ class ObserveSolarActivityUseCase @Inject constructor(
  * - DONKI ([SyncSource.DONKI]) changes far less often: at most once per [SOLAR_ACTIVITY_INTERVAL].
  * - Aurora alerts are checked against the cached forecast after every run, refreshed or not.
  * - NOAA and DONKI, and Kp and the aurora grid, are fetched concurrently.
+ * - A successful NOAA refresh re-renders the aurora widget, the only way it gets fresh data: it has
+ *   no job of its own.
  *
  * Returns the NOAA outcome, which decides whether the job retries.
  */
@@ -62,6 +67,7 @@ class SynchronizeSpaceWeatherUseCase @Inject constructor(
     private val repository: SpaceWeatherRepository,
     private val refreshSource: RefreshSourceUseCase,
     private val checkAuroraAlert: CheckAuroraAlertUseCase,
+    private val widgetUpdater: HomeWidgetUpdater,
     private val timeProvider: TimeProvider,
 ) {
     suspend operator fun invoke(force: Boolean = false, includeAuroraMap: Boolean = false): SourceRefreshResult<Unit> =
@@ -75,6 +81,7 @@ class SynchronizeSpaceWeatherUseCase @Inject constructor(
             val noaa = refreshNoaa(force, includeAuroraMap)
             // Needs the fresh Kp only, not the solar activity.
             checkAuroraAlert()
+            if (noaa.succeeded()) widgetUpdater.update(HomeWidget.AURORA)
             donki.await()
             noaa
         }

@@ -26,6 +26,7 @@ import com.radustavila.nasaexplorer.core.model.LocationSource
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.fake.FakeCityDirectory
 import com.radustavila.nasaexplorer.core.testing.fake.FakeDeviceLocationProvider
+import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeIssPassReminderScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
@@ -177,7 +178,7 @@ class SkyTonightViewModelTest {
     private fun createViewModel(): SkyTonightViewModel {
         val dispatcher = mainDispatcherRule.testDispatcher
         val refreshSource = RefreshSourceUseCase(metadata, clock)
-        val refreshElements = RefreshOrbitalElementsUseCase(satellites, refreshSource)
+        val refreshElements = RefreshOrbitalElementsUseCase(satellites, refreshSource, FakeHomeWidgetUpdater())
         val reschedule = RescheduleIssPassReminderUseCase(preferences, location, satellites, predictor, scheduler, clock)
         return SkyTonightViewModel(
             observeLocation = ObserveObserverLocationUseCase(location),
@@ -187,8 +188,8 @@ class SkyTonightViewModelTest {
             observePeople = ObservePeopleInSpaceUseCase(people),
             observeReminders = ObserveIssPassRemindersEnabledUseCase(preferences),
             observeConnectivity = ObserveConnectivityUseCase(network),
-            locateDevice = LocateDeviceUseCase(deviceLocation, location),
-            setManualLocation = SetManualLocationUseCase(location),
+            locateDevice = LocateDeviceUseCase(deviceLocation, location, FakeHomeWidgetUpdater()),
+            setManualLocation = SetManualLocationUseCase(location, FakeHomeWidgetUpdater()),
             searchCities = SearchCitiesUseCase(cities),
             refreshElements = refreshElements,
             refreshPeople = RefreshPeopleInSpaceUseCase(people, metadata, clock, refreshSource),

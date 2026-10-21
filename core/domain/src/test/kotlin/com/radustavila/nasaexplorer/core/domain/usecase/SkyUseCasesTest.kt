@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.core.domain.usecase
 import app.cash.turbine.test
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidget
 import com.radustavila.nasaexplorer.core.domain.location.DeviceLocationResult
 import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
@@ -10,6 +11,7 @@ import com.radustavila.nasaexplorer.core.model.LocationSource
 import com.radustavila.nasaexplorer.core.model.SyncSource
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.fake.FakeDeviceLocationProvider
+import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakePeopleInSpaceRepository
@@ -36,6 +38,7 @@ class SkyUseCasesTest {
     private val refreshSource = RefreshSourceUseCase(metadata, clock)
     private val satellites = FakeSatelliteRepository()
     private val predictor = FakeSatellitePassPredictor(passes = listOf(TestSky.pass()))
+    private val widgets = FakeHomeWidgetUpdater()
 
     @Test
     fun `a device fix is saved coarsely, a denial saves nothing`() = runTest {
@@ -45,14 +48,14 @@ class SkyUseCasesTest {
             result = DeviceLocationResult.Located(GeoCoordinate(44.426812, 26.102538)),
         )
 
-        LocateDeviceUseCase(provider, repository)()
+        LocateDeviceUseCase(provider, repository, widgets)()
 
         assertEquals(GeoCoordinate(44.43, 26.1), repository.current?.coordinate)
         assertEquals(LocationSource.DEVICE, repository.current?.source)
 
         repository.clearLocation()
         provider.permissionGranted = false
-        assertEquals(DeviceLocationResult.PermissionDenied, LocateDeviceUseCase(provider, repository)())
+        assertEquals(DeviceLocationResult.PermissionDenied, LocateDeviceUseCase(provider, repository, widgets)())
         assertNull(repository.current)
     }
 
@@ -126,7 +129,7 @@ class SkyUseCasesTest {
 
     @Test
     fun `orbital elements refresh at most twice a day`() = runTest {
-        val refresh = RefreshOrbitalElementsUseCase(satellites, refreshSource)
+        val refresh = RefreshOrbitalElementsUseCase(satellites, refreshSource, widgets)
 
         refresh()
         val skipped = refresh()
@@ -139,7 +142,7 @@ class SkyUseCasesTest {
     @Test
     fun `an offline refresh is attempted, recorded and leaves the source due`() = runTest {
         satellites.refreshResult = DataResult.Failure(AppError.NoConnection)
-        val refresh = RefreshOrbitalElementsUseCase(satellites, refreshSource)
+        val refresh = RefreshOrbitalElementsUseCase(satellites, refreshSource, widgets)
 
         assertEquals(SourceRefreshResult.Completed(DataResult.Failure(AppError.NoConnection)), refresh())
         refresh()
@@ -175,5 +178,37 @@ class SkyUseCasesTest {
         refresh()
 
         assertEquals(2, people.refreshCallCount)
+    }
+
+    @Test
+    fun `a new place re-renders the widgets that depend on it`() = runTest {
+        val repository = FakeObserverLocationRepository()
+        val provider = FakeDeviceLocationProvider(
+            permissionGranted = true,
+            result = DeviceLocationResult.Located(GeoCoordinate(44.43, 26.1)),
+        )
+
+        LocateDeviceUseCase(provider, repository, widgets)()
+        SetManualLocationUseCase(repository, widgets)(GeoCoordinate(60.17, 24.94), "Helsinki")
+
+        val forOnePlace = listOf(HomeWidget.SKY_TONIGHT, HomeWidget.AURORA)
+        assertEquals(forOnePlace + forOnePlace, widgets.updated)
+
+        provider.permissionGranted = false
+        LocateDeviceUseCase(provider, repository, widgets)()
+        assertEquals(4, widgets.updated.size)
+    }
+
+    @Test
+    fun `new orbital elements re-render the sky widget, a skipped or failed refresh does not`() = runTest {
+        val refresh = RefreshOrbitalElementsUseCase(satellites, refreshSource, widgets)
+
+        refresh()
+        refresh()
+        assertEquals(listOf(HomeWidget.SKY_TONIGHT), widgets.updated)
+
+        satellites.refreshResult = DataResult.Failure(AppError.NoConnection)
+        refresh(force = true)
+        assertEquals(1, widgets.updated.size)
     }
 }

@@ -14,8 +14,9 @@ import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeApodsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeUpcomingLaunchesUseCase
 import com.radustavila.nasaexplorer.core.testing.data.TestApods
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
-import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLatestApodWidgetUpdater
+import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNewApodNotifier
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
@@ -214,6 +215,7 @@ class ApodSyncWorkerTest {
                             launchRepository = launchRepository,
                             networkMonitor = networkMonitor,
                             refreshSource = RefreshSourceUseCase(metadata, FakeTimeProvider()),
+                            widgetUpdater = FakeHomeWidgetUpdater(),
                         ),
                         applyDailyWallpaper = ApplyDailyWallpaperUseCase(
                             apodRepository = repository,

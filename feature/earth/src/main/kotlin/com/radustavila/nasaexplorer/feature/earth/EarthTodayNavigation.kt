@@ -5,7 +5,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
+import com.radustavila.nasaexplorer.core.model.EarthTodayDeepLink
 import com.radustavila.nasaexplorer.core.model.EpicPhotoRef
 import kotlinx.serialization.Serializable
 
@@ -37,12 +39,16 @@ fun NavController.navigateToEpicPhoto(ref: EpicPhotoRef, navOptions: NavOptions?
  * screen; as the tab's start screen it has nowhere to go back to.
  * @param footer content below the rotation on the tab's start screen, such as entries leading to
  * the tab's other features. `:app` supplies it, so this module depends on none of them.
+ *
+ * The Earth today widget opens the newest day through [EarthTodayDeepLink].
  */
 fun NavGraphBuilder.earthTodayScreen(
     onBackClick: () -> Unit,
     footer: (@Composable () -> Unit)? = null,
 ) {
-    composable<EarthTodayRoute> { entry ->
+    composable<EarthTodayRoute>(
+        deepLinks = listOf(navDeepLink { uriPattern = EarthTodayDeepLink.URI }),
+    ) { entry ->
         val isPhotoLink = entry.toRoute<EarthTodayRoute>().imageId != null
         EarthTodayScreen(
             onBackClick = onBackClick.takeIf { isPhotoLink },
