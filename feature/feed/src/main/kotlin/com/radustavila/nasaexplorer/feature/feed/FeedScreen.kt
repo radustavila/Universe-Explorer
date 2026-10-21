@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.MoreVert
@@ -68,6 +70,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.radustavila.nasaexplorer.core.designsystem.adaptive.CardColumnMinWidth
 import com.radustavila.nasaexplorer.core.designsystem.component.ApodCard
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
 import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
@@ -154,7 +157,7 @@ internal fun FeedContent(
     onSearchQueryChange: (String?) -> Unit = {},
     onDailyWallpaperChange: (Boolean) -> Unit = {},
 ) {
-    val listState = rememberLazyListState()
+    val listState = rememberLazyGridState()
     val errorMessage = uiState.error?.asText()
     var isDatePickerOpen by rememberSaveable { mutableStateOf(false) }
 
@@ -424,7 +427,7 @@ internal fun Long.toUtcLocalDate(): LocalDate =
 @Composable
 private fun FeedList(
     uiState: FeedUiState,
-    listState: LazyListState,
+    listState: LazyGridState,
     onApodClick: (LocalDate) -> Unit,
     onToggleFavorite: (Apod) -> Unit,
     header: (@Composable () -> Unit)?,
@@ -455,7 +458,10 @@ private fun FeedList(
         if (!hasReaderScrolled) listState.scrollToItem(0)
     }
 
-    LazyColumn(
+    // One column of cards on a phone; wider windows gain columns instead of stretching the cards.
+    // Everything that is not an entry spans the full width.
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = CardColumnMinWidth),
         state = listState,
         modifier = Modifier
             .fillMaxSize()
@@ -469,10 +475,11 @@ private fun FeedList(
             end = FEED_GUTTER,
             bottom = FEED_GUTTER,
         ),
+        horizontalArrangement = Arrangement.spacedBy(FEED_GUTTER),
         verticalArrangement = Arrangement.spacedBy(FEED_GUTTER),
     ) {
         if (shownHeader != null) {
-            item(key = FEED_HEADER_KEY, contentType = "header") {
+            item(key = FEED_HEADER_KEY, span = { GridItemSpan(maxLineSpan) }, contentType = "header") {
                 Column(
                     modifier = Modifier
                         .topGutterUnlessEmpty(FEED_GUTTER)
@@ -482,7 +489,7 @@ private fun FeedList(
         }
 
         if (uiState.onThisDay.isNotEmpty()) {
-            item(key = "on-this-day", contentType = "on-this-day") {
+            item(key = "on-this-day", span = { GridItemSpan(maxLineSpan) }, contentType = "on-this-day") {
                 OnThisDayRail(
                     entries = uiState.onThisDay,
                     onApodClick = onApodClick,
@@ -492,7 +499,7 @@ private fun FeedList(
         }
 
         if (uiState.freshness.lastUpdatedAt != null) {
-            item(key = "freshness", contentType = "freshness") {
+            item(key = "freshness", span = { GridItemSpan(maxLineSpan) }, contentType = "freshness") {
                 FreshnessLabel(
                     freshness = uiState.freshness,
                     modifier = Modifier.onSizeChanged { size -> freshnessHeight = size.height },
@@ -510,7 +517,7 @@ private fun FeedList(
         }
 
         if (uiState.isLoadingMore) {
-            item(key = "loading-more", contentType = "footer") {
+            item(key = "loading-more", span = { GridItemSpan(maxLineSpan) }, contentType = "footer") {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -527,7 +534,7 @@ private fun FeedList(
         }
 
         if (uiState.hasReachedArchiveStart) {
-            item(key = "archive-start", contentType = "footer") {
+            item(key = "archive-start", span = { GridItemSpan(maxLineSpan) }, contentType = "footer") {
                 Text(
                     text = stringResource(R.string.feed_archive_start),
                     style = MaterialTheme.typography.bodySmall,
@@ -565,7 +572,7 @@ private val FEED_GUTTER = 16.dp
  */
 @Composable
 private fun NotifyWhenNearEnd(
-    listState: LazyListState,
+    listState: LazyGridState,
     itemCount: Int,
     onLoadMore: () -> Unit,
 ) {
