@@ -35,6 +35,7 @@ import com.radustavila.nasaexplorer.core.designsystem.component.FavoriteButton
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.MessageState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
 import com.radustavila.nasaexplorer.core.model.Exoplanet
 import com.radustavila.nasaexplorer.core.model.ExoplanetUnits
@@ -270,7 +271,7 @@ private fun Section(title: String, content: @Composable () -> Unit) {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(text = title, style = MaterialTheme.typography.titleSmall)
+            SectionTitle(text = title, style = MaterialTheme.typography.titleSmall)
             content()
         }
     }

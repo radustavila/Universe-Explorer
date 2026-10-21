@@ -1,6 +1,9 @@
 package com.radustavila.nasaexplorer.feature.universe.gallery
 
 import androidx.compose.material3.Text
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -61,6 +64,7 @@ class GalleryScreenTest {
         composeTestRule.onNodeWithTag(GALLERY_RAILS_TEST_TAG).assertIsDisplayed()
         composeTestRule.onNodeWithText("Exoplanets").assertIsDisplayed()
         composeTestRule.onNodeWithText("Webb galaxies").assertIsDisplayed()
+            .assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading))
         composeTestRule.onNodeWithText("Webb #0").assertIsDisplayed().performClick()
         assertEquals("Webb-0", opened)
     }

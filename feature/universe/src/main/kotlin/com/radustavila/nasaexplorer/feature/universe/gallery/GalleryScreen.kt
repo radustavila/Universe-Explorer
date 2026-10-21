@@ -58,6 +58,7 @@ import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.MessageState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
 import com.radustavila.nasaexplorer.core.model.GalleryRail
 import com.radustavila.nasaexplorer.core.model.NasaMediaType
@@ -254,7 +255,7 @@ private fun RailSection(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.testTag(galleryRailTestTag(rail.rail))) {
-        Text(
+        SectionTitle(
             text = stringResource(rail.rail.titleRes),
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),

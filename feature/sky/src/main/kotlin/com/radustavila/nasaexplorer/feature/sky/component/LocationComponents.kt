@@ -42,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.model.City
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.model.LocationSource
@@ -220,7 +221,7 @@ internal fun LocationDialog(
                     }
                 }
                 HorizontalDivider()
-                Text(stringResource(R.string.sky_coordinates_title), style = MaterialTheme.typography.titleSmall)
+                SectionTitle(stringResource(R.string.sky_coordinates_title), style = MaterialTheme.typography.titleSmall)
                 CoordinateField(
                     value = latitude,
                     onValueChange = { latitude = it; showCoordinateError = false },

@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
 import com.radustavila.nasaexplorer.core.model.CoronalMassEjection
 import com.radustavila.nasaexplorer.core.model.SolarFlare
@@ -112,7 +113,7 @@ private fun SolarEventCard(
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                Text(title, style = MaterialTheme.typography.titleMedium)
+                SectionTitle(title)
             }
             content()
         }

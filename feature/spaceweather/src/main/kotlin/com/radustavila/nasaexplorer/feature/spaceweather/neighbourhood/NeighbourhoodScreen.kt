@@ -41,6 +41,7 @@ import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
 import com.radustavila.nasaexplorer.core.model.CloseApproach
 import com.radustavila.nasaexplorer.core.model.Fireball
@@ -242,7 +243,7 @@ private fun formatKilotons(kilotons: Double, locale: Locale): String =
 @Composable
 private fun Header(title: String, subtitle: String) {
     Column(Modifier.widthIn(max = CONTENT_MAX_WIDTH).fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp)) {
-        Text(title, style = MaterialTheme.typography.titleLarge)
+        SectionTitle(title, style = MaterialTheme.typography.titleLarge)
         Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

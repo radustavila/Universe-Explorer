@@ -49,6 +49,7 @@ import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.motion.rememberReducedMotion
 import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
 import com.radustavila.nasaexplorer.core.map.MapCamera
@@ -322,7 +323,7 @@ private fun Section(title: String?, content: @Composable () -> Unit) {
         modifier = Modifier.widthIn(max = CONTENT_MAX_WIDTH).fillMaxWidth().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        if (title != null) Text(title, style = MaterialTheme.typography.titleLarge)
+        if (title != null) SectionTitle(title, style = MaterialTheme.typography.titleLarge)
         content()
     }
 }

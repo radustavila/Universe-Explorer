@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.feature.mars.MarsPhotoCard
 import com.radustavila.nasaexplorer.feature.mars.R
 
@@ -63,7 +64,7 @@ internal fun MarsRailContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = stringResource(R.string.mars_rail_title), style = MaterialTheme.typography.titleLarge)
+                SectionTitle(text = stringResource(R.string.mars_rail_title), style = MaterialTheme.typography.titleLarge)
                 Text(
                     text = stringResource(R.string.mars_rail_subtitle),
                     style = MaterialTheme.typography.bodySmall,

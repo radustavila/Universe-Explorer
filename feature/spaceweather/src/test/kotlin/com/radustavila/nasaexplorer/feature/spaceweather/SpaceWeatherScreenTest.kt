@@ -1,6 +1,9 @@
 package com.radustavila.nasaexplorer.feature.spaceweather
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.hasTestTag
@@ -89,6 +92,13 @@ class SpaceWeatherScreenTest {
         composeTestRule.onNodeWithTag(AURORA_MAP_TEST_TAG).assertIsDisplayed()
         assertEquals(listOf("aurora-5", "aurora-20", "aurora-50", "place"), mapOverlays.map { it.id })
         assertEquals(1, mapOverlays.last().shapes.size)
+    }
+
+    @Test
+    fun `section titles are headings TalkBack can jump to`() {
+        setContent(content)
+
+        composeTestRule.onNodeWithText("Next 3 days").assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading))
     }
 
     @Test

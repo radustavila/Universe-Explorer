@@ -48,6 +48,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.NasaAsyncImage
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.theme.NasaTheme
 import com.radustavila.nasaexplorer.core.model.Launch
 import com.radustavila.nasaexplorer.core.model.LaunchStatus
@@ -116,10 +117,7 @@ internal fun NextLaunchesCardContent(
                 modifier = Modifier.size(20.dp),
             )
             Spacer(Modifier.width(8.dp))
-            Text(
-                text = stringResource(R.string.launches_card_title),
-                style = MaterialTheme.typography.titleMedium,
-            )
+            SectionTitle(text = stringResource(R.string.launches_card_title))
         }
 
         launches.forEachIndexed { index, launch ->

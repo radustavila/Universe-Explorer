@@ -2,6 +2,9 @@ package com.radustavila.nasaexplorer.feature.sky
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -87,6 +90,15 @@ class SkyTonightScreenTest {
     }
 
     @Test
+    fun `each card's title is a heading TalkBack can jump to`() {
+        setContent(located)
+
+        listOf(R.string.sky_night_title, R.string.sky_moon_title, R.string.sky_planets_title).forEach { title ->
+            composeTestRule.onNodeWithText(string(title)).assert(isHeading)
+        }
+    }
+
+    @Test
     fun `stale orbit data asks for a refresh instead of listing passes`() {
         setContent(located.copy(passes = IssPassForecast(TestSky.issElements(), emptyList(), isStale = true)))
 
@@ -160,6 +172,7 @@ class SkyTonightScreenTest {
 
     private companion object {
         const val FAKE_MAP_TAG = "fake-map"
+        val isHeading = SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading)
     }
 
     private fun string(id: Int): String =

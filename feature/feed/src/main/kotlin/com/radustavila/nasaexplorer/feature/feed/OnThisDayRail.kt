@@ -17,11 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.radustavila.nasaexplorer.core.designsystem.component.NasaAsyncImage
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.component.VideoPlaceholder
 import com.radustavila.nasaexplorer.core.model.Apod
 import java.time.LocalDate
@@ -39,11 +38,7 @@ internal fun OnThisDayRail(
         modifier = modifier.testTag(FEED_ON_THIS_DAY_TEST_TAG),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text(
-            text = stringResource(R.string.feed_on_this_day),
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.semantics { heading() },
-        )
+        SectionTitle(text = stringResource(R.string.feed_on_this_day))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             items(items = entries, key = { apod -> apod.date.toString() }) { apod ->
                 OnThisDayCard(apod = apod, onClick = { onApodClick(apod.date) })

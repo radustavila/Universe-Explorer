@@ -41,6 +41,7 @@ import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
 import com.radustavila.nasaexplorer.core.model.MarsRover
 import com.radustavila.nasaexplorer.feature.mars.MarsPhotoThumbnail
@@ -228,7 +229,7 @@ private fun SolList(
 private fun SolHeader(group: SolGroup) {
     val date = group.takenAt?.atZone(ZoneId.systemDefault())?.toLocalDate()?.formatMedium()
     Column(modifier = Modifier.padding(horizontal = 16.dp).padding(top = 8.dp)) {
-        Text(
+        SectionTitle(
             text = stringResource(R.string.mars_photo_sol, group.sol),
             style = MaterialTheme.typography.titleLarge,
         )
@@ -245,7 +246,7 @@ private fun SolHeader(group: SolGroup) {
 @Composable
 private fun CameraRow(camera: CameraGroup, onPhotoClick: (id: String) -> Unit) {
     Column {
-        Text(
+        SectionTitle(
             text = camera.cameraName,
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),

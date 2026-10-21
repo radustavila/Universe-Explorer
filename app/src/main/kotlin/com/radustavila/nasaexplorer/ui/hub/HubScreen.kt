@@ -25,6 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.radustavila.nasaexplorer.R
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
@@ -95,7 +97,8 @@ private fun HubEntryCard(entry: HubEntry, modifier: Modifier = Modifier) {
     Card(onClick = entry.onClick, modifier = modifier) {
         ListItem(
             leadingContent = { Icon(entry.icon, contentDescription = null) },
-            headlineContent = { Text(stringResource(entry.titleRes)) },
+            // A heading, merged into the card's node: TalkBack can jump from entry to entry.
+            headlineContent = { Text(stringResource(entry.titleRes), modifier = Modifier.semantics { heading() }) },
             supportingContent = { Text(stringResource(entry.descriptionRes)) },
             trailingContent = {
                 Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, contentDescription = null)
