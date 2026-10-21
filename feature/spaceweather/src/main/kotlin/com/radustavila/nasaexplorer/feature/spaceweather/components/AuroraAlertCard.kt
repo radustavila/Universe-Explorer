@@ -1,13 +1,5 @@
 package com.radustavila.nasaexplorer.feature.spaceweather.components
 
-import android.Manifest
-import android.content.ActivityNotFoundException
-import android.content.Context
-import android.content.Intent
-import android.os.Build
-import android.provider.Settings
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,34 +13,27 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.core.app.NotificationManagerCompat
-import androidx.lifecycle.compose.LifecycleResumeEffect
+import com.radustavila.nasaexplorer.core.designsystem.notification.rememberNotificationPermissionToggle
 import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.model.AuroraAlertSettings
 import com.radustavila.nasaexplorer.core.model.AuroraVisibility
 import com.radustavila.nasaexplorer.core.model.GeomagneticStorm
 import com.radustavila.nasaexplorer.feature.spaceweather.R
-import kotlinx.coroutines.launch
 
 const val AURORA_ALERT_SWITCH_TEST_TAG = "aurora-alert-switch"
 const val AURORA_ALERT_LOCATION_TEST_TAG = "aurora-alert-location"
@@ -75,6 +60,7 @@ internal fun AuroraAlertCard(
             if (enabled && !settings.hasLocation) onEditLocation(true) else onEnabledChange(enabled)
         },
         snackbarHostState = snackbarHostState,
+        blockedMessage = stringResource(R.string.space_weather_notifications_blocked),
     )
 
     Card(modifier = modifier.fillMaxWidth()) {
@@ -225,65 +211,5 @@ internal fun AuroraLocationFields(
                 color = MaterialTheme.colorScheme.primary,
             )
         }
-    }
-}
-
-private class NotificationPermissionToggle(val isOn: Boolean, val onClick: () -> Unit)
-
-/** Same reconciliation as the feed's new-picture bell: the user's choice and the system's say. */
-@Composable
-private fun rememberNotificationPermissionToggle(
-    isEnabled: Boolean,
-    onEnabledChange: (Boolean) -> Unit,
-    snackbarHostState: SnackbarHostState,
-): NotificationPermissionToggle {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    var isAllowedBySystem by remember { mutableStateOf(context.areNotificationsAllowed()) }
-
-    LifecycleResumeEffect(context) {
-        isAllowedBySystem = context.areNotificationsAllowed()
-        onPauseOrDispose { }
-    }
-
-    val blockedMessage = stringResource(R.string.space_weather_notifications_blocked)
-    val settingsLabel = stringResource(R.string.space_weather_notifications_open_settings)
-    val explainBlocked: () -> Unit = {
-        scope.launch {
-            val result = snackbarHostState.showSnackbar(
-                message = blockedMessage,
-                actionLabel = settingsLabel,
-                duration = SnackbarDuration.Long,
-            )
-            if (result == SnackbarResult.ActionPerformed) context.openAppNotificationSettings()
-        }
-    }
-
-    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-        isAllowedBySystem = isGranted
-        if (isGranted) onEnabledChange(true) else explainBlocked()
-    }
-
-    val isOn = isEnabled && isAllowedBySystem
-    return NotificationPermissionToggle(isOn = isOn) {
-        when {
-            isOn -> onEnabledChange(false)
-            isAllowedBySystem -> onEnabledChange(true)
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
-                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-
-            else -> explainBlocked()
-        }
-    }
-}
-
-private fun Context.areNotificationsAllowed(): Boolean = NotificationManagerCompat.from(this).areNotificationsEnabled()
-
-private fun Context.openAppNotificationSettings() {
-    val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
-    try {
-        startActivity(intent)
-    } catch (_: ActivityNotFoundException) {
-        // No settings app on this system image; there is nowhere else to send the user.
     }
 }

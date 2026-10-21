@@ -19,6 +19,9 @@
     <string name="media_player_error">This media could not be played.</string>
     <string name="media_player_retry">Try again</string>
 
+    <string name="notifications_blocked">Notifications are blocked for NASA Explorer. Allow them in system settings.</string>
+    <string name="notifications_open_settings">Settings</string>
+
     <!-- Units. %1$s is an already formatted number. -->
     <string name="unit_km">%1$s km</string>
     <string name="unit_mi">%1$s mi</string>

@@ -1,4 +1,4 @@
-package com.radustavila.nasaexplorer.feature.feed
+package com.radustavila.nasaexplorer.core.designsystem.notification
 
 import android.Manifest
 import android.content.ActivityNotFoundException
@@ -22,29 +22,33 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import com.radustavila.nasaexplorer.core.designsystem.R
 import kotlinx.coroutines.launch
 
-/** What the feed's notification action shows, and what tapping it does. */
+/** What a notification switch shows, and what tapping it does. */
 @Immutable
-internal class NewApodNotificationToggle(
+class NotificationPermissionToggle(
     val isOn: Boolean,
     val onClick: () -> Unit,
 )
 
 /**
- * Reconciles the user's in-app choice with what the system allows.
+ * Reconciles the user's in-app choice for one kind of notification with what the system allows.
+ * Every notification switch in the app (new picture, aurora alerts, ISS reminders, Settings) uses it.
  *
- * The bell only reads as "on" when both agree, because notifications can be blocked in system
+ * The switch only reads as "on" when both agree, because notifications can be blocked in system
  * settings at any time behind the app's back. Turning it on asks for the runtime permission where
  * the platform has one (Android 13+); when the system refuses - denied now, or blocked for good -
- * a snackbar points to the app's notification settings, the only place left to change it.
+ * a snackbar with [blockedMessage] points to the app's notification settings, the only place left
+ * to change it.
  */
 @Composable
-internal fun rememberNewApodNotificationToggle(
+fun rememberNotificationPermissionToggle(
     isEnabled: Boolean,
     onEnabledChange: (Boolean) -> Unit,
     snackbarHostState: SnackbarHostState,
-): NewApodNotificationToggle {
+    blockedMessage: String = stringResource(R.string.notifications_blocked),
+): NotificationPermissionToggle {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var isAllowedBySystem by remember { mutableStateOf(context.areNotificationsAllowed()) }
@@ -54,8 +58,7 @@ internal fun rememberNewApodNotificationToggle(
         onPauseOrDispose { }
     }
 
-    val blockedMessage = stringResource(R.string.feed_notifications_blocked)
-    val settingsLabel = stringResource(R.string.feed_notifications_open_settings)
+    val settingsLabel = stringResource(R.string.notifications_open_settings)
     val explainBlocked: () -> Unit = {
         scope.launch {
             val result = snackbarHostState.showSnackbar(
@@ -75,7 +78,7 @@ internal fun rememberNewApodNotificationToggle(
     }
 
     val isOn = isEnabled && isAllowedBySystem
-    return NewApodNotificationToggle(isOn = isOn) {
+    return NotificationPermissionToggle(isOn = isOn) {
         when {
             isOn -> onEnabledChange(false)
             isAllowedBySystem -> onEnabledChange(true)

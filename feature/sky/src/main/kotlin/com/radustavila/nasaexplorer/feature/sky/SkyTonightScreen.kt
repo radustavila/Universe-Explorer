@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,8 +20,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -36,7 +35,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -44,14 +42,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
+import com.radustavila.nasaexplorer.core.designsystem.notification.rememberNotificationPermissionToggle
 import com.radustavila.nasaexplorer.core.map.MapCamera
 import com.radustavila.nasaexplorer.core.map.SpaceMap
 import com.radustavila.nasaexplorer.core.map.TileLoadStatus
@@ -99,10 +96,11 @@ fun SkyTonightScreen(
         }
     }
 
-    val reminders = rememberIssReminderToggle(
+    val reminders = rememberNotificationPermissionToggle(
         isEnabled = uiState.remindersEnabled,
         onEnabledChange = viewModel::onRemindersChange,
         snackbarHostState = snackbarHostState,
+        blockedMessage = stringResource(R.string.sky_iss_notifications_blocked),
     )
 
     SkyMessageEffect(
@@ -305,59 +303,8 @@ private fun SkyMessageEffect(
     }
 }
 
-/** What the reminder switch shows, and what tapping it does. */
-private class IssReminderToggle(val isOn: Boolean, val onClick: () -> Unit)
-
-/**
- * Like the feed's bell: the switch only reads "on" when the user's choice and the system's
- * notification permission agree, and turning it on asks for the permission where there is one.
- */
-@Composable
-private fun rememberIssReminderToggle(
-    isEnabled: Boolean,
-    onEnabledChange: (Boolean) -> Unit,
-    snackbarHostState: SnackbarHostState,
-): IssReminderToggle {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    var isAllowedBySystem by remember { mutableStateOf(context.areNotificationsAllowed()) }
-    LifecycleResumeEffect(context) {
-        isAllowedBySystem = context.areNotificationsAllowed()
-        onPauseOrDispose { }
-    }
-
-    val blocked = stringResource(R.string.sky_iss_notifications_blocked)
-    val settings = stringResource(R.string.sky_iss_open_settings)
-    val explainBlocked: () -> Unit = {
-        scope.launch {
-            val result = snackbarHostState.showSnackbar(blocked, actionLabel = settings, duration = SnackbarDuration.Long)
-            if (result == SnackbarResult.ActionPerformed) context.openAppNotificationSettings()
-        }
-    }
-    val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        isAllowedBySystem = granted
-        if (granted) onEnabledChange(true) else explainBlocked()
-    }
-
-    val isOn = isEnabled && isAllowedBySystem
-    return IssReminderToggle(isOn) {
-        when {
-            isOn -> onEnabledChange(false)
-            isAllowedBySystem -> onEnabledChange(true)
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> permission.launch(Manifest.permission.POST_NOTIFICATIONS)
-            else -> explainBlocked()
-        }
-    }
-}
-
 private fun Context.hasPermission(permission: String): Boolean =
     ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
-
-private fun Context.areNotificationsAllowed(): Boolean = NotificationManagerCompat.from(this).areNotificationsEnabled()
-
-private fun Context.openAppNotificationSettings() {
-    openSettings(Settings.ACTION_APP_NOTIFICATION_SETTINGS) { putExtra(Settings.EXTRA_APP_PACKAGE, packageName) }
-}
 
 private fun Context.openSettings(action: String, configure: Intent.() -> Unit = {}) {
     val intent = Intent(action).apply(configure)

@@ -74,6 +74,7 @@ import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
+import com.radustavila.nasaexplorer.core.designsystem.notification.rememberNotificationPermissionToggle
 import com.radustavila.nasaexplorer.core.designsystem.theme.NasaTheme
 import com.radustavila.nasaexplorer.core.model.Apod
 import com.radustavila.nasaexplorer.core.model.MediaType
@@ -110,10 +111,11 @@ fun FeedScreen(
     // baseline profile's time-to-full-display.
     ReportDrawnWhen { uiState.hasContent || !uiState.isLoading }
     val snackbarHostState = remember { SnackbarHostState() }
-    val notificationToggle = rememberNewApodNotificationToggle(
+    val notificationToggle = rememberNotificationPermissionToggle(
         isEnabled = uiState.areNewApodNotificationsEnabled,
         onEnabledChange = viewModel::onNewApodNotificationsChanged,
         snackbarHostState = snackbarHostState,
+        blockedMessage = stringResource(R.string.feed_notifications_blocked),
     )
 
     FeedContent(

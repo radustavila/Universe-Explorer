@@ -78,7 +78,6 @@
     <string name="sky_iss_visible">Visible</string>
     <string name="sky_iss_reminders">Remind me 10 minutes before visible passes</string>
     <string name="sky_iss_notifications_blocked">Notifications are blocked for this app.</string>
-    <string name="sky_iss_open_settings">Settings</string>
     <string name="sky_iss_elements_from">Orbit data from %1$s</string>
 
     <!-- ISS track -->
