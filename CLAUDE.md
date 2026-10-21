@@ -9,7 +9,9 @@ with convention plugins in the included `build-logic` build. `README.md` documen
 ## Commands
 
 ```bash
-./gradlew test testDebugUnitTest      # all unit, Robolectric and Compose UI tests (no emulator) — what CI runs
+./gradlew test testDebugUnitTest      # all unit, Robolectric and Compose UI tests (no emulator)
+./gradlew verifyRoborazziDebug        # screenshot tests against the goldens in src/test/screenshots/ (CI runs this too)
+./gradlew recordRoborazziDebug        # rewrite the goldens after an intended UI change; review the PNG diff before committing
 ./gradlew lint                        # Android Lint; warnings are errors, so any new warning fails the build
 ./gradlew detekt                      # static analysis (config/detekt/detekt.yml) against each module's detekt-baseline.xml
 ./gradlew detektBaseline              # rewrite every module's detekt-baseline.xml from the current findings
@@ -140,7 +142,7 @@ Malformed entries are dropped during mapping; a window with nothing usable becom
 
 Module `build.gradle.kts` files are short because `build-logic/convention` does the work. Plugin IDs:
 `nasaexplorer.android.application`, `.android.library`, `.android.compose`, `.android.feature`, `.android.hilt`,
-`.android.room`, `.android.test`, `nasaexplorer.jvm.library`, `nasaexplorer.detekt` (applied automatically by the application/library/jvm
+`.android.room`, `.android.roborazzi`, `.android.test`, `nasaexplorer.jvm.library`, `nasaexplorer.detekt` (applied automatically by the application/library/jvm
 plugins). Shared SDK levels, Java 17 target, lint settings and the JDK 21 test launcher are in `KotlinAndroid.kt`.
 Versions come from `gradle/libs.versions.toml`; project dependencies use type-safe accessors (`projects.core.domain`).
 A new module must be added to `settings.gradle.kts`.
@@ -153,6 +155,12 @@ A new module must be added to `settings.gradle.kts`.
   add its fake there.
 - Robolectric provides the Android runtime for Room (real in-memory SQLite), WorkManager, notifications and Compose UI
   tests; network tests use MockWebServer; ViewModel flows use Turbine.
+- Screenshot tests (`*ScreenshotTest`, Roborazzi on Robolectric native graphics) live in modules applying
+  `nasaexplorer.android.roborazzi` and capture through `:core:screenshot-testing` (`captureScreen`/`captureComponent`
+  in `ScreenshotDevices.COMPACT`/`EXPANDED` windows), which renders in `NasaTheme` (the app's only theme, dark) with
+  fake Coil images and UTC clocks, so no network. Feed them fakes and fixed dates/instants. Goldens are stored at half
+  size; the 1 % change threshold absorbs macOS/Linux anti-aliasing. If CI still differs, its `test-reports` artifact
+  holds the actual and diff images under `build/outputs/roborazzi/`.
 - `:baselineprofile` generates the release baseline/startup profile checked in under `app/src/release/generated`
   (regenerate after big changes to startup or Today) and benchmarks cold start. Today reports itself fully drawn
   (`ReportDrawnWhen` in `FeedScreen`) once cached rows are on screen; keep startup work off the main thread

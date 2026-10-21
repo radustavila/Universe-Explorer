@@ -25,8 +25,9 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Unit tests
-        run: ./gradlew test testDebugUnitTest --stacktrace
+      # verifyRoborazziDebug runs the screenshot modules' unit tests once, comparing against the goldens.
+      - name: Unit and screenshot tests
+        run: ./gradlew test testDebugUnitTest verifyRoborazziDebug --stacktrace
 
       - name: Lint
         run: ./gradlew lint --stacktrace
@@ -50,3 +51,4 @@ jobs:
           path: |
             **/build/reports/tests/**
             **/build/reports/detekt/**
+            **/build/outputs/roborazzi/**

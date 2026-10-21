@@ -41,6 +41,7 @@ include(":core:wallpaper")
 include(":core:astro")
 include(":core:location")
 include(":core:offline")
+include(":core:screenshot-testing")
 
 include(":data:nasa")
 include(":data:launches")
