@@ -128,13 +128,12 @@ private fun NeighbourhoodList(uiState: NeighbourhoodUiState, onApproachClick: (S
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (uiState.isOffline) item(key = "offline", contentType = "offline") { OfflineBanner() }
-        if (uiState.lastUpdatedAt != null) {
-            item(key = "freshness", contentType = "freshness") {
-                FreshnessLabel(
-                    uiState.freshness,
-                    modifier = Modifier.widthIn(max = CONTENT_MAX_WIDTH).fillMaxWidth().padding(horizontal = 16.dp),
-                )
-            }
+        // Always an item (see SkyTonightScreen): the list keeps it, not the first row, in place.
+        item(key = "freshness", contentType = "freshness") {
+            FreshnessLabel(
+                uiState.freshness,
+                modifier = Modifier.widthIn(max = CONTENT_MAX_WIDTH).fillMaxWidth().padding(horizontal = 16.dp),
+            )
         }
         item(key = "approaches-header", contentType = "header") {
             Header(

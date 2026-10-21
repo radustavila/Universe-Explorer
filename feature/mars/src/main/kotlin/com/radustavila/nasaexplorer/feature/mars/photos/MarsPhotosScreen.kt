@@ -203,10 +203,9 @@ private fun SolList(
         contentPadding = PaddingValues(vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        if (uiState.lastUpdatedAt != null) {
-            item(key = "freshness", contentType = "freshness") {
-                FreshnessLabel(uiState.freshness, modifier = Modifier.padding(horizontal = 16.dp))
-            }
+        // Always an item (see SkyTonightScreen): the list keeps it, not the first sol, in place.
+        item(key = "freshness", contentType = "freshness") {
+            FreshnessLabel(uiState.freshness, modifier = Modifier.padding(horizontal = 16.dp))
         }
         uiState.sols.forEach { group ->
             item(key = "${uiState.rover.key}-sol-${group.sol}", contentType = "sol") { SolHeader(group) }

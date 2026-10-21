@@ -242,10 +242,9 @@ private fun Rails(
                 // The header draws its own side margins, so a rail in it can scroll edge to edge.
                 item(key = "header") { header() }
             }
-            if (uiState.freshness.lastUpdatedAt != null) {
-                item(key = "freshness") {
-                    FreshnessLabel(uiState.freshness, modifier = Modifier.padding(horizontal = 16.dp))
-                }
+            // Always an item (see SkyTonightScreen): the list keeps it, not the first rail, in place.
+            item(key = "freshness") {
+                FreshnessLabel(uiState.freshness, modifier = Modifier.padding(horizontal = 16.dp))
             }
             items(items = uiState.rails, key = { it.rail.key }) { rail ->
                 RailSection(rail = rail, onMediaClick = onMediaClick)

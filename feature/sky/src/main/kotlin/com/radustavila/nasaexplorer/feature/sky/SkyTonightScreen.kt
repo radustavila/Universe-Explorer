@@ -235,9 +235,9 @@ private fun SkyList(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        if (uiState.freshness.lastUpdatedAt != null) {
-            item(key = "freshness") { FreshnessLabel(uiState.freshness) }
-        }
+        // Always an item, even while it draws nothing: added later above the first card, the list
+        // would keep that card in place and scroll the line out of view.
+        item(key = "freshness") { FreshnessLabel(uiState.freshness) }
         if (location == null) {
             item(key = "prompt") {
                 LocationPrompt(
