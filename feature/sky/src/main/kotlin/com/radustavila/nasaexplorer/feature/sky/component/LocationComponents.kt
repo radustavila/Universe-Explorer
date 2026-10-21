@@ -221,7 +221,10 @@ internal fun LocationDialog(
                     }
                 }
                 HorizontalDivider()
-                SectionTitle(stringResource(R.string.sky_coordinates_title), style = MaterialTheme.typography.titleSmall)
+                SectionTitle(
+                    text = stringResource(R.string.sky_coordinates_title),
+                    style = MaterialTheme.typography.titleSmall,
+                )
                 CoordinateField(
                     value = latitude,
                     onValueChange = { latitude = it; showCoordinateError = false },
