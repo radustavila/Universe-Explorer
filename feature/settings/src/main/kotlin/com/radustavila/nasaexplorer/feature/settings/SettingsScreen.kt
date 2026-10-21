@@ -58,6 +58,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.notification.rememberNotificationPermissionToggle
 import com.radustavila.nasaexplorer.core.designsystem.units.LocalUnitPreferences
@@ -115,6 +116,10 @@ internal fun SettingsScreen(
     )
 
     SettingsMessageEffect(uiState.message, snackbarHostState, viewModel::onMessageShown)
+    LifecycleResumeEffect(viewModel) {
+        viewModel.onScreenResumed()
+        onPauseOrDispose { }
+    }
 
     SettingsContent(
         uiState = uiState,
@@ -395,6 +400,7 @@ private fun auroraSummary(settings: AuroraAlertSettings): String {
     if (latitude == null || longitude == null) return stringResource(R.string.settings_aurora_no_place)
     val place = rememberUnitFormatter().coordinate(latitude, longitude)
     val kp = settings.minimumKp ?: return stringResource(R.string.settings_aurora_unreachable, place)
+    if (kp == 0) return stringResource(R.string.settings_aurora_any_kp, place)
     val threshold = GeomagneticStorm.forLevel(kp)
         ?.let { stringResource(R.string.settings_aurora_kp_storm, kp, it.name) }
         ?: stringResource(R.string.settings_aurora_kp, kp)

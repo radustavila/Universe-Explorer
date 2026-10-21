@@ -82,7 +82,12 @@ class SettingsViewModel @Inject constructor(
         choices.copy(observerLocation = location, storage = storage, message = message)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STATE_TIMEOUT_MILLIS), SettingsUiState())
 
-    init {
+    /**
+     * Measures storage whenever the screen comes back: offline copies download and caches fill in
+     * the background while the user is elsewhere in the app.
+     */
+    fun onScreenResumed() {
+        if (storage.value.isClearing) return
         viewModelScope.launch { measure() }
     }
 

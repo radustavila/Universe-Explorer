@@ -30,6 +30,7 @@
     <string name="settings_aurora_no_place">Needs a place to know which storms reach you</string>
     <!-- %1$s is a place ("51.5° N, 0.1° W"), %2$s the Kp it takes, e.g. "Kp 5 (G1 storm)". -->
     <string name="settings_aurora_threshold">From %1$s, when %2$s or more is forecast</string>
+    <string name="settings_aurora_any_kp">From %1$s, where aurora can show even when the Sun is quiet</string>
     <string name="settings_aurora_unreachable">Aurora is rarely seen from %1$s</string>
     <string name="settings_aurora_kp">Kp %1$d</string>
     <string name="settings_aurora_kp_storm">Kp %1$d (%2$s storm)</string>

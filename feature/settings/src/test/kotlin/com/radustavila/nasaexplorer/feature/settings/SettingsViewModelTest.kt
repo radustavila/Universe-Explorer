@@ -44,7 +44,10 @@ class SettingsViewModelTest {
         preferences.setNewApodNotificationsEnabled(true)
         skyPreferences.setIssPassRemindersEnabled(true)
 
-        createViewModel().uiState.test {
+        val viewModel = createViewModel()
+        viewModel.onScreenResumed()
+
+        viewModel.uiState.test {
             val state = awaitUntil { it.storage.entries != null && it.newApodNotificationsEnabled }
             assertEquals(MeasurementSystem.IMPERIAL, state.units.measurementSystem)
             assertTrue(state.issRemindersEnabled)
@@ -59,6 +62,23 @@ class SettingsViewModelTest {
                 state.storage.entries,
             )
             assertEquals(44_900_000L, state.storage.totalBytes)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `storage is measured again when the screen comes back`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            viewModel.onScreenResumed()
+            awaitUntil { it.storage.entries != null }
+            fixture.offlineFavorites.bytes = 9_000_000
+
+            viewModel.onScreenResumed()
+
+            val state = awaitUntil { state -> state.storage.entries?.any { it.bytes == 9_000_000L } == true }
+            assertEquals(50_900_000L, state.storage.totalBytes)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -143,6 +163,7 @@ class SettingsViewModelTest {
     fun `clearing the cache empties every cache, keeps what must stay, and measures again`() = runTest {
         val viewModel = createViewModel()
 
+        viewModel.onScreenResumed()
         viewModel.uiState.test {
             awaitUntil { it.storage.entries != null }
             viewModel.onClearCache()

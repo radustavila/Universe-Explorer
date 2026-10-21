@@ -1,6 +1,8 @@
 package com.radustavila.nasaexplorer.storage
 
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteException
 import coil3.ImageLoader
 import com.radustavila.nasaexplorer.core.common.dispatchers.AppDispatcher
 import com.radustavila.nasaexplorer.core.common.dispatchers.Dispatcher
@@ -47,7 +49,7 @@ class ImageCacheStorage @Inject constructor(
 }
 
 /**
- * Sizes of the Room databases on disk, as the composition root is the one place that knows them
+ * Sizes of the Room databases, as the composition root is the one place that knows them
  * all. The feeds' mirrors count as cached data; the main database holds the user's library
  * (pictures of the day, Earth photos and the favourites table). They are emptied through their
  * evictors, not here.
@@ -64,11 +66,26 @@ class DatabaseStorage @Inject constructor(
         )
     }
 
-    /** The database file and SQLite's companions (write-ahead log, shared memory, rollback journal). */
+    /**
+     * What the database's data takes: its pages in use, read through a separate read-only connection
+     * (which sees the write-ahead log). SQLite never shrinks its files when rows are deleted, so
+     * file sizes would not drop after "Clear cache" and would even grow by the log. Falls back to
+     * the files' sizes when the database cannot be opened.
+     */
     private fun sizeOf(name: String): Long {
         val database = context.getDatabasePath(name)
-        return (listOf(database) + SQLITE_SUFFIXES.map { File(database.path + it) }).sumOf(File::length)
+        if (!database.exists()) return 0
+        return try {
+            SQLiteDatabase.openDatabase(database.path, null, SQLiteDatabase.OPEN_READONLY).use { db ->
+                (db.pragma("page_count") - db.pragma("freelist_count")) * db.pragma("page_size")
+            }
+        } catch (_: SQLiteException) {
+            (listOf(database) + SQLITE_SUFFIXES.map { File(database.path + it) }).sumOf(File::length)
+        }
     }
+
+    private fun SQLiteDatabase.pragma(name: String): Long =
+        rawQuery("PRAGMA $name", null).use { cursor -> if (cursor.moveToFirst()) cursor.getLong(0) else 0L }
 
     companion object {
         /** Local copies of remote feeds: everything here can be downloaded again. */
