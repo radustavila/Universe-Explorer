@@ -11,7 +11,8 @@ with convention plugins in the included `build-logic` build. `README.md` documen
 ```bash
 ./gradlew test testDebugUnitTest      # all unit, Robolectric and Compose UI tests (no emulator) — what CI runs
 ./gradlew lint                        # Android Lint; warnings are errors, so any new warning fails the build
-./gradlew detekt                      # static analysis (config/detekt/detekt.yml); not run by CI
+./gradlew detekt                      # static analysis (config/detekt/detekt.yml) against each module's detekt-baseline.xml
+./gradlew detektBaseline              # rewrite every module's detekt-baseline.xml from the current findings
 ./gradlew assembleDebug               # debug APK
 ./gradlew installDebug                # install on a connected device/emulator
 ./gradlew :app:connectedDebugAndroidTest   # instrumented end-to-end test (needs a device)
@@ -28,6 +29,10 @@ Single module / single test:
 
 Pure Kotlin modules (`:core:common`, `:core:model`, `:core:domain`, `:core:testing`) use `test`; Android modules use
 `testDebugUnitTest`.
+
+Detekt fails on any finding not in the module's `detekt-baseline.xml`. Fix new findings rather than baselining them;
+regenerate a baseline (`./gradlew :<module>:detektBaseline`) only after fixing or deleting baselined code, and review
+the diff so it only shrinks.
 
 JDK notes: production bytecode targets Java 17, but test tasks are forced onto a JDK 21 toolchain (Robolectric needs it),
 and the Gradle daemon JVM criteria in `gradle/gradle-daemon-jvm.properties` asks for JDK 25. If bare `./gradlew` fails

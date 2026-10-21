@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MaxLineLength:SyncMetadataDataSource.kt:SyncMetadataDataSource$.</ID>
+    <ID>MaxLineLength:SyncMetadataDataSourceTest.kt:SyncMetadataDataSourceTest$dataStore.edit { it[stringSetPreferencesKey("apod_dates_without_entry")] = it[stringSetPreferencesKey("apod_dates_without_entry")].orEmpty() + "garbage" }</ID>
+    <ID>MaxLineLength:SyncMetadataDataSourceTest.kt:SyncMetadataDataSourceTest$syncMetadata.recordSyncFailure(SyncSource.MARS, at = at, error = AppError.Timeout, nextAllowedRefreshAt = at.plusSeconds(60))</ID>
+    <ID>MaxLineLength:SyncMetadataDataSourceTest.kt:SyncMetadataDataSourceTest$syncMetadata.recordSyncSuccess(SyncSource.LAUNCHES, at = success, nextAllowedRefreshAt = success.plusSeconds(3_600))</ID>
+    <ID>MaxLineLength:UserPreferencesDataSourceTest.kt:UserPreferencesDataSourceTest$assertEquals(UnitPreferences(MeasurementSystem.AUTOMATIC, TimeFormat.SYSTEM), userPreferences.unitPreferences.first())</ID>
+    <ID>TooManyFunctions:SyncMetadataDataSource.kt:SyncMetadataDataSource : SyncMetadataRepository</ID>
+  </CurrentIssues>
+</SmellBaseline>

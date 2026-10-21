@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:NasaDatabaseMigrations.kt:NasaDatabaseMigrations$6</ID>
+    <ID>TooGenericExceptionCaught:RoomFavoritesRepository.kt:RoomFavoritesRepository$throwable: Throwable</ID>
+    <ID>TooManyFunctions:ApodDao.kt:ApodDao</ID>
+    <ID>TooManyFunctions:EpicDao.kt:EpicDao</ID>
+    <ID>TooManyFunctions:FavoriteDao.kt:FavoriteDao</ID>
+  </CurrentIssues>
+</SmellBaseline>

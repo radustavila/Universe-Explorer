@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MaxLineLength:SmallBodiesRepositoryImplTest.kt:SmallBodiesRepositoryImplTest$routeRefresh(sentry = MockResponse().setHeader("Content-Type", "application/json").setBody("""{"signature":{"version":"2.0"},"count":"0","data":[]}"""))</ID>
+    <ID>ReturnCount:JplDtos.kt:JplRow$operator fun get: String?</ID>
+    <ID>ReturnCount:SmallBodiesMappers.kt:internal fun SbdbDto.toEntityOrNull: SmallBodyDetailsEntity?</ID>
+    <ID>ReturnCount:SmallBodiesRepositoryImpl.kt:SmallBodiesRepositoryImpl$override suspend fun refresh: DataResult&lt;Unit&gt;</ID>
+    <ID>TooGenericExceptionCaught:SmallBodiesLocalDataSource.kt:RoomSmallBodiesLocalDataSource$throwable: Throwable</ID>
+    <ID>TooManyFunctions:SmallBodiesDao.kt:SmallBodiesDao</ID>
+  </CurrentIssues>
+</SmellBaseline>

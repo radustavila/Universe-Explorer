@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:EarthTodayScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable internal fun EarthTodayContent</ID>
+    <ID>LongMethod:EarthTodayCard.kt:@Composable internal fun EarthTodayCardContent</ID>
+    <ID>LongMethod:EarthTodayScreen.kt:@Composable private fun EarthRotation</ID>
+    <ID>LongMethod:EarthTodayScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable internal fun EarthTodayContent</ID>
+    <ID>MagicNumber:EarthTodayCard.kt:13</ID>
+    <ID>MagicNumber:EarthTodayScreen.kt:3</ID>
+    <ID>MatchingDeclarationName:EarthTodayNavigation.kt:EarthTodayRoute</ID>
+    <ID>MaxLineLength:EarthTodayScreenTest.kt:EarthTodayScreenTest$EarthTodayUiState(images = day, focusedImageId = day[2].identifier, favoriteIds = setOf(day[2].ref.favoriteId))</ID>
+    <ID>MaxLineLength:EarthTodayViewModelTest.kt:EarthTodayViewModelTest$val enhancedLatest = TestEpicImages.day(date = TestEpicImages.LATEST_DATE.minusDays(2), collection = EpicCollection.ENHANCED)</ID>
+    <ID>MaxLineLength:EarthTodayViewModelTest.kt:EarthTodayViewModelTest$val route = SavedStateHandle(mapOf("collection" to "natural", "date" to "2025-01-02", "imageId" to oldDay[1].identifier))</ID>
+    <ID>TooManyFunctions:EarthTodayScreen.kt:com.radustavila.nasaexplorer.feature.earth.EarthTodayScreen.kt</ID>
+  </CurrentIssues>
+</SmellBaseline>

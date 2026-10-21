@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LoopWithTooManyJumpStatements:SpaceWeatherMappers.kt:for</ID>
+    <ID>MagicNumber:SpaceWeatherMappers.kt:100</ID>
+    <ID>MagicNumber:SpaceWeatherMappers.kt:90</ID>
+    <ID>MaxLineLength:DataStoreAuroraAlertRepositoryTest.kt:DataStoreAuroraAlertRepositoryTest$assertEquals(AuroraAlertSettings(enabled = true, latitude = 59.3, longitude = 18.1), repository.settings.first())</ID>
+    <ID>MaxLineLength:SpaceWeatherLocalDataSource.kt:SpaceWeatherLocalDataSource$suspend fun saveSolarActivity: DataResult&lt;Unit&gt;</ID>
+    <ID>MaxLineLength:SpaceWeatherRepositoryImplTest.kt:SpaceWeatherRepositoryImplTest$setOf("/get/FLR?startDate=2026-09-19&amp;endDate=2026-10-19", "/get/CME?startDate=2026-10-05&amp;endDate=2026-10-19")</ID>
+    <ID>MaxLineLength:SpaceWeatherSyncWorkerTest.kt:SpaceWeatherSyncWorkerTest$private val alerts = FakeAuroraAlertRepository(AuroraAlertSettings(enabled = true, latitude = 59.3, longitude = 18.1))</ID>
+    <ID>ReturnCount:SpaceWeatherMappers.kt:internal fun CmeDto.toEntityOrNull: CoronalMassEjectionEntity?</ID>
+    <ID>ReturnCount:SpaceWeatherMappers.kt:internal fun FlareDto.toEntityOrNull: SolarFlareEntity?</ID>
+    <ID>ReturnCount:SpaceWeatherMappers.kt:internal fun KpForecastDto.toEntityOrNull: KpReadingEntity?</ID>
+    <ID>ReturnCount:SpaceWeatherMappers.kt:internal fun OvationDto.toEntityOrNull: AuroraForecastEntity?</ID>
+    <ID>ReturnCount:SpaceWeatherRepositoryImpl.kt:SpaceWeatherRepositoryImpl$override suspend fun refreshKp: DataResult&lt;Unit&gt;</ID>
+    <ID>ReturnCount:SpaceWeatherRepositoryImpl.kt:SpaceWeatherRepositoryImpl$override suspend fun refreshSolarActivity: DataResult&lt;Unit&gt;</ID>
+    <ID>TooGenericExceptionCaught:SpaceWeatherLocalDataSource.kt:RoomSpaceWeatherLocalDataSource$throwable: Throwable</ID>
+    <ID>TooManyFunctions:SpaceWeatherDao.kt:SpaceWeatherDao</ID>
+  </CurrentIssues>
+</SmellBaseline>

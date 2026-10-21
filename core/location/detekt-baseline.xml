@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:DataStoreObserverLocationRepository.kt:DataStoreObserverLocationRepository$180.0</ID>
+    <ID>MagicNumber:DataStoreObserverLocationRepository.kt:DataStoreObserverLocationRepository$90.0</ID>
+    <ID>ReturnCount:AndroidDeviceLocationProvider.kt:AndroidDeviceLocationProvider$@SuppressLint("MissingPermission") // Checked by hasPermission() first. override suspend fun currentLocation: DeviceLocationResult</ID>
+    <ID>ReturnCount:DataStoreObserverLocationRepository.kt:DataStoreObserverLocationRepository$private fun Preferences.toLocation: ObserverLocation?</ID>
+  </CurrentIssues>
+</SmellBaseline>

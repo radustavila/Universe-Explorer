@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ReturnCount:ExoplanetMappers.kt:fun ExoplanetDto.toEntityOrNull: ExoplanetEntity?</ID>
+    <ID>ReturnCount:ExoplanetRepositoryImpl.kt:ExoplanetRepositoryImpl$override suspend fun refresh: DataResult&lt;Int&gt;</ID>
+    <ID>TooGenericExceptionCaught:ExoplanetLocalDataSource.kt:RoomExoplanetLocalDataSource$throwable: Throwable</ID>
+    <ID>TooManyFunctions:ExoplanetDao.kt:ExoplanetDao</ID>
+  </CurrentIssues>
+</SmellBaseline>

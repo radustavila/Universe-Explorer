@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongMethod:DetailsScreen.kt:@Composable private fun ApodDetails</ID>
+    <ID>LongMethod:DetailsScreen.kt:@Composable private fun Explanation</ID>
+    <ID>MatchingDeclarationName:DetailsNavigation.kt:DetailsRoute</ID>
+    <ID>TooManyFunctions:DetailsScreen.kt:com.radustavila.nasaexplorer.feature.details.DetailsScreen.kt</ID>
+  </CurrentIssues>
+</SmellBaseline>

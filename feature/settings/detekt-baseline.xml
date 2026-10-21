@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongMethod:AboutScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable internal fun AboutContent</ID>
+    <ID>LongMethod:SettingsScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable internal fun SettingsContent</ID>
+    <ID>LongMethod:SettingsScreen.kt:private fun LazyListScope.unitsSection</ID>
+    <ID>MatchingDeclarationName:DataCredits.kt:DataCredit</ID>
+    <ID>MaxLineLength:AboutScreen.kt:Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.settings_back))</ID>
+    <ID>MaxLineLength:AboutScreenTest.kt:AboutScreenTest$composeTestRule.onNodeWithTag(ABOUT_LIST_TEST_TAG).performScrollToNode(hasTestTag(aboutCreditTestTag(credit.url)))</ID>
+    <ID>MaxLineLength:DataCredits.kt:DataCredit(R.string.credit_astronomy_engine, R.string.credit_astronomy_engine_description, "https://github.com/cosinekitty/astronomy")</ID>
+    <ID>MaxLineLength:DataCredits.kt:DataCredit(R.string.credit_exoplanets, R.string.credit_exoplanets_description, "https://exoplanetarchive.ipac.caltech.edu/")</ID>
+    <ID>MaxLineLength:DataCredits.kt:DataCredit(R.string.credit_launch_library, R.string.credit_launch_library_description, "https://thespacedevs.com/llapi")</ID>
+    <ID>MaxLineLength:LicencesScreen.kt:Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.settings_back))</ID>
+    <ID>MaxLineLength:SettingsFixture.kt:SettingsFixture$val checkAurora = CheckAuroraAlertUseCase(aurora, FakeSpaceWeatherRepository(), FakeAuroraAlertNotifier(), clock)</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.settings_back))</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:Text(description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:Text(label(option), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(start = 12.dp))</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:TextButton(onClick = { confirmClear = false }) { Text(stringResource(R.string.settings_clear_cache_cancel)) }</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:if (uiState.observerLocation == null) R.string.settings_iss_needs_place else R.string.settings_iss_description</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:item(key = "storage-measuring") { Description(R.string.settings_storage_measuring, Modifier.padding(horizontal = 16.dp)) }</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:private</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:stringResource(if (systemIs24Hour) R.string.settings_time_format_24 else R.string.settings_time_format_12)</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:val evening = remember { EXAMPLE_DAY.atTime(EXAMPLE_HOUR, EXAMPLE_MINUTE).atZone(ZoneId.systemDefault()).toInstant() }</ID>
+    <ID>MaxLineLength:SettingsScreenTest.kt:SettingsScreenTest$composeTestRule.onNodeWithText("Your favourites and their offline copies are kept", substring = true).assertExists()</ID>
+    <ID>MaxLineLength:SettingsViewModelTest.kt:SettingsViewModelTest$assertEquals(UnitPreferences(MeasurementSystem.METRIC, TimeFormat.TWELVE_HOUR), preferences.currentUnitPreferences)</ID>
+    <ID>MaxLineLength:SettingsViewModelTest.kt:SettingsViewModelTest$assertTrue(awaitUntil { it.observerLocation != null &amp;&amp; it.auroraAlerts.hasLocation }.canUseSavedPlaceForAurora)</ID>
+    <ID>MaxLineLength:SettingsViewModelTest.kt:SettingsViewModelTest$private suspend</ID>
+    <ID>ReturnCount:SettingsScreen.kt:@Composable private fun auroraSummary: String</ID>
+    <ID>TooManyFunctions:SettingsScreen.kt:com.radustavila.nasaexplorer.feature.settings.SettingsScreen.kt</ID>
+  </CurrentIssues>
+</SmellBaseline>

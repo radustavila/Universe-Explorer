@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongMethod:NasaNavHost.kt:@Composable fun NasaNavHost</ID>
+    <ID>MaxLineLength:FavoriteNavigation.kt:FavoriteSource.EPIC -&gt; EpicPhotoRef.fromFavoriteId(item.itemId)?.let { ref -&gt; navigateToEpicPhoto(ref, navOptions) }</ID>
+    <ID>MaxLineLength:ListDetailLayoutTest.kt:ListDetailLayoutTest$Button(onClick = { pane.navigate(TestItemRoute(id + 1)) }) { Text(DETAIL_LINK) }</ID>
+    <ID>MaxLineLength:ListDetailLayoutTest.kt:ListDetailLayoutTest$TextField(value = query, onValueChange = { query = it }, modifier = Modifier.testTag(SEARCH))</ID>
+    <ID>MaxLineLength:UniverseHub.kt:*</ID>
+    <ID>ReturnCount:ApodWebLinks.kt:ApodWebLinks$fun inAppUriFor: Uri?</ID>
+    <ID>ReturnCount:MainActivity.kt:MainActivity$private fun routeWebLink: Boolean</ID>
+    <ID>TooGenericExceptionCaught:VideoFrameFetcher.kt:VideoFrameFetcher$e: RuntimeException</ID>
+  </CurrentIssues>
+</SmellBaseline>

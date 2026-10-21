@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:AuroraAlertUseCases.kt:SetAuroraAlertLocationUseCase$180.0</ID>
+    <ID>MagicNumber:AuroraAlertUseCases.kt:SetAuroraAlertLocationUseCase$90.0</ID>
+    <ID>MaxLineLength:CheckAuroraAlertUseCaseTest.kt:CheckAuroraAlertUseCaseTest$val noPlace = CheckAuroraAlertUseCase(FakeAuroraAlertRepository(AuroraAlertSettings(enabled = true)), spaceWeather, notifier, clock)</ID>
+    <ID>MaxLineLength:IssPassReminderUseCasesTest.kt:IssPassReminderUseCasesTest$assertEquals(clock.currentInstant.plus(RescheduleIssPassReminderUseCase.RECHECK_INTERVAL), scheduler.scheduledAt)</ID>
+    <ID>MaxLineLength:SearchText.kt:SearchText$val from = if (start == 0) 0 else clean.indexOf(' ', start).let { if (it in start until firstMatch) it + 1 else start }</ID>
+    <ID>MaxLineLength:SkyUseCases.kt:ObserveIssTrackUseCase$groundTrack = predictor.groundTrack(usable, from = anchor.minus(TRACK_BEHIND), to = anchor.plus(TRACK_AHEAD))</ID>
+    <ID>MaxLineLength:SpaceWeatherUseCases.kt:SynchronizeSpaceWeatherUseCase$val map = async { if (includeAuroraMap) repository.refreshAuroraForecast() else DataResult.Success(Unit) }</ID>
+    <ID>MaxLineLength:UniversalSearchUseCaseTest.kt:UniversalSearchUseCaseTest$assertEquals(setOf(SearchSource.EXOPLANETS, SearchSource.NASA_LIBRARY, SearchSource.LAUNCHES), results.failedSources)</ID>
+    <ID>ReturnCount:ApplyDailyWallpaperUseCase.kt:ApplyDailyWallpaperUseCase$suspend operator fun invoke</ID>
+    <ID>ReturnCount:AuroraAlertUseCases.kt:CheckAuroraAlertUseCase$suspend operator fun invoke: AuroraAlert?</ID>
+    <ID>ReturnCount:CacheOnThisDayUseCase.kt:CacheOnThisDayUseCase$suspend operator fun invoke: DataResult&lt;Int&gt;</ID>
+    <ID>ReturnCount:FetchApodUseCase.kt:FetchApodUseCase$suspend operator fun invoke: DataResult&lt;Unit&gt;</ID>
+    <ID>ReturnCount:IssPassReminderUseCases.kt:RemindOfIssPassUseCase$private suspend fun imminentPass: SatellitePass?</ID>
+    <ID>ReturnCount:IssPassReminderUseCases.kt:RescheduleIssPassReminderUseCase$private suspend fun nextRemindablePass: SatellitePass?</ID>
+    <ID>ReturnCount:LoadOlderApodsUseCase.kt:LoadOlderApodsUseCase$suspend operator fun invoke: DataResult&lt;Int&gt;</ID>
+    <ID>ReturnCount:SearchText.kt:SearchText$fun snippet: String?</ID>
+    <ID>ReturnCount:SkyUseCases.kt:ObserveIssPassesUseCase$private fun forecast: IssPassForecast</ID>
+    <ID>TooGenericExceptionCaught:SearchableSource.kt:throwable: Throwable</ID>
+    <ID>TooGenericExceptionCaught:UniversalSearchUseCase.kt:UniversalSearchUseCase$throwable: Throwable</ID>
+  </CurrentIssues>
+</SmellBaseline>

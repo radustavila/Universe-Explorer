@@ -31,6 +31,10 @@ jobs:
       - name: Lint
         run: ./gradlew lint --stacktrace
 
+      # Fails on findings missing from each module's detekt-baseline.xml.
+      - name: Detekt
+        run: ./gradlew detekt --stacktrace
+
       - name: Assemble debug
         run: ./gradlew assembleDebug --stacktrace
 
@@ -43,4 +47,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
-          path: '**/build/reports/tests/**'
+          path: |
+            **/build/reports/tests/**
+            **/build/reports/detekt/**
