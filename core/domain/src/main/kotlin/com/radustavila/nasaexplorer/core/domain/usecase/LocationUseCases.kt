@@ -50,6 +50,20 @@ class SetManualLocationUseCase @Inject constructor(
     suspend operator fun invoke(city: City) = invoke(city.coordinate, city.name)
 }
 
+/**
+ * Forgets the saved place (Settings). Screens that need one ask again; the ISS reminder, computed
+ * for a place, is re-armed, which leaves it waiting for a new one.
+ */
+class ClearObserverLocationUseCase @Inject constructor(
+    private val repository: ObserverLocationRepository,
+    private val rescheduleIssPassReminder: RescheduleIssPassReminderUseCase,
+) {
+    suspend operator fun invoke() {
+        repository.clearLocation()
+        rescheduleIssPassReminder()
+    }
+}
+
 class SearchCitiesUseCase @Inject constructor(
     private val directory: CityDirectory,
 ) {

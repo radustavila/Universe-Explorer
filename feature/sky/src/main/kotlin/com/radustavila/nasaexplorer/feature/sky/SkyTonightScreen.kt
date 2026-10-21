@@ -1,13 +1,9 @@
 package com.radustavila.nasaexplorer.feature.sky
 
-import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.provider.Settings
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,7 +38,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
@@ -66,8 +61,8 @@ import com.radustavila.nasaexplorer.feature.sky.component.MoonCard
 import com.radustavila.nasaexplorer.feature.sky.component.NightCard
 import com.radustavila.nasaexplorer.feature.sky.component.PeopleInSpaceCard
 import com.radustavila.nasaexplorer.feature.sky.component.PlanetsCard
+import com.radustavila.nasaexplorer.feature.sky.component.rememberCoarseLocationRequest
 import java.time.Instant
-import kotlinx.coroutines.launch
 
 const val SKY_LIST_TEST_TAG = "sky-list"
 
@@ -81,20 +76,13 @@ fun SkyTonightScreen(
     viewModel: SkyTonightViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     var showLocationDialog by rememberSaveable { mutableStateOf(false) }
 
-    val locationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        if (granted) viewModel.onLocateDevice() else viewModel.onLocationPermissionDenied()
-    }
-    val onUseMyLocation: () -> Unit = {
-        if (context.hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            viewModel.onLocateDevice()
-        } else {
-            locationPermission.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
-        }
-    }
+    val onUseMyLocation = rememberCoarseLocationRequest(
+        onGranted = viewModel::onLocateDevice,
+        onDenied = viewModel::onLocationPermissionDenied,
+    )
 
     val reminders = rememberNotificationPermissionToggle(
         isEnabled = uiState.remindersEnabled,
@@ -302,9 +290,6 @@ private fun SkyMessageEffect(
         onShown()
     }
 }
-
-private fun Context.hasPermission(permission: String): Boolean =
-    ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 
 private fun Context.openSettings(action: String, configure: Intent.() -> Unit = {}) {
     val intent = Intent(action).apply(configure)

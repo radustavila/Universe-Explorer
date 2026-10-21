@@ -28,6 +28,7 @@
     <string name="sky_coordinates_invalid">Enter a latitude from −90 to 90 and a longitude from −180 to 180.</string>
     <string name="sky_use_coordinates">Use coordinates</string>
     <string name="sky_cancel">Cancel</string>
+    <string name="sky_location_clear">Forget this location</string>
 
     <!-- Night -->
     <string name="sky_night_title">Tonight</string>
