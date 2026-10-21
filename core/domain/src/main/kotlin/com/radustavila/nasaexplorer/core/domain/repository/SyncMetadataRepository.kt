@@ -39,6 +39,13 @@ interface SyncMetadataRepository {
         nextAllowedRefreshAt: Instant? = null,
     )
 
+    /**
+     * Forgets every source's next allowed refresh time, so each one refreshes the next time it is
+     * asked: after the user cleared the cached data. Servers' own cooldowns still apply, at the
+     * HTTP layer.
+     */
+    suspend fun allowRefreshNow()
+
     val oldestRequestedDate: Flow<LocalDate?>
     val lastAnnouncedApodDate: Flow<LocalDate?>
     val lastWallpaperApodDate: Flow<LocalDate?>
