@@ -4,6 +4,7 @@
     <string name="details_back">Back</string>
     <string name="details_share">Share</string>
     <string name="details_copyright">© %1$s</string>
+    <string name="details_share_source">Astronomy Picture of the Day</string>
     <string name="details_view_full_size">View full size</string>
     <string name="details_close_full_size">Close full size view</string>
     <string name="details_about_image">About this image</string>
