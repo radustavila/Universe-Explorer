@@ -17,11 +17,14 @@ import com.radustavila.nasaexplorer.core.model.City
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.feature.sky.component.LocationDialog
+import com.radustavila.nasaexplorer.feature.sky.component.LocationPrompt
+import com.radustavila.nasaexplorer.feature.sky.component.SKY_CHOOSE_CITY_BUTTON_TEST_TAG
 import com.radustavila.nasaexplorer.feature.sky.component.SKY_CITY_RESULTS_TEST_TAG
 import com.radustavila.nasaexplorer.feature.sky.component.SKY_CITY_SEARCH_FIELD_TEST_TAG
 import com.radustavila.nasaexplorer.feature.sky.component.SKY_LATITUDE_FIELD_TEST_TAG
 import com.radustavila.nasaexplorer.feature.sky.component.SKY_LONGITUDE_FIELD_TEST_TAG
 import com.radustavila.nasaexplorer.feature.sky.component.SKY_USE_COORDINATES_TEST_TAG
+import com.radustavila.nasaexplorer.feature.sky.component.SKY_USE_LOCATION_BUTTON_TEST_TAG
 import com.radustavila.nasaexplorer.feature.sky.component.parseCoordinate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -30,6 +33,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 @RunWith(RobolectricTestRunner::class)
 class LocationDialogTest {
@@ -93,6 +98,25 @@ class LocationDialogTest {
         composeTestRule.onNodeWithTag(SKY_USE_COORDINATES_TEST_TAG).performScrollTo().assertIsDisplayed()
 
         assertEquals(listOf(cities.last()), picked)
+    }
+
+    @Test
+    @Config(qualifiers = "w360dp-h640dp")
+    // Real text metrics: the legacy shadows measure glyphs far narrower than a device does.
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun `at twice the font size the prompt's buttons wrap instead of squeezing`() {
+        composeTestRule.setContent {
+            val density = LocalDensity.current
+            CompositionLocalProvider(LocalDensity provides Density(density.density, fontScale = 2f)) {
+                LocationPrompt(isLocating = false, onUseMyLocation = {}, onChooseCity = {})
+            }
+        }
+
+        val useLocation = composeTestRule.onNodeWithTag(SKY_USE_LOCATION_BUTTON_TEST_TAG).getUnclippedBoundsInRoot()
+        val chooseCity = composeTestRule.onNodeWithTag(SKY_CHOOSE_CITY_BUTTON_TEST_TAG).getUnclippedBoundsInRoot()
+        // Its own line, at its natural width, rather than a sliver beside the first button.
+        assertTrue(chooseCity.top >= useLocation.bottom)
+        assertTrue(chooseCity.right - chooseCity.left > 100.dp)
     }
 
     @Test

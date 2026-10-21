@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.feature.sky.component
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -80,7 +81,11 @@ internal fun LocationPrompt(
         modifier = modifier.testTag(SKY_LOCATION_PROMPT_TEST_TAG),
     ) {
         Text(stringResource(R.string.sky_location_prompt_rationale), style = MaterialTheme.typography.bodyMedium)
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        // Wraps rather than squeezes: at large font sizes the second button moves to its own line.
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             Button(
                 onClick = onUseMyLocation,
                 enabled = !isLocating,
