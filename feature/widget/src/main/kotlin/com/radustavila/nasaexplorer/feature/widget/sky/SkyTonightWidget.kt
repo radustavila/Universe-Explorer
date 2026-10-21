@@ -11,6 +11,7 @@ import com.radustavila.nasaexplorer.core.designsystem.util.deepLinkIntent
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveIssPassesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveObserverLocationUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSkyTonightUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveUnitPreferencesUseCase
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.model.SkyTonightDeepLink
 import com.radustavila.nasaexplorer.feature.widget.R
@@ -50,7 +51,7 @@ class SkyTonightWidget : GlanceAppWidget() {
             location = location,
             issForecast = location?.let { entryPoint.observeIssPasses().invoke(it.coordinate).first() },
             now = now,
-            format = WidgetFormat(context.resources),
+            format = WidgetFormat.forWidget(context, entryPoint.observeUnitPreferences()),
             resources = context.resources,
         )
         val moonPicture = drawMoon(
@@ -82,6 +83,7 @@ class SkyTonightWidgetReceiver : GlanceAppWidgetReceiver() {
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface SkyTonightWidgetEntryPoint {
+    fun observeUnitPreferences(): ObserveUnitPreferencesUseCase
     fun observeObserverLocation(): ObserveObserverLocationUseCase
     fun observeIssPasses(): ObserveIssPassesUseCase
     fun observeSkyTonight(): ObserveSkyTonightUseCase

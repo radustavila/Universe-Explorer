@@ -2,6 +2,7 @@ package com.radustavila.nasaexplorer.feature.settings
 
 import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidget
 import com.radustavila.nasaexplorer.core.domain.storage.StorageEntry
 import com.radustavila.nasaexplorer.core.domain.storage.StorageKind
 import com.radustavila.nasaexplorer.core.model.AuroraAlertSettings
@@ -73,6 +74,8 @@ class SettingsViewModelTest {
             val state = awaitUntil { it.units == UnitPreferences(MeasurementSystem.METRIC, TimeFormat.TWELVE_HOUR) }
             assertEquals(UnitPreferences(MeasurementSystem.METRIC, TimeFormat.TWELVE_HOUR), preferences.currentUnitPreferences)
             assertEquals(MeasurementSystem.METRIC, state.units.measurementSystem)
+            // Widgets show clock times too: they are re-rendered in the new format.
+            assertEquals(HomeWidget.entries.toSet(), fixture.widgets.updated.toSet())
             cancelAndIgnoreRemainingEvents()
         }
     }

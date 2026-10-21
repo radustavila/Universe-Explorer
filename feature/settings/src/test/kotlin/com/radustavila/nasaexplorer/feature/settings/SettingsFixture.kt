@@ -21,6 +21,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.SetTimeFormatUseCase
 import com.radustavila.nasaexplorer.core.testing.fake.FakeAuroraAlertNotifier
 import com.radustavila.nasaexplorer.core.testing.fake.FakeAuroraAlertRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeCacheStorage
+import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeIssPassReminderScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSatellitePassPredictor
@@ -43,6 +44,7 @@ internal class SettingsFixture {
     val location = FakeObserverLocationRepository()
     val metadata = FakeSyncMetadataRepository()
     val syncScheduler = FakeSyncScheduler()
+    val widgets = FakeHomeWidgetUpdater()
     val images = FakeCacheStorage(StorageKind.IMAGE_CACHE, bytes = 40_000_000)
     val http = FakeCacheStorage(StorageKind.HTTP_CACHE, bytes = 1_000_000)
     val feeds = FakeCacheStorage(StorageKind.CACHED_DATA, bytes = 900_000, keptBytes = 200_000)
@@ -68,7 +70,7 @@ internal class SettingsFixture {
             observeObserverLocation = ObserveObserverLocationUseCase(location),
             observeDailyWallpaper = ObserveDailyWallpaperEnabledUseCase(preferences),
             setMeasurementSystem = SetMeasurementSystemUseCase(preferences),
-            setTimeFormat = SetTimeFormatUseCase(preferences),
+            setTimeFormat = SetTimeFormatUseCase(preferences, widgets),
             setNewApodNotifications = SetNewApodNotificationsEnabledUseCase(preferences),
             setAuroraAlertEnabled = SetAuroraAlertEnabledUseCase(aurora, spaceWeatherScheduler, checkAurora),
             setAuroraAlertLocation = SetAuroraAlertLocationUseCase(aurora, checkAurora),

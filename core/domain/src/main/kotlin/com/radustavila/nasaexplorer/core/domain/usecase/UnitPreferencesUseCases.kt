@@ -1,5 +1,7 @@
 package com.radustavila.nasaexplorer.core.domain.usecase
 
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidget
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.domain.repository.UserPreferencesRepository
 import com.radustavila.nasaexplorer.core.model.MeasurementSystem
 import com.radustavila.nasaexplorer.core.model.TimeFormat
@@ -20,8 +22,13 @@ class SetMeasurementSystemUseCase @Inject constructor(
     suspend operator fun invoke(system: MeasurementSystem) = userPreferencesRepository.setMeasurementSystem(system)
 }
 
+/** Home screen widgets show clock times too, so they are re-rendered in the new format. */
 class SetTimeFormatUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
+    private val widgetUpdater: HomeWidgetUpdater,
 ) {
-    suspend operator fun invoke(format: TimeFormat) = userPreferencesRepository.setTimeFormat(format)
+    suspend operator fun invoke(format: TimeFormat) {
+        userPreferencesRepository.setTimeFormat(format)
+        HomeWidget.entries.forEach { widgetUpdater.update(it) }
+    }
 }

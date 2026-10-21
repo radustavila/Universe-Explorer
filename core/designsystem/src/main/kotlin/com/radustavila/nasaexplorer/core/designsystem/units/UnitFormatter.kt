@@ -18,6 +18,7 @@ import com.radustavila.nasaexplorer.core.model.UnitPreferences
 import java.text.NumberFormat
 import java.time.Instant
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
@@ -51,6 +52,7 @@ class UnitFormatter(
     private val dateTimeFormat by lazy { dateFormat(if (is24Hour) "yMMMdHm" else "yMMMdhm") }
     private val dayAndTimeFormat by lazy { dateFormat(if (is24Hour) "EEEdMMMHm" else "EEEdMMMhm") }
     private val dayFormat by lazy { dateFormat("EEEdMMM") }
+    private val weekdayFormat by lazy { dateFormat("EEE") }
 
     /** "21:30" or "9:30 PM", in the device's time zone. */
     fun time(instant: Instant): String = timeFormat.format(Date.from(instant))
@@ -63,6 +65,9 @@ class UnitFormatter(
 
     /** "Tue 21 Oct" or "Tue, Oct 21": a day within the coming weeks, without the year. */
     fun day(instant: Instant): String = dayFormat.format(Date.from(instant))
+
+    /** "Tue": the weekday alone, for times within the coming week where space is short. */
+    fun weekday(instant: Instant): String = weekdayFormat.format(Date.from(instant))
 
     /** "408 km" or "254 mi": distances and altitudes given in kilometres. */
     fun distance(km: Double, fractionDigits: Int = 0): String {
@@ -155,7 +160,7 @@ class UnitFormatter(
     private fun string(@StringRes id: Int, vararg args: Any): String = resources.getString(id, *args)
 
     private fun dateFormat(skeleton: String): DateFormat =
-        DateFormat.getInstanceForSkeleton(skeleton, locale).apply { timeZone = TimeZone.getTimeZone(zone.id) }
+        DateFormat.getInstanceForSkeleton(skeleton, locale).apply { timeZone = TimeZone.getTimeZone(zone.icuId()) }
 
     private fun lengthUnit(maxMeters: Double): Pair<LengthUnit, (Double) -> Double> = when {
         !isImperial && maxMeters >= THOUSAND -> LengthUnit.KILOMETRE to { m: Double -> m / THOUSAND }
@@ -211,6 +216,12 @@ fun rememberUnitFormatter(): UnitFormatter {
             is24Hour = preferences.timeFormat.is24Hour(systemIs24Hour),
         )
     }
+}
+
+/** ICU knows region ids and "GMT+hh:mm", not java.time's "Z" or "+02:00". */
+private fun ZoneId.icuId(): String = when (this) {
+    is ZoneOffset -> if (totalSeconds == 0) "UTC" else "GMT$id"
+    else -> id
 }
 
 private fun quantity(value: Double): Int = value.roundToLong().coerceIn(0, Int.MAX_VALUE.toLong()).toInt()

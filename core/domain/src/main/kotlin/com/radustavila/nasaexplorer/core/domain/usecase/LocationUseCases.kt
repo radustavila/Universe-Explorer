@@ -63,10 +63,12 @@ class SetManualLocationUseCase @Inject constructor(
 class ClearObserverLocationUseCase @Inject constructor(
     private val repository: ObserverLocationRepository,
     private val rescheduleIssPassReminder: RescheduleIssPassReminderUseCase,
+    private val widgetUpdater: HomeWidgetUpdater,
 ) {
     suspend operator fun invoke() {
         repository.clearLocation()
         rescheduleIssPassReminder()
+        widgetUpdater.updateLocationWidgets()
     }
 }
 

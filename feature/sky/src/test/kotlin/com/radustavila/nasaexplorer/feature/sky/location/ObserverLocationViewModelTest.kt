@@ -1,6 +1,7 @@
 package com.radustavila.nasaexplorer.feature.sky.location
 
 import app.cash.turbine.test
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidget
 import com.radustavila.nasaexplorer.core.domain.location.DeviceLocationResult
 import com.radustavila.nasaexplorer.core.domain.usecase.ClearObserverLocationUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.LocateDeviceUseCase
@@ -14,6 +15,7 @@ import com.radustavila.nasaexplorer.core.model.LocationSource
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.fake.FakeCityDirectory
 import com.radustavila.nasaexplorer.core.testing.fake.FakeDeviceLocationProvider
+import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeIssPassReminderScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSatellitePassPredictor
@@ -26,6 +28,7 @@ import java.time.Instant
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
@@ -42,6 +45,7 @@ class ObserverLocationViewModelTest {
     private val satellites = FakeSatelliteRepository().apply { setElements(TestSky.issElements(epoch = clock.currentInstant)) }
     private val pass = TestSky.pass(start = clock.currentInstant.plus(Duration.ofHours(14)))
     private val scheduler = FakeIssPassReminderScheduler()
+    private val widgets = FakeHomeWidgetUpdater()
 
     private fun createViewModel(): ObserverLocationViewModel {
         val reschedule = RescheduleIssPassReminderUseCase(
@@ -54,9 +58,9 @@ class ObserverLocationViewModelTest {
         )
         return ObserverLocationViewModel(
             observeLocation = ObserveObserverLocationUseCase(location),
-            locateDevice = LocateDeviceUseCase(device, location),
-            setManualLocation = SetManualLocationUseCase(location),
-            clearLocation = ClearObserverLocationUseCase(location, reschedule),
+            locateDevice = LocateDeviceUseCase(device, location, widgets),
+            setManualLocation = SetManualLocationUseCase(location, widgets),
+            clearLocation = ClearObserverLocationUseCase(location, reschedule, widgets),
             searchCities = SearchCitiesUseCase(cities),
             rescheduleReminder = reschedule,
         )
@@ -108,6 +112,7 @@ class ObserverLocationViewModelTest {
         viewModel.onClear()
 
         assertNull(location.current)
+        assertTrue(HomeWidget.SKY_TONIGHT in widgets.updated)
         assertEquals(clock.currentInstant.plus(RescheduleIssPassReminderUseCase.RECHECK_INTERVAL), scheduler.scheduledAt)
     }
 

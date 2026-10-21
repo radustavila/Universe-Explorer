@@ -8,6 +8,7 @@ import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import com.radustavila.nasaexplorer.core.common.time.TimeProvider
 import com.radustavila.nasaexplorer.core.designsystem.util.deepLinkIntent
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveUnitPreferencesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveUpcomingLaunchesUseCase
 import com.radustavila.nasaexplorer.core.model.TodayDeepLink
 import com.radustavila.nasaexplorer.feature.widget.R
@@ -44,7 +45,7 @@ class NextLaunchWidget : GlanceAppWidget() {
         val state = nextLaunchWidgetState(
             launches = entryPoint.observeUpcomingLaunches().invoke().first(),
             now = entryPoint.timeProvider().now(),
-            format = WidgetFormat(context.resources),
+            format = WidgetFormat.forWidget(context, entryPoint.observeUnitPreferences()),
             resources = context.resources,
         )
 
@@ -66,6 +67,7 @@ class NextLaunchWidgetReceiver : GlanceAppWidgetReceiver() {
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface NextLaunchWidgetEntryPoint {
+    fun observeUnitPreferences(): ObserveUnitPreferencesUseCase
     fun observeUpcomingLaunches(): ObserveUpcomingLaunchesUseCase
     fun timeProvider(): TimeProvider
 }
