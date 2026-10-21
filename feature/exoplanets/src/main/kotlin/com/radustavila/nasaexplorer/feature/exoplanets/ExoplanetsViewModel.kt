@@ -59,6 +59,7 @@ class ExoplanetsViewModel @Inject constructor(
             isOffline = !isOnline,
             neverSynced = sync.lastSuccessAt == null,
             lastRefreshFailed = sync.lastAttemptFailed,
+            lastUpdatedAt = sync.lastSuccessAt,
             confirmedPlanets = stats?.confirmedPlanets,
             newestSinceYear = newestSinceYear,
         )

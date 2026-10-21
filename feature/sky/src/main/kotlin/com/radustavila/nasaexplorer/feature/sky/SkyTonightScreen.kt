@@ -49,6 +49,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
@@ -234,6 +235,9 @@ private fun SkyList(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        // Always an item, even while it draws nothing: added later above the first card, the list
+        // would keep that card in place and scroll the line out of view.
+        item(key = "freshness") { FreshnessLabel(uiState.freshness) }
         if (location == null) {
             item(key = "prompt") {
                 LocationPrompt(

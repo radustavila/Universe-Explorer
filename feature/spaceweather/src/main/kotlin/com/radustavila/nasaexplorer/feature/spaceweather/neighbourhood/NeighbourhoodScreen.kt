@@ -38,9 +38,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
 import com.radustavila.nasaexplorer.core.model.CloseApproach
 import com.radustavila.nasaexplorer.core.model.Fireball
@@ -126,6 +128,13 @@ private fun NeighbourhoodList(uiState: NeighbourhoodUiState, onApproachClick: (S
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (uiState.isOffline) item(key = "offline", contentType = "offline") { OfflineBanner() }
+        // Always an item (see SkyTonightScreen): the list keeps it, not the first row, in place.
+        item(key = "freshness", contentType = "freshness") {
+            FreshnessLabel(
+                uiState.freshness,
+                modifier = Modifier.widthIn(max = CONTENT_MAX_WIDTH).fillMaxWidth().padding(horizontal = 16.dp),
+            )
+        }
         item(key = "approaches-header", contentType = "header") {
             Header(
                 title = stringResource(R.string.neighbourhood_approaches_title),
@@ -150,10 +159,8 @@ private fun NeighbourhoodList(uiState: NeighbourhoodUiState, onApproachClick: (S
         items(uiState.fireballs, key = { "fireball-${it.time}" }, contentType = { "fireball" }) { fireball ->
             FireballRow(fireball)
         }
-        uiState.lastUpdatedAt?.let { updated ->
-            item(key = "updated", contentType = "note") {
-                Note(stringResource(R.string.neighbourhood_updated, updated.formatDateTime()))
-            }
+        item(key = "lunar-distance", contentType = "note") {
+            Note(stringResource(R.string.neighbourhood_lunar_distance_note))
         }
     }
 }
@@ -242,7 +249,7 @@ private fun formatKilotons(kilotons: Double, locale: Locale): String =
 @Composable
 private fun Header(title: String, subtitle: String) {
     Column(Modifier.widthIn(max = CONTENT_MAX_WIDTH).fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp)) {
-        Text(title, style = MaterialTheme.typography.titleLarge)
+        SectionTitle(title, style = MaterialTheme.typography.titleLarge)
         Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

@@ -66,6 +66,14 @@ class SynchronizeEpicUseCaseTest {
     }
 
     @Test
+    fun `a forced sync ignores the refresh interval`() = runTest {
+        synchronizeEpic()
+
+        assertTrue(synchronizeEpic(force = true) is SourceRefreshResult.Completed)
+        assertEquals(EpicCollection.entries + EpicCollection.entries, repository.refreshedCollections)
+    }
+
+    @Test
     fun `is due again once the refresh interval has passed`() = runTest {
         synchronizeEpic()
         timeProvider.currentInstant = timeProvider.currentInstant.plus(SynchronizeEpicUseCase.REFRESH_INTERVAL)

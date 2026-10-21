@@ -7,6 +7,7 @@ import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.location.DeviceLocationResult
 import com.radustavila.nasaexplorer.core.domain.usecase.LocateDeviceUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDataFreshnessUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveIssPassRemindersEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveIssPassesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveIssTrackUseCase
@@ -95,6 +96,17 @@ class SkyTonightViewModelTest {
         }
         assertEquals(1, satellites.refreshCallCount)
         assertEquals(1, people.refreshCallCount)
+    }
+
+    @Test
+    fun `the refreshed orbit and crew feed the freshness line`() = runTest {
+        location.setLocation(TestSky.location())
+
+        createViewModel().uiState.test {
+            val state = awaitUntil { it.freshness.lastUpdatedAt != null }
+            assertEquals(clock.currentInstant, state.freshness.lastUpdatedAt)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
@@ -188,6 +200,7 @@ class SkyTonightViewModelTest {
             observePeople = ObservePeopleInSpaceUseCase(people),
             observeReminders = ObserveIssPassRemindersEnabledUseCase(preferences),
             observeConnectivity = ObserveConnectivityUseCase(network),
+            observeDataFreshness = ObserveDataFreshnessUseCase(metadata, network),
             locateDevice = LocateDeviceUseCase(deviceLocation, location, FakeHomeWidgetUpdater()),
             setManualLocation = SetManualLocationUseCase(location, FakeHomeWidgetUpdater()),
             searchCities = SearchCitiesUseCase(cities),

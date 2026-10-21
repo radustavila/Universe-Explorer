@@ -1,5 +1,8 @@
 package com.radustavila.nasaexplorer.feature.mars
 
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -80,8 +83,10 @@ class MarsScreensTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Sol 5048").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Mars Hand Lens Imager (MAHLI)").assertIsDisplayed()
+        // The sol and its cameras are headings, so TalkBack can skip from one group to the next.
+        val isHeading = SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading)
+        composeTestRule.onNodeWithText("Sol 5048").assertIsDisplayed().assert(isHeading)
+        composeTestRule.onNodeWithText("Mars Hand Lens Imager (MAHLI)").assertIsDisplayed().assert(isHeading)
         composeTestRule.onNodeWithTag(marsRoverTabTestTag(MarsRover.PERSEVERANCE)).performClick()
 
         assertEquals(MarsRover.PERSEVERANCE, selected)

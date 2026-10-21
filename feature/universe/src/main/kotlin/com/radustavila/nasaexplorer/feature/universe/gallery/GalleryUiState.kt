@@ -1,6 +1,7 @@
 package com.radustavila.nasaexplorer.feature.universe.gallery
 
 import com.radustavila.nasaexplorer.core.designsystem.error.UiError
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.GalleryRail
 import com.radustavila.nasaexplorer.core.model.NasaMedia
 import com.radustavila.nasaexplorer.core.model.NasaMediaType
@@ -14,6 +15,8 @@ data class GalleryUiState(
     /** Why the last rail refresh failed; shown over cached rails, or instead of missing ones. */
     val refreshError: UiError? = null,
     val search: SearchUiState = SearchUiState.Idle,
+    /** When the library's rails last synced, for the "Updated …" line above them. */
+    val freshness: DataFreshness = DataFreshness(),
 ) {
     val isSearching: Boolean get() = query.isNotBlank()
 

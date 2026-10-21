@@ -36,14 +36,16 @@ class SynchronizeEpicUseCase @Inject constructor(
     private val refreshSource: RefreshSourceUseCase,
     private val widgetUpdater: HomeWidgetUpdater,
 ) {
-    suspend operator fun invoke(): SourceRefreshResult<Int> {
+    /** @param force ignore [REFRESH_INTERVAL] (pull-to-refresh). */
+    suspend operator fun invoke(force: Boolean = false): SourceRefreshResult<Int> {
         // Not worth recording as a failure of the source: nothing was even attempted.
         if (!networkMonitor.isOnline.first()) {
             return SourceRefreshResult.Completed(DataResult.Failure(AppError.NoConnection))
         }
 
-        return refreshSource(SyncSource.EPIC, minInterval = REFRESH_INTERVAL) { refreshAllCollections() }
-            .also { outcome -> if (outcome.succeeded()) widgetUpdater.update(HomeWidget.EARTH_TODAY) }
+        return refreshSource(SyncSource.EPIC, minInterval = REFRESH_INTERVAL, force = force) {
+            refreshAllCollections()
+        }.also { outcome -> if (outcome.succeeded()) widgetUpdater.update(HomeWidget.EARTH_TODAY) }
     }
 
     private suspend fun refreshAllCollections(): DataResult<Int> {

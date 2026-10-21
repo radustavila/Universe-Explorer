@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.MessageState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
@@ -51,7 +52,6 @@ import com.radustavila.nasaexplorer.core.model.ExoplanetUnits
 import kotlin.math.ln
 
 const val EXOPLANET_LIST_TEST_TAG = "exoplanet-list"
-const val EXOPLANET_REFRESH_FAILED_TEST_TAG = "exoplanet-refresh-failed"
 
 @Composable
 fun ExoplanetsScreen(
@@ -206,16 +206,7 @@ private fun PlanetList(
 @Composable
 private fun ListHeader(uiState: ExoplanetsUiState) {
     Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
-        if (uiState.lastRefreshFailed && !uiState.isOffline) {
-            Text(
-                text = stringResource(R.string.exoplanets_refresh_failed),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier
-                    .padding(bottom = 8.dp)
-                    .testTag(EXOPLANET_REFRESH_FAILED_TEST_TAG),
-            )
-        }
+        FreshnessLabel(uiState.freshness, modifier = Modifier.padding(bottom = 8.dp))
         val description = when (uiState.selectedList) {
             ExoplanetList.NEWEST ->
                 stringResource(R.string.exoplanets_list_newest_description, uiState.newestSinceYear)

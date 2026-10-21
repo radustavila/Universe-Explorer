@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.model.EarthEventCategory
 
 const val RIGHT_NOW_ON_EARTH_CARD_TEST_TAG = "right-now-on-earth-card"
@@ -66,7 +67,7 @@ internal fun RightNowOnEarthCardContent(
                         modifier = Modifier.size(20.dp),
                     )
                     Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.earth_events_card_title), style = MaterialTheme.typography.titleMedium)
+                    SectionTitle(stringResource(R.string.earth_events_card_title))
                 }
                 counts.take(MAX_LINES).forEach { (category, count) ->
                     Row(verticalAlignment = Alignment.CenterVertically) {

@@ -8,8 +8,8 @@ import com.radustavila.nasaexplorer.core.designsystem.error.UiError
 import com.radustavila.nasaexplorer.core.designsystem.error.toUiError
 import com.radustavila.nasaexplorer.core.domain.usecase.LoadOlderApodsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveApodFeedUseCase
-import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDailyWallpaperEnabledUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDataFreshnessUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveNewApodNotificationsEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveOnThisDayUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSyncStateUseCase
@@ -19,6 +19,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.SetDailyWallpaperEnabled
 import com.radustavila.nasaexplorer.core.domain.usecase.SetNewApodNotificationsEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ToggleFavoriteUseCase
 import com.radustavila.nasaexplorer.core.model.Apod
+import com.radustavila.nasaexplorer.core.model.SyncSource
 import com.radustavila.nasaexplorer.core.model.SyncState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -49,11 +50,11 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class FeedViewModel @Inject constructor(
     observeApodFeed: ObserveApodFeedUseCase,
-    observeConnectivity: ObserveConnectivityUseCase,
     observeSyncState: ObserveSyncStateUseCase,
     observeNewApodNotificationsEnabled: ObserveNewApodNotificationsEnabledUseCase,
     observeDailyWallpaperEnabled: ObserveDailyWallpaperEnabledUseCase,
     observeOnThisDay: ObserveOnThisDayUseCase,
+    observeDataFreshness: ObserveDataFreshnessUseCase,
     private val searchCachedApods: SearchCachedApodsUseCase,
     private val refreshFeed: RefreshFeedUseCase,
     private val loadOlderApods: LoadOlderApodsUseCase,
@@ -97,12 +98,14 @@ class FeedViewModel @Inject constructor(
 
     val uiState: StateFlow<FeedUiState> = combine(
         cachedContent,
-        observeConnectivity(),
+        // Connectivity comes with the freshness: offline is part of how fresh the entries are.
+        observeDataFreshness(SyncSource.APOD),
         observeSyncState(),
         preferences,
         localState,
-    ) { content, isOnline, syncState, settings, local ->
+    ) { content, freshness, syncState, settings, local ->
         val items = content.feed
+        val isOnline = !freshness.isOffline
         // A sync that is enqueued while offline cannot run: WorkManager holds it until the
         // connectivity constraint is met. Reporting it as "refreshing" would spin forever, so
         // progress is only shown for work that can actually make progress.
@@ -122,6 +125,7 @@ class FeedViewModel @Inject constructor(
             isDailyWallpaperEnabled = settings.isDailyWallpaperEnabled,
             onThisDay = content.onThisDay,
             search = content.search,
+            freshness = freshness,
         )
     }.stateIn(
         scope = viewModelScope,

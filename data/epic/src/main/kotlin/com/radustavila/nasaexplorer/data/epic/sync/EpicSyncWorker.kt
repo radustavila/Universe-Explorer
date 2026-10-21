@@ -32,7 +32,8 @@ class EpicSyncWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         // Skipped: synced recently enough, nothing to report.
-        val result = (synchronizeEpic() as? SourceRefreshResult.Completed)?.result
+        val outcome = synchronizeEpic(force = inputData.getBoolean(KEY_FORCE, false))
+        val result = (outcome as? SourceRefreshResult.Completed)?.result
             ?: return Result.success(workDataOf(KEY_SYNCED_COUNT to 0))
 
         return when (result) {
@@ -48,6 +49,7 @@ class EpicSyncWorker @AssistedInject constructor(
 
     companion object {
         const val KEY_SYNCED_COUNT = "synced_count"
+        const val KEY_FORCE = "force"
 
         private const val MAX_ATTEMPTS = 3
         private const val BACKOFF_SECONDS = 30L
@@ -59,7 +61,8 @@ class EpicSyncWorker @AssistedInject constructor(
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        fun oneTimeRequest() = OneTimeWorkRequestBuilder<EpicSyncWorker>()
+        fun oneTimeRequest(force: Boolean = false) = OneTimeWorkRequestBuilder<EpicSyncWorker>()
+            .setInputData(workDataOf(KEY_FORCE to force))
             .setConstraints(constraints)
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, BACKOFF_SECONDS, TimeUnit.SECONDS)
             .build()

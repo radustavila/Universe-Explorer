@@ -36,6 +36,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
 import com.radustavila.nasaexplorer.core.model.EarthEvent
 import com.radustavila.nasaexplorer.core.model.EventMagnitude
@@ -88,7 +89,7 @@ internal fun EventSheet(
                     Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.earth_events_close_event))
                 }
             }
-            Text(
+            SectionTitle(
                 text = event.title,
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(end = 12.dp),

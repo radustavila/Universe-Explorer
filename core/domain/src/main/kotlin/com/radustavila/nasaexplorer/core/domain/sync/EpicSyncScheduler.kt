@@ -6,4 +6,11 @@ package com.radustavila.nasaexplorer.core.domain.sync
  *
  * A separate type rather than a qualifier so injecting the wrong scheduler is a compile error.
  */
-interface EpicSyncScheduler : SyncScheduler
+interface EpicSyncScheduler : SyncScheduler {
+
+    /**
+     * Like [requestSync]; with [force] the run ignores EPIC's refresh interval (pull-to-refresh).
+     * A host that is cooling down after a rate limit still refuses the call.
+     */
+    fun requestSync(force: Boolean)
+}
