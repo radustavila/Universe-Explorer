@@ -12,6 +12,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.RefreshSourceUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeEpicUseCase
 import com.radustavila.nasaexplorer.core.model.EpicCollection
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEpicRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
@@ -91,6 +92,7 @@ class EpicSyncWorkerTest {
                             epicRepository = repository,
                             networkMonitor = networkMonitor,
                             refreshSource = RefreshSourceUseCase(metadata, FakeTimeProvider()),
+                            widgetUpdater = FakeHomeWidgetUpdater(),
                         ),
                     )
                 },

@@ -1,5 +1,7 @@
 package com.radustavila.nasaexplorer.core.domain.usecase
 
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidget
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.domain.location.CityDirectory
 import com.radustavila.nasaexplorer.core.domain.location.DeviceLocationProvider
 import com.radustavila.nasaexplorer.core.domain.location.DeviceLocationResult
@@ -25,6 +27,7 @@ class ObserveObserverLocationUseCase @Inject constructor(
 class LocateDeviceUseCase @Inject constructor(
     private val provider: DeviceLocationProvider,
     private val repository: ObserverLocationRepository,
+    private val widgetUpdater: HomeWidgetUpdater,
 ) {
     suspend operator fun invoke(): DeviceLocationResult {
         val result = provider.currentLocation()
@@ -32,6 +35,7 @@ class LocateDeviceUseCase @Inject constructor(
             repository.setLocation(
                 ObserverLocation(coordinate = result.coordinate.coarse(), source = LocationSource.DEVICE),
             )
+            widgetUpdater.updateLocationWidgets()
         }
         return result
     }
@@ -40,11 +44,13 @@ class LocateDeviceUseCase @Inject constructor(
 /** Saves a city, or raw coordinates when [name] is null, the user picked instead. */
 class SetManualLocationUseCase @Inject constructor(
     private val repository: ObserverLocationRepository,
+    private val widgetUpdater: HomeWidgetUpdater,
 ) {
     suspend operator fun invoke(coordinate: GeoCoordinate, name: String? = null) {
         repository.setLocation(
             ObserverLocation(coordinate = coordinate, name = name, source = LocationSource.MANUAL),
         )
+        widgetUpdater.updateLocationWidgets()
     }
 
     suspend operator fun invoke(city: City) = invoke(city.coordinate, city.name)
@@ -69,6 +75,12 @@ class SearchCitiesUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(query: String): List<City> =
         if (query.isBlank()) emptyList() else directory.search(query.trim())
+}
+
+/** The widgets that show something for the saved place: the next ISS pass, the local aurora chance. */
+private suspend fun HomeWidgetUpdater.updateLocationWidgets() {
+    update(HomeWidget.SKY_TONIGHT)
+    update(HomeWidget.AURORA)
 }
 
 private fun GeoCoordinate.coarse(): GeoCoordinate =

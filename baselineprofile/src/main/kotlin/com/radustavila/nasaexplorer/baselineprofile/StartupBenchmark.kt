@@ -37,7 +37,12 @@ class StartupBenchmark {
         compilationMode = compilationMode,
         iterations = ITERATIONS,
         startupMode = StartupMode.COLD,
-        setupBlock = { pressHome() },
+        setupBlock = {
+            pressHome()
+            // A sync job queued by the previous start can bring the process back after the rule
+            // kills it, which fails the cold start check; killed again right before the launch.
+            killProcess()
+        },
     ) {
         startActivityAndWait()
         waitForToday()

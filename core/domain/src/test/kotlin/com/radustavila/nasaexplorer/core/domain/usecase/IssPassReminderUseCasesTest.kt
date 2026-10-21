@@ -1,6 +1,7 @@
 package com.radustavila.nasaexplorer.core.domain.usecase
 
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
+import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeIssPassNotifier
 import com.radustavila.nasaexplorer.core.testing.fake.FakeIssPassReminderScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
@@ -43,6 +44,7 @@ class IssPassReminderUseCasesTest {
         refreshOrbitalElements = RefreshOrbitalElementsUseCase(
             satellites,
             RefreshSourceUseCase(FakeSyncMetadataRepository(), clock),
+            FakeHomeWidgetUpdater(),
         ),
         predictor = predictor,
         notifier = notifier,

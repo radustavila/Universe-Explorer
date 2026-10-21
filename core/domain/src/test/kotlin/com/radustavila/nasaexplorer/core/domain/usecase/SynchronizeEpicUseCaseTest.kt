@@ -2,10 +2,12 @@ package com.radustavila.nasaexplorer.core.domain.usecase
 
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidget
 import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
 import com.radustavila.nasaexplorer.core.model.EpicCollection
 import com.radustavila.nasaexplorer.core.model.SyncSource
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEpicRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
@@ -21,11 +23,13 @@ class SynchronizeEpicUseCaseTest {
     private val networkMonitor = FakeNetworkMonitor()
     private val metadata = FakeSyncMetadataRepository()
     private val timeProvider = FakeTimeProvider()
+    private val widgets = FakeHomeWidgetUpdater()
 
     private val synchronizeEpic = SynchronizeEpicUseCase(
         epicRepository = repository,
         networkMonitor = networkMonitor,
         refreshSource = RefreshSourceUseCase(metadata, timeProvider),
+        widgetUpdater = widgets,
     )
 
     @Test
@@ -93,5 +97,17 @@ class SynchronizeEpicUseCaseTest {
         assertEquals(listOf(EpicCollection.ENHANCED), repository.prefetchedCollections)
         // A failure leaves the source due, so the next request tries again.
         assertTrue(synchronizeEpic() is SourceRefreshResult.Completed)
+    }
+
+    @Test
+    fun `the Earth widget is re-rendered after a successful sync, not after a skip or failure`() = runTest {
+        synchronizeEpic()
+        synchronizeEpic()
+        assertEquals(listOf(HomeWidget.EARTH_TODAY), widgets.updated)
+
+        timeProvider.currentInstant = timeProvider.currentInstant.plus(SynchronizeEpicUseCase.REFRESH_INTERVAL)
+        repository.refreshResults[EpicCollection.NATURAL] = DataResult.Failure(AppError.Timeout)
+        synchronizeEpic()
+        assertEquals(1, widgets.updated.size)
     }
 }

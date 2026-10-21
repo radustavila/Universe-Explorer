@@ -6,6 +6,8 @@ import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.common.result.getOrNull
 import com.radustavila.nasaexplorer.core.common.time.TimeProvider
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidget
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
 import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepository
 import com.radustavila.nasaexplorer.core.domain.sky.IssPassForecast
@@ -15,6 +17,7 @@ import com.radustavila.nasaexplorer.core.domain.sky.SatellitePassPredictor
 import com.radustavila.nasaexplorer.core.domain.sky.SatelliteRepository
 import com.radustavila.nasaexplorer.core.domain.sky.SkyCalculator
 import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
+import com.radustavila.nasaexplorer.core.domain.sync.succeeded
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.model.OrbitalElements
 import com.radustavila.nasaexplorer.core.model.OrbitalElements.Companion.ISS_NORAD_ID
@@ -145,6 +148,7 @@ class ObserveIssTrackUseCase @Inject constructor(
 
 /**
  * Refreshes the cached ISS elements at most once per [MIN_REFRESH_INTERVAL], as CelesTrak asks.
+ * New elements move the next pass, so a successful refresh re-renders the sky tonight widget.
  *
  * There is no connectivity pre-check: the monitor's first value can briefly read offline while a
  * second network reports in, which silently skipped the refresh. Offline, the call fails fast at
@@ -153,11 +157,12 @@ class ObserveIssTrackUseCase @Inject constructor(
 class RefreshOrbitalElementsUseCase @Inject constructor(
     private val satelliteRepository: SatelliteRepository,
     private val refreshSource: RefreshSourceUseCase,
+    private val widgetUpdater: HomeWidgetUpdater,
 ) {
     suspend operator fun invoke(force: Boolean = false): SourceRefreshResult<Unit> {
         return refreshSource(SyncSource.CELESTRAK, minInterval = MIN_REFRESH_INTERVAL, force = force) {
             satelliteRepository.refreshElements()
-        }
+        }.also { outcome -> if (outcome.succeeded()) widgetUpdater.update(HomeWidget.SKY_TONIGHT) }
     }
 
     companion object {

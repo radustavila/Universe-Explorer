@@ -2,11 +2,13 @@ package com.radustavila.nasaexplorer.core.domain.usecase
 
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidget
 import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
 import com.radustavila.nasaexplorer.core.model.SyncSource
 import com.radustavila.nasaexplorer.core.testing.data.TestSpaceWeather
 import com.radustavila.nasaexplorer.core.testing.fake.FakeAuroraAlertNotifier
 import com.radustavila.nasaexplorer.core.testing.fake.FakeAuroraAlertRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSpaceWeatherRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
@@ -21,6 +23,7 @@ class SynchronizeSpaceWeatherUseCaseTest {
     private val repository = FakeSpaceWeatherRepository()
     private val metadata = FakeSyncMetadataRepository()
     private val clock = FakeTimeProvider(currentInstant = TestSpaceWeather.NOW)
+    private val widgets = FakeHomeWidgetUpdater()
 
     private val synchronize = SynchronizeSpaceWeatherUseCase(
         repository = repository,
@@ -31,6 +34,7 @@ class SynchronizeSpaceWeatherUseCaseTest {
             FakeAuroraAlertNotifier(),
             clock,
         ),
+        widgetUpdater = widgets,
         timeProvider = clock,
     )
 
@@ -112,5 +116,21 @@ class SynchronizeSpaceWeatherUseCaseTest {
 
         assertEquals(SourceRefreshResult.Completed(DataResult.Failure(AppError.Timeout)), result)
         assertTrue(metadata.statusOf(SyncSource.SPACE_WEATHER).isFailing)
+    }
+
+    @Test
+    fun `the aurora widget is re-rendered after a good Kp refresh only`() = runTest {
+        synchronize()
+        assertEquals(listOf(HomeWidget.AURORA), widgets.updated)
+
+        // Skipped while fresh: nothing new to show.
+        clock.currentInstant = clock.currentInstant.plus(Duration.ofMinutes(10))
+        synchronize()
+        assertEquals(1, widgets.updated.size)
+
+        clock.currentInstant = clock.currentInstant.plus(SynchronizeSpaceWeatherUseCase.KP_INTERVAL)
+        repository.kpRefreshResult = DataResult.Failure(AppError.Timeout)
+        synchronize()
+        assertEquals(1, widgets.updated.size)
     }
 }

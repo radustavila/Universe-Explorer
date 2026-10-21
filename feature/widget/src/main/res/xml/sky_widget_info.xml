@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Re-rendered when new ISS orbit data lands or the saved place changes. The hourly update only
+  re-renders from the cache and the on-device astronomy (no network), so the Moon's phase and the
+  next pass move along.
+
+  The preview layout and target cell size are Android 12+ only; older launchers fall back to
+  previewImage and minWidth/minHeight, hence the UnusedAttribute suppression.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:description="@string/sky_widget_description"
+    android:initialLayout="@layout/glance_default_loading_layout"
+    android:minWidth="110dp"
+    android:minHeight="110dp"
+    android:minResizeWidth="110dp"
+    android:minResizeHeight="110dp"
+    android:previewImage="@drawable/latest_apod_widget_preview_art"
+    android:previewLayout="@layout/sky_widget_preview"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellHeight="2"
+    android:targetCellWidth="2"
+    android:updatePeriodMillis="3600000"
+    android:widgetCategory="home_screen"
+    tools:ignore="UnusedAttribute" />

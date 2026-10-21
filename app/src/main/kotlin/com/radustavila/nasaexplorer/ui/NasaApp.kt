@@ -13,6 +13,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -37,7 +39,11 @@ fun NasaApp(
     }
 
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        // Exposes test tags as resource ids, so UI Automator (the baseline profile generator and
+        // the startup benchmark) can find composables by tag.
+        modifier = modifier
+            .fillMaxSize()
+            .semantics { testTagsAsResourceId = true },
         // Insets are consumed by the screens themselves (their top bars) and by the navigation
         // bar below; applying them here as well padded every screen twice.
         contentWindowInsets = WindowInsets(0),

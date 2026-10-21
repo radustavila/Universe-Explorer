@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Stand-in for the EPIC photo in the widget picker: a whole-Earth disc on black. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="180dp"
+    android:height="180dp"
+    android:viewportWidth="180"
+    android:viewportHeight="180">
+    <path android:fillColor="#FF000000" android:pathData="M0,0h180v180h-180z" />
+    <path android:fillColor="#FF1E5AA8" android:pathData="M90,90m-70,0a70,70 0,1 1,140 0a70,70 0,1 1,-140 0" />
+    <path android:fillColor="#FF6B8E4E" android:pathData="M60,50C80,40 100,52 96,70C92,88 70,84 66,100C62,112 48,104 44,88C40,72 46,58 60,50z" />
+    <path android:fillColor="#FFC2A46E" android:pathData="M104,96C120,90 136,100 132,118C128,134 112,140 104,128C98,118 96,102 104,96z" />
+    <path android:fillColor="#E6FFFFFF" android:pathData="M40,120C60,112 80,126 100,118C120,110 140,120 150,112C146,124 130,140 110,148C84,156 56,146 40,120z" />
+    <path android:fillColor="#CCFFFFFF" android:pathData="M70,30C90,24 116,30 130,44C116,40 96,44 70,30z" />
+</vector>
