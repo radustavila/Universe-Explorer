@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 12+ backup and device-to-device transfer. Only what the user made is kept: the database
+  holding the favourites (with its write-ahead log; a stale log is ignored by SQLite on open) and the
+  DataStore files with the user's choices. Everything that is downloaded again is left out by not
+  being included: image and HTTP caches, the feeds' mirror databases (launches, Earth events,
+  exoplanets, Mars, NASA images, small bodies, space weather, sky), offline copies of favourite
+  images and the sync bookkeeping. Keep in step with backup_rules.xml (Android 11 and older);
+  BackupRulesTest checks both.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="database" path="nasa-explorer.db" />
+        <include domain="database" path="nasa-explorer.db-wal" />
+        <include domain="file" path="datastore/user_preferences.preferences_pb" />
+        <include domain="file" path="datastore/observer_location.preferences_pb" />
+        <include domain="file" path="datastore/sky_preferences.preferences_pb" />
+        <include domain="file" path="datastore/aurora_alerts.preferences_pb" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="database" path="nasa-explorer.db" />
+        <include domain="database" path="nasa-explorer.db-wal" />
+        <include domain="file" path="datastore/user_preferences.preferences_pb" />
+        <include domain="file" path="datastore/observer_location.preferences_pb" />
+        <include domain="file" path="datastore/sky_preferences.preferences_pb" />
+        <include domain="file" path="datastore/aurora_alerts.preferences_pb" />
+    </device-transfer>
+</data-extraction-rules>
