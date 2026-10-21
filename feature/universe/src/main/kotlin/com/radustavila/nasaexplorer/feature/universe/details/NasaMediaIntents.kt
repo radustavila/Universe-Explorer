@@ -8,18 +8,27 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import androidx.core.net.toUri
+import com.radustavila.nasaexplorer.core.designsystem.util.ShareContent
+import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
 import com.radustavila.nasaexplorer.core.model.NasaMedia
 
 /** The item's page on images.nasa.gov. */
 internal val NasaMedia.webPageUrl: String
     get() = "https://images.nasa.gov/details/${Uri.encode(nasaId)}"
 
-internal fun Context.shareNasaMedia(media: NasaMedia, chooserTitle: String) {
-    val send = Intent(Intent.ACTION_SEND)
-        .setType("text/plain")
-        .putExtra(Intent.EXTRA_SUBJECT, media.title)
-        .putExtra(Intent.EXTRA_TEXT, "${media.title}\n${media.webPageUrl}")
-    startActivitySafely(Intent.createChooser(send, chooserTitle))
+/**
+ * The item as an image card, captioned with its title, date, credit and library page. [credit] is the
+ * already formatted credit line; [source] names the library on the card.
+ */
+internal fun NasaMedia.shareContent(credit: String?, source: String): ShareContent {
+    val created = dateCreated?.formatMedium()
+    return ShareContent(
+        title = title,
+        details = listOfNotNull(created, credit),
+        link = webPageUrl,
+        imageUrl = previewUrl,
+        cardSubtitle = listOfNotNull(created, source).joinToString(separator = " · "),
+    )
 }
 
 internal fun Context.openUrl(url: String) {

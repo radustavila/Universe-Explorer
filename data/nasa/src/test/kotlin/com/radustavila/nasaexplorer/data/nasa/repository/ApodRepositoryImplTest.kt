@@ -12,6 +12,7 @@ import com.radustavila.nasaexplorer.core.domain.repository.ApodBatchResult
 import com.radustavila.nasaexplorer.core.model.Apod
 import com.radustavila.nasaexplorer.core.model.FavoriteItem
 import com.radustavila.nasaexplorer.core.model.FavoriteSource
+import com.radustavila.nasaexplorer.core.testing.fake.FakeOfflineFavoriteImages
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import com.radustavila.nasaexplorer.data.nasa.local.ApodLocalDataSource
@@ -55,7 +56,11 @@ class ApodRepositoryImplTest {
             NasaDatabase::class.java,
         ).allowMainThreadQueries().build()
 
-        favorites = RoomFavoritesRepository(database.favoriteDao(), UnconfinedTestDispatcher())
+        favorites = RoomFavoritesRepository(
+            favoriteDao = database.favoriteDao(),
+            offlineImages = FakeOfflineFavoriteImages(),
+            ioDispatcher = UnconfinedTestDispatcher(),
+        )
         localDataSource = CountingLocalDataSource(
             RoomApodLocalDataSource(apodDao = database.apodDao(), ioDispatcher = UnconfinedTestDispatcher()),
         )

@@ -20,6 +20,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -50,7 +52,9 @@ fun NasaApp(
         NasaNavigationSuite(
             currentTopLevelDestination = currentTopLevelDestination,
             onTopLevelDestinationClick = navController::navigateToTopLevel,
-            modifier = modifier,
+            // Exposes test tags as resource ids, so UI Automator (the baseline profile generator and
+            // the startup benchmark) can find composables by tag.
+            modifier = modifier.semantics { testTagsAsResourceId = true },
         ) {
             NasaNavHost(navController = navController)
         }
