@@ -18,6 +18,7 @@ import androidx.compose.ui.test.performScrollToNode
 import com.radustavila.nasaexplorer.core.domain.sky.IssPassForecast
 import com.radustavila.nasaexplorer.core.domain.sky.IssTrack
 import com.radustavila.nasaexplorer.core.map.overlay.MapOverlay
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.feature.sky.component.ISS_POSITION_OVERLAY_ID
 import com.radustavila.nasaexplorer.feature.sky.component.ISS_TRACK_OVERLAY_ID
@@ -96,6 +97,13 @@ class SkyTonightScreenTest {
         listOf(R.string.sky_night_title, R.string.sky_moon_title, R.string.sky_planets_title).forEach { title ->
             composeTestRule.onNodeWithText(string(title)).assert(isHeading)
         }
+    }
+
+    @Test
+    fun `the screen says when its data was last updated`() {
+        setContent(located.copy(freshness = DataFreshness(lastUpdatedAt = Instant.now().minusSeconds(5))))
+
+        composeTestRule.onNodeWithText("Updated just now").assertExists()
     }
 
     @Test

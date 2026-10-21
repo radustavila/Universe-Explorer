@@ -5,6 +5,7 @@ import com.radustavila.nasaexplorer.core.designsystem.error.UiError
 import com.radustavila.nasaexplorer.core.domain.sky.IssPassForecast
 import com.radustavila.nasaexplorer.core.domain.sky.IssTrack
 import com.radustavila.nasaexplorer.core.model.City
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.ObserverLocation
 import com.radustavila.nasaexplorer.core.model.PersonInSpace
 import com.radustavila.nasaexplorer.core.model.SkyTonight
@@ -25,6 +26,8 @@ data class SkyTonightUiState(
     val isOffline: Boolean = false,
     val citySearch: CitySearchUiState = CitySearchUiState(),
     val message: SkyMessage? = null,
+    /** When the ISS orbit and the crew list last synced; the rest is computed on the device. */
+    val freshness: DataFreshness = DataFreshness(),
 )
 
 @Immutable
