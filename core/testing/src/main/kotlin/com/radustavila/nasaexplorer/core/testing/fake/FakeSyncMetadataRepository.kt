@@ -71,6 +71,10 @@ class FakeSyncMetadataRepository(
         }
     }
 
+    override suspend fun allowRefreshNow() {
+        statuses.update { map -> map.mapValues { (_, status) -> status.copy(nextAllowedRefreshAt = null) } }
+    }
+
     override suspend fun setOldestRequestedDate(date: LocalDate) {
         oldestRequested.value = date
     }

@@ -164,7 +164,8 @@ class ExoplanetsScreenTest {
                 "One of the Sun's nearest neighbours: Proxima Centauri, the closest star, is 4.2 light-years away",
             )
             .assertExists()
-        composeTestRule.onNodeWithText("234 K (-39 °C)").assertExists()
+        // Fahrenheit: Robolectric's default region is the United States.
+        composeTestRule.onNodeWithText("234 K (-38 °F)").assertExists()
         composeTestRule.onNodeWithText("Radial velocity").assertExists()
         composeTestRule
             .onNodeWithText("The planet's pull made its star wobble, shifting the colour of its light back and forth.")

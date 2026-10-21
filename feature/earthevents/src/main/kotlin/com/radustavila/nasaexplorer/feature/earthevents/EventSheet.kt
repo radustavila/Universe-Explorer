@@ -37,7 +37,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
-import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
+import com.radustavila.nasaexplorer.core.designsystem.units.UnitFormatter
+import com.radustavila.nasaexplorer.core.designsystem.units.formatLocalDateTime
+import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.model.EarthEvent
 import com.radustavila.nasaexplorer.core.model.EventMagnitude
 import java.util.Locale
@@ -94,12 +96,12 @@ internal fun EventSheet(
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(end = 12.dp),
             )
-            Detail(stringResource(R.string.earth_events_last_update, event.lastUpdate.formatDateTime()))
+            Detail(stringResource(R.string.earth_events_last_update, event.lastUpdate.formatLocalDateTime()))
             event.latest.magnitude?.let { magnitude ->
-                Detail(stringResource(R.string.earth_events_magnitude, magnitude.formatted()))
+                Detail(stringResource(R.string.earth_events_magnitude, magnitude.formatted(rememberUnitFormatter())))
             }
             if (event.track.size >= 2) {
-                val first = event.geometry.first().date.formatDateTime()
+                val first = event.geometry.first().date.formatLocalDateTime()
                 Detail(pluralStringResource(R.plurals.earth_events_track, event.track.size, event.track.size, first))
             }
 
@@ -160,14 +162,19 @@ private fun Detail(text: String) {
     )
 }
 
-/** `55 kts`, `751 acres`, `12.5 NM²`. */
-internal fun EventMagnitude.formatted(locale: Locale = Locale.getDefault()): String {
-    val number = if (value % 1.0 == 0.0) {
-        String.format(locale, "%,d", value.toLong())
-    } else {
-        String.format(locale, "%,.1f", value)
+/**
+ * EONET reports wind in knots, burned areas in acres and ice in square nautical miles; each is
+ * shown in the user's units (`83 km/h` or `52 mph`, `304 ha` or `751 acres`, `43 km²` or
+ * `17 mi²`). A unit EONET may add later is shown as it came.
+ */
+internal fun EventMagnitude.formatted(units: UnitFormatter): String = when (unit.trim().lowercase(Locale.ROOT)) {
+    "kts", "kt", "knots" -> units.speedPerHour(value * UnitFormatter.KM_PER_NAUTICAL_MILE)
+    "acres" -> units.landArea(value)
+    "nm^2", "nm²" -> units.area(value * UnitFormatter.KM_PER_NAUTICAL_MILE * UnitFormatter.KM_PER_NAUTICAL_MILE)
+    else -> {
+        val number = units.number(value, fractionDigits = if (value % 1.0 == 0.0) 0 else 1)
+        "$number ${unit.replace("^2", "²")}"
     }
-    return "$number ${unit.replace("^2", "²")}"
 }
 
 internal fun Context.openUrl(url: String) {

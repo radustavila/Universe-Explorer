@@ -1,6 +1,5 @@
 package com.radustavila.nasaexplorer.feature.earth
 
-import com.radustavila.nasaexplorer.core.model.GeoPoint
 import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -8,12 +7,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class EarthTodayFormattingTest {
-
-    @Test
-    fun `coordinates read as compass bearings`() {
-        assertEquals("0.7° N, 163.7° E", GeoPoint(0.65918, 163.696289).toCoordinateLabel())
-        assertEquals("12.3° S, 45.0° W", GeoPoint(-12.34, -45.0).toCoordinateLabel())
-    }
 
     @Test
     fun `only published days and their years are selectable`() {

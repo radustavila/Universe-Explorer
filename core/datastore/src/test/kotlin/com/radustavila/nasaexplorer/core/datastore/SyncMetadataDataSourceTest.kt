@@ -133,4 +133,18 @@ class SyncMetadataDataSourceTest {
         syncMetadata.setLastWallpaperApodDate(null)
         assertNull(syncMetadata.lastWallpaperApodDate.first())
     }
+
+    @Test
+    fun `allowing a refresh now forgets every next allowed time but keeps the history`() = runTest {
+        val at = Instant.parse("2026-10-21T10:00:00Z")
+        syncMetadata.recordSyncSuccess(SyncSource.EONET, at = at, nextAllowedRefreshAt = at.plusSeconds(3_600))
+        syncMetadata.recordSyncFailure(SyncSource.MARS, at = at, error = AppError.Timeout, nextAllowedRefreshAt = at.plusSeconds(60))
+
+        syncMetadata.allowRefreshNow()
+
+        val events = syncMetadata.observeSourceStatus(SyncSource.EONET).first()
+        assertNull(events.nextAllowedRefreshAt)
+        assertEquals(at, events.lastSuccessAt)
+        assertNull(syncMetadata.observeSourceStatus(SyncSource.MARS).first().nextAllowedRefreshAt)
+    }
 }

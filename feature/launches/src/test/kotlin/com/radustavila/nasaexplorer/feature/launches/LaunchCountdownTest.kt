@@ -12,17 +12,19 @@ class LaunchCountdownTest {
 
     @Test
     fun `counts down inside a day as hours minutes and seconds`() {
-        assertEquals("T-02:03:04", countdownText(net = now + Duration.parse("PT2H3M4S"), now = now))
+        assertEquals(Countdown(afterLiftoff = false, days = 0, clock = "02:03:04"), countdown(net = now + Duration.parse("PT2H3M4S"), now = now))
     }
 
     @Test
     fun `adds whole days for launches further away`() {
-        assertEquals("T-3d 00:00:05", countdownText(net = now + Duration.parse("P3DT5S"), now = now))
+        assertEquals(Countdown(afterLiftoff = false, days = 3, clock = "00:00:05"), countdown(net = now + Duration.parse("P3DT5S"), now = now))
     }
 
     @Test
     fun `counts up after lift-off`() {
-        assertEquals("T+00:12:30", countdownText(net = now - Duration.parse("PT12M30S"), now = now))
+        val countdown = countdown(net = now - Duration.parse("PT12M30S"), now = now)
+        assertEquals(Countdown(afterLiftoff = true, days = 0, clock = "00:12:30"), countdown)
+        assertEquals("+", countdown.sign)
     }
 
     @Test

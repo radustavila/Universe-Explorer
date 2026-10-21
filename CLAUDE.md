@@ -75,6 +75,17 @@ Boundary rules the code relies on:
 - Contracts live in `:core:domain`; Hilt bindings live next to their implementations (`NasaDataModule`,
   `NotificationsModule`, `WidgetModule`, …). Inject dispatchers via `@Dispatcher(AppDispatcher.IO)`, never hardcode
   `Dispatchers.IO`. The Glance widget reads use cases through a Hilt `@EntryPoint`.
+- When a feature needs another feature's UI (Settings shows Sky tonight's `ObserverLocationSection`), `:app` passes it
+  in as a composable slot, as with `todayHeader`/`earthFooter`.
+- Distances, speeds, temperatures, coordinates and clock times go through `UnitFormatter` (`rememberUnitFormatter()`,
+  `formatLocalDateTime()`; `:core:designsystem` `units/`), which follows the user's metric/imperial and 12/24 h choice
+  (`LocalUnitPreferences`, provided in `MainActivity`). No unit labels or English in Kotlin: store raw data, word it
+  with string resources and plurals in the UI. Astronomical units (LD, light-years, Earth radii) are not converted.
+- Notification switches use `rememberNotificationPermissionToggle` (`:core:designsystem` `notification/`).
+- Settings measures storage through `@IntoSet StorageUsageSource` and "Clear cache" runs every `@IntoSet CacheCleaner`
+  (contracts in `:core:domain` `storage/`); neither may touch favourites or their offline copies.
+- Backups include only the favourites database and the user-choice DataStores (`app/src/main/res/xml/`); a new
+  DataStore holding user choices goes into both rule files and `BackupRulesTest`.
 
 ### Data flow (offline-first)
 

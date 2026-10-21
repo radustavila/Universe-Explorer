@@ -13,6 +13,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.ObserveAuroraForecastUse
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveCurrentKpUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveKpForecastUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveObserverLocationUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveUnitPreferencesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RequestSpaceWeatherSyncUseCase
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.model.SpaceWeatherDeepLink
@@ -59,7 +60,7 @@ class AuroraWidget : GlanceAppWidget() {
             auroraMap = entryPoint.observeAuroraForecast().invoke().first(),
             place = place,
             now = entryPoint.timeProvider().now(),
-            format = WidgetFormat(context.resources),
+            format = WidgetFormat.forWidget(context, entryPoint.observeUnitPreferences()),
             resources = context.resources,
         )
         if (state == null) entryPoint.requestSpaceWeatherSync().invoke()
@@ -82,6 +83,7 @@ class AuroraWidgetReceiver : GlanceAppWidgetReceiver() {
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface AuroraWidgetEntryPoint {
+    fun observeUnitPreferences(): ObserveUnitPreferencesUseCase
     fun observeCurrentKp(): ObserveCurrentKpUseCase
     fun observeKpForecast(): ObserveKpForecastUseCase
     fun observeAuroraForecast(): ObserveAuroraForecastUseCase

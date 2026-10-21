@@ -72,6 +72,12 @@ class SyncMetadataDataSource @Inject constructor(
         }
     }
 
+    override suspend fun allowRefreshNow() {
+        editSafely { preferences ->
+            SyncSource.entries.forEach { source -> preferences.remove(SourceKeys(source).nextAllowed) }
+        }
+    }
+
     override val oldestRequestedDate: Flow<LocalDate?> = observeDate(OLDEST_REQUESTED_DATE)
 
     override val lastAnnouncedApodDate: Flow<LocalDate?> = observeDate(LAST_ANNOUNCED_APOD_DATE)

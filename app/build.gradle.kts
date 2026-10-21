@@ -4,6 +4,8 @@ plugins {
     id("nasaexplorer.android.hilt")
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.baselineprofile)
+    // Generates res/raw/aboutlibraries.json (the licences screen) from the release dependencies.
+    alias(libs.plugins.aboutlibraries.android)
 }
 
 android {
@@ -80,6 +82,7 @@ dependencies {
     implementation(projects.feature.sky)
     implementation(projects.feature.earth)
     implementation(projects.feature.search)
+    implementation(projects.feature.settings)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

@@ -19,4 +19,5 @@ plugins {
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.android.lint) apply false
     alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.aboutlibraries.android) apply false
 }

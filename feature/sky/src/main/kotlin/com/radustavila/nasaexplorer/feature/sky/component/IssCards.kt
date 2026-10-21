@@ -30,6 +30,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.domain.sky.IssPassForecast
 import com.radustavila.nasaexplorer.core.domain.sky.IssTrack
 import com.radustavila.nasaexplorer.core.map.overlay.GeoPoint
@@ -183,11 +184,12 @@ internal fun IssTrackCard(
             Text(stringResource(R.string.sky_track_unavailable), style = MaterialTheme.typography.bodyMedium)
             return@SkySection
         }
+        val units = rememberUnitFormatter()
         Text(
             text = if (position.isLive) {
-                stringResource(R.string.sky_track_live, position.altitudeKm.formatWhole(), position.speedKmPerHour.formatWhole())
+                stringResource(R.string.sky_track_live, units.distance(position.altitudeKm), units.speedPerHour(position.speedKmPerHour))
             } else {
-                stringResource(R.string.sky_track_estimated, position.altitudeKm.formatWhole())
+                stringResource(R.string.sky_track_estimated, units.distance(position.altitudeKm))
             },
             style = MaterialTheme.typography.bodyMedium,
         )

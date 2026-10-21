@@ -1,13 +1,17 @@
 package com.radustavila.nasaexplorer.feature.widget
 
+import android.content.Context
 import android.content.res.Resources
+import android.text.format.DateFormat
+import com.radustavila.nasaexplorer.core.designsystem.units.UnitFormatter
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveUnitPreferencesUseCase
+import com.radustavila.nasaexplorer.core.model.MeasurementSystem
 import java.text.NumberFormat
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.Locale
+import kotlinx.coroutines.flow.first
 
 /**
  * Times and numbers as the widgets show them, in the device's zone and locale (passed in so tests
@@ -21,14 +25,15 @@ internal class WidgetFormat(
     private val resources: Resources,
     private val zone: ZoneId = ZoneId.systemDefault(),
     private val locale: Locale = Locale.getDefault(),
+    /** The user's 12/24-hour choice, resolved against the system setting: see [forWidget]. */
+    is24Hour: Boolean = true,
 ) {
-    private val timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale)
-    private val dayFormatter = DateTimeFormatter.ofPattern("EEE d MMM", locale)
-    private val weekdayFormatter = DateTimeFormatter.ofPattern("EEE", locale)
+    // Clock and day labels come from the app's shared formatter, so widgets and screens agree.
+    private val units = UnitFormatter(resources, locale, MeasurementSystem.METRIC, is24Hour, zone)
 
-    fun time(instant: Instant): String = timeFormatter.format(instant.atZone(zone))
+    fun time(instant: Instant): String = units.time(instant)
 
-    fun day(instant: Instant): String = dayFormatter.format(instant.atZone(zone))
+    fun day(instant: Instant): String = units.day(instant)
 
     /** Just the time on [now]'s day, the day and time otherwise: "21:43", "Tue 21 Oct 21:43". */
     fun dayAndTime(instant: Instant, now: Instant): String =
@@ -46,7 +51,7 @@ internal class WidgetFormat(
         if (instant.atZone(zone).toLocalDate() == now.atZone(zone).toLocalDate()) {
             time(instant)
         } else {
-            "${weekdayFormatter.format(instant.atZone(zone))} ${time(instant)}"
+            "${units.weekday(instant)} ${time(instant)}"
         }
 
     fun decimal(value: Double, fractionDigits: Int): String = NumberFormat.getNumberInstance(locale).apply {
@@ -78,8 +83,17 @@ internal class WidgetFormat(
         }
     }
 
-    private companion object {
-        const val MINUTES_PER_HOUR = 60L
-        const val MINUTES_PER_DAY = 24 * MINUTES_PER_HOUR
+    companion object {
+        private const val MINUTES_PER_HOUR = 60L
+        private const val MINUTES_PER_DAY = 24 * MINUTES_PER_HOUR
+
+        /** The device's zone and locale, and the clock format the user chose in Settings. */
+        suspend fun forWidget(context: Context, observeUnitPreferences: ObserveUnitPreferencesUseCase): WidgetFormat {
+            val preferences = observeUnitPreferences().first()
+            return WidgetFormat(
+                resources = context.resources,
+                is24Hour = preferences.timeFormat.is24Hour(DateFormat.is24HourFormat(context)),
+            )
+        }
     }
 }

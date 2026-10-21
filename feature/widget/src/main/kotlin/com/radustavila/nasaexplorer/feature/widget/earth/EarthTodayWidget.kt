@@ -9,6 +9,7 @@ import com.radustavila.nasaexplorer.core.common.time.TimeProvider
 import com.radustavila.nasaexplorer.core.designsystem.util.deepLinkIntent
 import com.radustavila.nasaexplorer.core.designsystem.util.loadBitmap
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveLatestEpicDayUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveUnitPreferencesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEpicUseCase
 import com.radustavila.nasaexplorer.core.model.EarthTodayDeepLink
 import com.radustavila.nasaexplorer.core.model.EpicImage
@@ -44,7 +45,7 @@ class EarthTodayWidget : GlanceAppWidget() {
         if (photo == null) entryPoint.refreshEpic().invoke()
 
         val state = photo?.let {
-            val format = WidgetFormat(context.resources)
+            val format = WidgetFormat.forWidget(context, entryPoint.observeUnitPreferences())
             earthTodayWidgetState(it, entryPoint.timeProvider().now(), format, context.resources)
         }
         val picture = photo?.let {
@@ -82,6 +83,7 @@ class EarthTodayWidgetReceiver : GlanceAppWidgetReceiver() {
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface EarthTodayWidgetEntryPoint {
+    fun observeUnitPreferences(): ObserveUnitPreferencesUseCase
     fun observeLatestEpicDay(): ObserveLatestEpicDayUseCase
     fun refreshEpic(): RefreshEpicUseCase
     fun timeProvider(): TimeProvider

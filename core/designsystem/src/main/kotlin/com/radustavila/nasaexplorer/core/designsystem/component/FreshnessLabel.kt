@@ -24,13 +24,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.R
-import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
+import com.radustavila.nasaexplorer.core.designsystem.units.formatLocalDateTime
+import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.model.DataFreshness
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import kotlinx.coroutines.delay
 
 const val FRESHNESS_LABEL_TEST_TAG = "freshness-label"
@@ -92,17 +91,16 @@ private fun Instant.formatSince(now: Instant): String {
             DateUtils.FORMAT_ABBREV_RELATIVE,
         ).toString()
 
-        else -> formatDateTime()
+        else -> formatLocalDateTime()
     }
 }
 
-/** The time alone when the data is from today, the date and time otherwise. */
-private fun Instant.formatOfflineTime(now: Instant, zone: ZoneId = ZoneId.systemDefault()): String =
-    if (atZone(zone).toLocalDate() == now.atZone(zone).toLocalDate()) {
-        timeFormatter.format(atZone(zone))
-    } else {
-        formatDateTime(zone)
-    }
+/** The time alone when the data is from today, the date and time otherwise, in the user's clock format. */
+@Composable
+private fun Instant.formatOfflineTime(now: Instant, zone: ZoneId = ZoneId.systemDefault()): String {
+    val units = rememberUnitFormatter()
+    return if (atZone(zone).toLocalDate() == now.atZone(zone).toLocalDate()) units.time(this) else units.dateTime(this)
+}
 
 /** The current time, moved on at every minute boundary while the app is at least started. */
 @Composable
@@ -118,6 +116,5 @@ private fun rememberMinuteClock(): State<Instant> {
     }
 }
 
-private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
 private const val RELATIVE_DAYS = 7L
 private const val MINUTE_MILLIS = 60_000L

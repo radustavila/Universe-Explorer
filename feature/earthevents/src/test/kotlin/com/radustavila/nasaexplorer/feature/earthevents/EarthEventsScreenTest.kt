@@ -109,7 +109,8 @@ class EarthEventsScreenTest {
         composeTestRule.onNodeWithTag(EARTH_EVENT_SHEET_TEST_TAG).assertIsDisplayed()
         composeTestRule.onNodeWithText("Tropical Cyclone Wati").assertIsDisplayed()
         composeTestRule.onNodeWithText("Severe storms").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Magnitude: 45 kts", substring = true).assertIsDisplayed()
+        // 45 kts, in the units of Robolectric's default en-US region.
+        composeTestRule.onNodeWithText("Magnitude: 52 mph", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithText("Last update:", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithText("Track: 3 positions since", substring = true).assertIsDisplayed()
 

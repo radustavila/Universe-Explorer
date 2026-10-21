@@ -39,7 +39,11 @@ class WorkManagerOfflineFavoriteImages @Inject constructor(
     override suspend fun backfillOnce() {
         val missing = withContext(ioDispatcher) {
             if (files.backfillMarker.exists()) return@withContext null
-            favoriteDao.findWithoutLocalImage()
+            // The marker is missing on a fresh install and after a restore from backup: the
+            // database comes back with its recorded copies, the files under filesDir do not.
+            favoriteDao.findWithoutLocalImage() + favoriteDao.findWithLocalImage().filter { favorite ->
+                favorite.localImagePath?.let { files.resolve(it).isFile } != true
+            }
         } ?: return
 
         missing.forEach { favorite ->

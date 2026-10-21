@@ -26,14 +26,19 @@ import com.radustavila.nasaexplorer.feature.mars.marsPhotoScreen
 import com.radustavila.nasaexplorer.feature.mars.marsPhotosScreen
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
 import com.radustavila.nasaexplorer.feature.search.searchScreen
+import com.radustavila.nasaexplorer.feature.settings.aboutScreen
+import com.radustavila.nasaexplorer.feature.settings.licencesScreen
+import com.radustavila.nasaexplorer.feature.settings.navigateToLicences
+import com.radustavila.nasaexplorer.feature.settings.settingsScreen
+import com.radustavila.nasaexplorer.feature.sky.location.ObserverLocationSection
 import com.radustavila.nasaexplorer.feature.sky.skyTonightScreen
 import com.radustavila.nasaexplorer.feature.spaceweather.navigateToSmallBody
 import com.radustavila.nasaexplorer.feature.spaceweather.neighbourhoodScreen
 import com.radustavila.nasaexplorer.feature.spaceweather.smallBodyScreen
 import com.radustavila.nasaexplorer.feature.spaceweather.spaceWeatherScreen
 import com.radustavila.nasaexplorer.feature.universe.GalleryRoute
-import com.radustavila.nasaexplorer.feature.universe.gallerySearchScreen
 import com.radustavila.nasaexplorer.feature.universe.galleryScreen
+import com.radustavila.nasaexplorer.feature.universe.gallerySearchScreen
 import com.radustavila.nasaexplorer.feature.universe.nasaMediaDetailsScreen
 import com.radustavila.nasaexplorer.feature.universe.navigateToGallerySearch
 import com.radustavila.nasaexplorer.feature.universe.navigateToNasaMedia
@@ -143,6 +148,12 @@ fun NasaNavHost(
                     entries = moreHubEntries(navController),
                 )
             }
+            settingsScreen(
+                onBackClick = navController::popBackStack,
+                locationSection = { modifier -> ObserverLocationSection(modifier) },
+            )
+            aboutScreen(onBackClick = navController::popBackStack, onLicencesClick = navController::navigateToLicences)
+            licencesScreen(onBackClick = navController::popBackStack, librariesRes = R.raw.aboutlibraries)
             debugScreen()
         }
 

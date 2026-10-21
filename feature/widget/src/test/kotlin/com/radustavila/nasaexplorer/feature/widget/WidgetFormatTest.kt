@@ -44,4 +44,13 @@ class WidgetFormatTest {
     fun `decimals follow the locale`() {
         assertEquals("4.3", format.decimal(4.33, fractionDigits = 1))
     }
+
+    @Test
+    fun `follows the user's 12-hour clock`() {
+        val twelve = WidgetFormat(testResources, zone = java.time.ZoneOffset.UTC, locale = java.util.Locale.UK, is24Hour = false)
+        val now = Instant.parse("2026-10-19T12:00:00Z")
+
+        assertEquals("9:43 pm", twelve.dayAndTime(Instant.parse("2026-10-19T21:43:00Z"), now).replace('\u202F', ' '))
+        assertEquals("Tue 2:07 am", twelve.weekdayAndTime(Instant.parse("2026-10-20T02:07:31Z"), now).replace('\u202F', ' '))
+    }
 }
