@@ -6,8 +6,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.adaptive.Posture
+import androidx.compose.material3.adaptive.WindowAdaptiveInfo
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -16,6 +28,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import androidx.window.core.layout.WindowSizeClass
+import androidx.window.core.layout.computeWindowSizeClass
+import com.radustavila.nasaexplorer.core.designsystem.adaptive.LocalWindowAdaptiveInfo
 import com.radustavila.nasaexplorer.core.designsystem.theme.NasaTheme
 import com.radustavila.nasaexplorer.ui.ProvideWindowAdaptiveInfo
 import kotlinx.serialization.Serializable
@@ -45,10 +60,11 @@ class ListDetailLayoutTest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private fun showList() {
+    /** [window] stands in for the measured window when given. */
+    private fun showList(window: State<WindowAdaptiveInfo>? = null) {
         composeTestRule.setContent {
             NasaTheme {
-                ProvideWindowAdaptiveInfo {
+                ProvideWindow(window) {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = TestHomeRoute) {
                         composable<TestHomeRoute> {
@@ -71,6 +87,8 @@ class ListDetailLayoutTest {
                                 },
                                 list = { onItemClick ->
                                     Column {
+                                        var query by remember { mutableStateOf("") }
+                                        TextField(value = query, onValueChange = { query = it }, modifier = Modifier.testTag(SEARCH))
                                         (1..NOT_IN_PANE).forEach { id ->
                                             Text("Item $id", Modifier.clickable { onItemClick(id) })
                                         }
@@ -84,6 +102,15 @@ class ListDetailLayoutTest {
             }
         }
         composeTestRule.onNodeWithText(OPEN_LIST).performClick()
+    }
+
+    @Composable
+    private fun ProvideWindow(window: State<WindowAdaptiveInfo>?, content: @Composable () -> Unit) {
+        if (window == null) {
+            ProvideWindowAdaptiveInfo(content)
+        } else {
+            CompositionLocalProvider(LocalWindowAdaptiveInfo provides window.value, content = content)
+        }
     }
 
     private fun pressBack() {
@@ -117,6 +144,14 @@ class ListDetailLayoutTest {
     }
 
     @Test
+    @Config(qualifiers = "w411dp-h891dp")
+    fun `showing the list does not put focus in its text field`() {
+        showList()
+
+        composeTestRule.onNodeWithTag(SEARCH).assertIsNotFocused()
+    }
+
+    @Test
     @Config(qualifiers = "w700dp-h1000dp")
     fun `a medium window still shows one pane`() {
         showList()
@@ -146,6 +181,37 @@ class ListDetailLayoutTest {
 
         assertDisplayed("Detail 3")
         assertGone("Detail 2")
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp")
+    fun `the panes follow the window when it widens after the first frame`() {
+        // As on a device, where the window's size arrives after the first composition.
+        val window = mutableStateOf(windowOf(widthDp = 0, heightDp = 0))
+        showList(window)
+        composeTestRule.onNodeWithTag(DETAIL_PANE_TEST_TAG).assertDoesNotExist()
+
+        window.value = windowOf(widthDp = 1280, heightDp = 800)
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithTag(DETAIL_PANE_PLACEHOLDER_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Item 2").performClick()
+        assertDisplayed("Detail 2")
+        assertDisplayed("Item 1")
+    }
+
+    private fun windowOf(widthDp: Int, heightDp: Int) =
+        WindowAdaptiveInfo(WindowSizeClass.BREAKPOINTS_V2.computeWindowSizeClass(widthDp, heightDp), Posture())
+
+    @Test
+    @Config(qualifiers = "w923dp-h411dp")
+    fun `a phone in landscape shows two panes`() {
+        showList()
+
+        composeTestRule.onNodeWithTag(DETAIL_PANE_PLACEHOLDER_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Item 2").performClick()
+        assertDisplayed("Detail 2")
+        assertDisplayed("Item 1")
     }
 
     @Test
@@ -207,5 +273,6 @@ class ListDetailLayoutTest {
         const val DETAIL_BACK = "Back"
         const val DETAIL_LINK = "Next"
         const val NOT_IN_PANE = 4
+        const val SEARCH = "search"
     }
 }

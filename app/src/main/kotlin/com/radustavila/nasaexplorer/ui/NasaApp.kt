@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -106,7 +107,15 @@ internal fun NasaNavigationSuite(
                             contentDescription = null,
                         )
                     },
-                    label = { Text(stringResource(destination.labelRes)) },
+                    // One line whatever the font scale: a narrow bar item would otherwise break a
+                    // label mid-word at large text sizes.
+                    label = {
+                        Text(
+                            text = stringResource(destination.labelRes),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
                     navigationSuiteType = navigationSuiteType,
                 )
             }

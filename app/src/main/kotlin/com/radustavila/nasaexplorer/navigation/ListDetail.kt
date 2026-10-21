@@ -13,13 +13,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.layout.MutableThreePaneScaffoldState
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
+import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldValue
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
 import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -89,19 +92,32 @@ internal fun <T> ListDetailLayout(
     modifier: Modifier = Modifier,
 ) {
     val navigator = rememberListDetailPaneScaffoldNavigator(
-        scaffoldDirective = calculatePaneScaffoldDirective(LocalWindowAdaptiveInfo.current),
+        scaffoldDirective = calculatePaneScaffoldDirective(LocalWindowAdaptiveInfo.current).withoutAutoFocus(),
     )
     // Hoisted above the panes, so the picked item survives the detail pane being hidden (the
     // window narrowing to one pane and back) and is still there when it shows again.
     val pane = rememberNavController()
     val scope = rememberCoroutineScope()
 
+    // The navigator moves its scaffold state only when it navigates, not when the window changes
+    // size; the window's real size also arrives a frame after the first composition. Follow
+    // such changes at once, so the panes shown always match the window.
+    val scaffoldValue = navigator.scaffoldValue
+    LaunchedEffect(scaffoldValue) {
+        val state = navigator.scaffoldState as? MutableThreePaneScaffoldState ?: return@LaunchedEffect
+        if (state.targetState != scaffoldValue && !state.isPredictiveBackInProgress) {
+            state.snapTo(scaffoldValue)
+        }
+    }
+    // What is on screen, which is what a click must go by.
+    val isTwoPane = { navigator.scaffoldState.targetState.isTwoPane }
+
     // The picked item replaces the previous one rather than stacking on it: the pane's back stack
     // holds the item and the items it links to, never the history of picks.
     // (Built on use: the pane's graph exists only once its host has been composed.)
     val replacePick = { navOptions { popUpTo(pane.graph.id) { inclusive = true } } }
     val onItemClick: (T) -> Unit = { item ->
-        if (navigator.scaffoldValue.isTwoPane && opensInPane(item)) {
+        if (isTwoPane() && opensInPane(item)) {
             pane.openInPane(item, replacePick())
             // Also lets the pick lead the way when the window narrows to one pane.
             if (navigator.currentDestination?.pane != ListDetailPaneScaffoldRole.Detail) {
@@ -116,7 +132,7 @@ internal fun <T> ListDetailLayout(
             pane.previousBackStackEntry != null -> pane.popBackStack()
 
             // One pane: back to the list; the pick stays for when the window widens again.
-            !navigator.scaffoldValue.isTwoPane -> scope.launch { navigator.navigateBack() }
+            !isTwoPane() -> scope.launch { navigator.navigateBack() }
 
             // Two panes: nothing to go back to, so the arrow puts the item away.
             else -> {
@@ -146,6 +162,21 @@ internal fun <T> ListDetailLayout(
         },
     )
 }
+
+/**
+ * The scaffold would otherwise move focus into the pane it shows, which lands on the first text
+ * field there (the gallery's search) and opens the keyboard whenever the screen appears.
+ */
+private fun PaneScaffoldDirective.withoutAutoFocus() = PaneScaffoldDirective(
+    maxHorizontalPartitions = maxHorizontalPartitions,
+    horizontalPartitionSpacerSize = horizontalPartitionSpacerSize,
+    maxVerticalPartitions = maxVerticalPartitions,
+    verticalPartitionSpacerSize = verticalPartitionSpacerSize,
+    defaultPanePreferredWidth = defaultPanePreferredWidth,
+    defaultPanePreferredHeight = defaultPanePreferredHeight,
+    excludedBounds = excludedBounds,
+    shouldAutoFocusCurrentDestination = false,
+)
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 private val ThreePaneScaffoldValue.isTwoPane: Boolean
