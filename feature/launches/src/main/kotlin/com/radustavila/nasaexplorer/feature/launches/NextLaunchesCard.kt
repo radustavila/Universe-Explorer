@@ -47,9 +47,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.NasaAsyncImage
 import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.theme.NasaTheme
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.Launch
 import com.radustavila.nasaexplorer.core.model.LaunchStatus
 import java.time.Duration
@@ -90,6 +92,7 @@ fun NextLaunchesCard(
         now = { second.value },
         onOpenUrl = context::openUrl,
         modifier = modifier,
+        freshness = uiState.freshness,
     )
 }
 
@@ -99,6 +102,7 @@ internal fun NextLaunchesCardContent(
     now: () -> Instant,
     onOpenUrl: (String) -> Unit,
     modifier: Modifier = Modifier,
+    freshness: DataFreshness = DataFreshness(),
 ) {
     if (launches.isEmpty()) return
 
@@ -124,6 +128,7 @@ internal fun NextLaunchesCardContent(
             if (index > 0) HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             LaunchRow(launch = launch, now = now, dateFormatter = dateFormatter, onOpenUrl = onOpenUrl)
         }
+        FreshnessLabel(freshness, modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
         Spacer(Modifier.size(8.dp))
     }
 }

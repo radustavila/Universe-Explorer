@@ -7,9 +7,11 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.LaunchStatus
 import com.radustavila.nasaexplorer.core.testing.data.TestLaunches
 import java.time.Duration
+import java.time.Instant
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -78,6 +80,16 @@ class NextLaunchesCardTest {
     }
 
     @Test
+    fun `offline the card says the list is the saved one`() {
+        setCard(
+            TestLaunches.upcoming(size = 1),
+            freshness = DataFreshness(lastUpdatedAt = Instant.now().minusSeconds(120), isOffline = true),
+        )
+
+        composeTestRule.onNodeWithText("Offline · showing data from", substring = true).assertExists()
+    }
+
+    @Test
     fun `draws nothing without launches`() {
         setCard(emptyList())
 
@@ -87,9 +99,10 @@ class NextLaunchesCardTest {
     private fun setCard(
         launches: List<com.radustavila.nasaexplorer.core.model.Launch>,
         onOpenUrl: (String) -> Unit = {},
+        freshness: DataFreshness = DataFreshness(),
     ) {
         composeTestRule.setContent {
-            NextLaunchesCardContent(launches = launches, now = { now }, onOpenUrl = onOpenUrl)
+            NextLaunchesCardContent(launches = launches, now = { now }, onOpenUrl = onOpenUrl, freshness = freshness)
         }
     }
 }
