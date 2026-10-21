@@ -9,12 +9,14 @@ import com.radustavila.nasaexplorer.core.designsystem.error.UiError
 import com.radustavila.nasaexplorer.core.designsystem.error.toUiError
 import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDataFreshnessUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveGalleryRailsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshGalleryUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SearchNasaMediaUseCase
 import com.radustavila.nasaexplorer.core.model.NasaMedia
 import com.radustavila.nasaexplorer.core.model.NasaMediaQuery
 import com.radustavila.nasaexplorer.core.model.NasaMediaType
+import com.radustavila.nasaexplorer.core.model.SyncSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -47,6 +49,7 @@ class GalleryViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     observeRails: ObserveGalleryRailsUseCase,
     observeConnectivity: ObserveConnectivityUseCase,
+    observeDataFreshness: ObserveDataFreshnessUseCase,
     private val refreshGallery: RefreshGalleryUseCase,
     private val searchMedia: SearchNasaMediaUseCase,
 ) : ViewModel() {
@@ -67,6 +70,9 @@ class GalleryViewModel @Inject constructor(
 
     private val isOnline = observeConnectivity()
     private val rails = observeRails()
+
+    // Carries connectivity too; the state reads it from here so going offline emits one state.
+    private val freshness = observeDataFreshness(SyncSource.NASA_LIBRARY)
     private val refreshState = MutableStateFlow(RefreshState())
     private val searchState = MutableStateFlow<SearchUiState>(SearchUiState.Idle)
 
@@ -77,18 +83,19 @@ class GalleryViewModel @Inject constructor(
     val uiState: StateFlow<GalleryUiState> = combine(
         combine(query, filters, ::Pair),
         rails,
-        isOnline,
+        freshness,
         refreshState,
         searchState,
-    ) { (query, filters), rails, online, refresh, search ->
+    ) { (query, filters), rails, freshness, refresh, search ->
         GalleryUiState(
             query = query,
             filters = filters,
             rails = rails.map { (rail, items) -> RailUi(rail, items) },
             isRefreshing = refresh.isRefreshing,
-            isOffline = !online,
+            isOffline = freshness.isOffline,
             refreshError = refresh.error,
             search = if (query.isBlank()) SearchUiState.Idle else search,
+            freshness = freshness,
         )
     }.stateIn(
         scope = viewModelScope,

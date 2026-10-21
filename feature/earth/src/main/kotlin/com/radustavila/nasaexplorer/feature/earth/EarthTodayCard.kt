@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.NasaAsyncImage
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.theme.NasaTheme
 import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
 import com.radustavila.nasaexplorer.core.model.EpicCollection
@@ -71,7 +72,7 @@ internal fun EarthTodayCardContent(
             .fillMaxWidth()
             .testTag(EARTH_TODAY_CARD_TEST_TAG),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -98,10 +99,7 @@ internal fun EarthTodayCardContent(
             }
 
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    text = stringResource(R.string.earth_today_card_title),
-                    style = MaterialTheme.typography.titleMedium,
-                )
+                SectionTitle(text = stringResource(R.string.earth_today_card_title))
                 Text(
                     text = if (cover == null) {
                         stringResource(R.string.earth_today_card_loading)

@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.radustavila.nasaexplorer.core.designsystem.units.LocalUnitPreferences
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.LaunchStatus
 import com.radustavila.nasaexplorer.core.model.TimeFormat
 import com.radustavila.nasaexplorer.core.model.UnitPreferences
@@ -20,6 +21,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.time.Duration
+import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -95,6 +97,16 @@ class NextLaunchesCardTest {
     }
 
     @Test
+    fun `offline the card says the list is the saved one`() {
+        setCard(
+            TestLaunches.upcoming(size = 1),
+            freshness = DataFreshness(lastUpdatedAt = Instant.now().minusSeconds(120), isOffline = true),
+        )
+
+        composeTestRule.onNodeWithText("Offline · showing data from", substring = true).assertExists()
+    }
+
+    @Test
     fun `draws nothing without launches`() {
         setCard(emptyList())
 
@@ -105,10 +117,11 @@ class NextLaunchesCardTest {
         launches: List<com.radustavila.nasaexplorer.core.model.Launch>,
         onOpenUrl: (String) -> Unit = {},
         timeFormat: TimeFormat = TimeFormat.SYSTEM,
+        freshness: DataFreshness = DataFreshness(),
     ) {
         composeTestRule.setContent {
             CompositionLocalProvider(LocalUnitPreferences provides UnitPreferences(timeFormat = timeFormat)) {
-                NextLaunchesCardContent(launches = launches, now = { now }, onOpenUrl = onOpenUrl)
+                NextLaunchesCardContent(launches = launches, now = { now }, onOpenUrl = onOpenUrl, freshness = freshness)
             }
         }
     }

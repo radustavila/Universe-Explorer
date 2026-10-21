@@ -85,6 +85,7 @@ import com.radustavila.nasaexplorer.core.designsystem.component.NasaAsyncImage
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
 import com.radustavila.nasaexplorer.core.designsystem.component.VideoPlaceholder
+import com.radustavila.nasaexplorer.core.designsystem.component.ZoomableImageDialog
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
 import com.radustavila.nasaexplorer.core.designsystem.util.ShareContent
 import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
@@ -312,7 +313,7 @@ private fun ApodDetails(
     }
 
     if (isViewerOpen && fullImageUrl != null) {
-        FullSizeImageDialog(
+        ZoomableImageDialog(
             url = fullImageUrl,
             previewUrl = apod.previewImageUrl,
             contentDescription = apod.imageDescription,

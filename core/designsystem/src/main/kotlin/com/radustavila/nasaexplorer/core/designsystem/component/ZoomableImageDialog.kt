@@ -41,8 +41,7 @@ import com.radustavila.nasaexplorer.core.designsystem.R
  * Full-screen, pinch-to-zoom image viewer: drags to pan, double-taps to zoom, and draws [url] on
  * top of an already cached [previewUrl] while it downloads.
  *
- * Shared by features that open a picture full size. The details screen still has its own copy
- * (`FullSizeImageDialog`), which can move onto this one.
+ * The one full-size viewer of the app: every feature that opens a picture full size uses it.
  */
 @Composable
 fun ZoomableImageDialog(

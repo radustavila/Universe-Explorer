@@ -51,4 +51,10 @@
     <string name="coordinate_east">%1$s° E</string>
     <string name="coordinate_west">%1$s° W</string>
     <string name="coordinate_pair">%1$s, %2$s</string>
+    <!-- %1$s: a relative time such as "5 min. ago", or a date. -->
+    <string name="freshness_updated">Updated %1$s</string>
+    <string name="freshness_updated_failed">Updated %1$s. The last refresh failed.</string>
+    <string name="freshness_just_now">just now</string>
+    <!-- %1$s: a time of day such as "14:03", or a date and time. -->
+    <string name="freshness_offline">Offline · showing data from %1$s</string>
 </resources>

@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.notification.rememberNotificationPermissionToggle
 import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.model.AuroraAlertSettings
@@ -68,7 +69,7 @@ internal fun AuroraAlertCard(
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Icon(Icons.Outlined.NotificationsActive, contentDescription = null)
                 Column(Modifier.weight(1f)) {
-                    Text(stringResource(R.string.space_weather_alerts_title), style = MaterialTheme.typography.titleMedium)
+                    SectionTitle(stringResource(R.string.space_weather_alerts_title))
                     Text(
                         stringResource(R.string.space_weather_alerts_description),
                         style = MaterialTheme.typography.bodySmall,

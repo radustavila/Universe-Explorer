@@ -10,6 +10,8 @@ android {
 dependencies {
     api(projects.core.model)
     implementation(projects.core.common)
+    // Features read the window's size classes through LocalWindowAdaptiveInfo.
+    api(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.coil.compose)

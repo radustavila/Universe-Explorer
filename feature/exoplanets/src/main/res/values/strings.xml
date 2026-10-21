@@ -11,7 +11,6 @@
     <string name="exoplanets_list_nearest_description">Planets of the star systems closest to the Sun</string>
     <string name="exoplanets_list_earth_sized_description">0.8 to 1.25 times Earth\'s radius, nearest first</string>
 
-    <string name="exoplanets_refresh_failed">Couldn\'t update from the Exoplanet Archive. Showing saved planets.</string>
     <string name="exoplanets_loading_title">Downloading the catalogue…</string>
     <string name="exoplanets_offline_empty_title">No planets saved yet</string>
     <string name="exoplanets_offline_empty_description">Connect once to download the catalogue; after that it works offline.</string>

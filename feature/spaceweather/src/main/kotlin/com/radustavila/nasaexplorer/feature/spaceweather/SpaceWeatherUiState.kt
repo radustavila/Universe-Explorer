@@ -6,6 +6,7 @@ import com.radustavila.nasaexplorer.core.map.overlay.GeoPoint
 import com.radustavila.nasaexplorer.core.map.overlay.MapOverlay
 import com.radustavila.nasaexplorer.core.model.AuroraAlertSettings
 import com.radustavila.nasaexplorer.core.model.CoronalMassEjection
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.KpReading
 import com.radustavila.nasaexplorer.core.model.SolarFlare
 import java.time.Instant
@@ -28,6 +29,9 @@ data class SpaceWeatherUiState(
     val lastRefreshFailed: Boolean = false,
 ) {
     val hasData: Boolean get() = currentKp != null || forecast.isNotEmpty()
+
+    val freshness: DataFreshness
+        get() = DataFreshness(lastUpdatedAt = lastUpdatedAt, isOffline = isOffline, lastRefreshFailed = lastRefreshFailed)
 }
 
 /** The aurora grid as map overlays, plus when NOAA observed and forecast it. */

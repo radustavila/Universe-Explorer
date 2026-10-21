@@ -6,6 +6,7 @@
     <string name="destination_earth">Earth</string>
     <string name="destination_favorites">Favorites</string>
     <string name="destination_more">More</string>
+    <string name="detail_pane_placeholder">Pick something from the list to see it here</string>
     <string name="hub_coming_soon_title">Coming soon</string>
     <string name="hub_coming_soon_description">Nothing here yet. New sections land in this tab as they are built.</string>
     <string name="earth_satellite_map_title">Satellite map</string>

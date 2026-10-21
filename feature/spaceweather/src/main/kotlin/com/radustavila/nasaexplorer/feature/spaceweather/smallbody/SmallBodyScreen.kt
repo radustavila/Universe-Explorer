@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
 import com.radustavila.nasaexplorer.core.designsystem.units.formatLocalDateTime
 import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
@@ -124,7 +125,7 @@ private fun ApproachCard(approach: CloseApproach, modifier: Modifier) {
     Card(modifier) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(stringResource(R.string.small_body_approach_title), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                SectionTitle(stringResource(R.string.small_body_approach_title), modifier = Modifier.weight(1f))
                 if (approach.sentry != null) SentryBadge()
             }
             val units = rememberUnitFormatter()
@@ -147,7 +148,7 @@ private fun ApproachCard(approach: CloseApproach, modifier: Modifier) {
 private fun SentryCard(sentry: SentryRisk, modifier: Modifier) {
     Card(modifier.testTag(SMALL_BODY_SENTRY_TEST_TAG)) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(stringResource(R.string.small_body_sentry_title), style = MaterialTheme.typography.titleMedium, color = SENTRY_COLOR)
+            SectionTitle(stringResource(R.string.small_body_sentry_title), color = SENTRY_COLOR)
             Text(stringResource(R.string.small_body_sentry_explanation), style = MaterialTheme.typography.bodySmall)
             Fact(stringResource(R.string.small_body_sentry_odds), formatOdds(sentry.impactProbability, currentLocale()))
             sentry.yearRange?.let { Fact(stringResource(R.string.small_body_sentry_years), it) }
@@ -162,7 +163,7 @@ private fun SentryCard(sentry: SentryRisk, modifier: Modifier) {
 private fun DetailsCard(details: SmallBodyDetails, modifier: Modifier) {
     Card(modifier.testTag(SMALL_BODY_DETAILS_TEST_TAG)) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(stringResource(R.string.small_body_orbit_title), style = MaterialTheme.typography.titleMedium)
+            SectionTitle(stringResource(R.string.small_body_orbit_title))
             details.orbitClass?.let { Fact(stringResource(R.string.small_body_orbit_class), it) }
             Fact(
                 stringResource(R.string.small_body_hazardous),

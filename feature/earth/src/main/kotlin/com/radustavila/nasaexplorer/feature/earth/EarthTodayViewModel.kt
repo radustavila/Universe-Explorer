@@ -7,7 +7,7 @@ import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.designsystem.error.UiError
 import com.radustavila.nasaexplorer.core.designsystem.error.toUiError
 import com.radustavila.nasaexplorer.core.domain.usecase.FetchEpicDayUseCase
-import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDataFreshnessUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEpicAvailableDatesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEpicDayUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEpicFavoriteIdsUseCase
@@ -17,6 +17,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEpicUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ToggleEpicFavoriteUseCase
 import com.radustavila.nasaexplorer.core.model.EpicCollection
 import com.radustavila.nasaexplorer.core.model.EpicImage
+import com.radustavila.nasaexplorer.core.model.SyncSource
 import com.radustavila.nasaexplorer.core.model.SyncState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
@@ -50,7 +51,7 @@ class EarthTodayViewModel @Inject constructor(
     observeLatestEpicDay: ObserveLatestEpicDayUseCase,
     private val observeEpicDay: ObserveEpicDayUseCase,
     private val observeEpicAvailableDates: ObserveEpicAvailableDatesUseCase,
-    observeConnectivity: ObserveConnectivityUseCase,
+    observeDataFreshness: ObserveDataFreshnessUseCase,
     observeEpicSyncState: ObserveEpicSyncStateUseCase,
     observeEpicFavoriteIds: ObserveEpicFavoriteIdsUseCase,
     private val refreshEpic: RefreshEpicUseCase,
@@ -89,11 +90,13 @@ class EarthTodayViewModel @Inject constructor(
 
     val uiState: StateFlow<EarthTodayUiState> = combine(
         combine(shownDay, availableDates, observeEpicFavoriteIds(), ::Triple),
-        observeConnectivity(),
+        // Connectivity comes with the freshness: offline is part of how fresh the photos are.
+        observeDataFreshness(SyncSource.EPIC),
         observeEpicSyncState(),
         localState,
-    ) { (day, dates, favoriteIds), isOnline, syncState, local ->
+    ) { (day, dates, favoriteIds), freshness, syncState, local ->
         val (current, images) = day
+        val isOnline = !freshness.isOffline
         // A sync waiting for connectivity cannot make progress; showing it as such would spin forever.
         val isSyncMakingProgress = syncState == SyncState.Syncing ||
             (syncState == SyncState.Enqueued && isOnline)
@@ -113,6 +116,7 @@ class EarthTodayViewModel @Inject constructor(
             error = local.error ?: (syncState as? SyncState.Failed)?.error
                 ?.takeIf { current.date == null }
                 ?.toUiError(),
+            freshness = freshness,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -150,6 +154,15 @@ class EarthTodayViewModel @Inject constructor(
     /** `null` returns to the newest day. */
     fun onDateSelected(date: LocalDate?) {
         updateSelection { it.copy(date = date) }
+    }
+
+    /**
+     * Pull-to-refresh: asks the EPIC sync job for a run that ignores its refresh interval. The
+     * newest day and the list of published days arrive through Room like any other sync.
+     */
+    fun onRefresh() {
+        localState.update { it.copy(error = null) }
+        refreshEpic(force = true)
     }
 
     fun onRetry() {

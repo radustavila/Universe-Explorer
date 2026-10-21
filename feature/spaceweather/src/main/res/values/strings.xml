@@ -7,8 +7,6 @@
     <string name="space_weather_offline_description">Connect to the internet once to download the Kp index and aurora forecast. After that they open offline.</string>
     <string name="space_weather_error_title">Could not load space weather</string>
     <string name="space_weather_error_description">NOAA did not answer. Pull down or retry in a moment.</string>
-    <string name="space_weather_updated">Updated %1$s</string>
-    <string name="space_weather_updated_failed">Updated %1$s. The last refresh failed.</string>
 
     <string name="space_weather_kp_label">Kp index</string>
     <string name="space_weather_kp_unknown">No reading yet</string>
@@ -86,7 +84,7 @@
     <string name="neighbourhood_fireball_energy">%1$s kilotons of TNT</string>
     <!-- %1$s is an altitude with its unit, e.g. "35 km". -->
     <string name="neighbourhood_fireball_altitude">%1$s up</string>
-    <string name="neighbourhood_updated">Updated %1$s. 1 LD is the Moon\'s distance, 384,400 km.</string>
+    <string name="neighbourhood_lunar_distance_note">1 LD is the Moon\'s distance, 384,400 km.</string>
 
     <!-- One asteroid -->
     <string name="small_body_approach_title">Close approach</string>

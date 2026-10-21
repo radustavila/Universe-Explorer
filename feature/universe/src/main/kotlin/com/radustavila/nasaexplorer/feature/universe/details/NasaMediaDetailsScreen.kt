@@ -63,6 +63,7 @@ import com.radustavila.nasaexplorer.core.designsystem.component.NasaAsyncImage
 import com.radustavila.nasaexplorer.core.designsystem.component.NasaMediaPlayer
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.component.ZoomableImageDialog
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
 import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
@@ -245,7 +246,7 @@ private fun MediaDetails(
             if (media.description.isNotEmpty()) Description(text = media.description)
 
             if (media.keywords.isNotEmpty()) {
-                Text(
+                SectionTitle(
                     text = stringResource(R.string.media_details_keywords),
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.padding(top = 8.dp),

@@ -33,6 +33,7 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.radustavila.nasaexplorer.core.designsystem.motion.rememberReducedMotion
 
 /**
  * Image loading with explicit loading, failure and "nothing to show" states.
@@ -51,7 +52,8 @@ import coil3.request.crossfade
  * details and zoom screens pass it; the layered loading it needs is too heavy for list cells.
  *
  * [crossfade] fades the image in once loaded. Turn it off where images replace each other quickly,
- * such as animation frames, so each one appears at once.
+ * such as animation frames, so each one appears at once. It is off anyway with reduced motion
+ * (see [rememberReducedMotion]).
  *
  * [contentDescription] belongs to the frame rather than to the loaded bitmap, so a screen reader
  * announces the picture while it is still loading or when it failed to load, too.
@@ -87,7 +89,7 @@ fun NasaAsyncImage(
             return@Box
         }
 
-        val model = rememberImageModel(url, crossfade)
+        val model = rememberImageModel(url, crossfade && !rememberReducedMotion())
         val preview = previewUrl?.takeIf { it != url }
         if (preview == null) {
             AsyncImage(

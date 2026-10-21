@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
  * Material You is intentionally not used: the wallpaper-derived palette tinted the photography and
  * varied per device, which made the one thing the app exists to show look different everywhere.
  */
-private val SpaceColors = darkColorScheme(
+internal val SpaceColors = darkColorScheme(
     primary = Lavender,
     onPrimary = DeepSpace,
     primaryContainer = LavenderContainer,
@@ -29,7 +29,7 @@ private val SpaceColors = darkColorScheme(
     onBackground = MoonGrey,
     surface = DeepSpace,
     onSurface = MoonGrey,
-    surfaceVariant = DeepSpaceCard,
+    surfaceVariant = DeepSpaceVariant,
     onSurfaceVariant = MoonGreyDim,
     surfaceContainer = DeepSpaceElevated,
     surfaceContainerHigh = DeepSpaceCard,
@@ -37,7 +37,7 @@ private val SpaceColors = darkColorScheme(
     surfaceContainerLow = DeepSpaceElevated,
     surfaceContainerLowest = DeepSpace,
     outline = DeepSpaceOutline,
-    outlineVariant = DeepSpaceOutline,
+    outlineVariant = DeepSpaceOutlineVariant,
 )
 
 @Composable

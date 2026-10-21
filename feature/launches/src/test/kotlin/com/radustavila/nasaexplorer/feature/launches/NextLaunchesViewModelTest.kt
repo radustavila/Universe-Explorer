@@ -1,10 +1,16 @@
 package com.radustavila.nasaexplorer.feature.launches
 
 import app.cash.turbine.test
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDataFreshnessUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveUpcomingLaunchesUseCase
+import com.radustavila.nasaexplorer.core.model.DataFreshness
+import com.radustavila.nasaexplorer.core.model.SyncSource
 import com.radustavila.nasaexplorer.core.testing.data.TestLaunches
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
+import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
+import java.time.Instant
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -17,6 +23,7 @@ class NextLaunchesViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val repository = FakeLaunchRepository()
+    private val metadata = FakeSyncMetadataRepository()
 
     @Test
     fun `exposes the cached launches without refreshing them`() = runTest {
@@ -45,7 +52,22 @@ class NextLaunchesViewModelTest {
         }
     }
 
+    @Test
+    fun `says when the launch list last synced`() = runTest {
+        repository.setLaunches(TestLaunches.upcoming(size = 1))
+        val syncedAt = Instant.parse("2026-10-21T09:00:00Z")
+        metadata.recordSyncSuccess(SyncSource.LAUNCHES, at = syncedAt)
+
+        createViewModel().uiState.test {
+            var state = awaitItem()
+            while (state.freshness.lastUpdatedAt == null) state = awaitItem()
+
+            assertEquals(DataFreshness(lastUpdatedAt = syncedAt), state.freshness)
+        }
+    }
+
     private fun createViewModel() = NextLaunchesViewModel(
         observeUpcomingLaunches = ObserveUpcomingLaunchesUseCase(repository),
+        observeDataFreshness = ObserveDataFreshnessUseCase(metadata, FakeNetworkMonitor()),
     )
 }

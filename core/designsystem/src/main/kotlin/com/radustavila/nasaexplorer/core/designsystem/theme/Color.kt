@@ -9,7 +9,26 @@ import androidx.compose.ui.graphics.Color
 internal val DeepSpace = Color(0xFF07070D)
 internal val DeepSpaceElevated = Color(0xFF101018)
 internal val DeepSpaceCard = Color(0xFF16161F)
-internal val DeepSpaceOutline = Color(0xFF2B2B38)
+
+/**
+ * `surfaceVariant`: image placeholders, gauge tracks, neutral chips. Deliberately not
+ * [DeepSpaceCard]: Material resolves a container's content colour by matching it against the
+ * scheme, and `surfaceVariant` is matched before `surfaceContainerHighest`, so if the two were equal
+ * every card's text would fall back to the dim `onSurfaceVariant`.
+ */
+internal val DeepSpaceVariant = Color(0xFF13131B)
+
+/**
+ * Borders of text fields, segmented buttons and other controls: at least 3:1 against every
+ * surface it sits on (WCAG 1.4.11), about 3.6:1 even on [DeepSpaceCard].
+ */
+internal val DeepSpaceOutline = Color(0xFF6E6E86)
+
+/**
+ * Chip borders and dividers (Material 3 draws chip outlines with `outlineVariant`): quieter than
+ * [DeepSpaceOutline] but still at least 3:1 on [DeepSpaceCard].
+ */
+internal val DeepSpaceOutlineVariant = Color(0xFF64647D)
 internal val Lavender = Color(0xFFCFC2FF)
 internal val LavenderContainer = Color(0xFF2A2545)
 internal val StardustCyan = Color(0xFF57D0E8)

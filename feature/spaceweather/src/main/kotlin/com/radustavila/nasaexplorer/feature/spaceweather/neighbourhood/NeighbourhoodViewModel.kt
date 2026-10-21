@@ -10,6 +10,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.ObserveRecentFireballsUs
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSmallBodiesSyncStatusUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RequestSmallBodiesSyncUseCase
 import com.radustavila.nasaexplorer.core.model.CloseApproach
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.Fireball
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Duration
@@ -36,6 +37,9 @@ data class NeighbourhoodUiState(
     val hasSynced: Boolean = false,
 ) {
     val hasData: Boolean get() = approaches.isNotEmpty() || fireballs.isNotEmpty()
+
+    val freshness: DataFreshness
+        get() = DataFreshness(lastUpdatedAt = lastUpdatedAt, isOffline = isOffline, lastRefreshFailed = lastRefreshFailed)
 }
 
 /**

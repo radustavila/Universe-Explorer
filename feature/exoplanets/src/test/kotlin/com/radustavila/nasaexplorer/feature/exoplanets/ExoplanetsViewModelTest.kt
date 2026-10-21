@@ -11,6 +11,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.ObserveExoplanetsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshSourceUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RequestExoplanetSyncUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeExoplanetsUseCase
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.ExoplanetCatalogStats
 import com.radustavila.nasaexplorer.core.model.ExoplanetList
 import com.radustavila.nasaexplorer.core.testing.data.TestExoplanets
@@ -130,6 +131,18 @@ class ExoplanetsViewModelTest {
 
             assertTrue(state.planets.isNotEmpty())
             assertFalse(state.isRefreshing)
+        }
+    }
+
+    @Test
+    fun `the catalogue's last sync feeds the freshness line`() = runTest {
+        SynchronizeExoplanetsUseCase(repository, RefreshSourceUseCase(metadata, clock)).invoke()
+
+        createViewModel().uiState.test {
+            var state = awaitItem()
+            while (state.freshness.lastUpdatedAt == null) state = awaitItem()
+
+            assertEquals(DataFreshness(lastUpdatedAt = clock.currentInstant), state.freshness)
         }
     }
 

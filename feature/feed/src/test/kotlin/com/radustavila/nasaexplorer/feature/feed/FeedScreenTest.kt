@@ -27,7 +27,9 @@ import com.radustavila.nasaexplorer.core.designsystem.component.LOADING_INDICATO
 import com.radustavila.nasaexplorer.core.designsystem.component.OFFLINE_BANNER_TEST_TAG
 import com.radustavila.nasaexplorer.core.designsystem.component.RETRY_BUTTON_TEST_TAG
 import com.radustavila.nasaexplorer.core.designsystem.error.UiError
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.testing.data.TestApods
+import java.time.Instant
 import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -222,6 +224,28 @@ class FeedScreenTest {
         }
 
         composeTestRule.onNodeWithTag(OFFLINE_BANNER_TEST_TAG).assertIsDisplayed()
+    }
+
+    @Test
+    fun `the entries say when they were last updated`() {
+        composeTestRule.setContent {
+            FeedContent(
+                uiState = FeedUiState(
+                    items = TestApods.feed(size = 1),
+                    freshness = DataFreshness(lastUpdatedAt = Instant.now().minusSeconds(5)),
+                ),
+                onApodClick = {},
+                onToggleFavorite = {},
+                onRefresh = {},
+                onRetry = {},
+                onLoadMore = {},
+                onErrorDismissed = {},
+                areNotificationsOn = false,
+                onNotificationsClick = {},
+            )
+        }
+
+        composeTestRule.onNodeWithText("Updated just now").assertIsDisplayed()
     }
 
     @Test

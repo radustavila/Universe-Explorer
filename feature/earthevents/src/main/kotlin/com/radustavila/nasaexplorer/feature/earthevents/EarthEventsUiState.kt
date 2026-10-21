@@ -5,6 +5,7 @@ import com.radustavila.nasaexplorer.core.map.gibs.GibsImagery
 import com.radustavila.nasaexplorer.core.map.gibs.GibsLayer
 import com.radustavila.nasaexplorer.core.map.gibs.GibsTileMatrixSet
 import com.radustavila.nasaexplorer.core.map.gibs.GibsTime
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.EarthEvent
 import com.radustavila.nasaexplorer.core.model.EarthEventCategory
 import com.radustavila.nasaexplorer.core.model.EventImageryLayer
@@ -27,6 +28,8 @@ data class EarthEventsUiState(
     val isLoadingImagery: Boolean = false,
     val isOffline: Boolean = false,
     val message: EarthEventsMessage? = null,
+    /** When the events last synced, for the "Updated …" line over the map. */
+    val freshness: DataFreshness = DataFreshness(),
 ) {
     /** The categories with open events and how many, largest first, for the filter. */
     val categoryCounts: List<Pair<EarthEventCategory, Int>>

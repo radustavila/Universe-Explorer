@@ -5,6 +5,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.radustavila.nasaexplorer.core.designsystem.adaptive.ListDetailHost
+import com.radustavila.nasaexplorer.core.designsystem.adaptive.listOnly
 import com.radustavila.nasaexplorer.feature.universe.details.NasaMediaDetailsScreen
 import com.radustavila.nasaexplorer.feature.universe.gallery.GalleryScreen
 import kotlinx.serialization.Serializable
@@ -21,15 +23,20 @@ fun NavController.navigateToNasaMedia(nasaId: String, navOptions: NavOptions? = 
     navigate(NasaMediaDetailsRoute(nasaId), navOptions)
 
 /**
+ * @param onMediaClick opens an item full screen.
  * @param header what else the Universe tab offers (exoplanets, sky tonight, Mars...), drawn above
  * the rails with its own side margins; null while there is nothing else.
+ * @param listDetail places the gallery beside the item it opened, where the window allows.
  */
 fun NavGraphBuilder.galleryScreen(
     onMediaClick: (nasaId: String) -> Unit,
     header: (@Composable () -> Unit)? = null,
+    listDetail: ListDetailHost<String> = listOnly(),
 ) {
     composable<GalleryRoute> {
-        GalleryScreen(onMediaClick = onMediaClick, header = header)
+        listDetail(onMediaClick) { onItemClick ->
+            GalleryScreen(onMediaClick = onItemClick, header = header)
+        }
     }
 }
 
