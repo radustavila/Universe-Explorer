@@ -35,6 +35,7 @@ class LaunchDtoTest {
         assertEquals(LaunchStatus.GO, first.status)
         assertEquals("Falcon 9 Block 5", first.rocket)
         assertEquals("Space Launch Complex 40, Cape Canaveral SFS, FL, USA", first.pad)
+        assertEquals("SpaceX", first.provider)
         assertEquals(
             "https://spacelaunchnow.app/launch/falcon-9-block-5-bandwagon-5-dedicated-mid-inclina/",
             first.pageUrl,
@@ -62,6 +63,11 @@ class LaunchDtoTest {
     }
 
     @Test
+    fun `a launch without a listed provider has none`() {
+        assertNull(launches.last().provider)
+    }
+
+    @Test
     fun `maps the status by id`() {
         assertEquals(LaunchStatus.TBC, launches.last().status)
     }
@@ -85,6 +91,7 @@ class LaunchDtoTest {
 
 /**
  * `GET /2.3.0/launches/upcoming/?limit=5&mode=detailed&hide_recent_previous=true`, recorded from
- * lldev.thespacedevs.com on 2026-10-19 and trimmed of nested fields the app never reads.
+ * lldev.thespacedevs.com on 2026-10-19 and trimmed of nested fields the app never reads (the
+ * first launch keeps its `launch_service_provider`, the others have it trimmed).
  */
 internal const val UPCOMING_FIXTURE = "launches/upcoming.json"

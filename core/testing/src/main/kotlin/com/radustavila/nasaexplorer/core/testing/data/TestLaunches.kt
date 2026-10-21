@@ -15,6 +15,7 @@ object TestLaunches {
         net: Instant = NOW.plus(Duration.ofHours(2)),
         status: LaunchStatus = LaunchStatus.GO,
         livestreamUrl: String? = "https://x.com/i/broadcasts/1nxeLMddZlEJX",
+        provider: String? = "SpaceX",
     ): Launch = Launch(
         id = id,
         name = name,
@@ -22,6 +23,7 @@ object TestLaunches {
         status = status,
         rocket = "Falcon 9 Block 5",
         pad = "Space Launch Complex 40, Cape Canaveral SFS, FL, USA",
+        provider = provider,
         imageUrl = "https://example.com/falcon9.jpg",
         livestreamUrl = livestreamUrl,
         pageUrl = "https://spacelaunchnow.app/launch/$id/",

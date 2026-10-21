@@ -4,17 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
-import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.action.actionStartActivity
-import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -24,11 +20,7 @@ import androidx.glance.layout.ContentScale
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
-import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
-import androidx.glance.text.TextAlign
-import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
 import com.radustavila.nasaexplorer.core.designsystem.util.apodDetailsIntent
 import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
 import com.radustavila.nasaexplorer.core.designsystem.util.loadBitmap
@@ -64,23 +56,36 @@ class LatestApodWidget : GlanceAppWidget() {
                 title = apod.title,
                 pictureDescription = apod.imageDescription,
                 dateLabel = apod.date.formatMedium(),
-                picture = apod.previewImageUrl?.let { url -> context.loadBitmap(url, PICTURE_SIZE_PX) },
+                picture = apod.previewImageUrl?.let { url ->
+                    val sizePx = context.widgetPictureSizePx(
+                        id,
+                        cropped = true,
+                        minPx = MIN_PICTURE_PX,
+                        maxPx = MAX_PICTURE_PX,
+                    )
+                    context.loadBitmap(url, sizePx, opaque = true)
+                },
                 openIntent = context.apodDetailsIntent(apod.date),
             )
         }
-        val emptyState = LatestApodWidgetEmptyState(
+        val emptyState = WidgetMessageState(
             message = context.getString(R.string.latest_apod_widget_empty),
             openIntent = context.packageManager.getLaunchIntentForPackage(context.packageName),
         )
 
         provideContent {
-            if (state != null) LatestApodContent(state) else EmptyContent(emptyState)
+            if (state != null) LatestApodContent(state) else WidgetMessage(emptyState)
         }
     }
 
     private companion object {
-        /** Sharp on a large widget, and comfortably under the RemoteViews bitmap budget. */
-        const val PICTURE_SIZE_PX = 720
+        /**
+         * The picture is decoded for the widget's size, as RGB_565 (photos have no transparency):
+         * at most 512 px is half a megabyte, sharp enough for a large widget and well inside the
+         * binder budget. The old fixed 720 px ARGB picture was two megabytes.
+         */
+        const val MIN_PICTURE_PX = 160
+        const val MAX_PICTURE_PX = 512
     }
 }
 
@@ -97,11 +102,6 @@ private class LatestApodWidgetState(
     val pictureDescription: String,
     val dateLabel: String,
     val picture: Bitmap?,
-    val openIntent: Intent?,
-)
-
-private class LatestApodWidgetEmptyState(
-    val message: String,
     val openIntent: Intent?,
 )
 
@@ -124,54 +124,19 @@ private fun LatestApodContent(state: LatestApodWidgetState) {
         Column(
             modifier = GlanceModifier
                 .fillMaxWidth()
-                .background(ScrimColor)
+                .background(WidgetColors.Scrim)
                 .padding(horizontal = 12.dp, vertical = 8.dp),
         ) {
             Text(
                 text = state.dateLabel,
                 maxLines = 1,
-                style = TextStyle(color = ColorProvider(SecondaryTextColor), fontSize = 12.sp),
+                style = widgetText(color = WidgetColors.SecondaryText, fontSize = 12.sp),
             )
             Text(
                 text = state.title,
                 maxLines = 2,
-                style = TextStyle(
-                    color = ColorProvider(PrimaryTextColor),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                ),
+                style = widgetText(fontSize = 15.sp, bold = true),
             )
         }
     }
 }
-
-@Composable
-private fun EmptyContent(state: LatestApodWidgetEmptyState) {
-    Box(
-        modifier = widgetFrame(state.openIntent).padding(16.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = state.message,
-            style = TextStyle(
-                color = ColorProvider(PrimaryTextColor),
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center,
-            ),
-        )
-    }
-}
-
-private fun widgetFrame(openIntent: Intent?): GlanceModifier {
-    val frame = GlanceModifier
-        .fillMaxSize()
-        .cornerRadius(16.dp)
-        .background(BackgroundColor)
-    return if (openIntent != null) frame.clickable(actionStartActivity(openIntent)) else frame
-}
-
-// The app is always dark, so the widget is too, whatever the launcher's theme.
-private val BackgroundColor = Color(0xFF07070D)
-private val ScrimColor = Color(0x99000000)
-private val PrimaryTextColor = Color(0xFFFFFFFF)
-private val SecondaryTextColor = Color(0xFFB8C0D9)

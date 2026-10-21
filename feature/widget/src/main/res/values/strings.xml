@@ -5,4 +5,82 @@
     <string name="latest_apod_widget_preview_date">Today</string>
     <string name="latest_apod_widget_preview_title">Astronomy Picture of the Day</string>
     <string name="latest_apod_widget_empty">Open NASA Explorer to download the latest picture of the day.</string>
+
+    <!-- Shared by the data widgets. -->
+    <string name="widget_percent">%1$d%%</string>
+    <string name="widget_in_minutes">in %1$d m</string>
+    <string name="widget_in_hours_minutes">in %1$d h %2$d m</string>
+    <string name="widget_in_days_hours">in %1$d d %2$d h</string>
+    <string name="widget_age_minutes">%1$d m old</string>
+    <string name="widget_age_hours">%1$d h old</string>
+    <string name="widget_age_days">%1$d d old</string>
+
+    <string name="aurora_widget_label">Aurora and Kp</string>
+    <string name="aurora_widget_description">The Kp index, the coming peak and the aurora outlook where you are. Refreshed when space weather updates.</string>
+    <string name="aurora_widget_title">Aurora · Kp</string>
+    <string name="aurora_widget_empty">No space weather yet. Open NASA Explorer online to download the Kp index.</string>
+    <string name="aurora_widget_kp_description">Kp index %1$s, %2$s</string>
+    <string name="aurora_widget_peak">Peak Kp %1$d · %2$s</string>
+    <string name="aurora_widget_now">now</string>
+    <string name="aurora_widget_updated">Kp at %1$s</string>
+    <string name="aurora_widget_updated_old">Kp at %1$s · %2$s</string>
+    <string name="aurora_widget_chance_here">%1$d%% aurora chance here</string>
+    <string name="aurora_widget_reaches_you">Watch the sky: from Kp %1$d it reaches you</string>
+    <string name="aurora_widget_needs_kp">Your place needs Kp %1$d</string>
+    <string name="aurora_widget_out_of_reach">The aurora rarely reaches your place</string>
+    <string name="aurora_widget_kp_quiet">Quiet</string>
+    <string name="aurora_widget_kp_unsettled">Unsettled</string>
+    <string name="aurora_widget_kp_active">Active</string>
+    <string name="aurora_widget_kp_g1">Minor storm</string>
+    <string name="aurora_widget_kp_g2">Moderate storm</string>
+    <string name="aurora_widget_kp_g3">Strong storm</string>
+    <string name="aurora_widget_kp_g4">Severe storm</string>
+    <string name="aurora_widget_kp_g5">Extreme storm</string>
+    <string name="aurora_widget_preview_kp">4.3</string>
+    <string name="aurora_widget_preview_peak">Peak Kp 6 · 21:00</string>
+    <string name="aurora_widget_preview_updated">Kp at 14:05</string>
+
+    <string name="next_launch_widget_label">Next launch</string>
+    <string name="next_launch_widget_description">The next rocket launch with a live countdown. Refreshed when launch data updates.</string>
+    <string name="next_launch_widget_title">Next launch</string>
+    <string name="next_launch_widget_empty">No launches yet. Open NASA Explorer online to load upcoming launches.</string>
+    <string name="next_launch_widget_liftoff_time">Lift-off time</string>
+    <string name="next_launch_widget_net_description">Target %1$s, %2$s</string>
+    <string name="next_launch_widget_status_go">Go</string>
+    <string name="next_launch_widget_status_tbc">TBC</string>
+    <string name="next_launch_widget_status_tbd">TBD</string>
+    <string name="next_launch_widget_status_hold">Hold</string>
+    <string name="next_launch_widget_status_in_flight">In flight</string>
+    <string name="next_launch_widget_preview_mission">Crew Dragon mission</string>
+    <string name="next_launch_widget_preview_vehicle">SpaceX · Falcon 9</string>
+    <string name="next_launch_widget_preview_countdown">in 3 h 20 m</string>
+    <string name="next_launch_widget_preview_net">Tue 21 Oct 14:30</string>
+
+    <string name="sky_widget_label">Sky tonight</string>
+    <string name="sky_widget_description">Tonight\'s Moon and the next visible ISS pass where you are. Works offline.</string>
+    <string name="sky_widget_title">Tonight</string>
+    <string name="sky_widget_illuminated">%1$d%% lit</string>
+    <string name="sky_widget_next_full_moon">Full moon %1$s</string>
+    <string name="sky_widget_iss_pass">ISS %1$s · up to %2$d°</string>
+    <string name="sky_widget_iss_no_place">Set your place in Sky tonight to see ISS passes</string>
+    <string name="sky_widget_iss_no_elements">Open Sky tonight online to predict ISS passes</string>
+    <string name="sky_widget_iss_stale">ISS orbit data is out of date. Open Sky tonight online</string>
+    <string name="sky_widget_iss_no_visible">No visible ISS pass in the next 5 days</string>
+    <string name="sky_widget_phase_new">New moon</string>
+    <string name="sky_widget_phase_waxing_crescent">Waxing crescent</string>
+    <string name="sky_widget_phase_first_quarter">First quarter</string>
+    <string name="sky_widget_phase_waxing_gibbous">Waxing gibbous</string>
+    <string name="sky_widget_phase_full">Full moon</string>
+    <string name="sky_widget_phase_waning_gibbous">Waning gibbous</string>
+    <string name="sky_widget_phase_last_quarter">Last quarter</string>
+    <string name="sky_widget_phase_waning_crescent">Waning crescent</string>
+    <string name="sky_widget_preview_illuminated" formatted="false">78% lit</string>
+    <string name="sky_widget_preview_iss">ISS 21:43 · up to 54°</string>
+
+    <string name="earth_widget_label">Earth today</string>
+    <string name="earth_widget_description">The newest whole-Earth photo from the DSCOVR spacecraft. Refreshed when the app syncs.</string>
+    <string name="earth_widget_caption">Earth · %1$s</string>
+    <string name="earth_widget_picture_description">%1$s Taken %2$s.</string>
+    <string name="earth_widget_empty">Open NASA Explorer online to download today\'s photo of Earth.</string>
+    <string name="earth_widget_preview_caption">Earth · 12:34</string>
 </resources>

@@ -12,7 +12,8 @@ import androidx.room.RoomDatabase
     entities = [LaunchEntity::class, PersonInSpaceEntity::class],
     // 2: refresh bookkeeping moved to the shared per-source sync metadata.
     // 3: people in space (Sky tonight).
-    version = 3,
+    // 4: launch service provider (next-launch widget).
+    version = 4,
     exportSchema = true,
 )
 abstract class LaunchesDatabase : RoomDatabase() {

@@ -62,6 +62,7 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 # OpenGL ES build: plain `android-sdk` is Vulkan-only since 13.x and fails on emulators and older GPUs.
 maplibre-android-sdk = { module = "org.maplibre.gl:android-sdk-opengl", version.ref = "maplibre" }
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glance" }
+androidx-glance-appwidget-testing = { module = "androidx.glance:glance-appwidget-testing", version.ref = "glance" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }

@@ -27,6 +27,7 @@ fun LaunchDto.toEntityOrNull(): LaunchEntity? {
             .map(String::trim)
             .filter(String::isNotEmpty)
             .joinToString(separator = ", "),
+        provider = launchServiceProvider?.name?.trim()?.takeIf(String::isNotEmpty),
         imageUrl = (image?.thumbnailUrl ?: image?.imageUrl)?.takeIf(String::isNotBlank),
         // LL2 lists the streams in its own priority order; the first one is the official webcast.
         livestreamUrl = vidUrls.firstNotNullOfOrNull { video -> video.url?.takeIf(String::isNotBlank) },
@@ -41,6 +42,7 @@ fun LaunchEntity.toDomain(): Launch = Launch(
     status = LaunchStatus.fromId(statusId),
     rocket = rocket,
     pad = pad,
+    provider = provider,
     imageUrl = imageUrl,
     livestreamUrl = livestreamUrl,
     pageUrl = pageUrl,

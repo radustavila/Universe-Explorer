@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A waxing gibbous Moon, as drawMoon renders it, for the widget picker preview. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="56dp"
+    android:height="56dp"
+    android:viewportWidth="56"
+    android:viewportHeight="56">
+    <path android:fillColor="#FF2B2B38" android:pathData="M28,28m-26,0a26,26 0,1 1,52 0a26,26 0,1 1,-52 0" />
+    <path android:fillColor="#FFECECF3" android:pathData="M28,2A26,26 0,0 1,28 54A14,26 0,0 1,28 2z" />
+</vector>

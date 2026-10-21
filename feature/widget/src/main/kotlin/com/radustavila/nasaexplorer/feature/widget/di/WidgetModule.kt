@@ -1,6 +1,8 @@
 package com.radustavila.nasaexplorer.feature.widget.di
 
+import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.domain.announcement.LatestApodWidgetUpdater
+import com.radustavila.nasaexplorer.feature.widget.GlanceHomeWidgetUpdater
 import com.radustavila.nasaexplorer.feature.widget.GlanceLatestApodWidgetUpdater
 import dagger.Binds
 import dagger.Module
@@ -13,4 +15,7 @@ interface WidgetModule {
 
     @Binds
     fun bindLatestApodWidgetUpdater(impl: GlanceLatestApodWidgetUpdater): LatestApodWidgetUpdater
+
+    @Binds
+    fun bindHomeWidgetUpdater(impl: GlanceHomeWidgetUpdater): HomeWidgetUpdater
 }
