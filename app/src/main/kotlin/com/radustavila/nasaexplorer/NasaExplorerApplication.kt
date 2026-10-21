@@ -7,12 +7,16 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import com.radustavila.nasaexplorer.core.cache.CacheEvictionScheduler
+import com.radustavila.nasaexplorer.core.common.dispatchers.ApplicationScope
 import com.radustavila.nasaexplorer.core.domain.sync.EpicSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.ExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
+import com.radustavila.nasaexplorer.core.domain.usecase.ScheduleAuroraAlertRefreshUseCase
 import com.radustavila.nasaexplorer.data.earthevents.sync.EarthEventsSyncScheduler
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @HiltAndroidApp
 class NasaExplorerApplication :
@@ -39,6 +43,13 @@ class NasaExplorerApplication :
     lateinit var epicSyncScheduler: EpicSyncScheduler
 
     @Inject
+    lateinit var scheduleAuroraAlertRefresh: ScheduleAuroraAlertRefreshUseCase
+
+    @Inject
+    @ApplicationScope
+    lateinit var applicationScope: CoroutineScope
+
+    @Inject
     lateinit var imageLoader: dagger.Lazy<ImageLoader>
 
     override val workManagerConfiguration: Configuration
@@ -58,5 +69,7 @@ class NasaExplorerApplication :
         earthEventsSyncScheduler.ensurePeriodicSync()
         exoplanetSyncScheduler.ensurePeriodicSync()
         epicSyncScheduler.ensurePeriodicSync()
+        // Reads the alert setting from DataStore, so off the main thread.
+        applicationScope.launch { scheduleAuroraAlertRefresh() }
     }
 }

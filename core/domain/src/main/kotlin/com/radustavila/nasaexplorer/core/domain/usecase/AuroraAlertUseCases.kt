@@ -70,8 +70,9 @@ class CheckAuroraAlertUseCase @Inject constructor(
 }
 
 /**
- * Turns alerts on or off. Turning them on keeps the 30-minute Kp refresh running and checks the
- * cached forecast at once, so a storm already forecast is announced without waiting for a sync.
+ * Turns alerts on or off. Turning them on starts the 30-minute Kp refresh and checks the cached
+ * forecast at once, so a storm already forecast is announced without waiting for a sync; turning
+ * them off stops the refresh, which nothing else needs.
  */
 class SetAuroraAlertEnabledUseCase @Inject constructor(
     private val repository: AuroraAlertRepository,
@@ -85,7 +86,23 @@ class SetAuroraAlertEnabledUseCase @Inject constructor(
         if (enabled) {
             scheduler.ensurePeriodicSync()
             checkAuroraAlert()
+        } else {
+            scheduler.cancelPeriodicSync()
         }
+    }
+}
+
+/**
+ * Brings the 30-minute Kp refresh in line with the alert setting, at app start: registered while
+ * alerts are on, cancelled otherwise. Older versions registered it whenever the space weather
+ * screen opened, so installs upgraded from them may hold a job that nothing needs.
+ */
+class ScheduleAuroraAlertRefreshUseCase @Inject constructor(
+    private val repository: AuroraAlertRepository,
+    private val scheduler: SpaceWeatherSyncScheduler,
+) {
+    suspend operator fun invoke() {
+        if (repository.settings.first().enabled) scheduler.ensurePeriodicSync() else scheduler.cancelPeriodicSync()
     }
 }
 

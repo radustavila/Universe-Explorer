@@ -14,11 +14,23 @@ class FakeSpaceWeatherSyncScheduler : SpaceWeatherSyncScheduler {
     var periodicSyncRegistrations = 0
         private set
 
+    var periodicSyncCancellations = 0
+        private set
+
+    /** Whether the periodic refresh is registered: set by [ensurePeriodicSync], cleared by [cancelPeriodicSync]. */
+    var isPeriodicSyncScheduled = false
+
     override fun requestSync(force: Boolean, includeAuroraMap: Boolean) {
         requests = requests + (force to includeAuroraMap)
     }
 
     override fun ensurePeriodicSync() {
         periodicSyncRegistrations++
+        isPeriodicSyncScheduled = true
+    }
+
+    override fun cancelPeriodicSync() {
+        periodicSyncCancellations++
+        isPeriodicSyncScheduled = false
     }
 }

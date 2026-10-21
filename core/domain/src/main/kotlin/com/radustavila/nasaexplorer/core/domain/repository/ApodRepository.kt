@@ -1,5 +1,6 @@
 package com.radustavila.nasaexplorer.core.domain.repository
 
+import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.model.Apod
 import java.time.LocalDate
@@ -59,6 +60,15 @@ interface ApodRepository {
     suspend fun fetchApod(date: LocalDate): DataResult<Unit>
 
     /**
+     * Fetches each of [dates] with its own request, at most [maxConcurrent] in flight, and merges
+     * every entry that arrived into the cache in one write, kept out of the feed like [fetchApod].
+     *
+     * A connectivity-type failure ([AppError.isRetryable]) stops the batch: requests not sent yet are
+     * dropped, since they would fail the same way, but what already arrived is still cached.
+     */
+    suspend fun fetchApods(dates: List<LocalDate>, maxConcurrent: Int): ApodBatchResult
+
+    /**
      * Fetches the next window of *older* entries (date-range pagination) and merges it into the
      * cache.
      *
@@ -66,3 +76,9 @@ interface ApodRepository {
      */
     suspend fun loadOlderWindow(): DataResult<Int>
 }
+
+/** Outcome of [ApodRepository.fetchApods]. A date the batch stopped before requesting is in neither. */
+data class ApodBatchResult(
+    val cached: Set<LocalDate> = emptySet(),
+    val failed: Map<LocalDate, AppError> = emptyMap(),
+)

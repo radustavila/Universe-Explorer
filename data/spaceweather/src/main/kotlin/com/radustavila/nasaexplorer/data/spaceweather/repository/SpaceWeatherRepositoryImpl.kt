@@ -18,13 +18,16 @@ import com.radustavila.nasaexplorer.data.spaceweather.remote.SpaceWeatherRemoteD
 import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 /**
  * Offline-first space weather: the screen observes Room, and the refresh calls are the only path
- * from NOAA and DONKI into it. Every failure leaves the cache as it was.
+ * from NOAA and DONKI into it. Every failure leaves the cache as it was. Calls a refresh needs
+ * together go out at once.
  */
 @Singleton
 class SpaceWeatherRepositoryImpl @Inject constructor(
@@ -56,12 +59,17 @@ class SpaceWeatherRepositoryImpl @Inject constructor(
      * one is kept when it fails.
      */
     override suspend fun refreshKp(): DataResult<Unit> {
-        val forecast = when (val result = remote.fetchKpForecast()) {
-            is DataResult.Success -> result.data.mapNotNull { it.toEntityOrNull() }
-            is DataResult.Failure -> return result
+        val (forecastResult, oneMinuteResult) = coroutineScope {
+            val forecast = async { remote.fetchKpForecast() }
+            val oneMinute = async { remote.fetchKpOneMinute() }
+            forecast.await() to oneMinute.await()
+        }
+        val forecast = when (forecastResult) {
+            is DataResult.Success -> forecastResult.data.mapNotNull { it.toEntityOrNull() }
+            is DataResult.Failure -> return forecastResult
         }
         if (forecast.isEmpty()) return DataResult.Failure(AppError.EmptyResponse)
-        val current = remote.fetchKpOneMinute().getOrNull()?.latestToEntityOrNull()
+        val current = oneMinuteResult.getOrNull()?.latestToEntityOrNull()
         return local.saveKp(forecast, current)
     }
 
@@ -77,13 +85,18 @@ class SpaceWeatherRepositoryImpl @Inject constructor(
     /** Flares from the last [FLARE_WINDOW_DAYS] days, CMEs from the last [CME_WINDOW_DAYS]. */
     override suspend fun refreshSolarActivity(): DataResult<Unit> {
         val today = timeProvider.today()
-        val flares = when (val result = remote.fetchFlares(today.minusDays(FLARE_WINDOW_DAYS), today)) {
-            is DataResult.Success -> result.data.mapNotNull { it.toEntityOrNull() }
-            is DataResult.Failure -> return result
+        val (flaresResult, cmesResult) = coroutineScope {
+            val flares = async { remote.fetchFlares(today.minusDays(FLARE_WINDOW_DAYS), today) }
+            val cmes = async { remote.fetchCmes(today.minusDays(CME_WINDOW_DAYS), today) }
+            flares.await() to cmes.await()
         }
-        val cmes = when (val result = remote.fetchCmes(today.minusDays(CME_WINDOW_DAYS), today)) {
-            is DataResult.Success -> result.data.mapNotNull { it.toEntityOrNull() }
-            is DataResult.Failure -> return result
+        val flares = when (flaresResult) {
+            is DataResult.Success -> flaresResult.data.mapNotNull { it.toEntityOrNull() }
+            is DataResult.Failure -> return flaresResult
+        }
+        val cmes = when (cmesResult) {
+            is DataResult.Success -> cmesResult.data.mapNotNull { it.toEntityOrNull() }
+            is DataResult.Failure -> return cmesResult
         }
         // A quiet Sun answers two empty lists, which is news too: nothing to store, nothing wrong.
         return local.saveSolarActivity(flares, cmes)

@@ -41,6 +41,16 @@ class SynchronizeEpicUseCaseTest {
     }
 
     @Test
+    fun `the collections are refreshed side by side`() = runTest {
+        repository.refreshDelayMillis = 1_000
+
+        synchronizeEpic()
+
+        assertEquals(EpicCollection.entries.toSet(), repository.prefetchedCollections.toSet())
+        assertEquals(1_000, testScheduler.currentTime)
+    }
+
+    @Test
     fun `records the outcome for the Debug screen and skips while EPIC is fresh`() = runTest {
         synchronizeEpic()
         assertEquals(timeProvider.currentInstant, metadata.observeSourceStatus(SyncSource.EPIC).first().lastSuccessAt)

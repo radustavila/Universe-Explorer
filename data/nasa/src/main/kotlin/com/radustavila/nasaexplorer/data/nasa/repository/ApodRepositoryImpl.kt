@@ -1,10 +1,13 @@
 package com.radustavila.nasaexplorer.data.nasa.repository
 
+import com.radustavila.nasaexplorer.core.common.concurrency.mapConcurrently
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.common.result.flatMap
 import com.radustavila.nasaexplorer.core.common.result.map
 import com.radustavila.nasaexplorer.core.common.time.TimeProvider
+import com.radustavila.nasaexplorer.core.database.entity.ApodEntity
+import com.radustavila.nasaexplorer.core.domain.repository.ApodBatchResult
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
 import com.radustavila.nasaexplorer.core.domain.repository.FavoritesRepository
 import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepository
@@ -12,8 +15,10 @@ import com.radustavila.nasaexplorer.core.model.Apod
 import com.radustavila.nasaexplorer.core.model.FavoriteSource
 import com.radustavila.nasaexplorer.data.nasa.local.ApodLocalDataSource
 import com.radustavila.nasaexplorer.data.nasa.mapper.toEntities
+import com.radustavila.nasaexplorer.data.nasa.mapper.toEntityOrNull
 import com.radustavila.nasaexplorer.data.nasa.remote.ApodRemoteDataSource
 import java.time.LocalDate
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
@@ -97,6 +102,38 @@ class ApodRepositoryImpl @Inject constructor(
             // appear directly below the current window. Paging absorbs it when it reaches that date.
             .flatMap { dto -> persist(listOf(dto), isInFeed = false) }
             .map { }
+
+    override suspend fun fetchApods(dates: List<LocalDate>, maxConcurrent: Int): ApodBatchResult {
+        val stopped = AtomicBoolean(false)
+        val outcomes = dates.mapConcurrently(maxConcurrent) { date ->
+            if (stopped.get()) return@mapConcurrently null
+            val result = remoteDataSource.fetchSingle(date)
+            if (result is DataResult.Failure && result.error.isRetryable) stopped.set(true)
+            date to result
+        }.filterNotNull()
+
+        val cachedAt = timeProvider.now()
+        val failed = mutableMapOf<LocalDate, AppError>()
+        val entities = mutableListOf<ApodEntity>()
+        for ((date, result) in outcomes) {
+            when (result) {
+                // Kept out of the feed, like a day fetched on its own.
+                is DataResult.Success -> {
+                    val entity = result.data.toEntityOrNull(cachedAt, isInFeed = false)
+                    if (entity != null) entities += entity else failed[date] = AppError.EmptyResponse
+                }
+                is DataResult.Failure -> failed[date] = result.error
+            }
+        }
+        if (entities.isEmpty()) return ApodBatchResult(failed = failed)
+
+        val cached = entities.mapTo(mutableSetOf()) { LocalDate.parse(it.date) }
+        // One write for the whole batch; distinct, since the transactional upsert rejects conflicting rows.
+        return when (val written = localDataSource.upsertPreservingLocalState(entities.distinctBy(ApodEntity::date))) {
+            is DataResult.Success -> ApodBatchResult(cached = cached, failed = failed)
+            is DataResult.Failure -> ApodBatchResult(failed = failed + cached.associateWith { written.error })
+        }
+    }
 
     override suspend fun loadOlderWindow(): DataResult<Int> {
         val oldestRequested = syncMetadataRepository.oldestRequestedDate.first()

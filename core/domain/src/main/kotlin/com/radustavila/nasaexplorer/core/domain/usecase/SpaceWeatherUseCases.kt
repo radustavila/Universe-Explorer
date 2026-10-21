@@ -15,6 +15,8 @@ import com.radustavila.nasaexplorer.core.model.SyncSource
 import java.time.Duration
 import java.time.Instant
 import javax.inject.Inject
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
@@ -52,6 +54,7 @@ class ObserveSolarActivityUseCase @Inject constructor(
  *   whenever the cached one is older than [AURORA_MAP_MAX_AGE], even if Kp is still fresh.
  * - DONKI ([SyncSource.DONKI]) changes far less often: at most once per [SOLAR_ACTIVITY_INTERVAL].
  * - Aurora alerts are checked against the cached forecast after every run, refreshed or not.
+ * - NOAA and DONKI, and Kp and the aurora grid, are fetched concurrently.
  *
  * Returns the NOAA outcome, which decides whether the job retries.
  */
@@ -61,19 +64,31 @@ class SynchronizeSpaceWeatherUseCase @Inject constructor(
     private val checkAuroraAlert: CheckAuroraAlertUseCase,
     private val timeProvider: TimeProvider,
 ) {
-    suspend operator fun invoke(force: Boolean = false, includeAuroraMap: Boolean = false): SourceRefreshResult<Unit> {
+    suspend operator fun invoke(force: Boolean = false, includeAuroraMap: Boolean = false): SourceRefreshResult<Unit> =
+        coroutineScope {
+            // NOAA and DONKI are different hosts with their own bookkeeping: refreshed side by side.
+            val donki = async {
+                refreshSource(SyncSource.DONKI, minInterval = SOLAR_ACTIVITY_INTERVAL, force = force) {
+                    repository.refreshSolarActivity()
+                }
+            }
+            val noaa = refreshNoaa(force, includeAuroraMap)
+            // Needs the fresh Kp only, not the solar activity.
+            checkAuroraAlert()
+            donki.await()
+            noaa
+        }
+
+    private suspend fun refreshNoaa(force: Boolean, includeAuroraMap: Boolean): SourceRefreshResult<Unit> {
         val auroraMapStale = includeAuroraMap && repository.auroraForecastFetchedAt().isOlderThan(AURORA_MAP_MAX_AGE)
-        val noaa = refreshSource(SyncSource.SPACE_WEATHER, minInterval = KP_INTERVAL, force = force || auroraMapStale) {
-            val kp = repository.refreshKp()
-            val map = if (includeAuroraMap) repository.refreshAuroraForecast() else DataResult.Success(Unit)
-            // A missing map must not hide a good Kp refresh from the bookkeeping, and vice versa.
-            if (kp is DataResult.Failure) kp else map
+        return refreshSource(SyncSource.SPACE_WEATHER, minInterval = KP_INTERVAL, force = force || auroraMapStale) {
+            coroutineScope {
+                val map = async { if (includeAuroraMap) repository.refreshAuroraForecast() else DataResult.Success(Unit) }
+                val kp = repository.refreshKp()
+                // A missing map must not hide a good Kp refresh from the bookkeeping, and vice versa.
+                if (kp is DataResult.Failure) kp else map.await()
+            }
         }
-        refreshSource(SyncSource.DONKI, minInterval = SOLAR_ACTIVITY_INTERVAL, force = force) {
-            repository.refreshSolarActivity()
-        }
-        checkAuroraAlert()
-        return noaa
     }
 
     private fun Instant?.isOlderThan(age: Duration): Boolean =
@@ -115,14 +130,13 @@ class ObserveSpaceWeatherSyncStatusUseCase @Inject constructor(
 }
 
 /**
- * Asks for a refresh with the aurora map, e.g. when the screen opens, and makes sure the 30-minute
- * background refresh exists from then on: nobody downloads space weather without having looked.
+ * Asks for a one-off refresh with the aurora map, e.g. when the screen opens. It registers no
+ * background refresh: only aurora alerts need one (see [ScheduleAuroraAlertRefreshUseCase]).
  */
 class RequestSpaceWeatherSyncUseCase @Inject constructor(
     private val scheduler: SpaceWeatherSyncScheduler,
 ) {
     operator fun invoke(force: Boolean = false) {
-        scheduler.ensurePeriodicSync()
         scheduler.requestSync(force = force, includeAuroraMap = true)
     }
 }

@@ -14,6 +14,7 @@ import javax.inject.Singleton
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -25,11 +26,13 @@ class RoomApodLocalDataSource @Inject constructor(
     @Dispatcher(AppDispatcher.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : ApodLocalDataSource {
 
+    // Room re-runs a query on every write to its table, including writes outside the feed (a day
+    // cached for "On this day"); unchanged rows are not mapped and emitted again.
     override fun observeFeed(): Flow<List<Apod>> =
-        apodDao.observeFeed().map { entities -> entities.toDomain() }.flowOn(ioDispatcher)
+        apodDao.observeFeed().distinctUntilChanged().map { entities -> entities.toDomain() }.flowOn(ioDispatcher)
 
     override fun observeLatest(): Flow<Apod?> =
-        apodDao.observeLatest().map { entity -> entity?.toDomain() }.flowOn(ioDispatcher)
+        apodDao.observeLatest().distinctUntilChanged().map { entity -> entity?.toDomain() }.flowOn(ioDispatcher)
 
     override fun observeApod(date: LocalDate): Flow<Apod?> =
         apodDao.observeApod(date.toString())

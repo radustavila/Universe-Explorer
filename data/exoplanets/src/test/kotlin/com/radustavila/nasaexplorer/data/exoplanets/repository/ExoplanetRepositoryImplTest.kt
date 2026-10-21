@@ -8,6 +8,7 @@ import com.radustavila.nasaexplorer.core.model.DiscoveryMethod
 import com.radustavila.nasaexplorer.core.model.ExoplanetCatalogStats
 import com.radustavila.nasaexplorer.core.model.ExoplanetList
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
+import com.radustavila.nasaexplorer.core.testing.http.ConcurrencyGate
 import com.radustavila.nasaexplorer.core.testing.http.FixtureServer
 import com.radustavila.nasaexplorer.data.exoplanets.local.ExoplanetsDatabase
 import com.radustavila.nasaexplorer.data.exoplanets.local.RoomExoplanetLocalDataSource
@@ -20,6 +21,7 @@ import java.time.LocalDate
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import okhttp3.mockwebserver.MockResponse
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -62,9 +64,16 @@ class ExoplanetRepositoryImplTest {
     @After
     fun tearDown() = database.close()
 
-    private fun enqueueRefresh() {
-        server.enqueueFixture(CATALOG_FIXTURE)
-        server.enqueueFixture(COUNT_FIXTURE)
+    /** The catalogue and the count are asked at once, so they are answered by query, not in order. */
+    private fun enqueueRefresh(
+        catalog: MockResponse = server.fixtureResponse(CATALOG_FIXTURE),
+        count: MockResponse = server.fixtureResponse(COUNT_FIXTURE),
+        gate: ConcurrencyGate? = null,
+    ) {
+        server.route { request ->
+            gate?.awaitOthers()
+            if (request.requestUrl?.queryParameter("query") == ExoplanetQueries.CONFIRMED_COUNT) count else catalog
+        }
     }
 
     @Test
@@ -74,8 +83,18 @@ class ExoplanetRepositoryImplTest {
         val result = repository.refresh()
 
         assertEquals(DataResult.Success(24), result)
-        assertEquals(ExoplanetQueries.catalog(2025), server.takeRequest().requestUrl!!.queryParameter("query"))
+        val queries = List(2) { server.takeRequest().requestUrl!!.queryParameter("query") }.toSet()
+        assertEquals(setOf(ExoplanetQueries.catalog(2025), ExoplanetQueries.CONFIRMED_COUNT), queries)
         assertEquals(ExoplanetCatalogStats(confirmedPlanets = 6451), repository.observeCatalogStats().first())
+    }
+
+    @Test
+    fun `the catalogue and the count are asked together`() = runTest {
+        val gate = ConcurrencyGate(requests = 2)
+        enqueueRefresh(gate = gate)
+
+        assertEquals(DataResult.Success(24), repository.refresh())
+        assertTrue(gate.allArrivedTogether)
     }
 
     @Test
@@ -137,7 +156,7 @@ class ExoplanetRepositoryImplTest {
         repository.refresh()
         val cached = repository.observeList(ExoplanetList.NEWEST).first()
 
-        server.enqueueStatus(code = 503)
+        enqueueRefresh(catalog = MockResponse().setResponseCode(503))
         val result = repository.refresh()
 
         assertEquals(DataResult.Failure(AppError.Http(code = 503, message = "Server Error")), result)
@@ -146,7 +165,10 @@ class ExoplanetRepositoryImplTest {
 
     @Test
     fun `a catalogue with nothing usable is an empty response and stores nothing`() = runTest {
-        server.enqueueJson("""[{"pl_name": null, "hostname": "X", "disc_year": 2026}]""")
+        enqueueRefresh(
+            catalog = MockResponse().setHeader("Content-Type", "application/json")
+                .setBody("""[{"pl_name": null, "hostname": "X", "disc_year": 2026}]"""),
+        )
 
         assertEquals(DataResult.Failure(AppError.EmptyResponse), repository.refresh())
         assertTrue(repository.observeList(ExoplanetList.NEAREST).first().isEmpty())
@@ -157,8 +179,7 @@ class ExoplanetRepositoryImplTest {
         enqueueRefresh()
         repository.refresh()
 
-        server.enqueueFixture(CATALOG_FIXTURE)
-        server.enqueueStatus(code = 500)
+        enqueueRefresh(count = MockResponse().setResponseCode(500))
         val result = repository.refresh()
 
         assertEquals(DataResult.Success(24), result)

@@ -36,7 +36,8 @@ import kotlinx.coroutines.launch
 /**
  * Kp, its forecast, the aurora map, the Sun's latest flare and CME, and the alert settings, all from
  * the local cache. Opening the screen asks the space weather job for a refresh including the aurora
- * grid (the job skips what is fresh) and keeps the 30-minute background refresh registered.
+ * grid (the job skips what is fresh); the 30-minute background refresh runs only while aurora alerts
+ * are on.
  */
 @HiltViewModel
 class SpaceWeatherViewModel @Inject constructor(
