@@ -83,8 +83,9 @@
 
     <!-- ISS track -->
     <string name="sky_track_title">Where the ISS is now</string>
-    <string name="sky_track_live">Live · %1$s km up · %2$s km/h</string>
-    <string name="sky_track_estimated">Estimated from orbit data · %1$s km up</string>
+    <!-- %1$s is an altitude with its unit ("408 km"), %2$s a speed with its unit ("27,600 km/h"). -->
+    <string name="sky_track_live">Live · %1$s up · %2$s</string>
+    <string name="sky_track_estimated">Estimated from orbit data · %1$s up</string>
     <string name="sky_track_sunlit">In sunlight</string>
     <string name="sky_track_eclipsed">In Earth\'s shadow</string>
     <string name="sky_track_unavailable">The station\'s position is not available offline until orbit data has been downloaded.</string>

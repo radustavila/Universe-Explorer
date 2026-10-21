@@ -49,7 +49,7 @@ import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
-import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
+import com.radustavila.nasaexplorer.core.designsystem.units.formatLocalDateTime
 import com.radustavila.nasaexplorer.core.map.SpaceMap
 import com.radustavila.nasaexplorer.core.map.SpaceMapState
 import com.radustavila.nasaexplorer.core.map.overlay.GeoPoint
@@ -252,7 +252,7 @@ private fun SpaceWeatherList(
                         .testTag(AURORA_MAP_TEST_TAG),
                 )
                 Caption(
-                    uiState.aurora?.let { stringResource(R.string.space_weather_aurora_caption, it.forecastFor.formatDateTime()) }
+                    uiState.aurora?.let { stringResource(R.string.space_weather_aurora_caption, it.forecastFor.formatLocalDateTime()) }
                         ?: stringResource(R.string.space_weather_aurora_missing),
                 )
             }
@@ -280,8 +280,8 @@ private fun auroraOverlays(uiState: SpaceWeatherUiState): List<MapOverlay> {
 private fun UpdatedLine(uiState: SpaceWeatherUiState) {
     val time = uiState.currentKpTime ?: uiState.lastUpdatedAt
     val text = when {
-        uiState.lastRefreshFailed && time != null -> stringResource(R.string.space_weather_updated_failed, time.formatDateTime())
-        time != null -> stringResource(R.string.space_weather_updated, time.formatDateTime())
+        uiState.lastRefreshFailed && time != null -> stringResource(R.string.space_weather_updated_failed, time.formatLocalDateTime())
+        time != null -> stringResource(R.string.space_weather_updated, time.formatLocalDateTime())
         else -> return
     }
     Caption(text)

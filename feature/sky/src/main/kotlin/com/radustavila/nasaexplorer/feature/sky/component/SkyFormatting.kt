@@ -3,6 +3,8 @@ package com.radustavila.nasaexplorer.feature.sky.component
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import com.radustavila.nasaexplorer.core.designsystem.units.formatClockTime
+import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.model.MoonPhase
 import com.radustavila.nasaexplorer.core.model.Planet
@@ -11,31 +13,27 @@ import java.text.NumberFormat
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.Locale
 import kotlin.math.abs
 
 /**
  * Times are shown in the device's time zone (the zone a user watching from a picked city far away
- * gets is named on the screen).
+ * gets is named on the screen), in the user's 12/24-hour choice.
  */
-internal fun Instant.formatTime(zone: ZoneId = ZoneId.systemDefault(), locale: Locale = Locale.getDefault()): String =
-    DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale).format(atZone(zone))
+@Composable
+internal fun Instant.formatTime(): String = formatClockTime()
 
 internal fun Instant.formatDay(zone: ZoneId = ZoneId.systemDefault(), locale: Locale = Locale.getDefault()): String =
     DateTimeFormatter.ofPattern("EEE d MMM", locale).format(atZone(zone))
 
-internal fun Instant.formatDayAndTime(zone: ZoneId = ZoneId.systemDefault(), locale: Locale = Locale.getDefault()): String =
-    "${formatDay(zone, locale)} ${formatTime(zone, locale)}"
+@Composable
+internal fun Instant.formatDayAndTime(): String = rememberUnitFormatter().dayAndTime(this)
 
 internal fun Double.formatDecimal(fractionDigits: Int, locale: Locale = Locale.getDefault()): String =
     NumberFormat.getNumberInstance(locale).apply {
         minimumFractionDigits = fractionDigits
         maximumFractionDigits = fractionDigits
     }.format(this)
-
-internal fun Double.formatWhole(locale: Locale = Locale.getDefault()): String =
-    NumberFormat.getIntegerInstance(locale).format(this)
 
 @Composable
 internal fun GeoCoordinate.label(): String {

@@ -20,11 +20,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
+import com.radustavila.nasaexplorer.core.designsystem.units.formatLocalDateTime
+import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.model.CoronalMassEjection
 import com.radustavila.nasaexplorer.core.model.SolarFlare
 import com.radustavila.nasaexplorer.feature.spaceweather.R
-import kotlin.math.roundToInt
 
 const val SOLAR_FLARE_TEST_TAG = "solar-flare"
 const val CME_TEST_TAG = "cme"
@@ -46,7 +46,7 @@ internal fun SolarFlareCard(flare: SolarFlare?, modifier: Modifier = Modifier) {
             color = flareColor(flare.classLetter),
         )
         Text(
-            text = stringResource(R.string.space_weather_flare_peak, (flare.peakTime ?: flare.beginTime).formatDateTime()),
+            text = stringResource(R.string.space_weather_flare_peak, (flare.peakTime ?: flare.beginTime).formatLocalDateTime()),
             style = MaterialTheme.typography.bodyMedium,
         )
         Text(
@@ -76,22 +76,22 @@ internal fun CmeCard(cme: CoronalMassEjection?, modifier: Modifier = Modifier) {
             return@SolarEventCard
         }
         Text(
-            text = stringResource(R.string.space_weather_cme_started, cme.startTime.formatDateTime()),
+            text = stringResource(R.string.space_weather_cme_started, cme.startTime.formatLocalDateTime()),
             style = MaterialTheme.typography.bodyMedium,
         )
         cme.speedKmPerSecond?.let { speed ->
             Text(
-                text = stringResource(R.string.space_weather_cme_speed, speed.roundToInt()),
+                text = rememberUnitFormatter().speedPerSecond(speed, fractionDigits = 0),
                 style = MaterialTheme.typography.headlineSmall,
             )
         }
         Text(
             text = when {
                 cme.earthArrival != null && cme.isEarthGlancingBlow ->
-                    stringResource(R.string.space_weather_cme_glancing, cme.earthArrival!!.formatDateTime())
+                    stringResource(R.string.space_weather_cme_glancing, cme.earthArrival!!.formatLocalDateTime())
 
                 cme.earthArrival != null ->
-                    stringResource(R.string.space_weather_cme_arrival, cme.earthArrival!!.formatDateTime())
+                    stringResource(R.string.space_weather_cme_arrival, cme.earthArrival!!.formatLocalDateTime())
 
                 else -> stringResource(R.string.space_weather_cme_misses)
             },

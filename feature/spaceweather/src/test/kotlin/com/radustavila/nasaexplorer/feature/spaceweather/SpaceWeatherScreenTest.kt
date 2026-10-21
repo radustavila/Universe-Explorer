@@ -98,7 +98,8 @@ class SpaceWeatherScreenTest {
         composeTestRule.onNodeWithTag(SPACE_WEATHER_LIST_TEST_TAG).performScrollToNode(hasTestTag(CME_TEST_TAG))
         composeTestRule.onNodeWithTag(SOLAR_FLARE_TEST_TAG).assertIsDisplayed()
         composeTestRule.onNodeWithText("Class M1.6").assertIsDisplayed()
-        composeTestRule.onNodeWithText("590 km/s").assertIsDisplayed()
+        // Miles: Robolectric's default region is the United States.
+        composeTestRule.onNodeWithText("367 mi/s").assertIsDisplayed()
         composeTestRule.onNodeWithText("Not expected to reach Earth.").assertIsDisplayed()
     }
 

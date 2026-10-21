@@ -43,11 +43,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.model.AuroraAlertSettings
 import com.radustavila.nasaexplorer.core.model.AuroraVisibility
 import com.radustavila.nasaexplorer.core.model.GeomagneticStorm
 import com.radustavila.nasaexplorer.feature.spaceweather.R
-import java.util.Locale
 import kotlinx.coroutines.launch
 
 const val AURORA_ALERT_SWITCH_TEST_TAG = "aurora-alert-switch"
@@ -123,7 +123,7 @@ private fun locationSummary(settings: AuroraAlertSettings): String {
     val latitude = settings.latitude
     val longitude = settings.longitude
     if (latitude == null || longitude == null) return stringResource(R.string.space_weather_alerts_no_place)
-    val place = formatPlace(latitude, longitude, currentLocale())
+    val place = rememberUnitFormatter().coordinate(latitude, longitude)
     return when (val kp = settings.minimumKp) {
         null -> stringResource(R.string.space_weather_alerts_place_unreachable, place)
         else -> stringResource(R.string.space_weather_alerts_place_threshold, place, thresholdLabel(kp))
@@ -134,12 +134,6 @@ private fun locationSummary(settings: AuroraAlertSettings): String {
 private fun thresholdLabel(kp: Int): String =
     GeomagneticStorm.forLevel(kp)?.let { stringResource(R.string.space_weather_kp_with_storm, kp, it.name) }
         ?: stringResource(R.string.space_weather_kp_value, kp)
-
-internal fun formatPlace(latitude: Double, longitude: Double, locale: Locale): String {
-    val ns = if (latitude >= 0) "N" else "S"
-    val ew = if (longitude >= 0) "E" else "W"
-    return String.format(locale, "%.1f° %s, %.1f° %s", kotlin.math.abs(latitude), ns, kotlin.math.abs(longitude), ew)
-}
 
 /** Latitude and longitude typed into the location dialog, once both are valid. */
 internal fun parsePlace(latitude: String, longitude: String): Pair<Double, Double>? {

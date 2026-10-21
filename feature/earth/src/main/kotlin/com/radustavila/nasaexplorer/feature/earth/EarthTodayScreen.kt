@@ -72,15 +72,14 @@ import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
 import com.radustavila.nasaexplorer.core.designsystem.component.ZoomableImageDialog
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
 import com.radustavila.nasaexplorer.core.designsystem.theme.NasaTheme
-import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
+import com.radustavila.nasaexplorer.core.designsystem.units.formatLocalDateTime
+import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.model.EpicCollection
 import com.radustavila.nasaexplorer.core.model.EpicImage
 import com.radustavila.nasaexplorer.core.model.GeoPoint
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
-import java.util.Locale
-import kotlin.math.abs
 import kotlinx.coroutines.delay
 
 const val EARTH_PAGER_TEST_TAG = "earth-pager"
@@ -324,7 +323,7 @@ private fun EarthRotation(
             val image = images[page]
             val description = stringResource(
                 R.string.earth_today_image_description,
-                image.capturedAt.formatDateTime(),
+                image.capturedAt.formatLocalDateTime(),
                 image.centroid.toCoordinateLabel(),
             )
             NasaAsyncImage(
@@ -444,7 +443,7 @@ private fun FrameDetails(
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = image.capturedAt.formatDateTime(),
+                    text = image.capturedAt.formatLocalDateTime(),
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
@@ -538,17 +537,8 @@ internal fun LocalDate.toUtcMillis(): Long = atStartOfDay(ZoneOffset.UTC).toInst
 internal fun Long.toUtcLocalDate(): LocalDate = Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDate()
 
 /** `0.7° N, 163.7° E`: compass letters rather than signs, which read naturally under a photo. */
-internal fun GeoPoint.toCoordinateLabel(): String {
-    val latitudeHemisphere = if (latitude < 0) "S" else "N"
-    val longitudeHemisphere = if (longitude < 0) "W" else "E"
-    return "%.1f° %s, %.1f° %s".format(
-        Locale.ROOT,
-        abs(latitude),
-        latitudeHemisphere,
-        abs(longitude),
-        longitudeHemisphere,
-    )
-}
+@Composable
+internal fun GeoPoint.toCoordinateLabel(): String = rememberUnitFormatter().coordinate(latitude, longitude)
 
 private val MAX_DISC_WIDTH = 480.dp
 private const val DISC_HEIGHT_FRACTION = 0.8f

@@ -44,7 +44,8 @@
     <string name="exoplanet_details_year">Year</string>
     <string name="exoplanet_details_year_value">%1$s days</string>
     <string name="exoplanet_details_temperature">Temperature</string>
-    <string name="exoplanet_details_temperature_value">%1$s K (%2$s °C)</string>
+    <!-- %2$s is the same temperature with its everyday unit, e.g. "-39 °C" or "-38 °F". -->
+    <string name="exoplanet_details_temperature_value">%1$s K (%2$s)</string>
     <string name="exoplanet_details_discovery_title">Discovery</string>
     <string name="exoplanet_details_discovered">Discovered</string>
     <string name="exoplanet_details_discovered_value">%1$s, published %2$s</string>

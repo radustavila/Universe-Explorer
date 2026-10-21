@@ -219,3 +219,11 @@ private fun roundToTwoSignificant(value: Double): Long {
     }
     return scaled.roundToLong() * scale
 }
+
+/** "21:30" or "9:30 PM": a clock time in the user's time format. */
+@Composable
+fun Instant.formatClockTime(): String = rememberUnitFormatter().time(this)
+
+/** A date and clock time in the user's time format, e.g. "21 Oct 2026, 21:30". */
+@Composable
+fun Instant.formatLocalDateTime(): String = rememberUnitFormatter().dateTime(this)

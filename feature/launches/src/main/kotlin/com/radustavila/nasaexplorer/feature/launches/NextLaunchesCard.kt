@@ -49,6 +49,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.NasaAsyncImage
 import com.radustavila.nasaexplorer.core.designsystem.theme.NasaTheme
+import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.model.Launch
 import com.radustavila.nasaexplorer.core.model.LaunchStatus
 import java.time.Duration
@@ -198,6 +199,15 @@ private fun LaunchRow(
                     )
                 } else {
                     CountdownText(net = launch.net, now = now)
+                    // When it lifts off in the user's own clock, beside mission control's.
+                    Text(
+                        text = rememberUnitFormatter().dayAndTime(launch.net),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false),
+                    )
                 }
             }
         }
