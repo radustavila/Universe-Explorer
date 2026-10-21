@@ -8,6 +8,7 @@ import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import com.radustavila.nasaexplorer.core.cache.CacheEvictionScheduler
 import com.radustavila.nasaexplorer.core.common.dispatchers.ApplicationScope
+import com.radustavila.nasaexplorer.core.domain.offline.OfflineFavoriteImages
 import com.radustavila.nasaexplorer.core.domain.sync.EpicSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.ExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
@@ -43,6 +44,9 @@ class NasaExplorerApplication :
     lateinit var epicSyncScheduler: EpicSyncScheduler
 
     @Inject
+    lateinit var offlineFavoriteImages: OfflineFavoriteImages
+
+    @Inject
     lateinit var scheduleAuroraAlertRefresh: ScheduleAuroraAlertRefreshUseCase
 
     @Inject
@@ -71,5 +75,7 @@ class NasaExplorerApplication :
         epicSyncScheduler.ensurePeriodicSync()
         // Reads the alert setting from DataStore, so off the main thread.
         applicationScope.launch { scheduleAuroraAlertRefresh() }
+        // Favourites saved before offline copies existed get theirs, once.
+        applicationScope.launch { offlineFavoriteImages.backfillOnce() }
     }
 }

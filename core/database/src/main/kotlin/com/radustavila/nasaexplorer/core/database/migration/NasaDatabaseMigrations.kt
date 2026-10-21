@@ -176,9 +176,24 @@ object NasaDatabaseMigrations {
         }
     }
 
+    /**
+     * v6 -> v7: favourites can keep an offline copy of their snapshot image.
+     *
+     * Both columns start empty: no copy exists yet. The app backfills copies for every existing
+     * favourite once, in the background, after the upgrade.
+     */
+    val MIGRATION_6_7 = object : Migration(6, 7) {
+        override fun migrate(connection: SQLiteConnection) {
+            connection.execSQL("ALTER TABLE `favorite` ADD COLUMN `local_image_path` TEXT")
+            connection.execSQL(
+                "ALTER TABLE `favorite` ADD COLUMN `local_image_bytes` INTEGER NOT NULL DEFAULT 0",
+            )
+        }
+    }
+
     /** Every migration the database ships with, in order. */
     val ALL: Array<Migration> =
-        arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+        arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
 
     private class MigratedFavorite(
         val itemId: String,
