@@ -498,7 +498,10 @@ private fun SizeRow(label: String, bytes: Long, emphasized: Boolean = false) {
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(label, style = style, modifier = Modifier.weight(1f))
-        Text(Formatter.formatShortFileSize(LocalContext.current, bytes), style = style)
+        val context = LocalContext.current
+        // ICU number and unit formatting: not redone on every recomposition while scrolling.
+        val size = remember(context, bytes) { Formatter.formatShortFileSize(context, bytes) }
+        Text(size, style = style)
     }
 }
 
