@@ -38,6 +38,15 @@ enum class SyncSource(val key: String) {
     /** JPL close approaches, Sentry and fireballs. */
     ASTEROIDS("jpl_ssd"),
 
+    /** DSN Now live antenna state, polled only while its screen or Today card is visible. */
+    DSN_NOW("dsn_now"),
+
+    /** DSN Now site and spacecraft names; changes a few times a year. */
+    DSN_CONFIG("dsn_config"),
+
+    /** JPL Horizons distances of far spacecraft (Voyager 1 and 2, New Horizons, …). */
+    HORIZONS("jpl_horizons"),
+
     /** CelesTrak orbital elements. */
     CELESTRAK("celestrak"),
 

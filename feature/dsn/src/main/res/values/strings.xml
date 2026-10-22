@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dsn_title">Deep Space Network</string>
+    <string name="dsn_back">Back</string>
+    <string name="dsn_intro">NASA\'s three antenna sites, a third of the world apart, so one of them always faces any spacecraft.</string>
+
+    <!-- Status of the live feed. %1$s is a clock time. -->
+    <string name="dsn_status_live">Live · as of %1$s</string>
+    <string name="dsn_status_unavailable">Live feed unavailable · showing %1$s</string>
+    <string name="dsn_status_offline">Offline · showing %1$s</string>
+    <plurals name="dsn_in_contact_count">
+        <item quantity="one">%d spacecraft in contact</item>
+        <item quantity="other">%d spacecraft in contact</item>
+    </plurals>
+
+    <string name="dsn_loading">Connecting to DSN Now…</string>
+    <string name="dsn_unavailable_title">DSN Now is unavailable</string>
+    <string name="dsn_unavailable_description">NASA\'s live feed did not answer. The app tries again every few seconds while this screen is open.</string>
+    <string name="dsn_offline_title">You\'re offline</string>
+    <string name="dsn_offline_description">The live antenna state downloads once you\'re back online.</string>
+
+    <!-- A dish. %1$s is its name ("DSS 43"), %2$d its diameter in metres. -->
+    <string name="dsn_dish_name">DSS %1$s</string>
+    <string name="dsn_dish_size">%1$d m</string>
+    <string name="dsn_dish_pointing">Az %1$d° · El %2$d°</string>
+    <string name="dsn_dish_idle">Idle</string>
+    <string name="dsn_dish_drawing">Antenna pointing %1$d° above the horizon, bearing %2$d°</string>
+    <string name="dsn_dish_drawing_idle">Antenna at rest</string>
+    <string name="dsn_link_waiting">standing by</string>
+    <string name="dsn_spacecraft_open">Details for %1$s</string>
+
+    <!-- Spacecraft sheet -->
+    <string name="dsn_sheet_via">Through %1$s, %2$s</string>
+    <string name="dsn_sheet_distance">Distance</string>
+    <string name="dsn_sheet_light_time">Signal takes</string>
+    <string name="dsn_sheet_light_time_value">%1$s one way</string>
+    <string name="dsn_sheet_downlink">Downlink</string>
+    <string name="dsn_sheet_uplink">Uplink</string>
+    <string name="dsn_sheet_carrier_only">carrier only</string>
+    <string name="dsn_sheet_off">off</string>
+    <string name="dsn_sheet_unknown">not reported</string>
+    <string name="dsn_sheet_band">%1$s band</string>
+    <string name="dsn_sheet_horizons">Distance predicted by JPL Horizons; the live feed gave none.</string>
+
+    <!-- Farthest from home -->
+    <string name="dsn_farthest_title">Farthest from home</string>
+    <string name="dsn_farthest_description">Distance from Earth today, by JPL Horizons</string>
+    <string name="dsn_farthest_au">%1$s AU</string>
+    <string name="dsn_farthest_light">Light takes %1$s to reach it</string>
+    <string name="dsn_farthest_talking">In contact now</string>
+
+    <!-- Durations and data rates -->
+    <string name="dsn_duration_hours_minutes">%1$d h %2$d min</string>
+    <string name="dsn_duration_minutes_seconds">%1$d min %2$d s</string>
+    <string name="dsn_duration_seconds">%1$s s</string>
+    <string name="dsn_rate_bps">%1$s bit/s</string>
+    <string name="dsn_rate_kbps">%1$s kbit/s</string>
+    <string name="dsn_rate_mbps">%1$s Mbit/s</string>
+
+    <!-- Today card -->
+    <string name="dsn_today_right_now">Right now: %1$s is talking to %2$s</string>
+    <string name="dsn_today_distance">%1$s away · signal takes %2$s</string>
+    <string name="dsn_today_quiet">No spacecraft in contact at the moment</string>
+    <string name="dsn_today_empty">The live antenna state downloads while this card is on screen</string>
+    <string name="dsn_today_open">Open Deep Space Network</string>
+
+    <!-- One-line mission notes, keyed by the feed's spacecraft code. -->
+    <string name="dsn_note_vgr1">Launched 1977; the farthest human-made object, in interstellar space since 2012.</string>
+    <string name="dsn_note_vgr2">Launched 1977; the only spacecraft to visit Uranus and Neptune, in interstellar space since 2018.</string>
+    <string name="dsn_note_nhpc">Flew past Pluto in 2015 and Arrokoth in 2019, now crossing the Kuiper Belt.</string>
+    <string name="dsn_note_jwst">The largest space telescope, seeing in infrared from 1.5 million km beyond Earth.</string>
+    <string name="dsn_note_mro">Orbiting Mars since 2006, mapping it and relaying the rovers\' data.</string>
+    <string name="dsn_note_m01o">Orbiting Mars since 2001, the longest-serving spacecraft at another planet.</string>
+    <string name="dsn_note_mvn">Studies how Mars lost its atmosphere to space.</string>
+    <string name="dsn_note_msl">The Curiosity rover, exploring Gale crater on Mars since 2012.</string>
+    <string name="dsn_note_m20">The Perseverance rover, collecting samples in Jezero crater on Mars.</string>
+    <string name="dsn_note_jno">Has orbited Jupiter since 2016, studying its interior and moons.</string>
+    <string name="dsn_note_eurc">On its way to Jupiter\'s moon Europa, arriving in 2030.</string>
+    <string name="dsn_note_spp">Flies through the Sun\'s corona, the closest any spacecraft has come to the Sun.</string>
+    <string name="dsn_note_sta">Watches the Sun from a point along Earth\'s orbit, seeing storms before they face us.</string>
+    <string name="dsn_note_ace">Samples the solar wind about an hour before it reaches Earth.</string>
+    <string name="dsn_note_soho">Has watched the Sun since 1995 and found more than 5,000 comets.</string>
+    <string name="dsn_note_wind">Measures the solar wind upstream of Earth since 1994.</string>
+    <string name="dsn_note_orx">After returning asteroid Bennu\'s sample, heading for asteroid Apophis in 2029.</string>
+    <string name="dsn_note_rst">The Nancy Grace Roman Space Telescope, surveying the sky in wide infrared views.</string>
+    <string name="dsn_note_mmx">Japan\'s mission to bring back a sample from Mars\'s moon Phobos.</string>
+    <string name="dsn_note_lro">Mapping the Moon from orbit since 2009.</string>
+    <string name="dsn_note_psyc">On its way to the metal-rich asteroid Psyche, arriving in 2029.</string>
+    <string name="dsn_note_lucy">Touring the Trojan asteroids that share Jupiter\'s orbit.</string>
+    <string name="dsn_note_bepi">Europe and Japan\'s mission to Mercury, arriving in 2026.</string>
+    <string name="dsn_note_tgo">Sniffs the Martian atmosphere for trace gases and relays rover data.</string>
+    <string name="dsn_note_mex">Europe\'s Mars orbiter, photographing the planet since 2003.</string>
+    <string name="dsn_note_emm">The United Arab Emirates\' Hope probe, studying Mars\'s weather.</string>
+    <string name="dsn_note_chdr">The Chandra X-ray Observatory, seeing the hot, violent universe.</string>
+    <string name="dsn_note_tess">Searches the nearest, brightest stars for transiting planets.</string>
+    <string name="dsn_note_kplo">Korea\'s first Moon orbiter, Danuri.</string>
+    <string name="dsn_note_gaia">Measured the positions and motions of almost two billion stars.</string>
+</resources>
