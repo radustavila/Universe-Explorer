@@ -1,2 +1,8 @@
 # Project overrides on top of Detekt's default rule set (buildUponDefaultConfig = true).
-# Only list rules whose settings differ from the defaults.
+# Only list rules whose settings differ from the defaults. Existing findings are recorded per
+# module in `detekt-baseline.xml`; see CLAUDE.md for how to regenerate them.
+
+naming:
+  FunctionNaming:
+    # Composables are PascalCase by convention.
+    ignoreAnnotated: [ 'Composable' ]

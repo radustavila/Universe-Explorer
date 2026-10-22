@@ -25,6 +25,7 @@ class FakeSyncMetadataRepository(
     private val oldestRequested = MutableStateFlow(initialOldestRequested)
     private val lastAnnounced = MutableStateFlow(initialLastAnnounced)
     private val lastWallpaper = MutableStateFlow(initialLastWallpaper)
+    private val datesWithoutEntry = MutableStateFlow<Set<LocalDate>>(emptySet())
 
     override val sourceStatuses: Flow<List<SourceSyncStatus>> = statuses.map { map ->
         SyncSource.entries.mapNotNull { map[it] }.filter { it.hasRecord }
@@ -36,12 +37,14 @@ class FakeSyncMetadataRepository(
     override val oldestRequestedDate: Flow<LocalDate?> = oldestRequested
     override val lastAnnouncedApodDate: Flow<LocalDate?> = lastAnnounced
     override val lastWallpaperApodDate: Flow<LocalDate?> = lastWallpaper
+    override val apodDatesWithoutEntry: Flow<Set<LocalDate>> = datesWithoutEntry
 
     /** APOD's last successful sync, the one the existing tests care about. */
     val currentLastSync: Instant? get() = statusOf(SyncSource.APOD).lastSuccessAt
     val currentOldestRequested: LocalDate? get() = oldestRequested.value
     val currentLastAnnounced: LocalDate? get() = lastAnnounced.value
     val currentLastWallpaper: LocalDate? get() = lastWallpaper.value
+    val currentDatesWithoutEntry: Set<LocalDate> get() = datesWithoutEntry.value
 
     fun statusOf(source: SyncSource): SourceSyncStatus = statuses.value[source] ?: SourceSyncStatus(source)
 
@@ -68,6 +71,10 @@ class FakeSyncMetadataRepository(
         }
     }
 
+    override suspend fun allowRefreshNow() {
+        statuses.update { map -> map.mapValues { (_, status) -> status.copy(nextAllowedRefreshAt = null) } }
+    }
+
     override suspend fun setOldestRequestedDate(date: LocalDate) {
         oldestRequested.value = date
     }
@@ -78,5 +85,9 @@ class FakeSyncMetadataRepository(
 
     override suspend fun setLastWallpaperApodDate(date: LocalDate?) {
         lastWallpaper.value = date
+    }
+
+    override suspend fun addApodDatesWithoutEntry(dates: Set<LocalDate>) {
+        datesWithoutEntry.update { it + dates }
     }
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ReturnCount:MarsPhotoMappers.kt:internal fun CuriosityImageDto.toDomainOrNull: MarsPhoto?</ID>
+    <ID>ReturnCount:MarsPhotoMappers.kt:internal fun PerseveranceImageDto.toDomainOrNull: MarsPhoto?</ID>
+    <ID>TooGenericExceptionCaught:MarsLocalDataSource.kt:RoomMarsLocalDataSource$throwable: Throwable</ID>
+    <ID>TooGenericExceptionCaught:MarsRemoteDataSource.kt:RetrofitMarsRemoteDataSource$throwable: Throwable</ID>
+  </CurrentIssues>
+</SmellBaseline>

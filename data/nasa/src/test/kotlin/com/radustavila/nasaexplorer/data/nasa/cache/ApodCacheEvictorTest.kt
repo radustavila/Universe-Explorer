@@ -5,6 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.radustavila.nasaexplorer.core.database.NasaDatabase
 import com.radustavila.nasaexplorer.core.database.entity.ApodEntity
 import com.radustavila.nasaexplorer.core.database.entity.FavoriteEntity
+import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import java.time.Instant
 import java.time.LocalDate
@@ -59,6 +60,26 @@ class ApodCacheEvictorTest {
             assertEquals(edge.minusDays(2).toString(), database.apodDao().findByDate(edge.minusDays(2).toString())?.date)
             assertEquals(edge, metadata.currentOldestRequested)
         }
+
+    @Test
+    fun `the paging cursor moves before any row is deleted`() = runTest {
+        val newest = LocalDate.of(2026, 10, 19)
+        val edge = newest.minusDays(ApodCacheEvictor.FEED_RETENTION_DAYS)
+        database.apodDao().upsertPreservingLocalState(listOf(row(newest), row(edge.minusDays(1))))
+        var rowsWhenCursorMoved: Int? = null
+        val watching = object : SyncMetadataRepository by metadata {
+            override suspend fun setOldestRequestedDate(date: LocalDate) {
+                rowsWhenCursorMoved = database.apodDao().observeCount().first()
+                metadata.setOldestRequestedDate(date)
+            }
+        }
+
+        ApodCacheEvictor(database.apodDao(), watching, UnconfinedTestDispatcher()).evict(NOW)
+
+        assertEquals(2, rowsWhenCursorMoved)
+        assertEquals(1, database.apodDao().observeCount().first())
+        assertEquals(edge, metadata.currentOldestRequested)
+    }
 
     @Test
     fun `a device that has been offline for months keeps its last quarter of the feed`() = runTest {

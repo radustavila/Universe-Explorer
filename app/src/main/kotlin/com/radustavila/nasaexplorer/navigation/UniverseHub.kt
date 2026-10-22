@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.NightsStay
 import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material.icons.outlined.Public
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -16,17 +17,25 @@ import com.radustavila.nasaexplorer.feature.exoplanets.navigateToExoplanets
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhotos
 import com.radustavila.nasaexplorer.feature.mars.rail.MarsRail
+import com.radustavila.nasaexplorer.feature.search.navigateToSearch
 import com.radustavila.nasaexplorer.feature.sky.navigateToSkyTonight
 import com.radustavila.nasaexplorer.ui.hub.HubEntry
 import com.radustavila.nasaexplorer.ui.hub.HubEntryCards
 
 /**
  * What the Universe tab offers besides the gallery (F3), which is the tab's first screen:
- * exoplanets (F8), sky tonight (F5), Mars (F7). Each feature adds its [HubEntry] here and registers
+ * search over everything on the device, exoplanets (F8), sky tonight (F5), Mars (F7). Each feature adds its [HubEntry] here and registers
  * its screens inside `navigation<UniverseGraph>` in `NasaNavHost`; the entries are listed above the
  * gallery's rails.
  */
 internal fun universeHubEntries(navController: NavHostController): List<HubEntry> = listOf(
+    HubEntry(
+        key = "search",
+        icon = Icons.Outlined.Search,
+        titleRes = R.string.universe_search_title,
+        descriptionRes = R.string.universe_search_description,
+        onClick = { navController.navigateToSearch() },
+    ),
     HubEntry(
         key = "exoplanets",
         icon = Icons.Outlined.Public,

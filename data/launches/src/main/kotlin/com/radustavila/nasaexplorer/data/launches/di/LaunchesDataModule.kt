@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.data.launches.di
 import android.content.Context
 import androidx.room.Room
 import com.radustavila.nasaexplorer.core.domain.repository.LaunchRepository
+import com.radustavila.nasaexplorer.core.domain.search.SearchableSource
 import com.radustavila.nasaexplorer.core.domain.sky.PeopleInSpaceRepository
 import com.radustavila.nasaexplorer.core.network.http.RetrofitFactory
 import com.radustavila.nasaexplorer.core.network.ratelimit.HostRateBudget
@@ -19,6 +20,7 @@ import com.radustavila.nasaexplorer.data.launches.remote.LaunchRemoteDataSource
 import com.radustavila.nasaexplorer.data.launches.remote.RetrofitLaunchRemoteDataSource
 import com.radustavila.nasaexplorer.data.launches.repository.LaunchRepositoryImpl
 import com.radustavila.nasaexplorer.data.launches.repository.PeopleInSpaceRepositoryImpl
+import com.radustavila.nasaexplorer.data.launches.search.LaunchSearchableSource
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -54,6 +56,10 @@ interface LaunchesDataModule {
 
     @Binds
     fun bindPeopleInSpaceLocalDataSource(impl: RoomPeopleInSpaceLocalDataSource): PeopleInSpaceLocalDataSource
+
+    @Binds
+    @IntoSet
+    fun bindLaunchSearchableSource(impl: LaunchSearchableSource): SearchableSource
 }
 
 @Module

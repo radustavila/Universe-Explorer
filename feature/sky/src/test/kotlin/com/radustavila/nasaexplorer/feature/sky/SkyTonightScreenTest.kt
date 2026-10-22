@@ -2,6 +2,9 @@ package com.radustavila.nasaexplorer.feature.sky
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -15,6 +18,7 @@ import androidx.compose.ui.test.performScrollToNode
 import com.radustavila.nasaexplorer.core.domain.sky.IssPassForecast
 import com.radustavila.nasaexplorer.core.domain.sky.IssTrack
 import com.radustavila.nasaexplorer.core.map.overlay.MapOverlay
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.feature.sky.component.ISS_POSITION_OVERLAY_ID
 import com.radustavila.nasaexplorer.feature.sky.component.ISS_TRACK_OVERLAY_ID
@@ -84,6 +88,22 @@ class SkyTonightScreenTest {
         composeTestRule.onAllNodesWithTag(SKY_ISS_PASS_TEST_TAG).assertCountEquals(1)
         composeTestRule.onNodeWithText(string(R.string.sky_iss_show_all)).performClick()
         composeTestRule.onAllNodesWithTag(SKY_ISS_PASS_TEST_TAG).assertCountEquals(2)
+    }
+
+    @Test
+    fun `each card's title is a heading TalkBack can jump to`() {
+        setContent(located)
+
+        listOf(R.string.sky_night_title, R.string.sky_moon_title, R.string.sky_planets_title).forEach { title ->
+            composeTestRule.onNodeWithText(string(title)).assert(isHeading)
+        }
+    }
+
+    @Test
+    fun `the screen says when its data was last updated`() {
+        setContent(located.copy(freshness = DataFreshness(lastUpdatedAt = Instant.now().minusSeconds(5))))
+
+        composeTestRule.onNodeWithText("Updated just now").assertExists()
     }
 
     @Test
@@ -160,6 +180,7 @@ class SkyTonightScreenTest {
 
     private companion object {
         const val FAKE_MAP_TAG = "fake-map"
+        val isHeading = SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading)
     }
 
     private fun string(id: Int): String =

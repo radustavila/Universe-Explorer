@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MatchingDeclarationName:TestResources.kt:RecordedResponses</ID>
+    <ID>MaxLineLength:CoilImagePrefetcherTest.kt:CoilImagePrefetcherTest$assertEquals(Size(CoilImagePrefetcher.DECODE_SIZE_PX, CoilImagePrefetcher.DECODE_SIZE_PX), request.sizeResolver.size())</ID>
+    <ID>MaxLineLength:EpicSyncStateMappingTest.kt:EpicSyncStateMappingTest$combineEpicSyncStates(listOf(workInfo(WorkInfo.State.SUCCEEDED), workInfo(WorkInfo.State.RUNNING)), emptyList())</ID>
+    <ID>MaxLineLength:EpicSyncWorkerTest.kt:EpicSyncWorkerTest$assertEquals(0, (result as ListenableWorker.Result.Success).outputData.getInt(EpicSyncWorker.KEY_SYNCED_COUNT, -1))</ID>
+    <ID>MaxLineLength:EpicSyncWorkerTest.kt:EpicSyncWorkerTest$assertEquals(25, (result as ListenableWorker.Result.Success).outputData.getInt(EpicSyncWorker.KEY_SYNCED_COUNT, 0))</ID>
+    <ID>ReturnCount:EpicMappers.kt:fun EpicImageDto.toEntityOrNull: EpicImageEntity?</ID>
+    <ID>ReturnCount:EpicRepositoryImpl.kt:EpicRepositoryImpl$private suspend fun refreshAvailableDatesIfMissing: DataResult&lt;Unit&gt;</ID>
+    <ID>TooGenericExceptionCaught:EpicLocalDataSource.kt:RoomEpicLocalDataSource$throwable: Throwable</ID>
+  </CurrentIssues>
+</SmellBaseline>

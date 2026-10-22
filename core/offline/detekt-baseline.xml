@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexCondition:FavoriteImageFiles.kt:FavoriteImageFiles.Companion$byte &gt;= 0 &amp;&amp; (char.isLetterOrDigit() || char == '_' || char == '-')</ID>
+    <ID>MaxLineLength:OfflineFavoriteImagesTest.kt:OfflineFavoriteImagesTest$fun</ID>
+    <ID>ReturnCount:FavoriteImageDownloader.kt:FavoriteImageDownloader$private suspend fun keep: FavoriteImageDownload</ID>
+    <ID>ReturnCount:FavoriteImageDownloader.kt:FavoriteImageDownloader.Companion$internal fun imageExtensionOf: String?</ID>
+    <ID>ReturnCount:OfflineFavoriteImageInterceptor.kt:OfflineFavoriteImageInterceptor$override suspend fun intercept: ImageResult</ID>
+  </CurrentIssues>
+</SmellBaseline>

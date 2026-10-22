@@ -16,6 +16,7 @@ import com.radustavila.nasaexplorer.core.model.AuroraAlertSettings
 import com.radustavila.nasaexplorer.core.testing.data.TestSpaceWeather
 import com.radustavila.nasaexplorer.core.testing.fake.FakeAuroraAlertNotifier
 import com.radustavila.nasaexplorer.core.testing.fake.FakeAuroraAlertRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSpaceWeatherRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
@@ -97,6 +98,7 @@ class SpaceWeatherSyncWorkerTest {
                             repository = repository,
                             refreshSource = RefreshSourceUseCase(metadata, clock),
                             checkAuroraAlert = CheckAuroraAlertUseCase(alerts, repository, notifier, clock),
+                            widgetUpdater = FakeHomeWidgetUpdater(),
                             timeProvider = clock,
                         ),
                     )

@@ -40,7 +40,7 @@ fun ApodCard(
         modifier = modifier.fillMaxWidth(),
         shape = CardShape,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
     ) {
         Box {

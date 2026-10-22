@@ -50,8 +50,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
+import com.radustavila.nasaexplorer.core.designsystem.motion.rememberReducedMotion
 import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
+import com.radustavila.nasaexplorer.core.map.MapCamera
 import com.radustavila.nasaexplorer.core.map.SpaceMap
 import com.radustavila.nasaexplorer.core.map.TileLoadStatus
 import com.radustavila.nasaexplorer.core.map.gibs.GibsImagery
@@ -84,6 +87,7 @@ internal fun EarthEventsRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val mapState = rememberSpaceMapState()
     val context = LocalContext.current
+    val reducedMotion = rememberReducedMotion()
 
     EarthEventsScreen(
         uiState = uiState,
@@ -95,7 +99,12 @@ internal fun EarthEventsRoute(
         onEventDismissed = viewModel::onEventDismissed,
         onShowImagery = {
             uiState.selectedEvent?.let { event ->
-                mapState.animateTo(event.position, zoom = maxOf(mapState.camera.zoom, EVENT_IMAGERY_ZOOM))
+                val zoom = maxOf(mapState.camera.zoom, EVENT_IMAGERY_ZOOM)
+                if (reducedMotion) {
+                    mapState.moveTo(MapCamera(event.position, zoom))
+                } else {
+                    mapState.animateTo(event.position, zoom)
+                }
             }
             viewModel.onShowImagery()
         },
@@ -181,11 +190,18 @@ fun EarthEventsScreen(
                     onCategoryToggled = onCategoryToggled,
                 )
             }
+            FreshnessLabel(uiState.freshness, modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
 
             BoxWithConstraints(Modifier.fillMaxWidth().weight(1f)) {
-                val overlays = remember(uiState.events, uiState.hiddenCategories, uiState.selectedEventId) {
-                    eventOverlays(uiState.events, uiState.hiddenCategories, uiState.selectedEventId)
+                // The selection lives in its own overlay, so picking an event leaves the (large) base
+                // overlays untouched and the map only redraws the highlight.
+                val baseOverlays = remember(uiState.events, uiState.hiddenCategories) {
+                    baseEventOverlays(uiState.events, uiState.hiddenCategories)
                 }
+                val selection = remember(uiState.events, uiState.hiddenCategories, uiState.selectedEventId) {
+                    selectionOverlay(uiState.events, uiState.hiddenCategories, uiState.selectedEventId)
+                }
+                val overlays = remember(baseOverlays, selection) { baseOverlays + selection }
                 map(uiState.imagery, overlays, onEventSelected, onEventDismissed, Modifier.fillMaxSize())
 
                 if (uiState.isLoaded && uiState.events.isEmpty()) {

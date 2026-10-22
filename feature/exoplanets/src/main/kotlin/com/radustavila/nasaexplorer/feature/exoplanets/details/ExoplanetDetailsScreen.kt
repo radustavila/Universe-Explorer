@@ -35,7 +35,9 @@ import com.radustavila.nasaexplorer.core.designsystem.component.FavoriteButton
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.MessageState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
+import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
+import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.model.Exoplanet
 import com.radustavila.nasaexplorer.core.model.ExoplanetUnits
 import com.radustavila.nasaexplorer.feature.exoplanets.PROXIMA_CENTAURI_LIGHT_YEARS
@@ -204,6 +206,7 @@ private fun PlanetDetails(planet: Exoplanet) {
             }
         }
 
+        val units = rememberUnitFormatter()
         val facts = buildList {
             val mass = planet.massEarth
             val massJupiter = planet.massJupiter
@@ -227,7 +230,8 @@ private fun PlanetDetails(planet: Exoplanet) {
                     stringResource(R.string.exoplanet_details_temperature) to stringResource(
                         R.string.exoplanet_details_temperature_value,
                         formatWhole(kelvin, locale),
-                        formatWhole(ExoplanetUnits.kelvinToCelsius(kelvin), locale),
+                        // Kelvin is the scientists' unit; the everyday one follows the user's system.
+                        units.temperature(ExoplanetUnits.kelvinToCelsius(kelvin)),
                     ),
                 )
             }
@@ -270,7 +274,7 @@ private fun Section(title: String, content: @Composable () -> Unit) {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(text = title, style = MaterialTheme.typography.titleSmall)
+            SectionTitle(text = title, style = MaterialTheme.typography.titleSmall)
             content()
         }
     }

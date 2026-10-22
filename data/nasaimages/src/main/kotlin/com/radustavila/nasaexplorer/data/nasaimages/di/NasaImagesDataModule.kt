@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.radustavila.nasaexplorer.core.cache.CacheEvictor
 import com.radustavila.nasaexplorer.core.domain.repository.NasaMediaRepository
+import com.radustavila.nasaexplorer.core.domain.search.SearchableSource
 import com.radustavila.nasaexplorer.core.network.http.RetrofitFactory
 import com.radustavila.nasaexplorer.core.network.ratelimit.HostRateBudget
 import com.radustavila.nasaexplorer.data.nasaimages.BuildConfig
@@ -16,6 +17,7 @@ import com.radustavila.nasaexplorer.data.nasaimages.remote.NasaImagesRemoteDataS
 import com.radustavila.nasaexplorer.data.nasaimages.remote.NasaImagesService
 import com.radustavila.nasaexplorer.data.nasaimages.remote.RetrofitNasaImagesRemoteDataSource
 import com.radustavila.nasaexplorer.data.nasaimages.repository.NasaMediaRepositoryImpl
+import com.radustavila.nasaexplorer.data.nasaimages.search.NasaMediaSearchableSource
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -50,6 +52,10 @@ interface NasaImagesDataModule {
     @Binds
     @IntoSet
     fun bindNasaMediaCacheEvictor(impl: NasaMediaCacheEvictor): CacheEvictor
+
+    @Binds
+    @IntoSet
+    fun bindNasaMediaSearchableSource(impl: NasaMediaSearchableSource): SearchableSource
 }
 
 @Module

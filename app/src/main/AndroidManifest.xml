@@ -5,6 +5,8 @@
     <application
         android:name=".NasaExplorerApplication"
         android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
@@ -24,6 +26,25 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!--
+              Pages of NASA's APOD site open on their day's details (MainActivity rewrites them to
+              the in-app deep link). The domain is not ours, so nothing can be verified; users opt
+              in under "Open by default". The pattern is broader than the two pages the app
+              shows, and anything else under it is handed straight back to the browser.
+            -->
+            <intent-filter android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+                <data android:scheme="http" />
+                <data android:host="apod.nasa.gov" />
+                <data android:path="/apod/astropix.html" />
+                <data android:pathPattern="/apod/ap.*\\.html" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
 
         <!--
@@ -37,6 +58,20 @@
             tools:node="merge">
             <meta-data
                 android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+            <!--
+              Both ran before the first frame of every cold start. OkHttp's set up its platform on
+              the main thread; NetworkModule hands it the context when the client is first built.
+              EmojiCompat downloaded and parsed an emoji font in the background while the first
+              screens composed; the system font draws the app's emoji.
+            -->
+            <meta-data
+                android:name="okhttp3.internal.platform.PlatformInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+            <meta-data
+                android:name="androidx.emoji2.text.EmojiCompatInitializer"
                 android:value="androidx.startup"
                 tools:node="remove" />
         </provider>

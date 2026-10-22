@@ -26,6 +26,13 @@ internal fun eventOverlays(
     events: List<EarthEvent>,
     hiddenCategories: Set<EarthEventCategory>,
     selectedEventId: String?,
+): List<MapOverlay> =
+    baseEventOverlays(events, hiddenCategories) + selectionOverlay(events, hiddenCategories, selectedEventId)
+
+/** Everything [eventOverlays] draws except the selection, which changes far more often. */
+internal fun baseEventOverlays(
+    events: List<EarthEvent>,
+    hiddenCategories: Set<EarthEventCategory>,
 ): List<MapOverlay> {
     val byCategory = events.groupBy(EarthEvent::category)
     val categories = EarthEventCategory.entries.filter(byCategory::containsKey)
@@ -38,11 +45,19 @@ internal fun eventOverlays(
         )
     }
 
-    val selected = events.firstOrNull { it.id == selectedEventId }?.takeIf { it.category !in hiddenCategories }
     return layer(KIND_AREAS) { it.mapNotNull(EarthEvent::area) } +
         layer(KIND_TRACKS) { it.flatMap(EarthEvent::trackLines) } +
-        layer(KIND_MARKERS) { it.map { event -> event.marker(selected = false) } } +
-        MapOverlay(id = SELECTED_OVERLAY_ID, shapes = listOfNotNull(selected?.marker(selected = true)))
+        layer(KIND_MARKERS) { it.map { event -> event.marker(selected = false) } }
+}
+
+/** The selected event's marker again, larger; empty without a selection or when its category is hidden. */
+internal fun selectionOverlay(
+    events: List<EarthEvent>,
+    hiddenCategories: Set<EarthEventCategory>,
+    selectedEventId: String?,
+): MapOverlay {
+    val selected = events.firstOrNull { it.id == selectedEventId }?.takeIf { it.category !in hiddenCategories }
+    return MapOverlay(id = SELECTED_OVERLAY_ID, shapes = listOfNotNull(selected?.marker(selected = true)))
 }
 
 /** The event a tapped shape belongs to. */

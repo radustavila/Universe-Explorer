@@ -1,25 +1,26 @@
 package com.radustavila.nasaexplorer.core.network.di
 
+import android.content.Context
 import com.radustavila.nasaexplorer.core.common.time.TimeProvider
 import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
 import com.radustavila.nasaexplorer.core.network.connectivity.AndroidNetworkMonitor
 import com.radustavila.nasaexplorer.core.network.http.NetworkConfiguration
 import com.radustavila.nasaexplorer.core.network.http.RetrofitFactory
+import com.radustavila.nasaexplorer.core.network.http.apiHttpClient
 import com.radustavila.nasaexplorer.core.network.ratelimit.HostRateBudget
 import com.radustavila.nasaexplorer.core.network.ratelimit.HostRateLimiter
-import com.radustavila.nasaexplorer.core.network.ratelimit.RateLimitInterceptor
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.ElementsIntoSet
-import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import kotlinx.serialization.json.Json
 import okhttp3.Call
+import okhttp3.OkHttp
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -49,31 +50,31 @@ object NetworkModule {
         timeProvider: TimeProvider,
     ): HostRateLimiter = HostRateLimiter(budgets = budgets, timeProvider = timeProvider)
 
+    /**
+     * OkHttp's own androidx.startup initializer is removed in the app manifest: it set up the
+     * platform (logging, TLS) on the main thread before the first frame. The context it needs is
+     * handed over here instead, when the first request builds the client (see [provideCallFactory]).
+     */
     @Provides
     @Singleton
     fun provideOkHttpClient(
+        @ApplicationContext context: Context,
         configuration: NetworkConfiguration,
         rateLimiter: HostRateLimiter,
-    ): OkHttpClient =
-        OkHttpClient.Builder()
-            .connectTimeout(configuration.connectTimeoutSeconds, TimeUnit.SECONDS)
-            .readTimeout(configuration.readTimeoutSeconds, TimeUnit.SECONDS)
-            .callTimeout(configuration.callTimeoutSeconds, TimeUnit.SECONDS)
-            .retryOnConnectionFailure(true)
-            // First, so a refused call is never logged as if it had been sent.
-            .addInterceptor(RateLimitInterceptor(rateLimiter))
-            .apply {
-                if (configuration.isLoggingEnabled) {
-                    addInterceptor(
-                        HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC },
-                    )
-                }
-            }
-            .build()
+    ): OkHttpClient {
+        // OkHttp's androidx.startup initializer is removed from the manifest; hand it the context here.
+        OkHttp.initialize(context)
+        return apiHttpClient(configuration, rateLimiter, cacheDirectory = context.cacheDir.resolve("http"))
+    }
 
+    /**
+     * Retrofit services are created while a screen's ViewModel is, on the main thread. Deferring the
+     * client to the first call keeps building it (TLS and platform setup) out of startup.
+     */
     @Provides
     @Singleton
-    fun provideCallFactory(client: OkHttpClient): Call.Factory = client
+    fun provideCallFactory(client: dagger.Lazy<OkHttpClient>): Call.Factory =
+        Call.Factory { request -> client.get().newCall(request) }
 
     @Provides
     @Singleton

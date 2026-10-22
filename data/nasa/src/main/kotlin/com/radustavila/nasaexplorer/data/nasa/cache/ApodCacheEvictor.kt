@@ -42,17 +42,18 @@ class ApodCacheEvictor @Inject constructor(
         val feedEdge = minOf(newest, now.atZone(ZoneOffset.UTC).toLocalDate())
             .minusDays(FEED_RETENTION_DAYS)
 
-        val deleted = apodDao.evict(
-            cutoffDate = feedEdge.toString(),
-            staleBeforeMillis = now.minus(ONE_OFF_RETENTION).toEpochMilli(),
-            favoriteSource = FavoriteSource.APOD.key,
-        )
-
+        // Cursor first: if the process dies between the two, "load more" re-fetches rows that are
+        // still there, rather than skipping the ones that are gone.
         val oldestRequested = syncMetadataRepository.oldestRequestedDate.first()
         if (oldestRequested != null && oldestRequested.isBefore(feedEdge)) {
             syncMetadataRepository.setOldestRequestedDate(feedEdge)
         }
-        deleted
+
+        apodDao.evict(
+            cutoffDate = feedEdge.toString(),
+            staleBeforeMillis = now.minus(ONE_OFF_RETENTION).toEpochMilli(),
+            favoriteSource = FavoriteSource.APOD.key,
+        )
     }
 
     companion object {

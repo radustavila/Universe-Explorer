@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ develop, main ]
   pull_request:
 
 concurrency:
@@ -25,18 +25,30 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Unit tests
-        run: ./gradlew test testDebugUnitTest --stacktrace
+      # verifyRoborazziDebug runs the screenshot modules' unit tests once, comparing against the goldens.
+      - name: Unit and screenshot tests
+        run: ./gradlew test testDebugUnitTest verifyRoborazziDebug --stacktrace
 
       - name: Lint
         run: ./gradlew lint --stacktrace
 
+      # Fails on findings missing from each module's detekt-baseline.xml.
+      - name: Detekt
+        run: ./gradlew detekt --stacktrace
+
       - name: Assemble debug
         run: ./gradlew assembleDebug --stacktrace
+
+      # Minified with R8 and debug-signed: catches keep rules that only break the shrunk build.
+      - name: Assemble release
+        run: ./gradlew assembleRelease --stacktrace
 
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
-          path: '**/build/reports/tests/**'
+          path: |
+            **/build/reports/tests/**
+            **/build/reports/detekt/**
+            **/build/outputs/roborazzi/**

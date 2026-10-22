@@ -15,6 +15,7 @@ dependencies {
     compileOnly(libs.ksp.gradlePlugin)
     compileOnly(libs.room.gradlePlugin)
     compileOnly(libs.detekt.gradlePlugin)
+    compileOnly(libs.roborazzi.gradlePlugin)
 }
 
 gradlePlugin {
@@ -27,6 +28,10 @@ gradlePlugin {
             id = "nasaexplorer.android.library"
             implementationClass = "com.radustavila.nasaexplorer.buildlogic.AndroidLibraryConventionPlugin"
         }
+        register("androidTest") {
+            id = "nasaexplorer.android.test"
+            implementationClass = "com.radustavila.nasaexplorer.buildlogic.AndroidTestConventionPlugin"
+        }
         register("androidCompose") {
             id = "nasaexplorer.android.compose"
             implementationClass = "com.radustavila.nasaexplorer.buildlogic.AndroidComposeConventionPlugin"
@@ -38,6 +43,10 @@ gradlePlugin {
         register("androidHilt") {
             id = "nasaexplorer.android.hilt"
             implementationClass = "com.radustavila.nasaexplorer.buildlogic.AndroidHiltConventionPlugin"
+        }
+        register("androidRoborazzi") {
+            id = "nasaexplorer.android.roborazzi"
+            implementationClass = "com.radustavila.nasaexplorer.buildlogic.AndroidRoborazziConventionPlugin"
         }
         register("androidRoom") {
             id = "nasaexplorer.android.room"

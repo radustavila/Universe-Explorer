@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Re-rendered by the space weather sync after each successful Kp refresh. The hourly update only
+  re-renders from the cache (no network), so the reading's age and the coming peak stay true
+  while the sync is not running.
+
+  The preview layout and target cell size are Android 12+ only; older launchers fall back to
+  previewImage and minWidth/minHeight, hence the UnusedAttribute suppression.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:description="@string/aurora_widget_description"
+    android:initialLayout="@layout/glance_default_loading_layout"
+    android:minWidth="110dp"
+    android:minHeight="110dp"
+    android:minResizeWidth="110dp"
+    android:minResizeHeight="110dp"
+    android:previewImage="@drawable/aurora_widget_preview_art"
+    android:previewLayout="@layout/aurora_widget_preview"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellHeight="2"
+    android:targetCellWidth="3"
+    android:updatePeriodMillis="3600000"
+    android:widgetCategory="home_screen"
+    tools:ignore="UnusedAttribute" />

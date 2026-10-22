@@ -6,16 +6,21 @@ import app.cash.turbine.test
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.database.NasaDatabase
+import com.radustavila.nasaexplorer.core.database.entity.ApodEntity
 import com.radustavila.nasaexplorer.core.database.repository.RoomFavoritesRepository
+import com.radustavila.nasaexplorer.core.domain.repository.ApodBatchResult
 import com.radustavila.nasaexplorer.core.model.Apod
 import com.radustavila.nasaexplorer.core.model.FavoriteItem
 import com.radustavila.nasaexplorer.core.model.FavoriteSource
+import com.radustavila.nasaexplorer.core.testing.fake.FakeOfflineFavoriteImages
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
+import com.radustavila.nasaexplorer.data.nasa.local.ApodLocalDataSource
 import com.radustavila.nasaexplorer.data.nasa.local.RoomApodLocalDataSource
 import com.radustavila.nasaexplorer.data.nasa.remote.ApodRemoteDataSource
 import com.radustavila.nasaexplorer.data.nasa.remote.dto.ApodDto
 import java.time.LocalDate
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -38,6 +43,7 @@ class ApodRepositoryImplTest {
     private lateinit var database: NasaDatabase
     private lateinit var repository: ApodRepositoryImpl
     private lateinit var favorites: RoomFavoritesRepository
+    private lateinit var localDataSource: CountingLocalDataSource
 
     private val remoteDataSource = ScriptedRemoteDataSource()
     private val syncMetadata = FakeSyncMetadataRepository()
@@ -50,12 +56,16 @@ class ApodRepositoryImplTest {
             NasaDatabase::class.java,
         ).allowMainThreadQueries().build()
 
-        favorites = RoomFavoritesRepository(database.favoriteDao(), UnconfinedTestDispatcher())
+        favorites = RoomFavoritesRepository(
+            favoriteDao = database.favoriteDao(),
+            offlineImages = FakeOfflineFavoriteImages(),
+            ioDispatcher = UnconfinedTestDispatcher(),
+        )
+        localDataSource = CountingLocalDataSource(
+            RoomApodLocalDataSource(apodDao = database.apodDao(), ioDispatcher = UnconfinedTestDispatcher()),
+        )
         repository = ApodRepositoryImpl(
-            localDataSource = RoomApodLocalDataSource(
-                apodDao = database.apodDao(),
-                ioDispatcher = UnconfinedTestDispatcher(),
-            ),
+            localDataSource = localDataSource,
             remoteDataSource = remoteDataSource,
             syncMetadataRepository = syncMetadata,
             favoritesRepository = favorites,
@@ -232,6 +242,71 @@ class ApodRepositoryImplTest {
     }
 
     @Test
+    fun `a write outside the feed does not make the feed emit again`() = runTest {
+        remoteDataSource.rangeResult = DataResult.Success(dtosFor(TODAY.minusDays(6), TODAY))
+        repository.refreshRecent()
+
+        repository.observeFeed().test {
+            assertEquals(7, awaitItem().size)
+
+            val archiveDate = LocalDate.of(2001, 3, 5)
+            remoteDataSource.singleResult = DataResult.Success(dtosFor(archiveDate, archiveDate).first())
+            repository.fetchApod(archiveDate)
+            remoteDataSource.rangeResult = DataResult.Success(dtosFor(TODAY.minusDays(6), TODAY, titlePrefix = "New"))
+            repository.refreshRecent()
+
+            // The next emission is the changed feed, not a copy caused by the one-off day.
+            assertEquals("New $TODAY", awaitItem().first().title)
+        }
+    }
+
+    @Test
+    fun `a batch of days is fetched a few at a time and cached in one write, outside the feed`() = runTest {
+        remoteDataSource.answerEveryDate = true
+        val days = (2001..2010).map { year -> LocalDate.of(year, 9, 10) }
+        remoteDataSource.singleDelayMillis = 100
+
+        val result = repository.fetchApods(days, maxConcurrent = 4)
+
+        assertEquals(ApodBatchResult(cached = days.toSet()), result)
+        assertEquals(4, remoteDataSource.maxInFlight)
+        assertEquals(days.toSet(), remoteDataSource.requestedDates.toSet())
+        assertEquals(1, localDataSource.upsertCount)
+        assertEquals(10, repository.observeCachedCount().first())
+        assertTrue(repository.observeFeed().first().isEmpty())
+    }
+
+    @Test
+    fun `a batch reports the days without an entry and caches the rest`() = runTest {
+        val gap = LocalDate.of(2005, 9, 10)
+        val malformed = LocalDate.of(2006, 9, 10)
+        val days = listOf(LocalDate.of(2007, 9, 10), malformed, gap)
+        remoteDataSource.answerEveryDate = true
+        remoteDataSource.singleResults[gap] = DataResult.Failure(AppError.Http(code = 404))
+        remoteDataSource.singleResults[malformed] = DataResult.Success(ApodDto(date = "not a date"))
+
+        val result = repository.fetchApods(days, maxConcurrent = 4)
+
+        assertEquals(setOf(LocalDate.of(2007, 9, 10)), result.cached)
+        assertEquals(mapOf(gap to AppError.Http(code = 404), malformed to AppError.EmptyResponse), result.failed)
+        assertEquals(1, repository.observeCachedCount().first())
+    }
+
+    @Test
+    fun `a connectivity failure stops the batch but keeps what arrived`() = runTest {
+        val days = (2010 downTo 2001).map { year -> LocalDate.of(year, 9, 10) }
+        remoteDataSource.answerEveryDate = true
+        remoteDataSource.singleResults[LocalDate.of(2009, 9, 10)] = DataResult.Failure(AppError.Timeout)
+
+        val result = repository.fetchApods(days, maxConcurrent = 1)
+
+        assertEquals(setOf(LocalDate.of(2010, 9, 10)), result.cached)
+        assertEquals(mapOf(LocalDate.of(2009, 9, 10) to AppError.Timeout), result.failed)
+        assertEquals(2, remoteDataSource.requestedDates.size)
+        assertEquals(1, repository.observeCachedCount().first())
+    }
+
+    @Test
     fun `a favourite saved in the shared table marks the entry in every read, offline`() = runTest {
         remoteDataSource.rangeResult = DataResult.Success(dtosFor(TODAY.minusDays(1), TODAY))
         repository.refreshRecent()
@@ -334,9 +409,44 @@ class ApodRepositoryImplTest {
         var lastRequestedDate: LocalDate? = null
             private set
 
+        /** Per-date answers; any other date gets [singleResult], or a valid entry when [answerEveryDate]. */
+        var answerEveryDate = false
+        val singleResults: MutableMap<LocalDate, DataResult<ApodDto>> = mutableMapOf()
+        var singleDelayMillis = 0L
+        val requestedDates = mutableListOf<LocalDate>()
+        var maxInFlight = 0
+            private set
+        private var inFlight = 0
+
         override suspend fun fetchSingle(date: LocalDate): DataResult<ApodDto> {
             lastRequestedDate = date
-            return singleResult
+            requestedDates += date
+            inFlight++
+            maxInFlight = maxOf(maxInFlight, inFlight)
+            delay(singleDelayMillis)
+            inFlight--
+            return singleResults[date] ?: if (answerEveryDate) DataResult.Success(dtoFor(date)) else singleResult
+        }
+
+        private fun dtoFor(date: LocalDate) = ApodDto(
+            date = date.toString(),
+            title = "Apod $date",
+            explanation = "Explanation for $date",
+            mediaType = "image",
+            url = "https://apod.nasa.gov/$date.jpg",
+        )
+    }
+
+    /** Counts writes, so a batch can be shown to write once. */
+    private class CountingLocalDataSource(
+        private val delegate: ApodLocalDataSource,
+    ) : ApodLocalDataSource by delegate {
+        var upsertCount = 0
+            private set
+
+        override suspend fun upsertPreservingLocalState(entities: List<ApodEntity>): DataResult<Int> {
+            upsertCount++
+            return delegate.upsertPreservingLocalState(entities)
         }
     }
 

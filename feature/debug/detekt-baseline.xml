@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongMethod:DebugScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable internal fun DebugContent</ID>
+    <ID>MatchingDeclarationName:DebugNavigation.kt:DebugRoute</ID>
+  </CurrentIssues>
+</SmellBaseline>

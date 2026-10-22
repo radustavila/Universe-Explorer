@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>DestructuringDeclarationWithTooManyEntries:EarthEventsViewModel.kt:EarthEventsViewModel.Companion$val (eventId, date, layerId, matrixSet, extension) = saved</ID>
+    <ID>LongMethod:EarthEventsScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable fun EarthEventsScreen</ID>
+    <ID>LongMethod:EventSheet.kt:@Composable internal fun EventSheet</ID>
+    <ID>MagicNumber:EventOverlays.kt:3</ID>
+    <ID>MatchingDeclarationName:EarthEventsNavigation.kt:EarthEventsRoute</ID>
+    <ID>MaxLineLength:EarthEventsScreen.kt:Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.earth_events_back))</ID>
+    <ID>MaxLineLength:EarthEventsScreen.kt:Icon(Icons.Outlined.Refresh, contentDescription = stringResource(R.string.earth_events_refresh))</ID>
+    <ID>MaxLineLength:EarthEventsScreen.kt:Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp), tint = MaterialTheme.colorScheme.onTertiaryContainer)</ID>
+    <ID>MaxLineLength:EarthEventsScreen.kt:InfoBar(Icons.Outlined.SyncProblem, stringResource(R.string.earth_events_tiles_failed), EARTH_EVENTS_TILE_BANNER_TEST_TAG)</ID>
+    <ID>MaxLineLength:EarthEventsScreen.kt:label = { Text(stringResource(R.string.earth_events_filter_label, stringResource(category.labelRes), count)) }</ID>
+    <ID>MaxLineLength:EarthEventsScreenTest.kt:EarthEventsScreenTest$composeTestRule.onNodeWithText("VIIRS SNPP Corrected Reflectance True Color", substring = true).assertIsDisplayed()</ID>
+    <ID>MaxLineLength:EarthEventsUiState.kt:EarthEventsUiState$get() = eventImagery?.toGibsImagery() ?: GibsImagery(GibsLayer.trueColorFor(latestImageryDate), latestImageryDate)</ID>
+    <ID>MaxLineLength:EarthEventsViewModel.kt:EarthEventsViewModel$savedStateHandle[KEY_HIDDEN] = ArrayList(if (category.key in current) current - category.key else current + category.key)</ID>
+    <ID>MaxLineLength:EarthEventsViewModelTest.kt:EarthEventsViewModelTest$listOf(EarthEventCategory.SEVERE_STORMS to 1, EarthEventCategory.VOLCANOES to 1, EarthEventCategory.WILDFIRES to 1)</ID>
+    <ID>MaxLineLength:EarthEventsViewModelTest.kt:EarthEventsViewModelTest$private</ID>
+    <ID>MaxLineLength:EarthEventsViewModelTest.kt:EarthEventsViewModelTest$val layer = EventImageryLayer("MODIS_Terra_CorrectedReflectance_TrueColor", "GoogleMapsCompatible_Level9", "jpg")</ID>
+    <ID>MaxLineLength:EarthEventsViewModelTest.kt:EarthEventsViewModelTest$val restored = createViewModel(SavedStateHandle(handle.keys().associateWith { handle.get&lt;Any&gt;(it) })).uiState.value</ID>
+    <ID>MaxLineLength:EventOverlaysTest.kt:EventOverlaysTest$assertEquals(listOf(listOf(178.0, 179.5), listOf(-179.5, -178.0)), lines.map { line -&gt; line.points.map { it.longitude } })</ID>
+    <ID>MaxLineLength:EventOverlaysTest.kt:EventOverlaysTest$assertEquals(storm.geometry.sortedBy { it.date }.map { it.shape.center.latitude }, track.points.map { it.latitude })</ID>
+    <ID>MaxLineLength:EventOverlaysTest.kt:EventOverlaysTest$listOf(listOf(GeoCoordinate(41.0, 2.0), GeoCoordinate(41.0, 3.0), GeoCoordinate(42.0, 3.0), GeoCoordinate(41.0, 2.0)))</ID>
+    <ID>MaxLineLength:EventSheet.kt:CircularProgressIndicator(modifier = Modifier.size(ButtonDefaults.IconSize), strokeWidth = 2.dp)</ID>
+    <ID>MaxLineLength:EventSheet.kt:Icon(Icons.Outlined.SatelliteAlt, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))</ID>
+    <ID>ReturnCount:EventOverlays.kt:private fun EarthEvent.area: MapPolygon?</ID>
+  </CurrentIssues>
+</SmellBaseline>

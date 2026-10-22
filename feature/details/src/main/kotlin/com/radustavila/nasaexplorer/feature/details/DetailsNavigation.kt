@@ -35,3 +35,16 @@ fun NavGraphBuilder.detailsScreen(
         DetailsScreen(onBackClick = onBackClick, onApodClick = onApodClick)
     }
 }
+
+/**
+ * The same screen inside a list-detail pane, which has a navigation host of its own: without the
+ * deep link, which only the app's own host may act on.
+ */
+fun NavGraphBuilder.detailsPane(
+    onBackClick: () -> Unit,
+    onApodClick: (LocalDate) -> Unit,
+) {
+    composable<DetailsRoute> {
+        DetailsScreen(onBackClick = onBackClick, onApodClick = onApodClick)
+    }
+}

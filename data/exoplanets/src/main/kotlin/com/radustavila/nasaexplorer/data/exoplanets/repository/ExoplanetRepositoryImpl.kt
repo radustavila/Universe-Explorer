@@ -15,6 +15,8 @@ import com.radustavila.nasaexplorer.data.exoplanets.mapper.toEntityOrNull
 import com.radustavila.nasaexplorer.data.exoplanets.remote.ExoplanetRemoteDataSource
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -38,9 +40,15 @@ class ExoplanetRepositoryImpl @Inject constructor(
     override fun observeCatalogStats(): Flow<ExoplanetCatalogStats?> = localDataSource.observeStats()
 
     override suspend fun refresh(): DataResult<Int> {
-        val catalog = when (val result = remoteDataSource.fetchCatalog(newestSinceYear())) {
-            is DataResult.Success -> result.data
-            is DataResult.Failure -> return result
+        // Two independent queries to the archive, asked at once.
+        val (catalogResult, countResult) = coroutineScope {
+            val catalog = async { remoteDataSource.fetchCatalog(newestSinceYear()) }
+            val count = async { remoteDataSource.fetchConfirmedCount() }
+            catalog.await() to count.await()
+        }
+        val catalog = when (catalogResult) {
+            is DataResult.Success -> catalogResult.data
+            is DataResult.Failure -> return catalogResult
         }
         val fetchedAt = timeProvider.now().toEpochMilli()
         val entities = catalog.mapNotNull { dto -> dto.toEntityOrNull(fetchedAt) }
@@ -48,7 +56,7 @@ class ExoplanetRepositoryImpl @Inject constructor(
 
         // The total is decoration: a failed count keeps the previous one rather than failing the
         // refresh that already brought the planets.
-        val stats = remoteDataSource.fetchConfirmedCount().getOrNull()?.let { count ->
+        val stats = countResult.getOrNull()?.let { count ->
             ExoplanetCatalogStatsEntity(confirmedPlanets = count, fetchedAtMillis = fetchedAt)
         }
         return localDataSource.storeRefresh(entities, stats).map { entities.size }

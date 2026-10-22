@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:SkyDataModule.kt:SkyInfrastructureModule$5</ID>
+    <ID>ReturnCount:SkyMappers.kt:fun GpElementsDto.toEntityOrNull: OrbitalElementsEntity?</ID>
+    <ID>ReturnCount:SkyMappers.kt:fun SatellitePositionDto.toDomainOrNull: SatellitePosition?</ID>
+    <ID>TooGenericExceptionCaught:SatelliteRepositoryImpl.kt:SatelliteRepositoryImpl$throwable: Throwable</ID>
+  </CurrentIssues>
+</SmellBaseline>

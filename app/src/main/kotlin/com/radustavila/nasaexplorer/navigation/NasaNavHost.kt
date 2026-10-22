@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.radustavila.nasaexplorer.R
 import com.radustavila.nasaexplorer.feature.debug.debugScreen
+import com.radustavila.nasaexplorer.feature.details.detailsPane
 import com.radustavila.nasaexplorer.feature.details.detailsScreen
 import com.radustavila.nasaexplorer.feature.details.navigateToDetails
 import com.radustavila.nasaexplorer.feature.earth.EarthTodayRoute
@@ -24,6 +25,12 @@ import com.radustavila.nasaexplorer.feature.feed.feedScreen
 import com.radustavila.nasaexplorer.feature.mars.marsPhotoScreen
 import com.radustavila.nasaexplorer.feature.mars.marsPhotosScreen
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
+import com.radustavila.nasaexplorer.feature.search.searchScreen
+import com.radustavila.nasaexplorer.feature.settings.aboutScreen
+import com.radustavila.nasaexplorer.feature.settings.licencesScreen
+import com.radustavila.nasaexplorer.feature.settings.navigateToLicences
+import com.radustavila.nasaexplorer.feature.settings.settingsScreen
+import com.radustavila.nasaexplorer.feature.sky.location.ObserverLocationSection
 import com.radustavila.nasaexplorer.feature.sky.skyTonightScreen
 import com.radustavila.nasaexplorer.feature.spaceweather.navigateToSmallBody
 import com.radustavila.nasaexplorer.feature.spaceweather.neighbourhoodScreen
@@ -31,7 +38,9 @@ import com.radustavila.nasaexplorer.feature.spaceweather.smallBodyScreen
 import com.radustavila.nasaexplorer.feature.spaceweather.spaceWeatherScreen
 import com.radustavila.nasaexplorer.feature.universe.GalleryRoute
 import com.radustavila.nasaexplorer.feature.universe.galleryScreen
+import com.radustavila.nasaexplorer.feature.universe.gallerySearchScreen
 import com.radustavila.nasaexplorer.feature.universe.nasaMediaDetailsScreen
+import com.radustavila.nasaexplorer.feature.universe.navigateToGallerySearch
 import com.radustavila.nasaexplorer.feature.universe.navigateToNasaMedia
 import com.radustavila.nasaexplorer.ui.hub.HubScreen
 
@@ -40,6 +49,8 @@ import com.radustavila.nasaexplorer.ui.hub.HubScreen
  *
  * Adding a feature screen means registering its `NavGraphBuilder` extension inside the graph of
  * the tab it belongs to (so that tab stays selected), or at the root for a full-screen detail.
+ * A list whose items have a detail screen also gets a [listDetail] host: on a window with room for
+ * two panes, the item opens beside the list instead of full screen.
  */
 @Composable
 fun NasaNavHost(
@@ -55,6 +66,11 @@ fun NasaNavHost(
             feedScreen(
                 onApodClick = navController::navigateToDetails,
                 header = todayHeader(navController),
+                listDetail = listDetail(
+                    openInPane = { date, navOptions -> navigateToDetails(date, navOptions) },
+                ) { pane, onBackClick ->
+                    detailsPane(onBackClick = onBackClick, onApodClick = pane::navigateToDetails)
+                },
             )
         }
 
@@ -63,6 +79,11 @@ fun NasaNavHost(
             galleryScreen(
                 onMediaClick = navController::navigateToNasaMedia,
                 header = universeHeader(navController),
+                listDetail = listDetail(
+                    openInPane = { nasaId, navOptions -> navigateToNasaMedia(nasaId, navOptions) },
+                ) { _, onBackClick ->
+                    nasaMediaDetailsScreen(onBackClick = onBackClick)
+                },
             )
             marsPhotosScreen(
                 onBackClick = navController::popBackStack,
@@ -71,8 +92,21 @@ fun NasaNavHost(
             exoplanetsScreen(
                 onBackClick = navController::popBackStack,
                 onExoplanetClick = navController::navigateToExoplanetDetails,
+                listDetail = listDetail(
+                    openInPane = { name, navOptions -> navigateToExoplanetDetails(name, navOptions) },
+                ) { _, onBackClick ->
+                    exoplanetDetailsScreen(onBackClick = onBackClick)
+                },
             )
             skyTonightScreen(onBackClick = navController::popBackStack)
+            gallerySearchScreen(
+                onMediaClick = navController::navigateToNasaMedia,
+                listDetail = listDetail(
+                    openInPane = { nasaId, navOptions -> navigateToNasaMedia(nasaId, navOptions) },
+                ) { _, onBackClick ->
+                    nasaMediaDetailsScreen(onBackClick = onBackClick)
+                },
+            )
         }
 
         // Earth today is the tab's home; the tab's other features are listed below the rotation.
@@ -92,7 +126,19 @@ fun NasaNavHost(
         }
 
         navigation<FavoritesGraph>(startDestination = FavoritesRoute) {
-            favoritesScreen(onFavoriteClick = navController::openFavorite)
+            favoritesScreen(
+                onFavoriteClick = navController::openFavorite,
+                listDetail = listDetail(
+                    openInPane = { item, navOptions -> openFavorite(item, navOptions) },
+                    opensInPane = ::opensInFavoritesPane,
+                ) { pane, onBackClick ->
+                    // The pane hosts every screen a favourite opens in, except EPIC's.
+                    detailsPane(onBackClick = onBackClick, onApodClick = pane::navigateToDetails)
+                    nasaMediaDetailsScreen(onBackClick = onBackClick)
+                    exoplanetDetailsScreen(onBackClick = onBackClick)
+                    marsPhotoScreen(onBackClick = onBackClick)
+                },
+            )
         }
 
         navigation<MoreGraph>(startDestination = MoreHomeRoute) {
@@ -102,6 +148,12 @@ fun NasaNavHost(
                     entries = moreHubEntries(navController),
                 )
             }
+            settingsScreen(
+                onBackClick = navController::popBackStack,
+                locationSection = { modifier -> ObserverLocationSection(modifier) },
+            )
+            aboutScreen(onBackClick = navController::popBackStack, onLicencesClick = navController::navigateToLicences)
+            licencesScreen(onBackClick = navController::popBackStack, librariesRes = R.raw.aboutlibraries)
             debugScreen()
         }
 
@@ -113,5 +165,10 @@ fun NasaNavHost(
         nasaMediaDetailsScreen(onBackClick = navController::popBackStack)
         marsPhotoScreen(onBackClick = navController::popBackStack)
         exoplanetDetailsScreen(onBackClick = navController::popBackStack)
+        searchScreen(
+            onBackClick = navController::popBackStack,
+            onResultClick = navController::openSearchTarget,
+            onSearchOnline = navController::navigateToGallerySearch,
+        )
     }
 }

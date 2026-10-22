@@ -4,6 +4,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.radustavila.nasaexplorer.core.designsystem.adaptive.ListDetailHost
+import com.radustavila.nasaexplorer.core.designsystem.adaptive.listOnly
 import com.radustavila.nasaexplorer.feature.exoplanets.details.ExoplanetDetailsScreen
 import kotlinx.serialization.Serializable
 
@@ -19,13 +21,21 @@ fun NavController.navigateToExoplanets(navOptions: NavOptions? = null) = navigat
 fun NavController.navigateToExoplanetDetails(name: String, navOptions: NavOptions? = null) =
     navigate(ExoplanetDetailsRoute(name), navOptions)
 
-/** The lists; registered inside the Universe tab's graph. */
+/**
+ * The lists; registered inside the Universe tab's graph.
+ *
+ * @param onExoplanetClick opens a planet full screen.
+ * @param listDetail places the lists beside the planet they opened, where the window allows.
+ */
 fun NavGraphBuilder.exoplanetsScreen(
     onBackClick: () -> Unit,
     onExoplanetClick: (String) -> Unit,
+    listDetail: ListDetailHost<String> = listOnly(),
 ) {
     composable<ExoplanetsRoute> {
-        ExoplanetsScreen(onBackClick = onBackClick, onExoplanetClick = onExoplanetClick)
+        listDetail(onExoplanetClick) { onItemClick ->
+            ExoplanetsScreen(onBackClick = onBackClick, onExoplanetClick = onItemClick)
+        }
     }
 }
 

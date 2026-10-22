@@ -7,7 +7,7 @@ import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.designsystem.error.toUiError
 import com.radustavila.nasaexplorer.core.domain.usecase.FetchEpicDayUseCase
-import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDataFreshnessUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEpicAvailableDatesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEpicDayUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEpicFavoriteIdsUseCase
@@ -17,15 +17,19 @@ import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEpicUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RemoveFavoriteUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SaveFavoriteUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ToggleEpicFavoriteUseCase
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.EpicCollection
+import com.radustavila.nasaexplorer.core.model.SyncSource
 import com.radustavila.nasaexplorer.core.model.SyncState
 import com.radustavila.nasaexplorer.core.testing.data.TestEpicImages
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEpicRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEpicSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeFavoritesRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
+import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
+import java.time.Instant
 import java.time.LocalDate
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -44,6 +48,7 @@ class EarthTodayViewModelTest {
     private val scheduler = FakeEpicSyncScheduler()
     private val networkMonitor = FakeNetworkMonitor()
     private val favorites = FakeFavoritesRepository()
+    private val metadata = FakeSyncMetadataRepository()
 
     private val latestDay = TestEpicImages.day(size = 3)
     private val archiveDate = LocalDate.of(2026, 9, 28)
@@ -61,6 +66,30 @@ class EarthTodayViewModelTest {
             assertNull(state.selectedDate)
         }
         assertEquals(1, scheduler.requestSyncCallCount)
+        assertEquals(0, scheduler.forcedSyncCallCount)
+    }
+
+    @Test
+    fun `pull-to-refresh asks the sync job for a run that ignores the interval`() = runTest {
+        repository.setImages(latestDay)
+        val viewModel = createViewModel()
+
+        viewModel.onRefresh()
+
+        assertEquals(2, scheduler.requestSyncCallCount)
+        assertEquals(1, scheduler.forcedSyncCallCount)
+    }
+
+    @Test
+    fun `the state says when EPIC last synced`() = runTest {
+        repository.setImages(latestDay)
+        val syncedAt = Instant.parse("2026-10-21T09:00:00Z")
+        metadata.recordSyncSuccess(SyncSource.EPIC, at = syncedAt)
+
+        createViewModel().uiState.test {
+            val state = awaitUntil { it.hasContent && it.freshness.lastUpdatedAt != null }
+            assertEquals(DataFreshness(lastUpdatedAt = syncedAt), state.freshness)
+        }
     }
 
     @Test
@@ -268,7 +297,7 @@ class EarthTodayViewModelTest {
         observeLatestEpicDay = ObserveLatestEpicDayUseCase(repository),
         observeEpicDay = ObserveEpicDayUseCase(repository),
         observeEpicAvailableDates = ObserveEpicAvailableDatesUseCase(repository),
-        observeConnectivity = ObserveConnectivityUseCase(networkMonitor),
+        observeDataFreshness = ObserveDataFreshnessUseCase(metadata, networkMonitor),
         observeEpicSyncState = ObserveEpicSyncStateUseCase(scheduler),
         observeEpicFavoriteIds = ObserveEpicFavoriteIdsUseCase(favorites),
         refreshEpic = RefreshEpicUseCase(scheduler),

@@ -27,11 +27,15 @@ class WorkManagerEpicSyncScheduler @Inject constructor(
     ) { onDemand, periodic -> combineEpicSyncStates(onDemand, periodic) }
         .distinctUntilChanged()
 
-    override fun requestSync() {
+    override fun requestSync() = requestSync(force = false)
+
+    override fun requestSync(force: Boolean) {
         workManager.enqueueUniqueWork(
             ON_DEMAND_SYNC_WORK,
-            ExistingWorkPolicy.KEEP,
-            EpicSyncWorker.oneTimeRequest(),
+            // A pending sync is as good as a new one, unless the new one must bypass the refresh
+            // interval: then it takes the pending one's place.
+            if (force) ExistingWorkPolicy.REPLACE else ExistingWorkPolicy.KEEP,
+            EpicSyncWorker.oneTimeRequest(force),
         )
     }
 

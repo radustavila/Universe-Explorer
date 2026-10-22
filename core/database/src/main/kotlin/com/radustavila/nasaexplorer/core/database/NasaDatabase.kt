@@ -19,7 +19,7 @@ import com.radustavila.nasaexplorer.core.database.entity.FavoriteEntity
         EpicImageEntity::class,
         EpicAvailableDateEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = true,
 )
 abstract class NasaDatabase : RoomDatabase() {

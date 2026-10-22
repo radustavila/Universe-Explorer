@@ -7,5 +7,6 @@ import javax.inject.Inject
 class RefreshEpicUseCase @Inject constructor(
     private val epicSyncScheduler: EpicSyncScheduler,
 ) {
-    operator fun invoke() = epicSyncScheduler.requestSync()
+    /** @param force ignore the refresh interval, for a pull-to-refresh. */
+    operator fun invoke(force: Boolean = false) = epicSyncScheduler.requestSync(force)
 }

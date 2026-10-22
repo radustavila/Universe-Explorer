@@ -5,14 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.common.time.TimeProvider
-import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
 import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
 import com.radustavila.nasaexplorer.core.domain.usecase.GetEventImageryLayerUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDataFreshnessUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveOpenEarthEventsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEarthEventsUseCase
 import com.radustavila.nasaexplorer.core.model.EarthEvent
 import com.radustavila.nasaexplorer.core.model.EarthEventCategory
 import com.radustavila.nasaexplorer.core.model.EventImageryLayer
+import com.radustavila.nasaexplorer.core.model.SyncSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -37,7 +38,7 @@ class EarthEventsViewModel @Inject constructor(
     private val refreshEarthEvents: RefreshEarthEventsUseCase,
     private val getEventImageryLayer: GetEventImageryLayerUseCase,
     timeProvider: TimeProvider,
-    networkMonitor: NetworkMonitor,
+    observeDataFreshness: ObserveDataFreshnessUseCase,
 ) : ViewModel() {
 
     private val latestImageryDate: LocalDate = timeProvider.today().minusDays(1)
@@ -51,8 +52,8 @@ class EarthEventsViewModel @Inject constructor(
         observeOpenEvents(),
         combine(hidden, selectedId, imagery, ::Selection),
         transient,
-        networkMonitor.isOnline,
-    ) { events, selection, transient, online ->
+        observeDataFreshness(SyncSource.EONET),
+    ) { events, selection, transient, freshness ->
         EarthEventsUiState(
             events = events,
             hiddenCategories = selection.hidden.mapNotNull(EarthEventCategory::fromKey).toSet(),
@@ -62,8 +63,9 @@ class EarthEventsViewModel @Inject constructor(
             isLoaded = true,
             isRefreshing = transient.isRefreshing,
             isLoadingImagery = transient.isLoadingImagery,
-            isOffline = !online,
+            isOffline = freshness.isOffline,
             message = transient.message,
+            freshness = freshness,
         )
     }.stateIn(
         scope = viewModelScope,

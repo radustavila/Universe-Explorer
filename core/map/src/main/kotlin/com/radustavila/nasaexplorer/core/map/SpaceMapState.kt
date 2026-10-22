@@ -8,6 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalInspectionMode
+import com.radustavila.nasaexplorer.core.map.internal.SpaceMapHost
+import com.radustavila.nasaexplorer.core.map.internal.SpaceMapHostEffects
 import com.radustavila.nasaexplorer.core.map.overlay.GeoPoint
 
 /** Where the map looks: its centre and MapLibre zoom level (0 = whole world in one tile). */
@@ -33,6 +36,10 @@ enum class TileLoadStatus {
 /**
  * Hoisted state of a [SpaceMap]: the camera (saved across configuration changes) and the health of
  * tile loading, which screens turn into an offline banner.
+ *
+ * State made by [rememberSpaceMapState] also owns the map's native view, for as long as the
+ * composable that remembered it stays composed. A [SpaceMap] inside a lazy list therefore keeps its
+ * tiles, style and camera when it scrolls out of view and back, instead of rebuilding the map.
  */
 @Stable
 class SpaceMapState(initialCamera: MapCamera = MapCamera.World) {
@@ -45,6 +52,9 @@ class SpaceMapState(initialCamera: MapCamera = MapCamera.World) {
         internal set
 
     internal var pendingMove: CameraMove? by mutableStateOf(null)
+
+    /** The map view this state owns; set while [rememberSpaceMapState]'s caller is composed. */
+    internal var host: SpaceMapHost? = null
 
     /** Flies the map to [center], e.g. to the event a user picked from a list. */
     fun animateTo(center: GeoPoint, zoom: Double = camera.zoom) {
@@ -68,6 +78,13 @@ class SpaceMapState(initialCamera: MapCamera = MapCamera.World) {
 
 internal data class CameraMove(val camera: MapCamera, val animate: Boolean)
 
+/**
+ * Remembers a [SpaceMapState] together with the map view it owns. Call it at screen level, outside
+ * any lazy list, so the view outlives the list item that shows it.
+ */
 @Composable
-fun rememberSpaceMapState(initialCamera: MapCamera = MapCamera.World): SpaceMapState =
-    rememberSaveable(saver = SpaceMapState.Saver) { SpaceMapState(initialCamera) }
+fun rememberSpaceMapState(initialCamera: MapCamera = MapCamera.World): SpaceMapState {
+    val state = rememberSaveable(saver = SpaceMapState.Saver) { SpaceMapState(initialCamera) }
+    if (!LocalInspectionMode.current) SpaceMapHostEffects(state)
+    return state
+}

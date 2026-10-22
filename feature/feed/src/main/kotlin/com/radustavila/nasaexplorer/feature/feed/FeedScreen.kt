@@ -1,6 +1,7 @@
 package com.radustavila.nasaexplorer.feature.feed
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,10 +11,12 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.MoreVert
@@ -49,6 +52,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
@@ -66,12 +70,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.radustavila.nasaexplorer.core.designsystem.adaptive.CardColumnMinWidth
 import com.radustavila.nasaexplorer.core.designsystem.component.ApodCard
 import com.radustavila.nasaexplorer.core.designsystem.component.EmptyState
+import com.radustavila.nasaexplorer.core.designsystem.component.FreshnessLabel
 import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
+import com.radustavila.nasaexplorer.core.designsystem.notification.rememberNotificationPermissionToggle
 import com.radustavila.nasaexplorer.core.designsystem.theme.NasaTheme
 import com.radustavila.nasaexplorer.core.model.Apod
 import com.radustavila.nasaexplorer.core.model.MediaType
@@ -84,6 +91,7 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 
 const val FEED_LIST_TEST_TAG = "feed-list"
+const val FEED_APOD_CARD_TEST_TAG = "feed-apod-card"
 const val FEED_CALENDAR_BUTTON_TEST_TAG = "feed-calendar-button"
 const val FEED_NOTIFICATIONS_BUTTON_TEST_TAG = "feed-notifications-button"
 const val FEED_SEARCH_BUTTON_TEST_TAG = "feed-search-button"
@@ -103,11 +111,16 @@ fun FeedScreen(
     viewModel: FeedViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    // Today is the start screen: the app is fully drawn once cached entries are on screen, or once
+    // there is nothing to wait for (empty or offline state). Feeds startup metrics and the
+    // baseline profile's time-to-full-display.
+    ReportDrawnWhen { uiState.hasContent || !uiState.isLoading }
     val snackbarHostState = remember { SnackbarHostState() }
-    val notificationToggle = rememberNewApodNotificationToggle(
+    val notificationToggle = rememberNotificationPermissionToggle(
         isEnabled = uiState.areNewApodNotificationsEnabled,
         onEnabledChange = viewModel::onNewApodNotificationsChanged,
         snackbarHostState = snackbarHostState,
+        blockedMessage = stringResource(R.string.feed_notifications_blocked),
     )
 
     FeedContent(
@@ -146,7 +159,7 @@ internal fun FeedContent(
     onSearchQueryChange: (String?) -> Unit = {},
     onDailyWallpaperChange: (Boolean) -> Unit = {},
 ) {
-    val listState = rememberLazyListState()
+    val listState = rememberLazyGridState()
     val errorMessage = uiState.error?.asText()
     var isDatePickerOpen by rememberSaveable { mutableStateOf(false) }
 
@@ -416,27 +429,41 @@ internal fun Long.toUtcLocalDate(): LocalDate =
 @Composable
 private fun FeedList(
     uiState: FeedUiState,
-    listState: LazyListState,
+    listState: LazyGridState,
     onApodClick: (LocalDate) -> Unit,
     onToggleFavorite: (Apod) -> Unit,
     header: (@Composable () -> Unit)?,
 ) {
+    // The header's cards each build a ViewModel and a data source of their own. Composed together
+    // with the first cached entries, they held back the frame that shows them; one frame later,
+    // the entries are already on screen. The cards fill in when their data arrives anyway.
+    var isHeaderReady by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        withFrameNanos { }
+        isHeaderReady = true
+    }
+    val shownHeader = header?.takeIf { isHeaderReady }
+
     // What sits above the first card - the Today header's cards and On this day - usually arrives
     // after the feed, because the sync worker fetches it. The list keeps its first visible card
     // anchored while content above it appears or grows, which would leave all of it scrolled out
     // of view. Until the reader scrolls the list themselves, it is kept at its top.
     var headerHeight by remember { mutableIntStateOf(0) }
     var onThisDayHeight by remember { mutableIntStateOf(0) }
+    var freshnessHeight by remember { mutableIntStateOf(0) }
     var hasReaderScrolled by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(listState) {
         listState.interactionSource.interactions.filterIsInstance<DragInteraction.Start>().first()
         hasReaderScrolled = true
     }
-    LaunchedEffect(headerHeight, onThisDayHeight) {
+    LaunchedEffect(shownHeader != null, headerHeight, onThisDayHeight, freshnessHeight) {
         if (!hasReaderScrolled) listState.scrollToItem(0)
     }
 
-    LazyColumn(
+    // One column of cards on a phone; wider windows gain columns instead of stretching the cards.
+    // Everything that is not an entry spans the full width.
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = CardColumnMinWidth),
         state = listState,
         modifier = Modifier
             .fillMaxSize()
@@ -446,24 +473,25 @@ private fun FeedList(
         // nothing (e.g. no launches cached yet).
         contentPadding = PaddingValues(
             start = FEED_GUTTER,
-            top = if (header == null) FEED_GUTTER else 0.dp,
+            top = if (shownHeader == null) FEED_GUTTER else 0.dp,
             end = FEED_GUTTER,
             bottom = FEED_GUTTER,
         ),
+        horizontalArrangement = Arrangement.spacedBy(FEED_GUTTER),
         verticalArrangement = Arrangement.spacedBy(FEED_GUTTER),
     ) {
-        if (header != null) {
-            item(key = FEED_HEADER_KEY) {
+        if (shownHeader != null) {
+            item(key = FEED_HEADER_KEY, span = { GridItemSpan(maxLineSpan) }, contentType = "header") {
                 Column(
                     modifier = Modifier
                         .topGutterUnlessEmpty(FEED_GUTTER)
                         .onSizeChanged { size -> headerHeight = size.height },
-                ) { header() }
+                ) { shownHeader() }
             }
         }
 
         if (uiState.onThisDay.isNotEmpty()) {
-            item(key = "on-this-day") {
+            item(key = "on-this-day", span = { GridItemSpan(maxLineSpan) }, contentType = "on-this-day") {
                 OnThisDayRail(
                     entries = uiState.onThisDay,
                     onApodClick = onApodClick,
@@ -472,16 +500,26 @@ private fun FeedList(
             }
         }
 
-        items(items = uiState.items, key = { apod -> apod.date.toString() }) { apod ->
+        if (uiState.freshness.lastUpdatedAt != null) {
+            item(key = "freshness", span = { GridItemSpan(maxLineSpan) }, contentType = "freshness") {
+                FreshnessLabel(
+                    freshness = uiState.freshness,
+                    modifier = Modifier.onSizeChanged { size -> freshnessHeight = size.height },
+                )
+            }
+        }
+
+        items(items = uiState.items, key = { apod -> apod.date.toString() }, contentType = { "apod" }) { apod ->
             ApodCard(
                 apod = apod,
                 onClick = { onApodClick(apod.date) },
                 onToggleFavorite = { onToggleFavorite(apod) },
+                modifier = Modifier.testTag(FEED_APOD_CARD_TEST_TAG),
             )
         }
 
         if (uiState.isLoadingMore) {
-            item(key = "loading-more") {
+            item(key = "loading-more", span = { GridItemSpan(maxLineSpan) }, contentType = "footer") {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -498,7 +536,7 @@ private fun FeedList(
         }
 
         if (uiState.hasReachedArchiveStart) {
-            item(key = "archive-start") {
+            item(key = "archive-start", span = { GridItemSpan(maxLineSpan) }, contentType = "footer") {
                 Text(
                     text = stringResource(R.string.feed_archive_start),
                     style = MaterialTheme.typography.bodySmall,
@@ -536,7 +574,7 @@ private val FEED_GUTTER = 16.dp
  */
 @Composable
 private fun NotifyWhenNearEnd(
-    listState: LazyListState,
+    listState: LazyGridState,
     itemCount: Int,
     onLoadMore: () -> Unit,
 ) {

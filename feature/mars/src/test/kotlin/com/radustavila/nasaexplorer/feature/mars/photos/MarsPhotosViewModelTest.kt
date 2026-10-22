@@ -3,11 +3,14 @@ package com.radustavila.nasaexplorer.feature.mars.photos
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
+import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveMarsRoverPhotosUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveMarsSyncStatusUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RequestMarsSyncUseCase
+import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.MarsRover
+import com.radustavila.nasaexplorer.core.model.SyncSource
 import com.radustavila.nasaexplorer.core.testing.data.TestMarsPhotos
 import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsPhotoRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsSyncScheduler
@@ -30,11 +33,12 @@ class MarsPhotosViewModelTest {
     private val scheduler = FakeMarsSyncScheduler()
     private val networkMonitor = FakeNetworkMonitor()
     private val savedStateHandle = SavedStateHandle()
+    private val metadata = FakeSyncMetadataRepository()
 
     private fun createViewModel() = MarsPhotosViewModel(
         savedStateHandle = savedStateHandle,
         observeRoverPhotos = ObserveMarsRoverPhotosUseCase(repository),
-        observeSyncStatus = ObserveMarsSyncStatusUseCase(scheduler, FakeSyncMetadataRepository()),
+        observeSyncStatus = ObserveMarsSyncStatusUseCase(scheduler, metadata),
         observeConnectivity = ObserveConnectivityUseCase(networkMonitor),
         requestSync = RequestMarsSyncUseCase(scheduler),
     )
@@ -97,6 +101,20 @@ class MarsPhotosViewModelTest {
         viewModel.onRefresh()
 
         assertEquals(listOf(false, true), scheduler.requests)
+    }
+
+    @Test
+    fun `the last sync and its outcome feed the freshness line`() = runTest {
+        val syncedAt = Instant.parse("2026-10-21T09:00:00Z")
+        metadata.recordSyncSuccess(SyncSource.MARS, at = syncedAt)
+        metadata.recordSyncFailure(SyncSource.MARS, at = syncedAt.plusSeconds(3_600), error = AppError.Timeout)
+
+        createViewModel().uiState.test {
+            assertEquals(
+                DataFreshness(lastUpdatedAt = syncedAt, lastRefreshFailed = true),
+                awaitLoaded().freshness,
+            )
+        }
     }
 
     @Test

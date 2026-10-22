@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:ExoplanetDetailsScreen.kt:@Composable private fun PlanetDetails</ID>
+    <ID>LongMethod:ExoplanetDetailsScreen.kt:@Composable private fun PlanetDetails</ID>
+    <ID>MagicNumber:ExoplanetDetailsScreen.kt:0.35f</ID>
+    <ID>MagicNumber:ExoplanetDetailsScreen.kt:0.65f</ID>
+    <ID>MaxLineLength:ExoplanetsUiState.kt:ExoplanetsUiState$get() = DataFreshness(lastUpdatedAt = lastUpdatedAt, isOffline = isOffline, lastRefreshFailed = lastRefreshFailed)</ID>
+  </CurrentIssues>
+</SmellBaseline>

@@ -7,6 +7,7 @@ import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.location.DeviceLocationResult
 import com.radustavila.nasaexplorer.core.domain.usecase.LocateDeviceUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDataFreshnessUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveIssPassRemindersEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveIssPassesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveIssTrackUseCase
@@ -26,6 +27,7 @@ import com.radustavila.nasaexplorer.core.model.LocationSource
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.fake.FakeCityDirectory
 import com.radustavila.nasaexplorer.core.testing.fake.FakeDeviceLocationProvider
+import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeIssPassReminderScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
@@ -94,6 +96,17 @@ class SkyTonightViewModelTest {
         }
         assertEquals(1, satellites.refreshCallCount)
         assertEquals(1, people.refreshCallCount)
+    }
+
+    @Test
+    fun `the refreshed orbit and crew feed the freshness line`() = runTest {
+        location.setLocation(TestSky.location())
+
+        createViewModel().uiState.test {
+            val state = awaitUntil { it.freshness.lastUpdatedAt != null }
+            assertEquals(clock.currentInstant, state.freshness.lastUpdatedAt)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
@@ -177,7 +190,7 @@ class SkyTonightViewModelTest {
     private fun createViewModel(): SkyTonightViewModel {
         val dispatcher = mainDispatcherRule.testDispatcher
         val refreshSource = RefreshSourceUseCase(metadata, clock)
-        val refreshElements = RefreshOrbitalElementsUseCase(satellites, refreshSource)
+        val refreshElements = RefreshOrbitalElementsUseCase(satellites, refreshSource, FakeHomeWidgetUpdater())
         val reschedule = RescheduleIssPassReminderUseCase(preferences, location, satellites, predictor, scheduler, clock)
         return SkyTonightViewModel(
             observeLocation = ObserveObserverLocationUseCase(location),
@@ -187,8 +200,9 @@ class SkyTonightViewModelTest {
             observePeople = ObservePeopleInSpaceUseCase(people),
             observeReminders = ObserveIssPassRemindersEnabledUseCase(preferences),
             observeConnectivity = ObserveConnectivityUseCase(network),
-            locateDevice = LocateDeviceUseCase(deviceLocation, location),
-            setManualLocation = SetManualLocationUseCase(location),
+            observeDataFreshness = ObserveDataFreshnessUseCase(metadata, network),
+            locateDevice = LocateDeviceUseCase(deviceLocation, location, FakeHomeWidgetUpdater()),
+            setManualLocation = SetManualLocationUseCase(location, FakeHomeWidgetUpdater()),
             searchCities = SearchCitiesUseCase(cities),
             refreshElements = refreshElements,
             refreshPeople = RefreshPeopleInSpaceUseCase(people, metadata, clock, refreshSource),

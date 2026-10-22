@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongMethod:MarsPhotoScreen.kt:@Composable private fun PhotoDetails</ID>
+    <ID>LongMethod:MarsPhotosScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable internal fun MarsPhotosContent</ID>
+    <ID>MaxLineLength:MarsPhotosUiState.kt:MarsPhotosUiState$get() = DataFreshness(lastUpdatedAt = lastUpdatedAt, isOffline = isOffline, lastRefreshFailed = lastAttemptFailed)</ID>
+    <ID>MaxLineLength:MarsRail.kt:SectionTitle(text = stringResource(R.string.mars_rail_title), style = MaterialTheme.typography.titleLarge)</ID>
+  </CurrentIssues>
+</SmellBaseline>

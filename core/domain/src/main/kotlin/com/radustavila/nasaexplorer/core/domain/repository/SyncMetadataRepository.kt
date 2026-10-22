@@ -15,7 +15,8 @@ import kotlinx.coroutines.flow.Flow
  * which reads and writes these for you, over calling the `record*` functions directly.
  *
  * APOD-specific: how far back into the archive the user has paged, which entry was last announced
- * outside the app, and which one was last set as the wallpaper.
+ * outside the app, which one was last set as the wallpaper, and which past days turned out to have
+ * no entry when "On this day" asked for them.
  */
 interface SyncMetadataRepository {
 
@@ -38,6 +39,13 @@ interface SyncMetadataRepository {
         nextAllowedRefreshAt: Instant? = null,
     )
 
+    /**
+     * Forgets every source's next allowed refresh time, so each one refreshes the next time it is
+     * asked: after the user cleared the cached data. Servers' own cooldowns still apply, at the
+     * HTTP layer.
+     */
+    suspend fun allowRefreshNow()
+
     val oldestRequestedDate: Flow<LocalDate?>
     val lastAnnouncedApodDate: Flow<LocalDate?>
     val lastWallpaperApodDate: Flow<LocalDate?>
@@ -47,4 +55,12 @@ interface SyncMetadataRepository {
 
     /** `null` forgets it, so the next run applies the current entry again. */
     suspend fun setLastWallpaperApodDate(date: LocalDate?)
+
+    /**
+     * Days NASA answered without an entry (the archive has gaps), so "On this day" stops asking for
+     * them. Grows by a few dates per day of the year at most.
+     */
+    val apodDatesWithoutEntry: Flow<Set<LocalDate>>
+
+    suspend fun addApodDatesWithoutEntry(dates: Set<LocalDate>)
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The widgets' dark card (WidgetColors.Background, 16dp corners) for the picker previews. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#FF07070D" />
+    <corners android:radius="16dp" />
+</shape>

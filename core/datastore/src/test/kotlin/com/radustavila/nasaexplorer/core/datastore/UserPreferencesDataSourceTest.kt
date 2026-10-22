@@ -1,10 +1,14 @@
 package com.radustavila.nasaexplorer.core.datastore
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import com.radustavila.nasaexplorer.core.model.MeasurementSystem
+import com.radustavila.nasaexplorer.core.model.TimeFormat
+import com.radustavila.nasaexplorer.core.model.UnitPreferences
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -50,5 +54,19 @@ class UserPreferencesDataSourceTest {
         assertTrue(userPreferences.dailyWallpaperEnabled.first())
         // The two choices are independent.
         assertFalse(userPreferences.newApodNotificationsEnabled.first())
+    }
+
+    @Test
+    fun `units follow the device until the user picks, then persist`() = runTest {
+        assertEquals(UnitPreferences(MeasurementSystem.AUTOMATIC, TimeFormat.SYSTEM), userPreferences.unitPreferences.first())
+
+        userPreferences.setMeasurementSystem(MeasurementSystem.IMPERIAL)
+        userPreferences.setTimeFormat(TimeFormat.TWENTY_FOUR_HOUR)
+
+        assertEquals(
+            UnitPreferences(MeasurementSystem.IMPERIAL, TimeFormat.TWENTY_FOUR_HOUR),
+            userPreferences.unitPreferences.first(),
+        )
+        assertFalse(userPreferences.dailyWallpaperEnabled.first())
     }
 }

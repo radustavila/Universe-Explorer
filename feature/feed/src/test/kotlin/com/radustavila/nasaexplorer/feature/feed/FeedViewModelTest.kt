@@ -6,8 +6,8 @@ import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.designsystem.R
 import com.radustavila.nasaexplorer.core.domain.usecase.LoadOlderApodsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveApodFeedUseCase
-import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDailyWallpaperEnabledUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDataFreshnessUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveNewApodNotificationsEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveOnThisDayUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSyncStateUseCase
@@ -16,6 +16,8 @@ import com.radustavila.nasaexplorer.core.domain.usecase.SearchCachedApodsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetDailyWallpaperEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetNewApodNotificationsEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ToggleFavoriteUseCase
+import com.radustavila.nasaexplorer.core.model.DataFreshness
+import com.radustavila.nasaexplorer.core.model.SyncSource
 import com.radustavila.nasaexplorer.core.model.SyncState
 import com.radustavila.nasaexplorer.core.testing.data.TestApods
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
@@ -25,6 +27,7 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import com.radustavila.nasaexplorer.core.testing.fake.FakeUserPreferencesRepository
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
+import java.time.Instant
 import java.time.LocalDate
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -62,6 +65,19 @@ class FeedViewModelTest {
 
             assertEquals(3, state.items.size)
             assertFalse(state.isLoading)
+        }
+    }
+
+    @Test
+    fun `the state says when APOD last synced`() = runTest {
+        repository.setEntries(TestApods.feed(size = 1))
+        val syncedAt = Instant.parse("2026-10-21T09:00:00Z")
+        syncMetadata.recordSyncSuccess(SyncSource.APOD, at = syncedAt)
+
+        createViewModel().uiState.test {
+            val state = awaitItem().awaitContent(this)
+
+            assertEquals(DataFreshness(lastUpdatedAt = syncedAt), state.freshness)
         }
     }
 
@@ -356,11 +372,11 @@ class FeedViewModelTest {
 
     private fun createViewModel() = FeedViewModel(
         observeApodFeed = ObserveApodFeedUseCase(repository),
-        observeConnectivity = ObserveConnectivityUseCase(networkMonitor),
         observeSyncState = ObserveSyncStateUseCase(syncScheduler),
         observeNewApodNotificationsEnabled = ObserveNewApodNotificationsEnabledUseCase(userPreferences),
         observeDailyWallpaperEnabled = ObserveDailyWallpaperEnabledUseCase(userPreferences),
         observeOnThisDay = ObserveOnThisDayUseCase(repository, timeProvider),
+        observeDataFreshness = ObserveDataFreshnessUseCase(syncMetadata, networkMonitor),
         searchCachedApods = SearchCachedApodsUseCase(repository),
         refreshFeed = RefreshFeedUseCase(syncScheduler),
         loadOlderApods = LoadOlderApodsUseCase(repository, syncMetadata, networkMonitor),

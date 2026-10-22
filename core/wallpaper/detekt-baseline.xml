@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ReturnCount:SystemWallpaperSetter.kt:SystemWallpaperSetter$override suspend fun setWallpaper: Boolean</ID>
+  </CurrentIssues>
+</SmellBaseline>

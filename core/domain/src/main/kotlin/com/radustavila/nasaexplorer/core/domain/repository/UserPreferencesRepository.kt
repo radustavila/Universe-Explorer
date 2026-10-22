@@ -1,5 +1,8 @@
 package com.radustavila.nasaexplorer.core.domain.repository
 
+import com.radustavila.nasaexplorer.core.model.MeasurementSystem
+import com.radustavila.nasaexplorer.core.model.TimeFormat
+import com.radustavila.nasaexplorer.core.model.UnitPreferences
 import kotlinx.coroutines.flow.Flow
 
 /** Choices the user made in the app, as opposed to bookkeeping the app keeps for itself. */
@@ -14,4 +17,11 @@ interface UserPreferencesRepository {
     val dailyWallpaperEnabled: Flow<Boolean>
 
     suspend fun setDailyWallpaperEnabled(enabled: Boolean)
+
+    /** Units for distances, speeds and clock times. */
+    val unitPreferences: Flow<UnitPreferences>
+
+    suspend fun setMeasurementSystem(system: MeasurementSystem)
+
+    suspend fun setTimeFormat(format: TimeFormat)
 }

@@ -1,5 +1,6 @@
 package com.radustavila.nasaexplorer.feature.spaceweather.neighbourhood
 
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -8,11 +9,14 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import com.radustavila.nasaexplorer.core.designsystem.units.LocalUnitPreferences
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveCloseApproachesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveRecentFireballsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSmallBodiesSyncStatusUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RequestSmallBodiesSyncUseCase
+import com.radustavila.nasaexplorer.core.model.MeasurementSystem
+import com.radustavila.nasaexplorer.core.model.UnitPreferences
 import com.radustavila.nasaexplorer.core.testing.data.TestSmallBodies
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSmallBodiesRepository
@@ -69,23 +73,29 @@ class NeighbourhoodTest {
         assertEquals(listOf("2026 UK", "2020 FN3"), viewModel.uiState.value.approaches.map { it.designation })
     }
 
+    private fun setNeighbourhood(system: MeasurementSystem, onApproachClick: (String) -> Unit = {}) {
+        composeTestRule.setContent {
+            CompositionLocalProvider(LocalUnitPreferences provides UnitPreferences(measurementSystem = system)) {
+                NeighbourhoodContent(
+                    uiState = NeighbourhoodUiState(
+                        approaches = listOf(
+                            TestSmallBodies.closeApproach("2026 UK", distanceAu = 0.0194736855784829),
+                            TestSmallBodies.closeApproach("2025 UK9", sentry = TestSmallBodies.sentry("2025 UK9")),
+                        ),
+                        fireballs = listOf(TestSmallBodies.fireball()),
+                    ),
+                    onBackClick = {},
+                    onRefresh = {},
+                    onApproachClick = onApproachClick,
+                )
+            }
+        }
+    }
+
     @Test
     fun `objects on the Sentry list wear a badge, and tapping one opens it`() {
         var opened: String? = null
-        composeTestRule.setContent {
-            NeighbourhoodContent(
-                uiState = NeighbourhoodUiState(
-                    approaches = listOf(
-                        TestSmallBodies.closeApproach("2026 UK", distanceAu = 0.0194736855784829),
-                        TestSmallBodies.closeApproach("2025 UK9", sentry = TestSmallBodies.sentry("2025 UK9")),
-                    ),
-                    fireballs = listOf(TestSmallBodies.fireball()),
-                ),
-                onBackClick = {},
-                onRefresh = {},
-                onApproachClick = { opened = it },
-            )
-        }
+        setNeighbourhood(MeasurementSystem.METRIC) { opened = it }
 
         composeTestRule.onAllNodesWithTag(SENTRY_BADGE_TEST_TAG, useUnmergedTree = true).fetchSemanticsNodes().let {
             assertEquals(1, it.size)
@@ -96,5 +106,14 @@ class NeighbourhoodTest {
 
         composeTestRule.onNodeWithTag(NEIGHBOURHOOD_LIST_TEST_TAG).performScrollToNode(hasText("0.18 kilotons of TNT"))
         composeTestRule.onNodeWithText("41.8° S, 173.1° W · 27 km up · 13.8 km/s").assertIsDisplayed()
+    }
+
+    @Test
+    fun `imperial units convert speeds, sizes and altitudes but keep lunar distances`() {
+        setNeighbourhood(MeasurementSystem.IMPERIAL)
+
+        composeTestRule.onNodeWithText("7.6 LD · 3.6 mi/s · 110–250 ft across").assertIsDisplayed()
+        composeTestRule.onNodeWithTag(NEIGHBOURHOOD_LIST_TEST_TAG).performScrollToNode(hasText("0.18 kilotons of TNT"))
+        composeTestRule.onNodeWithText("41.8° S, 173.1° W · 17 mi up · 8.6 mi/s").assertIsDisplayed()
     }
 }

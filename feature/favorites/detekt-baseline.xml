@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:FavoriteCard.kt:16f</ID>
+    <ID>MagicNumber:FavoriteCard.kt:9f</ID>
+    <ID>MatchingDeclarationName:FavoritesNavigation.kt:FavoritesRoute</ID>
+    <ID>MaxLineLength:FavoritesScreenTest.kt:FavoritesScreenTest$CompositionLocalProvider</ID>
+    <ID>MaxLineLength:FavoritesScreenTest.kt:FavoritesScreenTest$FavoriteItem(FavoriteSource.EPIC, "enhanced/2026-10-16/20261016211000", EpicImage.favoriteTitle(capturedAt), null)</ID>
+    <ID>MaxLineLength:FavoritesScreenTest.kt:FavoritesScreenTest$FavoriteItem(FavoriteSource.EPIC, "natural/2026-10-16/20261016002713", "Earth, 16 Oct 2026, 00:27 UTC", null)</ID>
+    <ID>MaxLineLength:FavoritesScreenTest.kt:FavoritesScreenTest$composeTestRule.onNodeWithText("Earth (enhanced), ", substring = true).assertTextContains(local, substring = true)</ID>
+    <ID>ReturnCount:FavoriteCard.kt:@Composable internal fun FavoriteItem.displayTitle: String</ID>
+  </CurrentIssues>
+</SmellBaseline>

@@ -47,7 +47,7 @@ import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.NasaAsyncImage
 import com.radustavila.nasaexplorer.core.designsystem.component.ZoomableImageDialog
 import com.radustavila.nasaexplorer.core.designsystem.error.asText
-import com.radustavila.nasaexplorer.core.designsystem.util.formatDateTime
+import com.radustavila.nasaexplorer.core.designsystem.units.formatLocalDateTime
 import com.radustavila.nasaexplorer.core.model.MarsPhoto
 import com.radustavila.nasaexplorer.feature.mars.R
 
@@ -182,7 +182,7 @@ private fun PhotoDetails(photo: MarsPhoto) {
             Text(text = photo.cameraName, style = MaterialTheme.typography.titleMedium)
             photo.takenAt?.let { takenAt ->
                 Text(
-                    text = stringResource(R.string.mars_photo_taken, takenAt.formatDateTime()),
+                    text = stringResource(R.string.mars_photo_taken, takenAt.formatLocalDateTime()),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

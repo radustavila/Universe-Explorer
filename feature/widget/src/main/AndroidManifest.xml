@@ -15,6 +15,54 @@
                 android:resource="@xml/latest_apod_widget_info" />
         </receiver>
 
+        <receiver
+            android:name=".aurora.AuroraWidgetReceiver"
+            android:exported="true"
+            android:label="@string/aurora_widget_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/aurora_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".launch.NextLaunchWidgetReceiver"
+            android:exported="true"
+            android:label="@string/next_launch_widget_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/next_launch_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".sky.SkyTonightWidgetReceiver"
+            android:exported="true"
+            android:label="@string/sky_widget_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/sky_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".earth.EarthTodayWidgetReceiver"
+            android:exported="true"
+            android:label="@string/earth_widget_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/earth_widget_info" />
+        </receiver>
+
     </application>
 
 </manifest>
