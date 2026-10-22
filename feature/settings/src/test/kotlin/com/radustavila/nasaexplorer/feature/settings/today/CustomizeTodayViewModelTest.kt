@@ -9,6 +9,7 @@ import com.radustavila.nasaexplorer.core.model.TodayCardId.DSN_NOW
 import com.radustavila.nasaexplorer.core.model.TodayCardId.EARTH_EVENTS
 import com.radustavila.nasaexplorer.core.model.TodayCardId.EARTH_TODAY
 import com.radustavila.nasaexplorer.core.model.TodayCardId.ISS_NOW
+import com.radustavila.nasaexplorer.core.model.TodayCardId.NASA_NEWS
 import com.radustavila.nasaexplorer.core.model.TodayCardId.NEXT_LAUNCHES
 import com.radustavila.nasaexplorer.core.model.TodayCardId.SKY_EVENTS
 import com.radustavila.nasaexplorer.core.model.TodayCardId.SKY_TONIGHT
@@ -51,18 +52,18 @@ class CustomizeTodayViewModelTest {
             awaitLoaded()
 
             viewModel.onShownChange(ISS_NOW, shown = true)
-            assertEquals(listOf(EARTH_TODAY, EARTH_EVENTS, NEXT_LAUNCHES, ISS_NOW), awaitItem().shown)
+            assertEquals(listOf(EARTH_TODAY, EARTH_EVENTS, NEXT_LAUNCHES, NASA_NEWS, ISS_NOW), awaitItem().shown)
 
             viewModel.onShownChange(EARTH_EVENTS, shown = false)
             val state = awaitItem()
-            assertEquals(listOf(EARTH_TODAY, NEXT_LAUNCHES, ISS_NOW), state.shown)
+            assertEquals(listOf(EARTH_TODAY, NEXT_LAUNCHES, NASA_NEWS, ISS_NOW), state.shown)
             assertEquals(
                 listOf(EARTH_EVENTS, SKY_TONIGHT, SPACE_WEATHER, DSN_NOW, SKY_EVENTS, STARGAZING),
                 state.hidden,
             )
             assertFalse(state.isDefault)
         }
-        assertEquals(listOf(EARTH_TODAY, NEXT_LAUNCHES, ISS_NOW), repository.currentTodayCards)
+        assertEquals(listOf(EARTH_TODAY, NEXT_LAUNCHES, NASA_NEWS, ISS_NOW), repository.currentTodayCards)
     }
 
     @Test
@@ -70,11 +71,11 @@ class CustomizeTodayViewModelTest {
         viewModel.uiState.test {
             awaitLoaded()
 
-            viewModel.onReorder(listOf(NEXT_LAUNCHES, EARTH_TODAY, EARTH_EVENTS))
-            assertEquals(listOf(NEXT_LAUNCHES, EARTH_TODAY, EARTH_EVENTS), awaitItem().shown)
+            viewModel.onReorder(listOf(NEXT_LAUNCHES, EARTH_TODAY, EARTH_EVENTS, NASA_NEWS))
+            assertEquals(listOf(NEXT_LAUNCHES, EARTH_TODAY, EARTH_EVENTS, NASA_NEWS), awaitItem().shown)
 
             viewModel.onMove(EARTH_EVENTS, offset = -1)
-            assertEquals(listOf(NEXT_LAUNCHES, EARTH_EVENTS, EARTH_TODAY), awaitItem().shown)
+            assertEquals(listOf(NEXT_LAUNCHES, EARTH_EVENTS, EARTH_TODAY, NASA_NEWS), awaitItem().shown)
 
             // Past either end nothing moves.
             viewModel.onMove(NEXT_LAUNCHES, offset = -1)

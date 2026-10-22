@@ -9,6 +9,7 @@ import com.radustavila.nasaexplorer.core.domain.location.ObserverLocationReposit
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
 import com.radustavila.nasaexplorer.core.domain.repository.AuroraAlertRepository
 import com.radustavila.nasaexplorer.core.domain.repository.EarthEventRepository
+import com.radustavila.nasaexplorer.core.domain.repository.NewsRepository
 import com.radustavila.nasaexplorer.core.domain.repository.EpicRepository
 import com.radustavila.nasaexplorer.core.domain.repository.ExoplanetRepository
 import com.radustavila.nasaexplorer.core.domain.repository.FavoritesRepository
@@ -38,6 +39,7 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeAuroraAlertRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeCityDirectory
 import com.radustavila.nasaexplorer.core.testing.fake.FakeDeviceLocationProvider
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthEventRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeNewsRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEpicRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEpicSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeExoplanetRepository
@@ -63,6 +65,7 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTodayCardsRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeUserPreferencesRepository
 import com.radustavila.nasaexplorer.data.earthevents.di.EarthEventsDataModule
+import com.radustavila.nasaexplorer.data.news.di.NewsDataModule
 import com.radustavila.nasaexplorer.data.epic.di.EpicDataModule
 import com.radustavila.nasaexplorer.data.exoplanets.di.ExoplanetsDataModule
 import com.radustavila.nasaexplorer.data.launches.di.LaunchesDataModule
@@ -204,6 +207,22 @@ object TestEarthEventsDataModule {
 
     @Provides
     fun provideEarthEventRepository(fake: FakeEarthEventRepository): EarthEventRepository = fake
+}
+
+/**
+ * News starts empty, so the Today card stays hidden unless a test seeds the fake; no feed calls (nor
+ * the news cache evictor or search source, which this module also contributes).
+ */
+@Module
+@TestInstallIn(components = [SingletonComponent::class], replaces = [NewsDataModule::class])
+object TestNewsDataModule {
+
+    @Provides
+    @Singleton
+    fun provideFakeNewsRepository(): FakeNewsRepository = FakeNewsRepository()
+
+    @Provides
+    fun provideNewsRepository(fake: FakeNewsRepository): NewsRepository = fake
 }
 
 /**

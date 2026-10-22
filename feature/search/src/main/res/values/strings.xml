@@ -25,6 +25,8 @@
     <string name="search_source_earth_events">Events on Earth</string>
     <string name="search_source_launches">Upcoming launches</string>
     <string name="search_source_sky_events">Sky events</string>
+    <string name="search_source_news">NASA news</string>
     <string name="search_favorite_epic">Earth photo</string>
     <string name="search_favorite_mars">Mars photo</string>
+    <string name="search_favorite_image_of_the_day">NASA Image of the Day</string>
 </resources>

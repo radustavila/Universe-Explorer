@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Event
+import androidx.compose.material.icons.outlined.Newspaper
 import androidx.compose.material.icons.outlined.NightsStay
 import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material.icons.outlined.Public
@@ -21,6 +22,7 @@ import com.radustavila.nasaexplorer.feature.exoplanets.navigateToExoplanets
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhotos
 import com.radustavila.nasaexplorer.feature.mars.rail.MarsRail
+import com.radustavila.nasaexplorer.feature.news.navigateToNews
 import com.radustavila.nasaexplorer.feature.search.navigateToSearch
 import com.radustavila.nasaexplorer.feature.sky.navigateToSkyTonight
 import com.radustavila.nasaexplorer.ui.hub.HubEntry
@@ -28,7 +30,7 @@ import com.radustavila.nasaexplorer.ui.hub.HubEntryCards
 
 /**
  * What the Universe tab offers besides the gallery (F3), which is the tab's first screen:
- * search over everything on the device, exoplanets (F8), sky tonight (F5), Mars (F7). Each feature adds its [HubEntry] here and registers
+ * search over everything on the device, exoplanets (F8), sky tonight (F5), Mars (F7), NASA news (F14). Each feature adds its [HubEntry] here and registers
  * its screens inside `navigation<UniverseGraph>` in `NasaNavHost`; the entries are listed above the
  * gallery's rails.
  */
@@ -72,6 +74,9 @@ internal fun universeHubEntries(navController: NavHostController): List<HubEntry
     ) {
         navController.navigateToSkyEvents()
     }, // F12
+    HubEntry("news", Icons.Outlined.Newspaper, R.string.universe_news_title, R.string.universe_news_description) {
+        navController.navigateToNews()
+    },
 )
 
 /**

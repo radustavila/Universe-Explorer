@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/">
+<!-- Hand-made from stories.xml: one good item between items the parser must drop. -->
+<channel>
+	<title>NASA</title>
+	<link>https://www.nasa.gov</link>
+	<item>
+		<title>No link at all</title>
+		<pubDate>Thu, 22 Oct 2026 16:20:37 +0000</pubDate>
+		<description><![CDATA[Dropped: nothing to open.]]></description>
+	</item>
+	<item>
+		<title>   </title>
+		<link>https://www.nasa.gov/blank-title/</link>
+		<pubDate>Thu, 22 Oct 2026 16:20:37 +0000</pubDate>
+	</item>
+	<item>
+		<title>A date nobody can read</title>
+		<link>https://www.nasa.gov/bad-date/</link>
+		<pubDate>sometime last week</pubDate>
+	</item>
+	<item>
+		<title>APOD: 2026 October 22 &#8211; The First Green Star</title>
+		<link>https://science.nasa.gov/image-article/apod-2026-october-22-the-first-green-star/</link>
+		<pubDate>Thu, 22 Oct 2026 04:05:00 +0000</pubDate>
+	</item>
+	<item>
+		<title>NASA&#8217;s Roman Space Telescope Enters Final Commissioning Phase</title>
+		<link>https://science.nasa.gov/blogs/roman/2026/10/22/final-commissioning/</link>
+		<dc:creator><![CDATA[Ashley Balzer]]></dc:creator>
+		<pubDate>Thu, 22 Oct 2026 19:43:51 +0000</pubDate>
+		<category><![CDATA[Roman]]></category>
+		<unknown-extension attribute="ignored"><nested>also ignored</nested></unknown-extension>
+		<description><![CDATA[<p>The mission has entered the science commissioning phase&nbsp;[&#8230;]</p>
+<p>The post <a rel="nofollow" href="https://science.nasa.gov/blogs/roman/">NASA&#8217;s Roman</a> appeared first on <a rel="nofollow" href="https://science.nasa.gov">NASA Science</a>.</p>
+]]></description>
+		<content:encoded><![CDATA[<p>No pictures in this one.</p>]]></content:encoded>
+	</item>
+	<item>
+		<title>A link that is not a web page</title>
+		<link>javascript:alert(1)</link>
+		<pubDate>Thu, 22 Oct 2026 16:20:37 +0000</pubDate>
+	</item>
+</channel>
+</rss>

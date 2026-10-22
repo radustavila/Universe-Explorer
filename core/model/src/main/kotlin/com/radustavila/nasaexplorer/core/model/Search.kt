@@ -30,6 +30,8 @@ enum class SearchSource {
 
     /** Sky events of the coming year, computed on the device. */
     SKY_EVENTS,
+    /** Cached NASA news: stories, science articles, Images of the Day and videos. */
+    NEWS,
 }
 
 /** Where opening a [SearchHit] leads; `:app` maps each target to its feature's route. */
@@ -47,6 +49,8 @@ sealed interface SearchTarget {
 
     /** Opens the sky events calendar on the event (a `SkyEvent.id`). */
     data class SkyEventEntry(val id: String) : SearchTarget
+    /** A cached news item; opens on its own screen, which links to the page or video. */
+    data class NewsEntry(val id: String) : SearchTarget
 
     /** Opens the favourite in the screen of the feature it was saved from. */
     data class Favorite(val item: FavoriteItem) : SearchTarget

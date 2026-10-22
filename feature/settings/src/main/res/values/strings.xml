@@ -116,6 +116,10 @@
     <string name="credit_wheretheiss_description">The International Space Station\'s live position</string>
     <string name="credit_launch_library">Launch Library 2 by The Space Devs</string>
     <string name="credit_launch_library_description">Upcoming launches and people in space</string>
+    <string name="credit_nasa_news">NASA news feeds</string>
+    <string name="credit_nasa_news_description">Stories, science articles and the Image of the Day from nasa.gov and science.nasa.gov. Pictures credited to others belong to them.</string>
+    <string name="credit_nasa_youtube">NASA on YouTube</string>
+    <string name="credit_nasa_youtube_description">Videos and live streams, played in YouTube</string>
     <string name="credit_astronomy_engine">Astronomy Engine by Don Cross</string>
     <string name="credit_astronomy_engine_description">Rise and set times, Moon phases and planet positions, computed on the device</string>
     <string name="credit_maplibre">MapLibre Native</string>
@@ -155,4 +159,6 @@
     <string name="customize_today_card_sky_events_description">Coming eclipses, full Moons, meteor showers and planet events</string>
     <string name="customize_today_card_stargazing">Stargazing tonight</string>
     <string name="customize_today_card_stargazing_description">Tonight\'s observing score and clearest hours at your place</string>
+    <string name="customize_today_card_news">Latest from NASA</string>
+    <string name="customize_today_card_news_description">NASA\'s newest stories, Image of the Day, videos and live streams</string>
 </resources>

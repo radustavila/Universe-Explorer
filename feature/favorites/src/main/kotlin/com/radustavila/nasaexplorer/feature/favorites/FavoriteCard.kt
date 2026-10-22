@@ -100,4 +100,5 @@ private val FavoriteSource.labelRes: Int
         FavoriteSource.NASA_LIBRARY -> R.string.favorites_source_nasa_library
         FavoriteSource.MARS -> R.string.favorites_source_mars
         FavoriteSource.EXOPLANET -> R.string.favorites_source_exoplanet
+        FavoriteSource.NASA_IMAGE_OF_THE_DAY -> R.string.favorites_source_image_of_the_day
     }
