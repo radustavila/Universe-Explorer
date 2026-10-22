@@ -23,11 +23,39 @@ data class OrbitalElements(
     val meanAnomalyDegrees: Double,
     /** SGP4 drag term, in inverse Earth radii. */
     val bstar: Double,
+    /** International designator, e.g. `2026-232A`: launch year, launch of that year, piece. */
+    val internationalDesignator: String? = null,
+    /** Orbits completed at [epoch]; for a fresh object, how long ago it was launched. */
+    val revolutionsAtEpoch: Long? = null,
 ) {
     companion object {
         /** The International Space Station's catalogue number. */
         const val ISS_NORAD_ID = 25544
     }
+}
+
+/**
+ * What Sky tonight predicts passes for, each fetched from CelesTrak as one set. [noradId] is set for
+ * a single named object; [typicalMagnitude] is a hand-made figure for a good pass (lower is
+ * brighter), null where it varies too much to quote.
+ *
+ * Stored by name (enabled sets, reminders): never rename an entry.
+ */
+enum class SatelliteSet(val noradId: Int?, val typicalMagnitude: Double?) {
+    /** The International Space Station, which has its own card and reminder. */
+    ISS(noradId = OrbitalElements.ISS_NORAD_ID, typicalMagnitude = -3.0),
+
+    /** The Hubble Space Telescope; only rises well south of about 40° N (or north of 40° S). */
+    HUBBLE(noradId = 20580, typicalMagnitude = 1.5),
+
+    /** China's space station, tracked by its core module Tianhe. */
+    TIANGONG(noradId = 48274, typicalMagnitude = -1.0),
+
+    /** Starlink satellites still flying in a line in the days after their launch. */
+    STARLINK_TRAINS(noradId = null, typicalMagnitude = null),
+
+    /** CelesTrak's "visual" group: about 150 satellites and rocket bodies bright enough to see. */
+    BRIGHT_SATELLITES(noradId = null, typicalMagnitude = null),
 }
 
 /** One pass of a satellite over the observer, from when it climbs above the minimum elevation. */

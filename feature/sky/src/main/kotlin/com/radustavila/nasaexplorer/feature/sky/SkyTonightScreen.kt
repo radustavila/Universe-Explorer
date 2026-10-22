@@ -66,6 +66,7 @@ import com.radustavila.nasaexplorer.feature.sky.component.NightCard
 import com.radustavila.nasaexplorer.feature.sky.component.PeopleInSpaceCard
 import com.radustavila.nasaexplorer.feature.sky.component.PlanetsCard
 import com.radustavila.nasaexplorer.feature.sky.component.rememberCoarseLocationRequest
+import com.radustavila.nasaexplorer.feature.sky.satellites.MoreSatellitesSection
 import java.time.Instant
 
 const val SKY_LIST_TEST_TAG = "sky-list"
@@ -133,6 +134,7 @@ fun SkyTonightScreen(
         onRefresh = viewModel::onRefresh,
         snackbarHostState = snackbarHostState,
         modifier = modifier,
+        moreSatellites = { MoreSatellitesSection(snackbarHostState) },
     )
 
     if (showLocationDialog) {
@@ -168,6 +170,7 @@ fun SkyTonightContent(
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    moreSatellites: (@Composable () -> Unit)? = null,
 ) {
     Scaffold(
         modifier = modifier,
@@ -200,6 +203,7 @@ fun SkyTonightContent(
                         onUseMyLocation = onUseMyLocation,
                         onChooseLocation = onChooseLocation,
                         onRemindersClick = onRemindersClick,
+                        moreSatellites = moreSatellites,
                     )
                 }
             }
@@ -215,6 +219,7 @@ private fun SkyList(
     onUseMyLocation: () -> Unit,
     onChooseLocation: () -> Unit,
     onRemindersClick: () -> Unit,
+    moreSatellites: (@Composable () -> Unit)?,
 ) {
     val location = uiState.location
     // One column on a phone held upright; side by side on wider windows (a phone in landscape
@@ -261,6 +266,8 @@ private fun SkyList(
                     IssPassesCard(forecast = forecast, remindersOn = remindersOn, onRemindersClick = onRemindersClick)
                 }
             }
+            // Passes are computed for a place, like the ISS's.
+            moreSatellites?.let { card -> item(key = "more-satellites") { card() } }
         }
         item(key = "track") { IssTrackCard(track = uiState.track, observer = location?.coordinate, map = trackMap) }
         item(key = "people") {

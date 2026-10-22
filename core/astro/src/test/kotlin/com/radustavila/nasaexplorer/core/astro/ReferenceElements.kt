@@ -33,6 +33,41 @@ internal object ReferenceElements {
         bstar = 0.13772e-3,
     )
 
+    /**
+     * Hubble from CelesTrak (GP JSON), 2026-10-21:
+     * ```
+     * EPOCH 2026-10-21T07:25:27.668064, MEAN_MOTION 15.32029197, ECCENTRICITY 0.00021583,
+     * INCLINATION 28.4737, RA_OF_ASC_NODE 297.7404, ARG_OF_PERICENTER 117.4266,
+     * MEAN_ANOMALY 242.655, BSTAR 0.00022957401
+     * ```
+     */
+    val HUBBLE = OrbitalElements(
+        noradId = 20580,
+        name = "HST",
+        epoch = Instant.parse("2026-10-21T07:25:27.668064Z"),
+        meanMotion = 15.32029197,
+        eccentricity = 0.00021583,
+        inclinationDegrees = 28.4737,
+        raanDegrees = 297.7404,
+        argOfPericenterDegrees = 117.4266,
+        meanAnomalyDegrees = 242.655,
+        bstar = 0.00022957401,
+    )
+
+    /** Tiangong's core module Tianhe from CelesTrak (GP JSON), 2026-10-21. */
+    val TIANGONG = OrbitalElements(
+        noradId = 48274,
+        name = "CSS (TIANHE)",
+        epoch = Instant.parse("2026-10-21T06:12:11.347488Z"),
+        meanMotion = 15.61026916,
+        eccentricity = 0.00020312,
+        inclinationDegrees = 41.4687,
+        raanDegrees = 276.1937,
+        argOfPericenterDegrees = 190.5094,
+        meanAnomalyDegrees = 169.5703,
+        bstar = 0.00035037653,
+    )
+
     /** Vanguard 1 (00005), the near-Earth case of Vallado's SGP4 verification set. */
     val VANGUARD_1 = OrbitalElements(
         noradId = 5,
@@ -49,6 +84,9 @@ internal object ReferenceElements {
 
     val BUCHAREST = GeoCoordinate(latitude = 44.4268, longitude = 26.1025)
     val LONDON = GeoCoordinate(latitude = 51.5072, longitude = -0.1276)
+
+    /** Far enough south for Hubble, which never climbs 10 degrees above Bucharest. */
+    val CAIRO = GeoCoordinate(latitude = 30.0444, longitude = 31.2357)
 
     private fun tleEpoch(year: Int, dayOfYear: Double): Instant {
         val wholeDay = dayOfYear.toLong()

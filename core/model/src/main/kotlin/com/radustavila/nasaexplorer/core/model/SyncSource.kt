@@ -47,8 +47,20 @@ enum class SyncSource(val key: String) {
     /** JPL Horizons distances of far spacecraft (Voyager 1 and 2, New Horizons, …). */
     HORIZONS("jpl_horizons"),
 
-    /** CelesTrak orbital elements. */
+    /** CelesTrak orbital elements of the ISS. */
     CELESTRAK("celestrak"),
+
+    /** CelesTrak orbital elements of the Hubble Space Telescope. */
+    CELESTRAK_HUBBLE("celestrak_hubble"),
+
+    /** CelesTrak orbital elements of the Tiangong space station. */
+    CELESTRAK_TIANGONG("celestrak_tiangong"),
+
+    /** CelesTrak `last-30-days` group, for Starlink trains. */
+    CELESTRAK_STARLINK("celestrak_last_30_days"),
+
+    /** CelesTrak `visual` group: the brightest satellites. */
+    CELESTRAK_VISUAL("celestrak_visual"),
 
     /**
      * Launch Library 2 astronauts in space. Same host and hourly budget as [LAUNCHES], but its own

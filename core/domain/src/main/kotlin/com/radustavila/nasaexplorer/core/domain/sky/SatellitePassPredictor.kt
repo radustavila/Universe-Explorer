@@ -22,6 +22,21 @@ interface SatellitePassPredictor {
         minElevationDegrees: Double = DEFAULT_MIN_ELEVATION,
     ): List<SatellitePass>
 
+    /**
+     * Visible passes (see [SatellitePass.isVisible]) of each of [elements], keyed by catalogue
+     * number, for many satellites at once: an implementation can skip the daylight hours, when
+     * nothing is visible, for all of them.
+     */
+    fun visiblePasses(
+        elements: List<OrbitalElements>,
+        observer: GeoCoordinate,
+        from: Instant,
+        to: Instant,
+        minElevationDegrees: Double = DEFAULT_MIN_ELEVATION,
+    ): Map<Int, List<SatellitePass>> = elements.associate { satellite ->
+        satellite.noradId to passes(satellite, observer, from, to, minElevationDegrees).filter(SatellitePass::isVisible)
+    }
+
     /** Sub-satellite point at [at], or null when the elements cannot be propagated there. */
     fun position(elements: OrbitalElements, at: Instant): SatellitePosition?
 

@@ -34,6 +34,8 @@ fun GpElementsDto.toEntityOrNull(fetchedAt: Instant): OrbitalElementsEntity? {
         meanAnomalyDegrees = meanAnomaly ?: return null,
         bstar = bstar ?: 0.0,
         fetchedAtMillis = fetchedAt.toEpochMilli(),
+        objectId = objectId?.trim()?.takeIf(String::isNotEmpty),
+        revAtEpoch = revAtEpoch,
     )
 }
 
@@ -48,6 +50,8 @@ fun OrbitalElementsEntity.toDomain(): OrbitalElements = OrbitalElements(
     argOfPericenterDegrees = argOfPericenterDegrees,
     meanAnomalyDegrees = meanAnomalyDegrees,
     bstar = bstar,
+    internationalDesignator = objectId,
+    revolutionsAtEpoch = revAtEpoch,
 )
 
 /** Null when the tracker answered without a usable position. */
