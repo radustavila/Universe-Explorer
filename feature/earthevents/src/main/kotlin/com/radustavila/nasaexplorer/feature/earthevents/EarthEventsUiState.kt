@@ -25,12 +25,10 @@ data class EarthEventsUiState(
     /** Whether wildfires last reported 2 to 6 weeks ago are drawn too. */
     val showWildfireHistory: Boolean = false,
     val selectedEventId: String? = null,
-    /** An event's own imagery, after "Show imagery"; `null` shows the latest true colour. */
+    /** An event's own imagery, after "Show imagery"; `null` shows the plain, cloud-free map. */
     val eventImagery: EventImagery? = null,
     /** The UTC day events' ages are counted to. */
     val today: LocalDate,
-    /** Day of the default true colour imagery: yesterday, as on the satellite map. */
-    val latestImageryDate: LocalDate = today.minusDays(1),
     /** False until the cache has been read once, so an empty map is not mistaken for no events. */
     val isLoaded: Boolean = false,
     val isRefreshing: Boolean = false,
@@ -57,9 +55,12 @@ data class EarthEventsUiState(
 
     fun recencyOf(event: EarthEvent): EventRecency = event.recency(today)
 
-    /** What the map draws under the events. */
-    val imagery: GibsImagery
-        get() = eventImagery?.toGibsImagery() ?: GibsImagery.trueColor(latestImageryDate)
+    /**
+     * What the map draws under the events: the event's imagery once asked for, otherwise nothing
+     * over the map's cloud-free Blue Marble base, so the markers stand out.
+     */
+    val imagery: GibsImagery?
+        get() = eventImagery?.toGibsImagery()
 }
 
 /**

@@ -120,7 +120,7 @@ internal fun EventSheet(
             ) {
                 if (isShowingImagery) {
                     OutlinedButton(onClick = onHideImagery) {
-                        Text(stringResource(R.string.earth_events_latest_imagery))
+                        Text(stringResource(R.string.earth_events_hide_imagery))
                     }
                 } else {
                     FilledTonalButton(

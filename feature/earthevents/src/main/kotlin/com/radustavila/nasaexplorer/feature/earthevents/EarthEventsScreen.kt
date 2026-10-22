@@ -81,7 +81,7 @@ private const val EVENT_IMAGERY_ZOOM = 5.0
 
 /** The live map's slot, so tests can render the screen without MapLibre's native renderer. */
 typealias EarthEventsMap = @Composable (
-    imagery: GibsImagery,
+    imagery: GibsImagery?,
     overlays: List<MapOverlay>,
     onEventClick: (eventId: String) -> Unit,
     onMapClick: () -> Unit,
@@ -138,7 +138,7 @@ internal fun EarthEventsRoute(
 /**
  * Stateless events map: banners, the category filter, the wildfire history toggle, the map with
  * event overlays, and the sheet of the selected event. [isLoadingMapImagery] is true while the map
- * loads new imagery under the old.
+ * loads an event's imagery.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -229,7 +229,8 @@ fun EarthEventsScreen(
                 MapNotes(
                     isLoadingImagery = isLoadingMapImagery,
                     // The sheet covers the bottom of the map; the note can wait until it closes.
-                    showsGapNote = uiState.imagery.layers.any { it.hasNoDataGaps } && uiState.selectedEvent == null,
+                    showsGapNote = uiState.imagery?.layers.orEmpty().any { it.hasNoDataGaps } &&
+                        uiState.selectedEvent == null,
                 )
 
                 if (uiState.isLoaded && shownEvents.isEmpty()) {
@@ -285,7 +286,7 @@ private fun ImageryBar(imagery: EventImagery, onHideImagery: () -> Unit) {
         text = stringResource(R.string.earth_events_imagery_caption, imagery.layerName, imagery.date.formatMedium()),
         testTag = EARTH_EVENTS_IMAGERY_BAR_TEST_TAG,
         action = {
-            TextButton(onClick = onHideImagery) { Text(stringResource(R.string.earth_events_latest_imagery)) }
+            TextButton(onClick = onHideImagery) { Text(stringResource(R.string.earth_events_hide_imagery)) }
         },
     )
 }
@@ -349,7 +350,7 @@ private fun WildfireHistoryToggle(count: Int, isShown: Boolean, onToggle: () -> 
     }
 }
 
-/** The progress bar over the map while new imagery loads, and the note on daily mosaics' gaps. */
+/** The progress bar over the map while an event's imagery loads, and the note on daily mosaics' gaps. */
 @Composable
 private fun BoxScope.MapNotes(isLoadingImagery: Boolean, showsGapNote: Boolean) {
     if (isLoadingImagery) {
