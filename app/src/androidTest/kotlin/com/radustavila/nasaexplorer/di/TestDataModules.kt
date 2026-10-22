@@ -21,6 +21,7 @@ import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepositor
 import com.radustavila.nasaexplorer.core.domain.repository.TodayCardsRepository
 import com.radustavila.nasaexplorer.core.domain.repository.UserPreferencesRepository
 import com.radustavila.nasaexplorer.core.domain.sky.IssPassReminderScheduler
+import com.radustavila.nasaexplorer.core.domain.sky.SatellitePassReminderScheduler
 import com.radustavila.nasaexplorer.core.domain.sky.PeopleInSpaceRepository
 import com.radustavila.nasaexplorer.core.domain.sky.SatelliteRepository
 import com.radustavila.nasaexplorer.core.domain.sky.SkyPreferencesRepository
@@ -43,6 +44,7 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeExoplanetRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeFavoritesRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeIssPassReminderScheduler
+import com.radustavila.nasaexplorer.core.testing.fake.FakeSatellitePassReminderScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsPhotoRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsSyncScheduler
@@ -154,6 +156,10 @@ object TestSkyDataModule {
     @Provides
     @Singleton
     fun provideIssPassReminderScheduler(): IssPassReminderScheduler = FakeIssPassReminderScheduler()
+
+    @Provides
+    @Singleton
+    fun provideSatellitePassReminderScheduler(): SatellitePassReminderScheduler = FakeSatellitePassReminderScheduler()
 }
 
 /** The observer's location in memory (no DataStore, no platform location). */

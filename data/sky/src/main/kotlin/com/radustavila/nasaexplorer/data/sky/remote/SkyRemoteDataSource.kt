@@ -13,6 +13,7 @@ import kotlinx.coroutines.withContext
 
 interface SkyRemoteDataSource {
     suspend fun fetchElements(noradId: Int): DataResult<List<GpElementsDto>>
+    suspend fun fetchGroup(group: String): DataResult<List<GpElementsDto>>
     suspend fun fetchLivePosition(noradId: Int): DataResult<SatellitePositionDto>
 }
 
@@ -25,6 +26,10 @@ class RetrofitSkyRemoteDataSource @Inject constructor(
 
     override suspend fun fetchElements(noradId: Int): DataResult<List<GpElementsDto>> = withContext(ioDispatcher) {
         safeNetworkCall { celesTrak.getElements(noradId) }
+    }
+
+    override suspend fun fetchGroup(group: String): DataResult<List<GpElementsDto>> = withContext(ioDispatcher) {
+        safeNetworkCall { celesTrak.getGroup(group) }
     }
 
     override suspend fun fetchLivePosition(noradId: Int): DataResult<SatellitePositionDto> =

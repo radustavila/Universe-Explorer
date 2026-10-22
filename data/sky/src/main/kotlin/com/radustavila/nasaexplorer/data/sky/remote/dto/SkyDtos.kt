@@ -22,6 +22,10 @@ data class GpElementsDto(
     @SerialName("BSTAR") val bstar: Double? = null,
     /** 0 for SGP4 elements, the only kind the propagator accepts. */
     @SerialName("EPHEMERIS_TYPE") val ephemerisType: Int? = null,
+    /** International designator, e.g. `2026-232A`; groups Starlink satellites by launch. */
+    @SerialName("OBJECT_ID") val objectId: String? = null,
+    /** Orbits completed at the epoch; dates a fresh launch. */
+    @SerialName("REV_AT_EPOCH") val revAtEpoch: Long? = null,
 )
 
 /** wheretheiss.at `v1/satellites/25544`. */
