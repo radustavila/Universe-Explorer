@@ -9,6 +9,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDailyWallpaperEna
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveIssPassRemindersEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveNewApodNotificationsEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveObserverLocationUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveStargazingAlertSettingsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveUnitPreferencesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetAuroraAlertEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetAuroraAlertLocationUseCase
@@ -16,6 +17,8 @@ import com.radustavila.nasaexplorer.core.domain.usecase.SetDailyWallpaperEnabled
 import com.radustavila.nasaexplorer.core.domain.usecase.SetIssPassRemindersEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetMeasurementSystemUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetNewApodNotificationsEnabledUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.SetStargazingAlertEnabledUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.SetStargazingAlertMinimumScoreUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetTimeFormatUseCase
 import com.radustavila.nasaexplorer.core.model.MeasurementSystem
 import com.radustavila.nasaexplorer.core.model.TimeFormat
@@ -41,6 +44,7 @@ class SettingsViewModel @Inject constructor(
     observeNewApodNotifications: ObserveNewApodNotificationsEnabledUseCase,
     private val observeAuroraAlerts: ObserveAuroraAlertSettingsUseCase,
     observeIssReminders: ObserveIssPassRemindersEnabledUseCase,
+    observeStargazingAlerts: ObserveStargazingAlertSettingsUseCase,
     private val observeObserverLocation: ObserveObserverLocationUseCase,
     observeDailyWallpaper: ObserveDailyWallpaperEnabledUseCase,
     private val setMeasurementSystem: SetMeasurementSystemUseCase,
@@ -49,6 +53,8 @@ class SettingsViewModel @Inject constructor(
     private val setAuroraAlertEnabled: SetAuroraAlertEnabledUseCase,
     private val setAuroraAlertLocation: SetAuroraAlertLocationUseCase,
     private val setIssReminders: SetIssPassRemindersEnabledUseCase,
+    private val setStargazingAlertEnabled: SetStargazingAlertEnabledUseCase,
+    private val setStargazingAlertMinimumScore: SetStargazingAlertMinimumScoreUseCase,
     private val setDailyWallpaper: SetDailyWallpaperEnabledUseCase,
     private val measureStorage: MeasureStorageUseCase,
     private val clearCache: ClearCacheUseCase,
@@ -57,18 +63,21 @@ class SettingsViewModel @Inject constructor(
     private val storage = MutableStateFlow(StorageUiState())
     private val message = MutableStateFlow<SettingsMessage?>(null)
 
+    private val alerts = combine(observeAuroraAlerts(), observeStargazingAlerts(), ::Pair)
+
     private val choices = combine(
         observeUnitPreferences(),
         observeNewApodNotifications(),
-        observeAuroraAlerts(),
+        alerts,
         observeIssReminders(),
         observeDailyWallpaper(),
-    ) { units, newApod, aurora, iss, wallpaper ->
+    ) { units, newApod, (aurora, stargazing), iss, wallpaper ->
         SettingsUiState(
             units = units,
             newApodNotificationsEnabled = newApod,
             auroraAlerts = aurora,
             issRemindersEnabled = iss,
+            stargazingAlerts = stargazing,
             dailyWallpaperEnabled = wallpaper,
         )
     }
@@ -131,6 +140,21 @@ class SettingsViewModel @Inject constructor(
 
     fun onIssRemindersChange(enabled: Boolean) {
         viewModelScope.launch { setIssReminders(enabled) }
+    }
+
+    /** The forecast is for the saved observer location; without one the user is told to save it first. */
+    fun onStargazingAlertsChange(enabled: Boolean) {
+        viewModelScope.launch {
+            if (enabled && observeObserverLocation().first() == null) {
+                message.value = SettingsMessage.STARGAZING_NEEDS_PLACE
+                return@launch
+            }
+            setStargazingAlertEnabled(enabled)
+        }
+    }
+
+    fun onStargazingMinimumScoreChange(score: Int) {
+        viewModelScope.launch { setStargazingAlertMinimumScore(score) }
     }
 
     fun onDailyWallpaperChange(enabled: Boolean) {

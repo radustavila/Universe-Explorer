@@ -69,6 +69,8 @@ import com.radustavila.nasaexplorer.core.domain.storage.StorageKind
 import com.radustavila.nasaexplorer.core.model.AuroraAlertSettings
 import com.radustavila.nasaexplorer.core.model.GeomagneticStorm
 import com.radustavila.nasaexplorer.core.model.MeasurementSystem
+import com.radustavila.nasaexplorer.core.model.StargazingAlertSettings
+import com.radustavila.nasaexplorer.core.model.StargazingRating
 import com.radustavila.nasaexplorer.core.model.TimeFormat
 import java.time.LocalDate
 import java.time.ZoneId
@@ -77,6 +79,7 @@ const val SETTINGS_LIST_TEST_TAG = "settings-list"
 const val SETTINGS_NEW_APOD_SWITCH_TEST_TAG = "settings-new-apod"
 const val SETTINGS_AURORA_SWITCH_TEST_TAG = "settings-aurora"
 const val SETTINGS_ISS_SWITCH_TEST_TAG = "settings-iss"
+const val SETTINGS_STARGAZING_SWITCH_TEST_TAG = "settings-stargazing"
 const val SETTINGS_WALLPAPER_SWITCH_TEST_TAG = "settings-wallpaper"
 const val SETTINGS_UNITS_EXAMPLE_TEST_TAG = "settings-units-example"
 const val SETTINGS_CLEAR_CACHE_TEST_TAG = "settings-clear-cache"
@@ -86,6 +89,8 @@ const val SETTINGS_CUSTOMIZE_TODAY_TEST_TAG = "settings-customize-today"
 fun measurementOptionTestTag(system: MeasurementSystem) = "settings-measurement-${system.name}"
 
 fun timeFormatOptionTestTag(format: TimeFormat) = "settings-time-format-${format.name}"
+
+fun stargazingMinimumOptionTestTag(score: Int) = "settings-stargazing-minimum-$score"
 
 @Composable
 internal fun SettingsScreen(
@@ -118,6 +123,12 @@ internal fun SettingsScreen(
         snackbarHostState = snackbarHostState,
         blockedMessage = blocked,
     )
+    val stargazing = rememberNotificationPermissionToggle(
+        isEnabled = uiState.stargazingAlerts.enabled,
+        onEnabledChange = viewModel::onStargazingAlertsChange,
+        snackbarHostState = snackbarHostState,
+        blockedMessage = blocked,
+    )
 
     SettingsMessageEffect(uiState.message, snackbarHostState, viewModel::onMessageShown)
     LifecycleResumeEffect(viewModel) {
@@ -134,6 +145,9 @@ internal fun SettingsScreen(
             onAuroraClick = aurora.onClick,
             issOn = iss.isOn,
             onIssClick = iss.onClick,
+            stargazingOn = stargazing.isOn,
+            onStargazingClick = stargazing.onClick,
+            onStargazingMinimumScoreChange = viewModel::onStargazingMinimumScoreChange,
         ),
         onBackClick = onBackClick,
         onCustomizeTodayClick = onCustomizeTodayClick,
@@ -156,6 +170,9 @@ internal data class NotificationSwitches(
     val onAuroraClick: () -> Unit,
     val issOn: Boolean,
     val onIssClick: () -> Unit,
+    val stargazingOn: Boolean = false,
+    val onStargazingClick: () -> Unit = {},
+    val onStargazingMinimumScoreChange: (Int) -> Unit = {},
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -372,6 +389,39 @@ private fun LazyListScope.notificationsSection(
             testTag = SETTINGS_ISS_SWITCH_TEST_TAG,
         )
     }
+    item(key = "stargazing") {
+        val minimum = uiState.stargazingAlerts.minimumScore
+        Column {
+            SwitchRow(
+                title = stringResource(R.string.settings_stargazing_title),
+                description = if (uiState.observerLocation == null) {
+                    stringResource(R.string.settings_stargazing_needs_place)
+                } else {
+                    stringResource(R.string.settings_stargazing_description, minimum)
+                },
+                checked = notifications.stargazingOn,
+                onClick = notifications.onStargazingClick,
+                testTag = SETTINGS_STARGAZING_SWITCH_TEST_TAG,
+            )
+            if (notifications.stargazingOn) {
+                ChoiceGroup(
+                    title = stringResource(R.string.settings_stargazing_minimum_title),
+                    options = StargazingAlertSettings.MINIMUM_SCORE_CHOICES,
+                    selected = minimum,
+                    label = { score -> stringResource(stargazingMinimumLabel(score), score) },
+                    testTag = ::stargazingMinimumOptionTestTag,
+                    onSelect = notifications.onStargazingMinimumScoreChange,
+                )
+            }
+        }
+    }
+}
+
+@StringRes
+private fun stargazingMinimumLabel(score: Int): Int = when {
+    score >= StargazingRating.EXCELLENT_FROM -> R.string.settings_stargazing_minimum_excellent
+    score > StargazingRating.GOOD_FROM -> R.string.settings_stargazing_minimum_very_good
+    else -> R.string.settings_stargazing_minimum_good
 }
 
 private fun LazyListScope.storageSection(storage: StorageUiState, onClearClick: () -> Unit) {
@@ -547,6 +597,7 @@ private fun SettingsMessageEffect(message: SettingsMessage?, snackbarHostState: 
                 SettingsMessage.CACHE_CLEARED -> R.string.settings_cache_cleared
                 SettingsMessage.CACHE_CLEAR_FAILED -> R.string.settings_cache_clear_failed
                 SettingsMessage.AURORA_NEEDS_PLACE -> R.string.settings_aurora_needs_place
+                SettingsMessage.STARGAZING_NEEDS_PLACE -> R.string.settings_stargazing_needs_place_message
             },
         )
     }
