@@ -22,6 +22,9 @@ enum class FavoriteSource(val key: String) {
 
     /** Confirmed exoplanet; item id is the archive's `pl_name`. */
     EXOPLANET("exoplanet"),
+
+    /** NASA Image of the Day; item id is the image's page URL ([NewsItem.id]). */
+    NASA_IMAGE_OF_THE_DAY("nasa_image_of_the_day"),
     ;
 
     companion object {

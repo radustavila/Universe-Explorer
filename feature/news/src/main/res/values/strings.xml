@@ -1,0 +1,35 @@
+<resources>
+    <string name="news_title">NASA news</string>
+    <string name="news_back">Back</string>
+    <string name="news_kind_story">Story</string>
+    <string name="news_kind_science">Science</string>
+    <string name="news_kind_image_of_the_day">Image of the Day</string>
+    <string name="news_kind_video">Video</string>
+    <string name="news_filter_stories">Stories</string>
+    <string name="news_filter_science">Science</string>
+    <string name="news_filter_image_of_the_day">Image of the Day</string>
+    <string name="news_filter_videos">Videos</string>
+    <string name="news_live_now">Live now</string>
+    <string name="news_live_badge">Live</string>
+    <!-- %1$s: kind of item, e.g. "Science"; %2$s: how long ago it was published, e.g. "3 hours ago". -->
+    <string name="news_kind_and_age">%1$s · %2$s</string>
+    <!-- %1$s: who holds rights to the picture, e.g. "NASA, ESA, and X. Huang". -->
+    <string name="news_credit">Credit: %1$s</string>
+    <string name="news_empty_title">No news yet</string>
+    <string name="news_empty_description">NASA\'s stories, pictures and videos appear here once they have been downloaded.</string>
+    <string name="news_offline_title">You\'re offline</string>
+    <string name="news_offline_description">NASA\'s news will download when you\'re back online.</string>
+    <string name="news_failed_title">Couldn\'t load NASA\'s news</string>
+    <string name="news_failed_description">Check your connection and try again.</string>
+    <string name="news_filter_empty">Nothing of this kind in the latest news.</string>
+    <string name="news_attribution">From NASA\'s public news feeds and its YouTube channel. Videos play on YouTube.</string>
+
+    <string name="news_item_missing_title">This item is no longer cached</string>
+    <string name="news_item_missing_description">NASA\'s feeds only list recent news. Save an Image of the Day to keep it.</string>
+    <string name="news_item_view_full_size">View full size</string>
+    <string name="news_item_open_page">Read on NASA\'s site</string>
+    <string name="news_item_watch">Watch on YouTube</string>
+
+    <string name="news_card_title">Latest from NASA</string>
+    <string name="news_card_see_all">All news</string>
+</resources>

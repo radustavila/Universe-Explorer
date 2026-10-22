@@ -67,6 +67,7 @@ dependencies {
     implementation(projects.core.location)
     implementation(projects.data.sky)
     implementation(projects.data.epic)
+    implementation(projects.data.news)
 
     implementation(projects.feature.feed)
     implementation(projects.feature.details)
@@ -84,6 +85,7 @@ dependencies {
     implementation(projects.feature.earth)
     implementation(projects.feature.search)
     implementation(projects.feature.settings)
+    implementation(projects.feature.news)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
@@ -125,6 +127,7 @@ dependencies {
     androidTestImplementation(projects.core.location)
     androidTestImplementation(projects.feature.sky)
     androidTestImplementation(projects.data.epic)
+    androidTestImplementation(projects.data.news)
     androidTestImplementation(projects.feature.earth)
     androidTestImplementation(projects.feature.feed)
     androidTestImplementation(projects.feature.details)

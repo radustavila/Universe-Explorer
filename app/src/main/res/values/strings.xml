@@ -29,6 +29,8 @@
     <string name="universe_exoplanets_description">The newest worlds beyond the Solar System, their size and distance</string>
     <string name="universe_sky_title">Sky tonight</string>
     <string name="universe_sky_description">Moon, planets and ISS passes above you, and who is in space</string>
+    <string name="universe_news_title">NASA news</string>
+    <string name="universe_news_description">Stories, the Image of the Day, videos and live streams</string>
     <string name="universe_search_title">Search everything</string>
     <string name="universe_search_description">Pictures, planets, asteroids, events and favourites saved on this device</string>
 

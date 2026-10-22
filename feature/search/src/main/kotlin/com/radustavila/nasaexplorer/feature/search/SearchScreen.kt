@@ -27,6 +27,7 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.Newspaper
 import androidx.compose.material.icons.outlined.ImageSearch
 import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material.icons.outlined.Public
@@ -484,6 +485,7 @@ internal val SearchSource.labelRes: Int
         SearchSource.SMALL_BODIES -> R.string.search_source_small_bodies
         SearchSource.EARTH_EVENTS -> R.string.search_source_earth_events
         SearchSource.LAUNCHES -> R.string.search_source_launches
+        SearchSource.NEWS -> R.string.search_source_news
     }
 
 private val FavoriteSource.labelRes: Int
@@ -493,6 +495,7 @@ private val FavoriteSource.labelRes: Int
         FavoriteSource.NASA_LIBRARY -> R.string.search_source_nasa_library
         FavoriteSource.MARS -> R.string.search_favorite_mars
         FavoriteSource.EXOPLANET -> R.string.search_source_exoplanets
+        FavoriteSource.NASA_IMAGE_OF_THE_DAY -> R.string.search_favorite_image_of_the_day
     }
 
 private val SearchSource.icon: ImageVector
@@ -504,4 +507,5 @@ private val SearchSource.icon: ImageVector
         SearchSource.SMALL_BODIES -> Icons.Outlined.Explore
         SearchSource.EARTH_EVENTS -> Icons.Outlined.Public
         SearchSource.LAUNCHES -> Icons.Outlined.RocketLaunch
+        SearchSource.NEWS -> Icons.Outlined.Newspaper
     }

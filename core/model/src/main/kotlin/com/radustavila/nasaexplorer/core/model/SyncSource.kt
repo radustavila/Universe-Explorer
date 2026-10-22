@@ -49,6 +49,21 @@ enum class SyncSource(val key: String) {
 
     /** Solar Dynamics Observatory latest pictures of the Sun. */
     SDO("sdo"),
+
+    /** NASA news (F14), one source per feed: nasa.gov stories. */
+    NASA_NEWS("nasa_news"),
+
+    /** nasa.gov news releases. */
+    NASA_NEWS_RELEASES("nasa_news_releases"),
+
+    /** science.nasa.gov articles. */
+    NASA_SCIENCE_NEWS("nasa_science_news"),
+
+    /** NASA Image of the Day. */
+    NASA_IMAGE_OF_THE_DAY("nasa_image_of_the_day"),
+
+    /** NASA's YouTube channel feed. */
+    NASA_YOUTUBE("nasa_youtube"),
     ;
 
     companion object {

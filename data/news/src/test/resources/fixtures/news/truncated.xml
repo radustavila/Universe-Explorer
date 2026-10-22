@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/" xmlns="http://www.w3.org/2005/Atom">
+ <link rel="self" href="http://www.youtube.com/feeds/videos.xml?channel_id=UCLA_DiR1FfKNvjuUpBHmylQ"/>
+ <id>yt:channel:LA_DiR1FfKNvjuUpBHmylQ</id>
+ <yt:channelId>LA_DiR1FfKNvjuUpBHmylQ</yt:channelId>
+ <title>NASA</title>
+ <link rel="alternate" href="https://www.youtube.com/channel/UCLA_DiR1FfKNvjuUpBHmylQ"/>
+ <author>
+  <name>NASA</name>
+  <uri>https://www.youtube.com/channel/UCLA_DiR1FfKNvjuUpBHmylQ</uri>
+ </author>
+ <published>2008-06-03T18:44:30+00:00</published>
+ <entry>
+  <id>yt:video:ROboUHfPUrU</id>
+  <yt:videoId>ROboUHfPUrU</yt:videoId>
+  <yt:channelId>UCLA_DiR1FfKNvjuUpBHmylQ</yt:channelId>
+  <title>Live High-Definition Views from the International Space Station (Official NASA Stream)</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=ROboUHfPUrU"/>
+  <author>
+   <name>NASA</name>
+   <uri>https://www.youtube.com/channel/UCLA_DiR1FfKNvjuUpBHmylQ</uri>
+  </author>
+  <published>2026-10-22T14:29:44+00:00</published>
+  <updated>2026-10-22T14:58:00+00:00</updated>
+  <media:group>
+   <media:title>Live High-Definition Views from the International Space Station (Official NASA Stream)</media:title>
+   <media:content url="https://www.youtube.com/v/ROboUHfPUrU?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i3.ytimg.com/vi/ROboUHfPUrU/hqdefault.jpg" width="480" height="360"/>
+   <media:description>Live views from the International Space Station are streaming from an external camera mounted on the station's Harmony module. 
+
+The camera is looking forward at an angle so that International Docking Adapter 2 is visible. If the Harmony module camera is not available due to operational considerations for a longer period of time, a continuous loop of recorded Earth views will be displayed with the caption “Previously Recorded.”
+
+The space station orbits Earth about 250 miles (425 kilometers) above the surface. An international partnership of five space agencies from 15 countries operates the station, and it has been continuously occupied since November 2000. It's a microgravity laboratory where science, research, and human innovation make way for new technologies and research breakthroughs not possible on Earth. More: https://go.nasa.gov/3CkVtC8
+
+Did you know you can spot the station without a telescope? It looks like a fast-moving star, but you have to know when to look up. Download our mobile app for alerts to let you know when (and where) to spot the station and wave to the crew: https://www.nasa.gov/spot-the-station/
+
+https://nasa.gov/iss
+
+Credit: NASA</media:description>
+   <media:community>
+    <media:starRating count="903" average="5.00" min="1" max="5"/>
+    <media:statistics views="40424"/>
+   </media:community>
+  </media:group>
+ </entry>
+ <entry>
+  <id>yt:video:UleiRdWFG7o</id>
+  <yt:videoId>UleiRdWFG7o</yt:videoId>
+  <yt:channelId>UCLA_DiR1FfKNvjuUpBHmylQ</yt:channelId>
+  <title>U.S. Spacewalk Preview News Conference (Oct. 20, 2026)</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=UleiRdWFG7o"/>
+  <author>
+   <name>NASA</name>
+   <uri>https://www.youtube.com/channel/UCLA_DiR1FfKNvjuUpBHmylQ</uri>
+  </author>
+  <published>2026-10-20T18:30:12+00:00</published>
+  <updated>2026-10-22T17:35:10+00:00</updated>
+  <media:group>
+   <media:title>U.S. Spacewalk Preview News Conference (Oct. 20, 2026)</media:title>
+   <media:content url="https://www.youtube.com/v/UleiRdWFG7o?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i2.ytimg.com/vi/UleiRdWFG7o/hqdefault.jpg" width="480" height="360"/>
+   <media:description>We're giving a preview of two upcoming spacewalks on Oct. 29 and Nov. 5 to finish installing solar arrays that will provide more power to the International Space Station. 
+
+NASA astronaut Anil Menon and CSA (Canadian Space Agency) astronaut Joshua Kutryk will participate in both spacewalks. The spacewalks will be the 285th and 286th conducted in support of space station assembly, maintenance, and upgrades.
+
+NASA participants in the news conference include:
+- Gaurang Patel, operations integration manager, Low Earth Orbit Program
+- Garrett Hehn, spacewalk flight director, Flight Operations Directorate
+
+Learn more about the spacewalks: https://go.nasa.gov/4yRBm97
+Learn more about International Space Station operations and research: https://www.nasa.gov/station</media:description>
+   <media:community>
+    <media:starRating count="952" average="5.00" min="1" max="5"/>
+    <media:statistics views="71344"/>
+   </media:community>
+  </media:group>
+ </entry>
+ <entry>
+  <id>yt:video:hv867HnY4j4</id>
+  <yt:videoId>hv867HnY4j4</yt:videoId>
+  <yt:channelId>UCLA_DiR1FfKNvjuUpBHmylQ</yt:channelId>
+  <title>U.S. Spacewalk 100</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=hv867HnY4j4"/>
+  <author>
+   <name>NASA</name>
+   <uri>https://www.youtube.com/channel/UCLA_DiR1FfKNvjuUpBHmylQ</uri>
+  </author>
+  <published>2026-10-20T16:54:06+00:00</published>
+  <updated>2026-10-21T18:51:03+00:00</updated>
+  <media:group>
+   <media:title>U.S. Spacewalk 100</media:title>
+   <media:content url="https://www.youtube.com/v/hv867HnY4j4?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i1.ytimg.com/vi/hv867HnY4j4/hqdefault.jpg" width="480" height="360"/>
+   <media:description>Join us for a spacewalk milestone!
+
+NASA astronaut Anil Menon and CSA (Canadian Space Agency) astronaut Joshua Kutryk are participating in the 100th spacewalk conducted from the International Space Station's Quest airlock without the space shuttle present. This will be the 285th spacewalk conducted to build, maintain, and upgrade the orbiting laboratory.
+
+Menon and Kutryk are expected to begin their spacewalk at about 8:10 a.m. EDT (1210 UTC); they'll be installing a new International Space Station Roll-Out Solar Array (IROSA), which will boost the station's power.
+
+Learn more about today's spacewalk: https://go.nasa.gov/4yRBm97
+Get daily updates from the space station: https://www.nasa.gov/blogs/spacestation/</media:description>
+   <media:community>
+    <media:starRating count="48" average="5.00" min="1" max="5"/>
+    <media:statistics views="0"/>
+   </media:community>
+  </media:group>
+ </entry>
+ <entry>
+  <id>yt:video:Zezt6EsG9WE</id>
+  <yt:videoId>Zezt6EsG9WE</yt:videoId>
+  <yt:channelId>UCLA_DiR1FfKNvjuUpBHmylQ</yt:channelId>
+  <title>NASA Moon Base: Rovers and Lunar Terrain Vehicles (October 2026 Update)</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=Zezt6EsG9WE"/>
+  <author>
+   <name>NASA</name>
+   <uri>https://www.youtube.com/channel/UCLA_DiR1FfKNvjuUpBHmylQ</uri>
+  </author>
+  <published>2026-10-20T15:02:15+00:00</published>
+  <updated>2026-10-20T15:07:36+00:00</updated>
+  <media:group>
+   <media:title>NASA Moon Base: Rovers and Lunar Terrain Vehicles (October 2026 Update)</media:title>
+   <media:content url="https://www.youtube.com/v/Zezt6EsG9WE?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i3.ytimg.com/vi/Zezt6EsG9WE/hqdefault.jpg" width="480" height="360"/>
+   <media:description>There's a lot of ground to cover when you're building a Moon Base. 
+
+From robotic rovers exploring the rugged lunar landscape to lunar terrain vehicles carrying Artemis astronauts across the surface, mobility will play a crucial role in establishing an enduring human presence on the Moon.
+
+During the early phases of Moon Base development, these vehicles will help NASA investigate the lunar South Pole region, conduct scientific research, test new technologies, and gather the information that will inform future missions.
+
+In this Moon Base update, get a closer look at some of the lunar terrain vehicles and robotic rovers helping pave the way for humanity's first lunar outpost. 
+
+Learn more about these vehicles: https://www.nasa.gov/missions/moon-base/nasa-provides-progress-update-on-moon-base-rovers/
+Learn more about Moon Base: https://www.nasa.gov/moonbase/ 
+
+[0:00] Introduction 
+[0:46] Lunar Rovers 
+[1:32] VIPER 
+[4:43] The Time of Apollo 
+[5:15] Lunar Terrain Vehicle (LTV) 
+[8:48] Outro</media:description>
+   <media:community>
+    <media:starRating count="8786" average="5.00" min="1" max="5"/>
+    <media:statistics views="620055"/>
+   </media:community>
+  </media:group>
+ </entry>
+ <entry>
+  <id>yt:video:ivng4U5xeYM</id>
+  <yt:videoId>ivng4U5xeYM</yt:videoId>
+  <yt:channelId>UCLA_DiR1FfKNvjuUpBHmylQ</yt:channelId>
+  <title>NASA's SpaceX Crew-12 Postflight News Conference (Oct. 15, 2026)</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=ivng4U5xeYM"/>
+  <author>
+   <name>NASA</name>
+   <uri>https://www.youtube.com/channel/UCLA_DiR1FfKNvjuUpBHmylQ</uri>
+  </author>
+  <published>2026-10-15T20:12:26+00:00</published>
+  <updated>2026-10-18T21:47:55+00:00</updated>
+  <media:group>
+   <media:title>NASA's SpaceX Crew-12 Postflight News Conference (Oct. 15, 2026)</media:title>
+   <media:content url="https://www.youtube.com/v/ivng4U5xeYM?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i2.ytimg.com/vi/ivng4U5xeYM/hqdefault.jpg" width="480" height="360"/>
+   <media:description>After spending over seven months in space, members of NASA’s SpaceX Crew-12 will discuss their mission aboard the International Space Station during a news conference at the agency’s Johnson Space Center in Houston.
+
+NASA astronauts Jessica Meir and Jack Hathaway, ESA (European Space Agency) astronaut Sophie Adenot, and Roscosmos cosmonaut Andrey Fedyaev returned to Earth on Oct. 8, after spending 237 days living and working in orbit. (Adenot will return to Europe and not be available during the news conference.)
+
+Learn more about Crew-12's science and technology research: https://go.nasa.gov/4jdAre7
+
+Watch Crew-12's return to Earth: https://youtube.com/live/x6p9Ri0DlNE
+
+Read more about Crew-12's return and today's event: https://go.nasa.gov/3UikER9</media:description>
+   <media:community>
+    <media:starRating count="974" average="5.00" min="1" max="5"/>
+    <media:statistics views="92936"/>
+   </media:community>
+  </media:group>
+ </entry>
+ <entry>
+  <id>yt:video:-jPQmjMWy9I</id>
+  <yt:videoId>-jPQmjMWy9I</yt:videoId>
+  <yt:channelId>UCLA_DiR1FfKNvjuUpBHmylQ</yt:channelId>
+  <title>NASA's SpaceX 35th Commercial Resupply Services Rendezvous and Docking</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=-jPQmjMWy9I"/>
+  <author>
+   <name>NASA</name>
+   <uri>https://www.youtube.com/channel/UCLA_DiR1FfKNvjuUpBHmylQ</uri>
+  </author>
+  <published>2026-10-15T14:49:15+00:00</published>
+  <updated>2026-10-16T06:56:10+00:00</updated>
+  <media:group>
+   <media:title>NASA's SpaceX 35th Commercial Resupply Services Rendezvous and Docking</media:title>
+   <media:content url="https://www.youtube.com/v/-jPQmjMWy9I?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i2.ytimg.com/vi/-jPQmjMWy9I/hqdefault.jpg" width="480" height="360"/>
+   <media:description>Following a successful launch on Oct. 13, 2026, an uncrewed SpaceX Dragon cargo spacecraft will plan to rendezvous with and dock to the International Space Station. The spacecraft, which is carrying over 6,300 pounds of supplies, is scheduled to dock autonomously at about 10:30 a.m. EDT (1430 UTC).
+
+In addition to cargo for the crew aboard the space station, Dragon will deliver several new science experiments that could help restore vision for people on Earth with artificial eye retinas, develop more realistic heart tissue models for disease research, and identify new treatment targets for diseases like Alzheimer’s, Parkinson’s, and multiple sclerosis.
+
+Dragon is scheduled to remain at the space station for one month before undocking and splashing down off the coast of California.
+
+Learn more about the mission: https://www.nasa.gov/general/nasas-spacex-35th-commercial-resupply-mission-overview/
+
+Learn more about International Space Station operations and research: https://www.nasa.gov/station</media:description>
+   <media:community>
+    <media:starRating count="1967" average="5.00" min="1" max="5"/>
+    <media:statistics views="122538"/>
+   </media:community>
+  </media:group>
+ </entry>
+ <entry>
+  <id>yt:video:5b3n-u_0QAI</id>
+  <yt:videoId>5b3n-u_0QAI</yt:videoId>
+  <yt:channelId>UCLA_DiR1FfKNvjuUpBHmylQ</yt:channelId>
+  <title>Planetary Defenders: This Is Not an Exercise</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=5b3n-u_0QAI"/>
+  <author>
+   <name>NASA</name>
+   <uri>https://www.youtube.com/channel/UCLA_DiR1FfKNvjuUpBHmylQ</uri>
+  </author>
+  <published>2026-10-14T15:05:17+00:00</published>
+  <updated>2026-10-19T15:05:40+00:00</updated>
+  <media:group>
+   <media:title>Planetary Defenders: This Is Not an Exercise</media:title>
+   <media:content url="https://www.youtube.com/v/5b3n-u_0QAI?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i2.ytimg.com/vi/5b3n-u_0QAI/hqdefault.jpg" width="480" height="360"/>
+   <media:description>When a newly discovered asteroid posed a potential risk to Earth, a global planetary defense system was put to the test like never before. 
+
+Planetary Defenders: This Is Not an Exercise tells the story of how NASA, its international partners, the astronomy community, and scientists around the world raced to observe and track the asteroid, understand its orbit into the future, calculate its impact probabilities, and eventually retire it from the risk list.
+
+Learn more about NASA’s efforts to find, track and monitor near-Earth asteroids: https://science.nasa.gov/planetary-defense/
+Download this episode: https://images.nasa.gov/details/NHQ_2026_0928_Planetar

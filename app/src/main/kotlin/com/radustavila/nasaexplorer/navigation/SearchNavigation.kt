@@ -5,6 +5,7 @@ import com.radustavila.nasaexplorer.core.model.SearchTarget
 import com.radustavila.nasaexplorer.feature.details.navigateToDetails
 import com.radustavila.nasaexplorer.feature.earthevents.navigateToEarthEvents
 import com.radustavila.nasaexplorer.feature.exoplanets.navigateToExoplanetDetails
+import com.radustavila.nasaexplorer.feature.news.navigateToNewsItem
 import com.radustavila.nasaexplorer.feature.spaceweather.navigateToSmallBody
 import com.radustavila.nasaexplorer.feature.universe.navigateToNasaMedia
 import com.radustavila.nasaexplorer.ui.navigateToTopLevel
@@ -22,6 +23,7 @@ internal fun NavHostController.openSearchTarget(target: SearchTarget) {
         // Neither has a screen per item: events are listed together, launches on the Today tab.
         is SearchTarget.EarthEventEntry -> navigateToEarthEvents()
         is SearchTarget.LaunchEntry -> navigateToTopLevel(TopLevelDestination.TODAY)
+        is SearchTarget.NewsEntry -> navigateToNewsItem(target.id)
         is SearchTarget.Favorite -> openFavorite(target.item)
     }
 }

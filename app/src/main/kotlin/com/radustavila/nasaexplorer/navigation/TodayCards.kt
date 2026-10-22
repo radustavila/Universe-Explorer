@@ -26,6 +26,9 @@ import com.radustavila.nasaexplorer.feature.earth.EarthTodayCard
 import com.radustavila.nasaexplorer.feature.earthevents.RightNowOnEarthCard
 import com.radustavila.nasaexplorer.feature.earthevents.navigateToEarthEvents
 import com.radustavila.nasaexplorer.feature.launches.NextLaunchesCard
+import com.radustavila.nasaexplorer.feature.news.navigateToNews
+import com.radustavila.nasaexplorer.feature.news.navigateToNewsItem
+import com.radustavila.nasaexplorer.feature.news.today.LatestFromNasaCard
 import com.radustavila.nasaexplorer.feature.search.SearchLauncher
 import com.radustavila.nasaexplorer.feature.search.navigateToSearch
 import com.radustavila.nasaexplorer.feature.settings.navigateToCustomizeToday
@@ -66,6 +69,12 @@ internal fun todayCards(navController: NavHostController): Map<TodayCardId, @Com
     TodayCardId.ISS_NOW to { IssNowCard(onClick = { navController.navigateToSkyTonight() }) }, // F5
     TodayCardId.SKY_TONIGHT to { SkyTonightSummaryCard(onClick = { navController.navigateToSkyTonight() }) }, // F5
     TodayCardId.SPACE_WEATHER to { SpaceWeatherTodayCard(onClick = { navController.navigateToSpaceWeather() }) }, // F6
+    TodayCardId.NASA_NEWS to {
+        LatestFromNasaCard(
+            onSeeAllClick = { navController.navigateToNews() },
+            onImageClick = navController::navigateToNewsItem,
+        )
+    }, // F14
 )
 
 /**

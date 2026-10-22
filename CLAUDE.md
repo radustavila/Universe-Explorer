@@ -56,7 +56,9 @@ Clean Architecture, dependencies pointing inward:
   `RoomFavoritesRepository`), `:core:datastore`, `:core:cache` (`CacheEvictor` + daily `CacheEvictionWorker`).
   `:data:launches` (Launch Library 2) keeps its own small `launches.db`, refreshed from `ApodSyncWorker` at most
   once an hour. `:data:earthevents` (NASA EONET) keeps `earth_events.db`, refreshed by its own 3-hourly
-  `EarthEventsSyncWorker` and when the events screen opens.
+  `EarthEventsSyncWorker` and when the events screen opens. `:data:news` (F14) parses NASA's RSS feeds and
+  YouTube's Atom feed with one `FeedParser` into `news.db`, with no background job: the News screen and the Today
+  card refresh it (3 h interval, one `SyncSource` per feed); stories open in a Custom Tab, videos in YouTube.
 - **Presentation**: `:feature:*` (one screen each: Compose UI, ViewModel, immutable `UiState`, own type-safe
   `@Serializable` route + `NavGraphBuilder` extension), `:feature:widget` (Glance), `:core:notifications`,
   `:core:designsystem` (theme, shared components like `ApodCard`/`NasaAsyncImage`, `AppError`→`UiError` mapping),

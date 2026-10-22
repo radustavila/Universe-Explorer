@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.feature.settings.today
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.LocalFireDepartment
+import androidx.compose.material.icons.outlined.Newspaper
 import androidx.compose.material.icons.outlined.NightsStay
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.RocketLaunch
@@ -29,6 +30,7 @@ internal val TodayCardId.titleRes: Int
         TodayCardId.ISS_NOW -> R.string.customize_today_card_iss
         TodayCardId.SKY_TONIGHT -> R.string.customize_today_card_sky
         TodayCardId.SPACE_WEATHER -> R.string.customize_today_card_space_weather
+        TodayCardId.NASA_NEWS -> R.string.customize_today_card_news
     }
 
 @get:StringRes
@@ -40,6 +42,7 @@ internal val TodayCardId.descriptionRes: Int
         TodayCardId.ISS_NOW -> R.string.customize_today_card_iss_description
         TodayCardId.SKY_TONIGHT -> R.string.customize_today_card_sky_description
         TodayCardId.SPACE_WEATHER -> R.string.customize_today_card_space_weather_description
+        TodayCardId.NASA_NEWS -> R.string.customize_today_card_news_description
     }
 
 internal val TodayCardId.icon: ImageVector
@@ -50,4 +53,5 @@ internal val TodayCardId.icon: ImageVector
         TodayCardId.ISS_NOW -> Icons.Outlined.SatelliteAlt
         TodayCardId.SKY_TONIGHT -> Icons.Outlined.NightsStay
         TodayCardId.SPACE_WEATHER -> Icons.Outlined.WbSunny
+        TodayCardId.NASA_NEWS -> Icons.Outlined.Newspaper
     }

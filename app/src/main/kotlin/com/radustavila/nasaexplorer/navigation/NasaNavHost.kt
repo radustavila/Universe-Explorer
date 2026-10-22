@@ -25,6 +25,9 @@ import com.radustavila.nasaexplorer.feature.feed.feedScreen
 import com.radustavila.nasaexplorer.feature.mars.marsPhotoScreen
 import com.radustavila.nasaexplorer.feature.mars.marsPhotosScreen
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
+import com.radustavila.nasaexplorer.feature.news.navigateToNewsItem
+import com.radustavila.nasaexplorer.feature.news.newsItemScreen
+import com.radustavila.nasaexplorer.feature.news.newsScreen
 import com.radustavila.nasaexplorer.feature.search.searchScreen
 import com.radustavila.nasaexplorer.feature.settings.aboutScreen
 import com.radustavila.nasaexplorer.feature.settings.customizeTodayScreen
@@ -101,6 +104,7 @@ fun NasaNavHost(
                 },
             )
             skyTonightScreen(onBackClick = navController::popBackStack)
+            newsScreen(onBackClick = navController::popBackStack, onImageClick = navController::navigateToNewsItem)
             gallerySearchScreen(
                 onMediaClick = navController::navigateToNasaMedia,
                 listDetail = listDetail(
@@ -139,6 +143,7 @@ fun NasaNavHost(
                     nasaMediaDetailsScreen(onBackClick = onBackClick)
                     exoplanetDetailsScreen(onBackClick = onBackClick)
                     marsPhotoScreen(onBackClick = onBackClick)
+                    newsItemScreen(onBackClick = onBackClick)
                 },
             )
         }
@@ -168,6 +173,7 @@ fun NasaNavHost(
         nasaMediaDetailsScreen(onBackClick = navController::popBackStack)
         marsPhotoScreen(onBackClick = navController::popBackStack)
         exoplanetDetailsScreen(onBackClick = navController::popBackStack)
+        newsItemScreen(onBackClick = navController::popBackStack)
         // From Settings and from Today's header, without switching tabs.
         customizeTodayScreen(onBackClick = navController::popBackStack)
         searchScreen(

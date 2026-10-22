@@ -27,6 +27,9 @@ enum class SearchSource {
 
     /** Upcoming rocket launches. */
     LAUNCHES,
+
+    /** Cached NASA news: stories, science articles, Images of the Day and videos. */
+    NEWS,
 }
 
 /** Where opening a [SearchHit] leads; `:app` maps each target to its feature's route. */
@@ -41,6 +44,9 @@ sealed interface SearchTarget {
 
     /** Launches are listed on the Today tab. */
     data class LaunchEntry(val id: String) : SearchTarget
+
+    /** A cached news item; opens on its own screen, which links to the page or video. */
+    data class NewsEntry(val id: String) : SearchTarget
 
     /** Opens the favourite in the screen of the feature it was saved from. */
     data class Favorite(val item: FavoriteItem) : SearchTarget

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/">
+<channel>
+	<title>NASA Image of the Day</title>
+	<description>The latest NASA &quot;Image of the Day&quot; image.</description>
+	<link>https://www.nasa.gov/image-of-the-day/</link>
+	<atom:link href="https://www.nasa.gov/feeds/iotd-feed/" rel="self" type="application/rss+xml" />
+	<language>en-us</language>
+	<managingEditor>brian.dunbar@nasa.gov (Brian Dunbar)</managingEditor>
+	<webMaster>brian.dunbar@nasa.gov (Brian Dunbar)</webMaster>
+	<docs>http://blogs.law.harvard.edu/tech/rss</docs>
+		<item>
+			<title>Science on the Space Station with NASA Astronaut Jessica Watkins</title>
+			<link>https://www.nasa.gov/image-detail/iss075e0190239/</link>
+			<description>NASA astronaut and Expedition 75 flight engineer Jessica Watkins works inside the Kibo laboratory module&#039;s Life Science Glovebox, safely mixing living cell samples with a bioink and then filling a special cartridge with the cell‑ink mixture.</description>
+			<enclosure url="https://www.nasa.gov/wp-content/uploads/2026/10/iss075e0190239orig.jpg" length="2118596" type="image/jpeg" />
+			<guid isPermaLink="false">https://www.nasa.gov/image-detail/iss075e0190239/</guid>
+			<pubDate>Wed, 21 Oct 2026 15:07 GMT</pubDate>
+			<source url="https://www.nasa.gov/feeds/iotd-feed/">NASA Image of the Day</source>
+		</item>
+		<item>
+			<title>Webb Captures Stellar Jets</title>
+			<link>https://www.nasa.gov/image-detail/55572978759-545472774e-o/</link>
+			<description>NASA’s James Webb Space Telescope has revealed many protostars and stars within the glowing gases of NGC 7129. Hot, atomic hydrogen gas is shown here in the golden region, while cooler, molecular hydrogen gas, shocked by embedded protostars, is represented in red.</description>
+			<enclosure url="https://www.nasa.gov/wp-content/uploads/2026/10/55572978759-545472774e-o.png" length="208563652" type="image/png" />
+			<guid isPermaLink="false">https://www.nasa.gov/image-detail/55572978759-545472774e-o/</guid>
+			<pubDate>Tue, 20 Oct 2026 14:45 GMT</pubDate>
+			<source url="https://www.nasa.gov/feeds/iotd-feed/">NASA Image of the Day</source>
+		</item>
+		<item>
+			<title>Martian Dawn</title>
+			<link>https://www.nasa.gov/image-detail/1-pia26728-fig-a-curiosity-captures-dawn-breaking-on-wind-carved-cliffs-2/</link>
+			<description>The captivating shapes of wind-carved crags called yardangs are revealed in this zoomed-in crop of a broader panorama captured by NASA’s Curiosity Mars rover. Scientists are eager to learn more about how the yardang layer formed.</description>
+			<enclosure url="https://www.nasa.gov/wp-content/uploads/2026/10/1-pia26728-fig-a-curiosity-captures-dawn-breaking-on-wind-carved-cliffs.webp" length="1222085" type="image/png" />
+			<guid isPermaLink="false">https://www.nasa.gov/image-detail/1-pia26728-fig-a-curiosity-captures-dawn-breaking-on-wind-carved-cliffs-2/</guid>
+			<pubDate>Mon, 19 Oct 2026 16:05 GMT</pubDate>
+			<source url="https://www.nasa.gov/feeds/iotd-feed/">NASA Image of the Day</source>
+		</item>
+		<item>
+			<title>Artemis II Heat Shield After Splashdown</title>
+			<link>https://www.nasa.gov/image-detail/afs-8-101-1320/</link>
+			<description>Shortly after Artemis II splashdown on April 10, 2026, U.S. Navy divers captured underwater imagery of the Orion spacecraft’s heat shield.</description>
+			<enclosure url="https://www.nasa.gov/wp-content/uploads/2026/10/ksc-20260411-navy01-0045orig-rotated.jpg" length="2514968" type="image/jpeg" />
+			<guid isPermaLink="false">https://www.nasa.gov/image-detail/afs-8-101-1320/</guid>
+			<pubDate>Fri, 16 Oct 2026 16:33 GMT</pubDate>
+			<source url="https://www.nasa.gov/feeds/iotd-feed/">NASA Image of the Day</source>
+		</item>
+		<item>
+			<title>Chandra Finds Possible Origin of &#039;Treble Clef&#039; Waves</title>
+			<link>https://www.nasa.gov/image-detail/shape-3601-3601/</link>
+			<description>Astronomers have used NASA’s Chandra X-ray Observatory to break down the cause of a remarkable formation of radio waves they have nicknamed the “Treble Clef” because its distinct shape strongly resembles the musical symbol.</description>
+			<enclosure url="https://www.nasa.gov/wp-content/uploads/2026/10/trebleclef-lg.jpg" length="5299595" type="image/jpeg" />
+			<guid isPermaLink="false">https://www.nasa.gov/image-detail/shape-3601-3601/</guid>
+			<pubDate>Thu, 15 Oct 2026 14:20 GMT</pubDate>
+			<source url="https://www.nasa.gov/feeds/iotd-feed/">NASA Image of the Day</source>
+		</item>
+		<item>
+			<title>NASA’s SpaceX CRS-35 Launch Jellyfish</title>
+			<link>https://www.nasa.gov/image-detail/nasas-spacex-crs-35-launch/</link>
+			<description>The exhaust plumes of a SpaceX Falcon 9 rocket carrying the company’s Dragon spacecraft are seen illuminated by sunlight against the predawn sky during the launch of NASA’s SpaceX CRS-35 mission, Tuesday, Oct. 13, 2026, as seen from Cocoa Beach, Florida. The light makes the plumes look like a jellyfish in the sky.</description>
+			<enclosure url="https://www.nasa.gov/wp-content/uploads/2026/10/nhq20261013-admin-0005orig.jpg" length="15430381" type="image/jpeg" />
+			<guid isPermaLink="false">https://www.nasa.gov/image-detail/nasas-spacex-crs-35-launch/</guid>
+			<pubDate>Wed, 14 Oct 2026 15:19 GMT</pubDate>
+			<source url="https://www.nasa.gov/feeds/iotd-feed/">NASA Image of the Day</source>
+		</item>
+		<item>
+			<title>Transporter-18 SmallSats Encapsulation</title>
+			<link>https://www.nasa.gov/image-detail/afs-8-101-1315/</link>
+			<description>Three NASA-supported small spacecraft, shown along with many commercial payloads, before being encapsulated in a SpaceX Falcon 9. The rocket launched the payloads into low-Earth orbit at 11:32 a.m. PDT Thursday, Oct. 1, 2026, as part of the company’s Transporter-18 mission from Space Launch Complex 4 East at Vandenberg Space Force Base in California.</description>
+			<enclosure url="https://www.nasa.gov/wp-content/uploads/2026/10/ksc-20261001-ph-spx01-0001orig.jpg" length="1112412" type="image/jpeg" />
+			<guid isPermaLink="false">https://www.nasa.gov/image-detail/afs-8-101-1315/</guid>
+			<pubDate>Tue, 13 Oct 2026 17:52 GMT</pubDate>
+			<source url="https://www.nasa.gov/feeds/iotd-feed/">NASA Image of the Day</source>
+		</item>
+		<item>
+			<title>Cosmic House of Mirrors</title>
+			<link>https://www.nasa.gov/image-detail/galaxies-in-a-cosmic-house-of-mirrors/</link>
+			<description>This NASA/ESA/CSA James Webb Space Telescope Picture of the Month features galaxies in incredible detail that have been warped and multiplied like they’ve stepped into a house of mirrors.</description>
+			<enclosure url="https://www.nasa.gov/wp-content/uploads/2026/10/55558916046-731625cbe5-o.jpg" length="4029963" type="image/jpeg" />
+			<guid isPermaLink="false">https://www.nasa.gov/image-detail/galaxies-in-a-cosmic-house-of-mirrors/</guid>
+			<pubDate>Fri, 09 Oct 2026 14:28 GMT</pubDate>
+			<source url="https://www.nasa.gov/feeds/iotd-feed/">NASA Image of the Day</source>
+		</item>
+		<item>
+			<title>Crew-12 Returns to Earth</title>
+			<link>https://www.nasa.gov/image-detail/nasas-spacex-crew-12-splashdown-2/</link>
+			<description>The SpaceX Crew Dragon Freedom spacecraft is seen as it lands with NASA astronauts Jessica Meir and Jack Hathaway, ESA (European Space Agency) astronaut Sophie Adenot, and Roscosmos cosmonaut Andrey Fedyaev aboard in the Pacific Ocean off the coast of Los Angeles, Calif., Thursday, Oct. 8, 2026.</description>
+			<enclosure url="https://www.nasa.gov/wp-content/uploads/2026/10/55577377940-a59482db3e-o.jpg" length="2799555" type="image/jpeg" />
+			<guid isPermaLink="false">https://www.nasa.gov/image-detail/nasas-spacex-crew-12-splashdown-2/</guid>
+			<pubDate>Thu, 08 Oct 2026 18:53 GMT</pubDate>
+			<source url="https://www.nasa.gov/feeds/iotd-feed/">NASA Image of the Day</source>
+		</item>
+		<item>
+			<title>Artemis II Crew Moon Photo Annotations</title>
+			<link>https://www.nasa.gov/image-detail/fd07_impact-flashes/</link>
+			<description>A visualization of a dark Moon eclipsing the Sun is marked with handwritten notes in this April 6, 2026, screenshot from an Artemis II crew member&#039;s tablet.</description>
+			<enclosure url="https://www.nasa.gov/wp-content/uploads/2026/10/art002e016252.jpg" length="233950" type="image/jpeg" />
+			<guid isPermaLink="false">https://www.nasa.gov/image-detail/fd07_impact-flashes/</guid>
+			<pubDate>Wed, 07 Oct 2026 15:46 GMT</pubDate>
+			<source url="https://www.nasa.gov/feeds/iotd-feed/">NASA Image of the Day</source>
+		</item>
+		<item>
+			<title>Astronomers Solve Cosmic Cold Case with NASA Hubble Data</title>
+			<link>https://www.nasa.gov/image-detail/stsci-01m3cbk3t6srkp4q7wv9cgfgw9/</link>
+			<description>This artist’s concept depicts a possible explanation for the unusual chemical abundances NASA’s Hubble Space Telescope detected in the HS 0209+0832 system: a second-generation planet orbiting the white dwarf star.</description>
+			<enclosure url="https://www.nasa.gov/wp-content/uploads/2026/10/stsci-01m3cbk3t6srkp4q7wv9cgfgw9.jpg" length="2041589" type="image/jpeg" />
+			<guid isPermaLink="false">https://www.nasa.gov/image-detail/stsci-01m3cbk3t6srkp4q7wv9cgfgw9/</guid>
+			<pubDate>Tue, 06 Oct 2026 16:17 GMT</pubDate>
+			<source url="https://www.nasa.gov/feeds/iotd-feed/">NASA Image of the Day</source>
+		</item>
+		<item>
+			<title>NASA Astronaut Christina Koch at Eagles vs. Rams</title>
+			<link>https://www.nasa.gov/image-detail/nasas-inspiration-tour-at-lincoln-financial-field/</link>
+			<description>NASA astronaut and mission specialist of the agency&#039;s Artemis II mission, Christina Koch, led the fans in singing the Eagles Fight Song from the field at an NFL game between the Philadelphia Eagles and the Los Angeles Rams at Lincoln Financial Field on Sunday, Oct. 4, 2026, in Philadelphia.</description>
+			<enclosure url="https://www.nasa.gov/wp-content/uploads/2026/10/nhq202610040010orig.jpg" length="4500611" type="image/jpeg" />
+			<guid isPermaLink="false">https://www.nasa.gov/image-detail/nasas-inspiration-tour-at-lincoln-financial-field/</guid>
+			<pubDate>Mon, 05 Oct 2026 17:45 GMT</pubDate>
+			<source url="https://www.nasa.gov/feeds/iotd-feed/">NASA Image of the Day</source>
+		</item>
+</channel>
+</rss>
