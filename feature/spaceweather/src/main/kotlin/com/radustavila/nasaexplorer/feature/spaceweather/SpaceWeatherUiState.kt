@@ -9,6 +9,8 @@ import com.radustavila.nasaexplorer.core.model.CoronalMassEjection
 import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.KpReading
 import com.radustavila.nasaexplorer.core.model.SolarFlare
+import com.radustavila.nasaexplorer.core.model.SunChannel
+import com.radustavila.nasaexplorer.core.model.SunImage
 import java.time.Instant
 
 @Immutable
@@ -22,6 +24,9 @@ data class SpaceWeatherUiState(
     val hemisphere: Hemisphere = Hemisphere.North,
     val flare: SolarFlare? = null,
     val cme: CoronalMassEjection? = null,
+    /** Helioviewer's picture of the Sun at the latest flare's peak. */
+    val flareImageUrl: String? = null,
+    val sun: SunUiState = SunUiState(),
     val alerts: AuroraAlertSettings = AuroraAlertSettings(),
     val isRefreshing: Boolean = false,
     val isOffline: Boolean = false,
@@ -32,6 +37,33 @@ data class SpaceWeatherUiState(
 
     val freshness: DataFreshness
         get() = DataFreshness(lastUpdatedAt = lastUpdatedAt, isOffline = isOffline, lastRefreshFailed = lastRefreshFailed)
+}
+
+/** The "Sun now" card and its full-screen view. */
+@Immutable
+data class SunUiState(
+    val channel: SunChannel = SunChannel.VISIBLE_LIGHT,
+    /** The newest picture on the device; null until the first download. */
+    val image: SunImage? = null,
+    val videoUrl: String? = null,
+    val isRefreshing: Boolean = false,
+    val lastRefreshFailed: Boolean = false,
+    val video: SunVideo = SunVideo.Closed,
+) {
+    fun freshness(isOffline: Boolean): DataFreshness =
+        DataFreshness(lastUpdatedAt = image?.updatedAt, isOffline = isOffline, lastRefreshFailed = lastRefreshFailed)
+}
+
+/** Where the 48-hour video stands: it is never composed, so never downloaded, before [Playing]. */
+enum class SunVideo {
+    Closed,
+
+    /** Finding out whether the network is metered. */
+    Checking,
+
+    /** On mobile data: waiting for the user's tap. */
+    AskFirst,
+    Playing,
 }
 
 /** The aurora grid as map overlays, plus when NOAA observed and forecast it. */

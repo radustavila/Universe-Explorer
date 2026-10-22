@@ -1,7 +1,9 @@
 package com.radustavila.nasaexplorer.feature.spaceweather
 
 import androidx.lifecycle.SavedStateHandle
+import com.radustavila.nasaexplorer.core.domain.usecase.CanAutoPlaySunVideoUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.CheckAuroraAlertUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.GetSunImageAtUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveAuroraAlertSettingsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveAuroraForecastUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveConnectivityUseCase
@@ -9,16 +11,24 @@ import com.radustavila.nasaexplorer.core.domain.usecase.ObserveCurrentKpUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveKpForecastUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSolarActivityUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSpaceWeatherSyncStatusUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSunUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RefreshSourceUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RefreshSunImageUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RequestSpaceWeatherSyncUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.SelectSunChannelUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetAuroraAlertEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetAuroraAlertLocationUseCase
+import com.radustavila.nasaexplorer.core.common.error.AppError
+import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.model.AuroraAlertSettings
+import com.radustavila.nasaexplorer.core.model.SunChannel
 import com.radustavila.nasaexplorer.core.testing.data.TestSpaceWeather
 import com.radustavila.nasaexplorer.core.testing.fake.FakeAuroraAlertNotifier
 import com.radustavila.nasaexplorer.core.testing.fake.FakeAuroraAlertRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSpaceWeatherRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSpaceWeatherSyncScheduler
+import com.radustavila.nasaexplorer.core.testing.fake.FakeSunImageRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
@@ -45,6 +55,8 @@ class SpaceWeatherViewModelTest {
     private val network = FakeNetworkMonitor()
     private val clock = FakeTimeProvider(currentInstant = TestSpaceWeather.NOW)
     private val savedState = SavedStateHandle()
+    private val sun = FakeSunImageRepository()
+    private val metadata = FakeSyncMetadataRepository()
 
     private fun createViewModel(): SpaceWeatherViewModel {
         val check = CheckAuroraAlertUseCase(alerts, repository, notifier, clock)
@@ -58,6 +70,11 @@ class SpaceWeatherViewModelTest {
             observeSyncStatus = ObserveSpaceWeatherSyncStatusUseCase(scheduler, FakeSyncMetadataRepository()),
             observeConnectivity = ObserveConnectivityUseCase(network),
             requestSync = RequestSpaceWeatherSyncUseCase(scheduler),
+            observeSun = ObserveSunUseCase(sun),
+            selectSunChannel = SelectSunChannelUseCase(sun),
+            refreshSunImage = RefreshSunImageUseCase(sun, RefreshSourceUseCase(metadata, clock), clock),
+            canAutoPlaySunVideo = CanAutoPlaySunVideoUseCase(network),
+            getSunImageAt = GetSunImageAtUseCase(sun),
             setAlertEnabled = SetAuroraAlertEnabledUseCase(alerts, scheduler, check),
             setAlertLocation = SetAuroraAlertLocationUseCase(alerts, check),
             timeProvider = clock,
@@ -155,5 +172,79 @@ class SpaceWeatherViewModelTest {
         network.setOnline(true)
 
         assertEquals(2, scheduler.requests.size)
+    }
+
+    @Test
+    fun `the chosen channel's picture is fetched on open and after each switch`() = runTest {
+        val viewModel = createViewModel()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+
+        viewModel.onSunChannelSelected(SunChannel.FLARES)
+
+        assertEquals(listOf(SunChannel.VISIBLE_LIGHT, SunChannel.FLARES), sun.refreshes)
+        assertEquals(SunChannel.FLARES, viewModel.uiState.value.sun.channel)
+        assertEquals(sun.videoUrl(SunChannel.FLARES), viewModel.uiState.value.sun.videoUrl)
+    }
+
+    @Test
+    fun `offline, the cached picture shows with its age and a failed refresh is reported`() = runTest {
+        network.setOnline(false)
+        repository.kpForecast.value = TestSpaceWeather.forecast(2.0, 3.0, 3.33)
+        val picture = FakeSunImageRepository.image(SunChannel.VISIBLE_LIGHT, TestSpaceWeather.NOW.minusSeconds(3_600))
+        sun.images.value = mapOf(SunChannel.VISIBLE_LIGHT to picture)
+        sun.refreshResult = DataResult.Failure(AppError.NoConnection)
+        val viewModel = createViewModel()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+
+        val state = viewModel.uiState.value.sun
+        assertEquals(picture, state.image)
+        assertTrue(state.lastRefreshFailed)
+        assertEquals(picture.updatedAt, state.freshness(isOffline = true).lastUpdatedAt)
+    }
+
+    @Test
+    fun `pull to refresh asks SDO again even for a fresh picture`() = runTest {
+        sun.images.value = mapOf(
+            SunChannel.VISIBLE_LIGHT to FakeSunImageRepository.image(SunChannel.VISIBLE_LIGHT, TestSpaceWeather.NOW),
+        )
+        val viewModel = createViewModel()
+        assertTrue(sun.refreshes.isEmpty())
+
+        viewModel.onRefresh()
+
+        assertEquals(listOf(SunChannel.VISIBLE_LIGHT), sun.refreshes)
+    }
+
+    @Test
+    fun `on mobile data the video waits for a tap, on Wi-Fi it plays`() = runTest {
+        val viewModel = createViewModel()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+
+        network.unmetered = false
+        viewModel.onSunVideoSelected()
+        assertEquals(SunVideo.AskFirst, viewModel.uiState.value.sun.video)
+        viewModel.onSunVideoConfirmed()
+        assertEquals(SunVideo.Playing, viewModel.uiState.value.sun.video)
+
+        // Another channel is another download: asked again.
+        viewModel.onSunChannelSelected(SunChannel.CORONA)
+        assertEquals(SunVideo.AskFirst, viewModel.uiState.value.sun.video)
+
+        viewModel.onSunVideoClosed()
+        assertEquals(SunVideo.Closed, viewModel.uiState.value.sun.video)
+
+        network.unmetered = true
+        viewModel.onSunVideoSelected()
+        assertEquals(SunVideo.Playing, viewModel.uiState.value.sun.video)
+    }
+
+    @Test
+    fun `the latest flare links to Helioviewer's picture at its peak`() = runTest {
+        val flare = TestSpaceWeather.flare()
+        repository.latestFlare.value = flare
+        val viewModel = createViewModel()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+
+        assertEquals(sun.imageUrlAt(flare.peakTime ?: flare.beginTime), viewModel.uiState.value.flareImageUrl)
     }
 }
