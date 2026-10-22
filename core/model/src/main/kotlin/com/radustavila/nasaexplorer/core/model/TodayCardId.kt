@@ -16,10 +16,14 @@ enum class TodayCardId {
     DSN_NOW,
     SKY_EVENTS,
     STARGAZING,
+    NASA_NEWS,
     ;
 
     companion object {
-        /** What Today shows until the user customizes it: the cards it always had, in that order. */
-        val DEFAULT: List<TodayCardId> = listOf(EARTH_TODAY, EARTH_EVENTS, NEXT_LAUNCHES)
+        /**
+         * What Today shows until the user customizes it: the cards it always had, in that order,
+         * then the latest from NASA (F14), the roadmap's Today feature.
+         */
+        val DEFAULT: List<TodayCardId> = listOf(EARTH_TODAY, EARTH_EVENTS, NEXT_LAUNCHES, NASA_NEWS)
     }
 }

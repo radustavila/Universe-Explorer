@@ -77,6 +77,7 @@ dependencies {
     implementation(projects.data.dsn)
     implementation(projects.data.skyevents)
     implementation(projects.data.forecast)
+    implementation(projects.data.news)
 
     implementation(projects.feature.feed)
     implementation(projects.feature.details)
@@ -96,6 +97,7 @@ dependencies {
     implementation(projects.feature.settings)
     implementation(projects.feature.dsn)
     implementation(projects.feature.events)
+    implementation(projects.feature.news)
     implementation(projects.feature.skymap)
 
     implementation(libs.androidx.core.ktx)
@@ -138,6 +140,7 @@ dependencies {
     androidTestImplementation(projects.core.location)
     androidTestImplementation(projects.feature.sky)
     androidTestImplementation(projects.data.epic)
+    androidTestImplementation(projects.data.news)
     androidTestImplementation(projects.feature.earth)
     androidTestImplementation(projects.feature.feed)
     androidTestImplementation(projects.feature.details)

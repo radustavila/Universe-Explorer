@@ -30,6 +30,9 @@ import com.radustavila.nasaexplorer.feature.earthevents.navigateToEarthEvents
 import com.radustavila.nasaexplorer.feature.events.navigateToSkyEvents
 import com.radustavila.nasaexplorer.feature.events.next.NextInTheSkyCard
 import com.radustavila.nasaexplorer.feature.launches.NextLaunchesCard
+import com.radustavila.nasaexplorer.feature.news.navigateToNews
+import com.radustavila.nasaexplorer.feature.news.navigateToNewsItem
+import com.radustavila.nasaexplorer.feature.news.today.LatestFromNasaCard
 import com.radustavila.nasaexplorer.feature.search.SearchLauncher
 import com.radustavila.nasaexplorer.feature.search.navigateToSearch
 import com.radustavila.nasaexplorer.feature.settings.navigateToCustomizeToday
@@ -79,6 +82,12 @@ internal fun todayCards(navController: NavHostController): Map<TodayCardId, @Com
         )
     }, // F12
     TodayCardId.STARGAZING to { StargazingTodayCard(onClick = { navController.navigateToSkyTonight() }) }, // F11
+    TodayCardId.NASA_NEWS to {
+        LatestFromNasaCard(
+            onSeeAllClick = { navController.navigateToNews() },
+            onImageClick = navController::navigateToNewsItem,
+        )
+    }, // F14
 )
 
 /**

@@ -17,6 +17,7 @@ import com.radustavila.nasaexplorer.core.model.TodayCardId
 import com.radustavila.nasaexplorer.core.model.TodayCardId.EARTH_EVENTS
 import com.radustavila.nasaexplorer.core.model.TodayCardId.EARTH_TODAY
 import com.radustavila.nasaexplorer.core.model.TodayCardId.ISS_NOW
+import com.radustavila.nasaexplorer.core.model.TodayCardId.NASA_NEWS
 import com.radustavila.nasaexplorer.core.model.TodayCardId.NEXT_LAUNCHES
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTodayCardsRepository
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
@@ -52,7 +53,7 @@ class CustomizeTodayScreenTest {
         composeTestRule.onNodeWithTag(customizeTodaySwitchTestTag(ISS_NOW)).assertIsOn()
         composeTestRule.onNodeWithTag(customizeTodaySwitchTestTag(EARTH_TODAY)).performClick()
 
-        assertEquals(listOf(EARTH_EVENTS, NEXT_LAUNCHES, ISS_NOW), repository.currentTodayCards)
+        assertEquals(listOf(EARTH_EVENTS, NEXT_LAUNCHES, NASA_NEWS, ISS_NOW), repository.currentTodayCards)
         composeTestRule.onNodeWithTag(customizeTodaySwitchTestTag(EARTH_TODAY)).assertIsOff()
     }
 
@@ -70,7 +71,7 @@ class CustomizeTodayScreenTest {
         }
         composeTestRule.waitForIdle()
 
-        assertEquals(listOf(EARTH_EVENTS, EARTH_TODAY, NEXT_LAUNCHES), repository.currentTodayCards)
+        assertEquals(listOf(EARTH_EVENTS, EARTH_TODAY, NEXT_LAUNCHES, NASA_NEWS), repository.currentTodayCards)
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -80,7 +81,7 @@ class CustomizeTodayScreenTest {
 
         composeTestRule.onNodeWithTag(customizeTodayRowTestTag(NEXT_LAUNCHES))
             .performCustomAccessibilityActionWithLabel("Move up")
-        assertEquals(listOf(EARTH_TODAY, NEXT_LAUNCHES, EARTH_EVENTS), repository.currentTodayCards)
+        assertEquals(listOf(EARTH_TODAY, NEXT_LAUNCHES, EARTH_EVENTS, NASA_NEWS), repository.currentTodayCards)
 
         composeTestRule.onNodeWithTag(CUSTOMIZE_TODAY_RESET_TEST_TAG).performClick()
         assertEquals(TodayCardId.DEFAULT, repository.currentTodayCards)

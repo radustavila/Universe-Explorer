@@ -9,6 +9,7 @@ import com.radustavila.nasaexplorer.feature.details.navigateToDetails
 import com.radustavila.nasaexplorer.feature.earth.navigateToEpicPhoto
 import com.radustavila.nasaexplorer.feature.exoplanets.navigateToExoplanetDetails
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
+import com.radustavila.nasaexplorer.feature.news.navigateToNewsItem
 import com.radustavila.nasaexplorer.feature.universe.navigateToNasaMedia
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
@@ -30,6 +31,8 @@ internal fun NavController.openFavorite(item: FavoriteItem, navOptions: NavOptio
         FavoriteSource.MARS -> navigateToMarsPhoto(item.itemId, navOptions)
 
         FavoriteSource.EPIC -> EpicPhotoRef.fromFavoriteId(item.itemId)?.let { ref -> navigateToEpicPhoto(ref, navOptions) }
+
+        FavoriteSource.NASA_IMAGE_OF_THE_DAY -> navigateToNewsItem(item.itemId, navOptions)
     }
 }
 

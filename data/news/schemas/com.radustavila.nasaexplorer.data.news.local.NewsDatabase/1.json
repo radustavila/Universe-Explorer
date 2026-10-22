@@ -1,0 +1,108 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "805d3a15d7b9f7656db5810f58d0e30d",
+    "entities": [
+      {
+        "tableName": "news_item",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`feed` TEXT NOT NULL, `id` TEXT NOT NULL, `title` TEXT NOT NULL, `url` TEXT NOT NULL, `published_at` INTEGER NOT NULL, `summary` TEXT, `image_url` TEXT, `full_image_url` TEXT, `image_credit` TEXT, `is_live` INTEGER NOT NULL, `cached_at` INTEGER NOT NULL, PRIMARY KEY(`feed`, `id`))",
+        "fields": [
+          {
+            "fieldPath": "feed",
+            "columnName": "feed",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "publishedAtMillis",
+            "columnName": "published_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "summary",
+            "columnName": "summary",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "imageUrl",
+            "columnName": "image_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "fullImageUrl",
+            "columnName": "full_image_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "imageCredit",
+            "columnName": "image_credit",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isLive",
+            "columnName": "is_live",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cachedAtMillis",
+            "columnName": "cached_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "feed",
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_news_item_published_at",
+            "unique": false,
+            "columnNames": [
+              "published_at"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_news_item_published_at` ON `${TABLE_NAME}` (`published_at`)"
+          },
+          {
+            "name": "index_news_item_id",
+            "unique": false,
+            "columnNames": [
+              "id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_news_item_id` ON `${TABLE_NAME}` (`id`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '805d3a15d7b9f7656db5810f58d0e30d')"
+    ]
+  }
+}

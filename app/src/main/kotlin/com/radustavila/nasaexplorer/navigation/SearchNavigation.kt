@@ -6,6 +6,7 @@ import com.radustavila.nasaexplorer.feature.details.navigateToDetails
 import com.radustavila.nasaexplorer.feature.earthevents.navigateToEarthEvents
 import com.radustavila.nasaexplorer.feature.events.navigateToSkyEvents
 import com.radustavila.nasaexplorer.feature.exoplanets.navigateToExoplanetDetails
+import com.radustavila.nasaexplorer.feature.news.navigateToNewsItem
 import com.radustavila.nasaexplorer.feature.spaceweather.navigateToSmallBody
 import com.radustavila.nasaexplorer.feature.universe.navigateToNasaMedia
 import com.radustavila.nasaexplorer.ui.navigateToTopLevel
@@ -24,6 +25,7 @@ internal fun NavHostController.openSearchTarget(target: SearchTarget) {
         is SearchTarget.EarthEventEntry -> navigateToEarthEvents()
         is SearchTarget.LaunchEntry -> navigateToTopLevel(TopLevelDestination.TODAY)
         is SearchTarget.SkyEventEntry -> navigateToSkyEvents(target.id)
+        is SearchTarget.NewsEntry -> navigateToNewsItem(target.id)
         is SearchTarget.Favorite -> openFavorite(target.item)
     }
 }
