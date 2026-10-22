@@ -49,9 +49,19 @@ class AndroidNetworkMonitorTest {
         }
     }
 
-    private fun setActiveNetworkCapabilities(isValidated: Boolean) {
+    @Test
+    fun `an unmetered network allows bulk downloads, a metered one does not`() = runTest {
+        setActiveNetworkCapabilities(isValidated = true, isUnmetered = true)
+        assertTrue(networkMonitor.isUnmetered())
+
+        setActiveNetworkCapabilities(isValidated = true, isUnmetered = false)
+        assertFalse(networkMonitor.isUnmetered())
+    }
+
+    private fun setActiveNetworkCapabilities(isValidated: Boolean, isUnmetered: Boolean = false) {
         val capabilities = ShadowNetworkCapabilities.newInstance()
         shadowOf(capabilities).addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        if (isUnmetered) shadowOf(capabilities).addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED)
         if (isValidated) {
             shadowOf(capabilities).addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
         } else {

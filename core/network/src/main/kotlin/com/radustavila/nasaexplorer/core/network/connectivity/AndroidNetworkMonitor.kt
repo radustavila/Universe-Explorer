@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 
 /**
  * Callback-driven connectivity. Registers a single [ConnectivityManager.NetworkCallback] while the
@@ -69,6 +70,12 @@ class AndroidNetworkMonitor @Inject constructor(
         .conflate()
         .distinctUntilChanged()
         .flowOn(ioDispatcher)
+
+    override suspend fun isUnmetered(): Boolean = withContext(ioDispatcher) {
+        val connectivityManager = context.getSystemService<ConnectivityManager>() ?: return@withContext false
+        val capabilities = connectivityManager.activeNetwork?.let(connectivityManager::getNetworkCapabilities)
+        capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED) == true
+    }
 
     private fun ConnectivityManager.isCurrentlyOnline(): Boolean {
         val capabilities = activeNetwork?.let(::getNetworkCapabilities) ?: return false

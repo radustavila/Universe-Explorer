@@ -42,6 +42,17 @@ class SynchronizeEpicUseCaseTest {
         assertEquals(SourceRefreshResult.Completed(DataResult.Success(25)), result)
         assertEquals(EpicCollection.entries, repository.refreshedCollections)
         assertEquals(EpicCollection.entries, repository.prefetchedCollections)
+        // A metered network gets the thumbnails only.
+        assertEquals(emptyList<EpicCollection>(), repository.hdPrefetchedCollections)
+    }
+
+    @Test
+    fun `an unmetered network prefetches the HD images too`() = runTest {
+        networkMonitor.unmetered = true
+
+        synchronizeEpic()
+
+        assertEquals(EpicCollection.entries.toSet(), repository.hdPrefetchedCollections.toSet())
     }
 
     @Test

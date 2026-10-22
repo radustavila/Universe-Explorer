@@ -8,4 +8,10 @@ import kotlinx.coroutines.flow.Flow
  */
 interface NetworkMonitor {
     val isOnline: Flow<Boolean>
+
+    /**
+     * Whether the network in use right now is unmetered (Wi-Fi, Ethernet), where optional bulk
+     * downloads cost the user nothing. `false` when offline.
+     */
+    suspend fun isUnmetered(): Boolean
 }

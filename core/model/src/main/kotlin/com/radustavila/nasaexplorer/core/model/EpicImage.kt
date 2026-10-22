@@ -20,9 +20,15 @@ data class EpicImage(
     val caption: String,
     /** The point on Earth directly below the spacecraft, i.e. the centre of the disc. */
     val centroid: GeoPoint,
-    /** ~120 px, a few KB: what the rotation plays and what stays available offline. */
+    /**
+     * 120 px, a few KB: stands in for a rotation frame while its HD image loads, or when it cannot
+     * (offline). Every sync downloads the newest day's, so the rotation always plays offline.
+     */
     val thumbnailUrl: String,
-    /** 1080 px JPEG, a few hundred KB: what the paused and zoomed views load. */
+    /**
+     * 1080 px JPEG, about 200 KB: what the rotation plays and the zoomed view shows. Syncs on an
+     * unmetered network download the newest day's too, so it plays sharp offline as well.
+     */
     val imageUrl: String,
 ) {
     /** EPIC files its archive by UTC capture day. */

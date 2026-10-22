@@ -26,8 +26,9 @@ import kotlinx.coroutines.flow.first
  *
  * Both collections are refreshed on every run, concurrently, so the natural/enhanced toggle works
  * offline. Each collection is attempted even when the other fails; the first failure is what gets reported, so
- * the worker can still decide whether a retry is worth it. Rotation thumbnails are prefetched for
- * every collection that refreshed, which is what makes the latest day play offline after one sync.
+ * the worker can still decide whether a retry is worth it. The newest day's rotation images are
+ * prefetched for every collection that refreshed, which is what makes it play offline after one
+ * sync: the thumbnails always, the HD JPEGs (about 3 MB a collection) only on an unmetered network.
  * A successful run re-renders the Earth today widget.
  */
 class SynchronizeEpicUseCase @Inject constructor(
@@ -49,12 +50,13 @@ class SynchronizeEpicUseCase @Inject constructor(
     }
 
     private suspend fun refreshAllCollections(): DataResult<Int> {
+        val includeHd = networkMonitor.isUnmetered()
         // The collections are independent: refreshed (and prefetched) side by side.
         val results = coroutineScope {
             EpicCollection.entries.map { collection ->
                 async {
                     epicRepository.refreshLatest(collection).also { result ->
-                        if (result is DataResult.Success) epicRepository.prefetchLatestThumbnails(collection)
+                        if (result is DataResult.Success) epicRepository.prefetchLatestImages(collection, includeHd)
                     }
                 }
             }.awaitAll()

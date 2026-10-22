@@ -33,6 +33,9 @@ class FakeEpicRepository : EpicRepository {
     val fetchedDays: MutableList<Pair<EpicCollection, LocalDate>> = mutableListOf()
     val prefetchedCollections: MutableList<EpicCollection> = mutableListOf()
 
+    /** The collections whose prefetch included the HD images. */
+    val hdPrefetchedCollections: MutableList<EpicCollection> = mutableListOf()
+
     fun setImages(list: List<EpicImage>) {
         images.value = list
     }
@@ -69,7 +72,8 @@ class FakeEpicRepository : EpicRepository {
         return result
     }
 
-    override suspend fun prefetchLatestThumbnails(collection: EpicCollection) {
+    override suspend fun prefetchLatestImages(collection: EpicCollection, includeHd: Boolean) {
         prefetchedCollections += collection
+        if (includeHd) hdPrefetchedCollections += collection
     }
 }

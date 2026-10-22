@@ -40,8 +40,9 @@ interface EpicRepository {
     suspend fun fetchDay(collection: EpicCollection, date: LocalDate): DataResult<Int>
 
     /**
-     * Downloads the small rotation images of the newest cached day ahead of time, so the rotation
-     * plays offline even if it was never opened online. Best effort: failures are not reported.
+     * Downloads the newest cached day's images ahead of time, so its rotation plays offline even if
+     * it was never opened online: always the thumbnails, and with [includeHd] the HD JPEGs too.
+     * Best effort: failures are not reported.
      */
-    suspend fun prefetchLatestThumbnails(collection: EpicCollection)
+    suspend fun prefetchLatestImages(collection: EpicCollection, includeHd: Boolean)
 }

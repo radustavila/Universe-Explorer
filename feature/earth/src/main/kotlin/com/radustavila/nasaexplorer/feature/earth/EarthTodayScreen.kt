@@ -54,6 +54,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -85,7 +86,10 @@ import com.radustavila.nasaexplorer.core.model.GeoPoint
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
 
 const val EARTH_PAGER_TEST_TAG = "earth-pager"
 const val EARTH_CALENDAR_BUTTON_TEST_TAG = "earth-calendar-button"
@@ -130,6 +134,7 @@ internal fun EarthTodayContent(
     footer: (@Composable () -> Unit)? = null,
     /** Tests turn this off: an endless rotation would never let the UI go idle. */
     autoPlay: Boolean = true,
+    frameImageLoader: FrameImageLoader = rememberFrameImageLoader(),
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val errorMessage = uiState.error?.asText()
@@ -252,6 +257,7 @@ internal fun EarthTodayContent(
                                     initialImageId = uiState.focusedImageId,
                                     favoriteIds = uiState.favoriteIds,
                                     onToggleFavorite = onToggleFavorite,
+                                    frameImageLoader = frameImageLoader,
                                 )
                             }
                         }
@@ -332,9 +338,11 @@ private fun CollectionToggle(
 /**
  * The day's photos as a rotation: a pager that advances on its own, so Earth visibly turns.
  *
- * While playing, frames are the few-KB thumbnails, which the sync prefetches and therefore play
- * offline. Once paused (or swiped by hand) the frame on screen sharpens to the full JPEG, drawn
- * over its thumbnail; tapping it opens the zoomable full-size view.
+ * Every frame is the HD JPEG, playing or paused, drawn over its thumbnail: the thumbnail is what
+ * shows while the HD file loads, and what plays when it cannot load (offline before the day was
+ * ever downloaded). The day's HD frames are downloaded as soon as it opens (see
+ * [HdFramePreloader]), and each frame stays on screen until the next one is ready to draw sharp,
+ * but never much longer than its turn. Tapping a frame opens the zoomable full-size view.
  *
  * Opened for one photo ([initialImageId], a favourite), it starts on that frame and holds still.
  * With reduced motion (system animations removed) it also starts paused; play still works.
@@ -347,9 +355,14 @@ private fun EarthRotation(
     initialImageId: String?,
     favoriteIds: Set<String>,
     onToggleFavorite: (EpicImage) -> Unit,
+    frameImageLoader: FrameImageLoader,
 ) {
     val initialPage = images.indexOfFirst { it.identifier == initialImageId }
     val pagerState = rememberPagerState(initialPage = initialPage.coerceAtLeast(0), pageCount = { images.size })
+    val hdFrames = remember(images, frameImageLoader) {
+        HdFramePreloader(urls = images.map(EpicImage::imageUrl), loader = frameImageLoader)
+    }
+    LaunchedEffect(hdFrames) { hdFrames.preload(currentIndex = pagerState.currentPage) }
     val reducedMotion = rememberReducedMotion()
     var isPlaying by rememberSaveable { mutableStateOf(autoPlay && initialPage < 0 && !reducedMotion) }
     var zoomedImage by remember { mutableStateOf<EpicImage?>(null) }
@@ -360,7 +373,7 @@ private fun EarthRotation(
         if (isDragged) isPlaying = false
     }
 
-    AutoAdvance(pagerState = pagerState, isPlaying = isPlaying && images.size > 1)
+    AutoAdvance(pagerState = pagerState, isPlaying = isPlaying && images.size > 1, hdFrames = hdFrames)
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         HorizontalPager(
@@ -381,13 +394,13 @@ private fun EarthRotation(
                 image.centroid.toCoordinateLabel(),
             )
             NasaAsyncImage(
-                url = if (isPlaying) image.thumbnailUrl else image.imageUrl,
+                url = image.imageUrl,
                 previewUrl = image.thumbnailUrl,
                 contentDescription = description,
                 contentScale = ContentScale.Fit,
                 backgroundColor = Color.Black,
-                // Frames replace each other every fraction of a second; fading each in would blur
-                // the rotation into a flicker.
+                // Frames replace each other in quick succession; fading each in would blur the
+                // rotation into a flicker.
                 crossfade = false,
                 modifier = Modifier
                     .fillMaxSize()
@@ -445,8 +458,8 @@ private fun CurrentFrameDetails(
 }
 
 @Composable
-private fun AutoAdvance(pagerState: PagerState, isPlaying: Boolean) {
-    LaunchedEffect(pagerState, isPlaying) {
+private fun AutoAdvance(pagerState: PagerState, isPlaying: Boolean, hdFrames: HdFramePreloader) {
+    LaunchedEffect(pagerState, isPlaying, hdFrames) {
         if (!isPlaying) {
             // Pausing cancels a slide that may be halfway done; settle on the nearest frame instead
             // of freezing between two. A finger on the pager outranks this and simply takes over.
@@ -456,8 +469,18 @@ private fun AutoAdvance(pagerState: PagerState, isPlaying: Boolean) {
             return@LaunchedEffect
         }
         while (true) {
-            delay(FRAME_DURATION_MILLIS)
             val next = (pagerState.currentPage + 1) % pagerState.pageCount
+            // The next frame gets ready while this one is on screen. Should it take longer than this
+            // frame's turn, the rotation waits for it, up to a limit: past that it slides in as its
+            // thumbnail and sharpens in place once the HD file arrives.
+            val nextReady = async {
+                // The first frame may come before the pager's first layout.
+                val pageSize = snapshotFlow { pagerState.layoutInfo.pageSize }.first { it > 0 }
+                hdFrames.awaitFrame(next, sizePx = pageSize)
+            }
+            delay(FRAME_DURATION_MILLIS)
+            withTimeoutOrNull(MAX_HD_WAIT_MILLIS) { nextReady.await() }
+            nextReady.cancel()
             // Wrapping around jumps instead of sliding back across the whole day.
             if (next == 0) pagerState.scrollToPage(next) else pagerState.animateScrollToPage(next)
         }
@@ -597,7 +620,10 @@ internal fun GeoPoint.toCoordinateLabel(): String = rememberUnitFormatter().coor
 private val MAX_DISC_WIDTH = 480.dp
 private const val DISC_HEIGHT_FRACTION = 0.8f
 private val STATE_HEIGHT = 360.dp
-private const val FRAME_DURATION_MILLIS = 1_000L
+internal const val FRAME_DURATION_MILLIS = 2_500L
+
+/** How much longer than its turn a frame may stay on screen while the next one's HD file loads. */
+internal const val MAX_HD_WAIT_MILLIS = 3_000L
 private const val PRELOADED_FRAMES = 1
 
 @Preview
