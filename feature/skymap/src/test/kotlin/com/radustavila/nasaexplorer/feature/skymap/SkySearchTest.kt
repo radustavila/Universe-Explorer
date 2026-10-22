@@ -18,7 +18,7 @@ class SkySearchTest {
     private val catalog = TestSkyMap.catalog().let { it.copy(constellations = it.constellations + bootes) }
     private val names = SkyNames(
         bodies = SolarSystemBody.entries.associateWith { it.name.lowercase().replaceFirstChar(Char::uppercase) },
-        iss = "ISS",
+        satellites = mapOf(25544 to "ISS"),
         cardinals = listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW"),
     )
     private val bodies = SkyMapBodies(

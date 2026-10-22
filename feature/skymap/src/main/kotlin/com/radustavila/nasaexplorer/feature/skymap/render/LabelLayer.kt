@@ -113,7 +113,7 @@ internal class LabelLayer(
         is SkyTarget.StarTarget -> sky.chart.catalog.stars.getOrNull(target.index)?.name
         is SkyTarget.Constellation -> sky.chart.catalog.constellations.getOrNull(target.index)?.name
         is SkyTarget.Body -> names.bodies[target.body]
-        is SkyTarget.Satellite -> names.iss
+        is SkyTarget.Satellite -> names.satellite(target.noradId, bodies)
     }
 
     private fun styleOf(target: SkyTarget): TextStyle = when (target) {

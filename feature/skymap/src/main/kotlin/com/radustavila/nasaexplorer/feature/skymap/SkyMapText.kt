@@ -5,10 +5,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalResources
+import com.radustavila.nasaexplorer.core.model.OrbitalElements
+import com.radustavila.nasaexplorer.core.model.SatelliteSet
 import com.radustavila.nasaexplorer.core.model.SkyCatalog
 import com.radustavila.nasaexplorer.core.model.SkyMapBodies
 import com.radustavila.nasaexplorer.core.model.SolarSystemBody
 import com.radustavila.nasaexplorer.feature.skymap.render.SkyNames
+import com.radustavila.nasaexplorer.feature.skymap.render.satellite
 import java.text.Normalizer
 
 @StringRes
@@ -53,6 +56,24 @@ private val CARDINALS = intArrayOf(
     R.string.sky_map_cardinal_nw,
 )
 
+private val HUBBLE_NORAD_ID = checkNotNull(SatelliteSet.HUBBLE.noradId)
+private val TIANGONG_NORAD_ID = checkNotNull(SatelliteSet.TIANGONG.noradId)
+
+/** Everyday names of the stations F15 tracks one by one, by NORAD id. */
+private val STATION_NAMES = mapOf(
+    OrbitalElements.ISS_NORAD_ID to R.string.sky_map_iss,
+    HUBBLE_NORAD_ID to R.string.sky_map_hubble,
+    TIANGONG_NORAD_ID to R.string.sky_map_tiangong,
+)
+
+@StringRes
+internal fun satelliteKindRes(noradId: Int): Int = when (noradId) {
+    OrbitalElements.ISS_NORAD_ID -> R.string.sky_map_kind_station
+    HUBBLE_NORAD_ID -> R.string.sky_map_kind_telescope
+    TIANGONG_NORAD_ID -> R.string.sky_map_kind_chinese_station
+    else -> R.string.sky_map_kind_satellite
+}
+
 private const val COMPASS_SECTOR = 45.0
 private const val FULL_TURN = 360.0
 
@@ -69,7 +90,7 @@ internal fun rememberSkyNames(): SkyNames {
     return remember(resources, configuration) {
         SkyNames(
             bodies = SolarSystemBody.entries.associateWith { resources.getString(it.nameRes()) },
-            iss = resources.getString(R.string.sky_map_iss),
+            satellites = STATION_NAMES.mapValues { (_, name) -> resources.getString(name) },
             cardinals = CARDINALS.map(resources::getString),
         )
     }
@@ -96,7 +117,9 @@ internal fun searchSky(
         SolarSystemBody.entries.forEach { body ->
             names.bodies[body]?.let { add(SkySearchResult(SkyTarget.Body(body), it)) }
         }
-        bodies?.satellites?.forEach { add(SkySearchResult(SkyTarget.Satellite(it.noradId), names.iss)) }
+        bodies?.satellites?.forEach {
+            add(SkySearchResult(SkyTarget.Satellite(it.noradId), names.satellite(it.noradId, bodies)))
+        }
         val seen = mutableSetOf<String>()
         catalog.constellations.forEachIndexed { index, figure ->
             if (seen.add(figure.id)) add(SkySearchResult(SkyTarget.Constellation(index), figure.name))

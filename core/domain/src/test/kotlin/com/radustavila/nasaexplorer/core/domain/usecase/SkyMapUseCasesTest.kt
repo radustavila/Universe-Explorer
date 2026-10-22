@@ -4,6 +4,8 @@ import app.cash.turbine.test
 import com.radustavila.nasaexplorer.core.model.EquatorialCoordinate
 import com.radustavila.nasaexplorer.core.model.HorizontalCoordinate
 import com.radustavila.nasaexplorer.core.model.OrbitalElements.Companion.ISS_NORAD_ID
+import com.radustavila.nasaexplorer.core.model.SatelliteSet
+import com.radustavila.nasaexplorer.core.testing.data.TestSatellites
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.data.TestSkyMap
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSatelliteRepository
@@ -44,6 +46,16 @@ class SkyMapUseCasesTest {
             assertEquals(now.plus(Duration.ofHours(2)), ephemeris.instants.last())
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun `Hubble joins once its elements are cached`() = runTest {
+        satellites.setElements(TestSatellites.hubbleElements(epoch = now.minus(Duration.ofHours(12))))
+        val useCase = ObserveSkyMapBodiesUseCase(ephemeris, satellites, StandardTestDispatcher(testScheduler))
+
+        val bodies = useCase(TestSky.BUCHAREST, MutableStateFlow(now)).first()
+
+        assertEquals(listOf(SatelliteSet.HUBBLE.noradId), bodies.satellites.map { it.noradId })
     }
 
     @Test

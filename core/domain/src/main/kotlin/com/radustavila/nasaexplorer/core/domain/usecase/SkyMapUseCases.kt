@@ -9,7 +9,7 @@ import com.radustavila.nasaexplorer.core.domain.sky.SkyMapPreferencesRepository
 import com.radustavila.nasaexplorer.core.model.EquatorialCoordinate
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.model.OrbitalElements
-import com.radustavila.nasaexplorer.core.model.OrbitalElements.Companion.ISS_NORAD_ID
+import com.radustavila.nasaexplorer.core.model.SatelliteSet
 import com.radustavila.nasaexplorer.core.model.SatelliteSkyPosition
 import com.radustavila.nasaexplorer.core.model.SkyCatalog
 import com.radustavila.nasaexplorer.core.model.SkyMapBodies
@@ -31,9 +31,10 @@ class LoadSkyCatalogUseCase @Inject constructor(
 }
 
 /**
- * The Sun, Moon, planets and the ISS above [observer] at every instant [instants] emits, computed on
- * the device from the cached orbital elements. A slow device skips instants rather than falling
- * behind.
+ * The Sun, Moon, planets and the space stations above [observer] at every instant [instants] emits,
+ * computed on the device from the cached orbital elements: the ISS always, Hubble and Tiangong once
+ * Sky tonight follows them (F15) and their elements are cached. A slow device skips instants rather
+ * than falling behind.
  */
 class ObserveSkyMapBodiesUseCase @Inject constructor(
     private val ephemeris: SkyMapEphemeris,
@@ -41,18 +42,26 @@ class ObserveSkyMapBodiesUseCase @Inject constructor(
     @Dispatcher(AppDispatcher.Default) private val computeDispatcher: CoroutineDispatcher,
 ) {
     operator fun invoke(observer: GeoCoordinate, instants: Flow<Instant>): Flow<SkyMapBodies> =
-        combine(instants.conflate(), satelliteRepository.observeElements(ISS_NORAD_ID)) { at, iss ->
+        combine(instants.conflate(), stationElements()) { at, stations ->
             SkyMapBodies(
                 solarSystem = ephemeris.solarSystem(observer, at),
-                satellites = listOfNotNull(iss?.let { satellite(it, observer, at) }),
+                satellites = stations.mapNotNull { satellite(it, observer, at) },
             )
         }.conflate().flowOn(computeDispatcher)
+
+    /** Cached elements of every single-object set (ISS, Hubble, Tiangong); none are fetched here. */
+    private fun stationElements(): Flow<List<OrbitalElements>> =
+        combine(STATIONS.map(satelliteRepository::observeElements)) { elements -> elements.filterNotNull() }
 
     // Elements propagated far from their epoch put the station in the wrong part of the sky.
     private fun satellite(elements: OrbitalElements, observer: GeoCoordinate, at: Instant): SatelliteSkyPosition? =
         elements.takeUnless { it.isTooOldAt(at) }
             ?.let { ephemeris.satellite(it, observer, at) }
             ?.let { SatelliteSkyPosition(elements.noradId, elements.name, it) }
+
+    private companion object {
+        val STATIONS: List<Int> = SatelliteSet.entries.mapNotNull { it.noradId }
+    }
 }
 
 /** IAU abbreviation of the constellation a direction falls in. */

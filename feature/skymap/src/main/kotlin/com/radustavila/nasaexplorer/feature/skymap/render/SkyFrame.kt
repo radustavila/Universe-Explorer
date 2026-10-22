@@ -23,7 +23,8 @@ internal class SkyFrame(
 /** The words the map draws that are not in the catalogue, resolved from string resources. */
 internal data class SkyNames(
     val bodies: Map<SolarSystemBody, String>,
-    val iss: String,
+    /** The stations' everyday names by NORAD id; others go by their catalogue name. */
+    val satellites: Map<Int, String>,
     /** N, NE, E, SE, S, SW, W, NW. */
     val cardinals: List<String>,
 )
@@ -37,6 +38,10 @@ internal fun SkyTarget.direction(sky: HorizontalSky, bodies: SkyMapBodies?): Sky
     is SkyTarget.Satellite -> bodies?.satellites?.firstOrNull { it.noradId == noradId }
         ?.let { SkyChart.apparent(it.horizontal) }
 }
+
+/** "ISS", "Hubble", or the catalogue's name for a satellite without an everyday one. */
+internal fun SkyNames.satellite(noradId: Int, bodies: SkyMapBodies?): String =
+    satellites[noradId] ?: bodies?.satellites?.firstOrNull { it.noradId == noradId }?.name.orEmpty()
 
 /** Apparent direction of a Sun, Moon or planet. */
 internal fun SolarSystemPosition.direction(): SkyVector = SkyChart.apparent(horizontal)

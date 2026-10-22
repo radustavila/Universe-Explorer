@@ -89,8 +89,10 @@ class ResourceSkyCatalog @Inject constructor() : SkyCatalogRepository {
         EquatorialCoordinate(readFloat().toDouble(), readFloat().toDouble())
 
     private companion object {
-        const val STARS_FILE = "stars.bin"
-        const val CONSTELLATIONS_FILE = "constellations.bin"
+        // Absolute: R8 moves this class to another package, which breaks paths relative to it.
+        const val RESOURCE_DIRECTORY = "/com/radustavila/nasaexplorer/core/skymap/"
+        const val STARS_FILE = RESOURCE_DIRECTORY + "stars.bin"
+        const val CONSTELLATIONS_FILE = RESOURCE_DIRECTORY + "constellations.bin"
         const val STARS_MAGIC = 0x534B5953
         const val CONSTELLATIONS_MAGIC = 0x534B5943
         const val FORMAT_VERSION = 1

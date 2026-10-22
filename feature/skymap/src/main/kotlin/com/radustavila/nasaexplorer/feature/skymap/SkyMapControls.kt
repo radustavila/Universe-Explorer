@@ -174,7 +174,7 @@ internal fun SkyTarget.kindRes(): Int = when (this) {
     is SkyTarget.StarTarget -> R.string.sky_map_kind_star
     is SkyTarget.Body -> body.kindRes()
     is SkyTarget.Constellation -> R.string.sky_map_kind_constellation
-    is SkyTarget.Satellite -> R.string.sky_map_kind_station
+    is SkyTarget.Satellite -> satelliteKindRes(noradId)
 }
 
 /** Keeps the target the map last turned to across configuration changes. */

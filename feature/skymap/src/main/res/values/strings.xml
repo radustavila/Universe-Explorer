@@ -44,6 +44,8 @@
     <string name="sky_map_uranus">Uranus</string>
     <string name="sky_map_neptune">Neptune</string>
     <string name="sky_map_iss">ISS</string>
+    <string name="sky_map_hubble">Hubble</string>
+    <string name="sky_map_tiangong">Tiangong</string>
 
     <!-- What a search result or the selection is -->
     <string name="sky_map_kind_star">Star</string>
@@ -52,6 +54,9 @@
     <string name="sky_map_kind_planet">Planet</string>
     <string name="sky_map_kind_constellation">Constellation</string>
     <string name="sky_map_kind_station">International Space Station</string>
+    <string name="sky_map_kind_telescope">Space telescope</string>
+    <string name="sky_map_kind_chinese_station">China\'s space station</string>
+    <string name="sky_map_kind_satellite">Satellite</string>
     <string name="sky_map_unnamed_star">Unnamed star</string>
 
     <!-- Details of the selection -->

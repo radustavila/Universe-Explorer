@@ -24,6 +24,7 @@ import com.radustavila.nasaexplorer.core.model.SolarSystemBody
 import com.radustavila.nasaexplorer.core.skymap.HorizontalSky
 import com.radustavila.nasaexplorer.feature.skymap.render.SkyNames
 import com.radustavila.nasaexplorer.feature.skymap.render.direction
+import com.radustavila.nasaexplorer.feature.skymap.render.satellite
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
@@ -43,7 +44,7 @@ internal fun SelectionCard(uiState: SkyMapUiState, selected: SkyTarget, names: S
         Row(Modifier.padding(start = 16.dp, top = 8.dp, bottom = 12.dp), verticalAlignment = Alignment.Top) {
             Column(Modifier.weight(1f).padding(top = 6.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
-                    text = title(sky, selected, names),
+                    text = title(uiState, sky, selected, names),
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -64,13 +65,14 @@ internal fun SelectionCard(uiState: SkyMapUiState, selected: SkyTarget, names: S
 }
 
 @Composable
-private fun title(sky: HorizontalSky, selected: SkyTarget, names: SkyNames): String = when (selected) {
-    is SkyTarget.StarTarget -> sky.chart.catalog.stars.getOrNull(selected.index)?.name
-        ?: stringResource(R.string.sky_map_unnamed_star)
-    is SkyTarget.Body -> names.bodies[selected.body].orEmpty()
-    is SkyTarget.Constellation -> sky.chart.catalog.constellations.getOrNull(selected.index)?.name.orEmpty()
-    is SkyTarget.Satellite -> names.iss
-}
+private fun title(uiState: SkyMapUiState, sky: HorizontalSky, selected: SkyTarget, names: SkyNames): String =
+    when (selected) {
+        is SkyTarget.StarTarget -> sky.chart.catalog.stars.getOrNull(selected.index)?.name
+            ?: stringResource(R.string.sky_map_unnamed_star)
+        is SkyTarget.Body -> names.bodies[selected.body].orEmpty()
+        is SkyTarget.Constellation -> sky.chart.catalog.constellations.getOrNull(selected.index)?.name.orEmpty()
+        is SkyTarget.Satellite -> names.satellite(selected.noradId, uiState.bodies)
+    }
 
 /** "Star in Orion", or just the kind when the constellation is not known. */
 @Composable
