@@ -131,4 +131,10 @@
     <string name="small_body_details_failed">Could not load the orbit: %1$s</string>
     <string name="small_body_retry">Retry</string>
     <string name="small_body_details_offline">you are offline, and this object has not been opened before</string>
+
+    <!-- Today card -->
+    <string name="space_weather_today_open">Open space weather</string>
+    <string name="space_weather_today_kp">Kp %1$s · %2$s</string>
+    <string name="space_weather_today_peak">Up to Kp %1$d (%2$s) from %3$s</string>
+    <string name="space_weather_today_empty">No Kp reading yet. It downloads while you are online.</string>
 </resources>

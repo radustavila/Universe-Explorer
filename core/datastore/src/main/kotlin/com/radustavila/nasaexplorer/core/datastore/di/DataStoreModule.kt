@@ -11,8 +11,10 @@ import com.radustavila.nasaexplorer.core.common.dispatchers.AppDispatcher
 import com.radustavila.nasaexplorer.core.common.dispatchers.ApplicationScope
 import com.radustavila.nasaexplorer.core.common.dispatchers.Dispatcher
 import com.radustavila.nasaexplorer.core.datastore.SyncMetadataDataSource
+import com.radustavila.nasaexplorer.core.datastore.TodayCardsDataSource
 import com.radustavila.nasaexplorer.core.datastore.UserPreferencesDataSource
 import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepository
+import com.radustavila.nasaexplorer.core.domain.repository.TodayCardsRepository
 import com.radustavila.nasaexplorer.core.domain.repository.UserPreferencesRepository
 import dagger.Binds
 import dagger.Module
@@ -30,6 +32,11 @@ import kotlinx.coroutines.plus
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
 annotation class UserPreferencesStore
+
+/** The DataStore holding which cards Today shows; a user choice, backed up like the one above. */
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class TodayCardsStore
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -60,8 +67,22 @@ object DataStoreModule {
         produceFile = { context.preferencesDataStoreFile(USER_PREFERENCES_NAME) },
     )
 
+    @Provides
+    @Singleton
+    @TodayCardsStore
+    fun provideTodayCardsDataStore(
+        @ApplicationContext context: Context,
+        @ApplicationScope applicationScope: CoroutineScope,
+        @Dispatcher(AppDispatcher.IO) ioDispatcher: CoroutineDispatcher,
+    ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
+        corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
+        scope = applicationScope + ioDispatcher,
+        produceFile = { context.preferencesDataStoreFile(TODAY_CARDS_NAME) },
+    )
+
     private const val DATASTORE_NAME = "sync_metadata"
     private const val USER_PREFERENCES_NAME = "user_preferences"
+    private const val TODAY_CARDS_NAME = "today_cards"
 }
 
 @Module
@@ -73,4 +94,7 @@ interface DataStoreBindingModule {
 
     @Binds
     fun bindUserPreferencesRepository(impl: UserPreferencesDataSource): UserPreferencesRepository
+
+    @Binds
+    fun bindTodayCardsRepository(impl: TodayCardsDataSource): TodayCardsRepository
 }

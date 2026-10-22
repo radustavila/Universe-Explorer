@@ -100,6 +100,28 @@ class SkyUseCasesTest {
     }
 
     @Test
+    fun `the position for Today is propagated from the elements, never fetched`() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        predictor.position = TestSky.position(isLive = false)
+        val observe = ObserveIssPositionUseCase(satellites, predictor, clock, dispatcher)
+
+        observe().test {
+            assertNull(awaitItem())
+
+            satellites.setElements(TestSky.issElements(epoch = clock.currentInstant))
+            assertEquals(clock.currentInstant, awaitItem()!!.at)
+
+            clock.currentInstant = clock.currentInstant.plus(ObserveIssPositionUseCase.INTERVAL)
+            assertEquals(clock.currentInstant, awaitItem()!!.at)
+
+            satellites.setElements(TestSky.issElements(epoch = clock.currentInstant.minus(Duration.ofDays(15))))
+            assertNull(awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+        assertEquals(0, satellites.livePositionCallCount)
+    }
+
+    @Test
     fun `the ground track window moves every five minutes, not on every poll`() = runTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
         satellites.setElements(TestSky.issElements(epoch = clock.currentInstant))

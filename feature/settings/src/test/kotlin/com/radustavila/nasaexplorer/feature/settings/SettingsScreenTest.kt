@@ -38,12 +38,14 @@ class SettingsScreenTest {
     val composeTestRule = createComposeRule()
 
     private val fixture = SettingsFixture()
+    private var customizeTodayClicks = 0
 
     private fun setScreen() {
         val viewModel = fixture.createViewModel()
         composeTestRule.setContent {
             SettingsScreen(
                 onBackClick = {},
+                onCustomizeTodayClick = { customizeTodayClicks++ },
                 locationSection = { Text("Location slot") },
                 viewModel = viewModel,
             )
@@ -52,6 +54,17 @@ class SettingsScreenTest {
 
     private fun scrollTo(tag: String) {
         composeTestRule.onNodeWithTag(SETTINGS_LIST_TEST_TAG).performScrollToNode(hasTestTag(tag))
+    }
+
+    @Test
+    fun `Customize Today opens from the top of Settings`() {
+        setScreen()
+
+        composeTestRule.onNodeWithTag(SETTINGS_CUSTOMIZE_TODAY_TEST_TAG)
+            .assertTextContains("Customize Today")
+            .performClick()
+
+        assertEquals(1, customizeTodayClicks)
     }
 
     @Test

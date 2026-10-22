@@ -121,4 +121,19 @@
     <string name="compass_short_sw">SW</string>
     <string name="compass_short_w">W</string>
     <string name="compass_short_nw">NW</string>
+
+    <!-- Today cards -->
+    <string name="sky_today_open">Open Sky tonight</string>
+    <string name="sky_today_iss_title">ISS now</string>
+    <string name="sky_today_iss_over">Over %1$s</string>
+    <string name="sky_today_iss_altitude">%1$s up</string>
+    <string name="sky_today_iss_next_pass">Next visible pass: %1$s, %2$s, up to %3$d°</string>
+    <string name="sky_today_iss_no_visible">No visible pass over you in the next 5 days.</string>
+    <string name="sky_today_iss_no_place">Choose where you watch from in Sky tonight to see when it passes over you.</string>
+    <string name="sky_today_summary_moon">%1$s · %2$d%% lit</string>
+    <string name="sky_today_summary_dark">Dark from %1$s</string>
+    <string name="sky_today_summary_planets">Planets tonight: %1$s</string>
+    <string name="sky_today_summary_no_planets">No bright planets tonight.</string>
+    <string name="sky_today_summary_no_place">Choose where you watch from to see tonight\'s Moon, darkness and planets.</string>
+    <string name="sky_today_list_separator">", "</string>
 </resources>

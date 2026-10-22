@@ -37,6 +37,7 @@ class BackupRulesTest {
         "file" to "datastore/observer_location.preferences_pb",
         "file" to "datastore/sky_preferences.preferences_pb",
         "file" to "datastore/aurora_alerts.preferences_pb",
+        "file" to "datastore/today_cards.preferences_pb",
     )
 
     @Test

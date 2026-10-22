@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.feature.settings
 import android.text.format.DateFormat
 import android.text.format.Formatter
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -79,6 +81,7 @@ const val SETTINGS_WALLPAPER_SWITCH_TEST_TAG = "settings-wallpaper"
 const val SETTINGS_UNITS_EXAMPLE_TEST_TAG = "settings-units-example"
 const val SETTINGS_CLEAR_CACHE_TEST_TAG = "settings-clear-cache"
 const val SETTINGS_CLEAR_CACHE_CONFIRM_TEST_TAG = "settings-clear-cache-confirm"
+const val SETTINGS_CUSTOMIZE_TODAY_TEST_TAG = "settings-customize-today"
 
 fun measurementOptionTestTag(system: MeasurementSystem) = "settings-measurement-${system.name}"
 
@@ -87,6 +90,7 @@ fun timeFormatOptionTestTag(format: TimeFormat) = "settings-time-format-${format
 @Composable
 internal fun SettingsScreen(
     onBackClick: () -> Unit,
+    onCustomizeTodayClick: () -> Unit,
     locationSection: @Composable (Modifier) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = hiltViewModel(),
@@ -132,6 +136,7 @@ internal fun SettingsScreen(
             onIssClick = iss.onClick,
         ),
         onBackClick = onBackClick,
+        onCustomizeTodayClick = onCustomizeTodayClick,
         onMeasurementSystemChange = viewModel::onMeasurementSystemChange,
         onTimeFormatChange = viewModel::onTimeFormatChange,
         onUseSavedPlaceForAurora = viewModel::onUseSavedPlaceForAurora,
@@ -159,6 +164,7 @@ internal fun SettingsContent(
     uiState: SettingsUiState,
     notifications: NotificationSwitches,
     onBackClick: () -> Unit,
+    onCustomizeTodayClick: () -> Unit,
     onMeasurementSystemChange: (MeasurementSystem) -> Unit,
     onTimeFormatChange: (TimeFormat) -> Unit,
     onUseSavedPlaceForAurora: () -> Unit,
@@ -193,6 +199,15 @@ internal fun SettingsContent(
                     .testTag(SETTINGS_LIST_TEST_TAG),
                 contentPadding = PaddingValues(vertical = 8.dp),
             ) {
+                item(key = "today-title") { SectionTitle(R.string.settings_today_title) }
+                item(key = "customize-today") {
+                    NavigationRow(
+                        title = stringResource(R.string.settings_customize_today),
+                        description = stringResource(R.string.settings_customize_today_description),
+                        onClick = onCustomizeTodayClick,
+                        testTag = SETTINGS_CUSTOMIZE_TODAY_TEST_TAG,
+                    )
+                }
                 unitsSection(uiState, onMeasurementSystemChange, onTimeFormatChange)
                 notificationsSection(uiState, notifications, onUseSavedPlaceForAurora)
                 item(key = "location-title") { SectionTitle(R.string.settings_location_title) }
@@ -487,6 +502,25 @@ private fun SwitchRow(title: String, description: String, checked: Boolean, onCl
         }
         Spacer(Modifier.width(12.dp))
         Switch(checked = checked, onCheckedChange = null)
+    }
+}
+
+@Composable
+private fun NavigationRow(title: String, description: String, onClick: () -> Unit, testTag: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .testTag(testTag),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.bodyLarge)
+            Text(description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        Spacer(Modifier.width(12.dp))
+        Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, contentDescription = null)
     }
 }
 

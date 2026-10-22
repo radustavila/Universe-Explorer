@@ -10,4 +10,5 @@
     <include domain="file" path="datastore/observer_location.preferences_pb" />
     <include domain="file" path="datastore/sky_preferences.preferences_pb" />
     <include domain="file" path="datastore/aurora_alerts.preferences_pb" />
+    <include domain="file" path="datastore/today_cards.preferences_pb" />
 </full-backup-content>

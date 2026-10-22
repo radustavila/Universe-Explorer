@@ -2,43 +2,120 @@ package com.radustavila.nasaexplorer.navigation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Tune
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.radustavila.nasaexplorer.R
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveTodayCardsUseCase
+import com.radustavila.nasaexplorer.core.model.TodayCardId
 import com.radustavila.nasaexplorer.feature.earth.EarthTodayCard
 import com.radustavila.nasaexplorer.feature.earthevents.RightNowOnEarthCard
 import com.radustavila.nasaexplorer.feature.earthevents.navigateToEarthEvents
 import com.radustavila.nasaexplorer.feature.launches.NextLaunchesCard
 import com.radustavila.nasaexplorer.feature.search.SearchLauncher
 import com.radustavila.nasaexplorer.feature.search.navigateToSearch
+import com.radustavila.nasaexplorer.feature.settings.navigateToCustomizeToday
+import com.radustavila.nasaexplorer.feature.sky.navigateToSkyTonight
+import com.radustavila.nasaexplorer.feature.sky.today.IssNowCard
+import com.radustavila.nasaexplorer.feature.sky.today.SkyTonightSummaryCard
+import com.radustavila.nasaexplorer.feature.spaceweather.navigateToSpaceWeather
+import com.radustavila.nasaexplorer.feature.spaceweather.today.SpaceWeatherTodayCard
 import com.radustavila.nasaexplorer.ui.navigateToTopLevel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+
+const val TODAY_CUSTOMIZE_BUTTON_TEST_TAG = "today-customize"
 
 /**
- * The cards on the Today tab, above the APOD feed, top to bottom. The registry for every feature
- * that contributes one: add a single line here, calling a composable your feature module exposes.
+ * The cards the Today tab can show above the APOD feed. The registry for every feature that
+ * contributes one: add a [TodayCardId] in `:core:model`, its label in Customize Today
+ * (`:feature:settings`), and a single line here calling a composable your feature module exposes.
  *
  * ```
- * { NextLaunchesCard() }, // F2
+ * TodayCardId.NEXT_LAUNCHES to { NextLaunchesCard() }, // F2
  * ```
  *
- * Cards render their own empty/offline state (or nothing at all), and must not scroll vertically:
- * they sit inside the feed's list.
+ * Which cards show, and in what order, is the user's choice (Customize Today); an id without an
+ * entry here is skipped. Cards render their own empty/offline state (or nothing at all), and must
+ * not scroll vertically: they sit inside the feed's list.
  */
-internal fun todayCards(navController: NavHostController): List<@Composable () -> Unit> = listOf(
-    { SearchLauncher(onClick = { navController.navigateToSearch() }) }, // Universal search
+internal fun todayCards(navController: NavHostController): Map<TodayCardId, @Composable () -> Unit> = mapOf(
     // Opens the Earth tab, whose first screen is Earth today, as if its tab had been tapped.
-    { EarthTodayCard(onClick = { navController.navigateToTopLevel(TopLevelDestination.EARTH) }) }, // F4
-    { RightNowOnEarthCard(onClick = { navController.navigateToEarthEvents() }) }, // F9
-    { NextLaunchesCard() }, // F2
+    TodayCardId.EARTH_TODAY to {
+        EarthTodayCard(onClick = { navController.navigateToTopLevel(TopLevelDestination.EARTH) })
+    }, // F4
+    TodayCardId.EARTH_EVENTS to { RightNowOnEarthCard(onClick = { navController.navigateToEarthEvents() }) }, // F9
+    TodayCardId.NEXT_LAUNCHES to { NextLaunchesCard() }, // F2
+    TodayCardId.ISS_NOW to { IssNowCard(onClick = { navController.navigateToSkyTonight() }) }, // F5
+    TodayCardId.SKY_TONIGHT to { SkyTonightSummaryCard(onClick = { navController.navigateToSkyTonight() }) }, // F5
+    TodayCardId.SPACE_WEATHER to { SpaceWeatherTodayCard(onClick = { navController.navigateToSpaceWeather() }) }, // F6
 )
 
-/** The feed's header slot: the cards in a column, or no header at all while there are none. */
-internal fun todayHeader(navController: NavHostController): (@Composable () -> Unit)? {
+/**
+ * The feed's header slot: universal search, always first, with the button to customize Today
+ * beside it, then the user's cards in their order.
+ */
+internal fun todayHeader(navController: NavHostController): @Composable () -> Unit {
     val cards = todayCards(navController)
-    if (cards.isEmpty()) return null
     return {
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            cards.forEach { card -> card() }
+        TodayHeader(
+            cards = cards,
+            onSearchClick = { navController.navigateToSearch() },
+            onCustomizeClick = { navController.navigateToCustomizeToday() },
+        )
+    }
+}
+
+@Composable
+internal fun TodayHeader(
+    cards: Map<TodayCardId, @Composable () -> Unit>,
+    onSearchClick: () -> Unit,
+    onCustomizeClick: () -> Unit,
+    viewModel: TodayCardsViewModel = hiltViewModel(),
+) {
+    val enabled by viewModel.cards.collectAsStateWithLifecycle()
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            SearchLauncher(onClick = onSearchClick, modifier = Modifier.weight(1f))
+            IconButton(onClick = onCustomizeClick, modifier = Modifier.testTag(TODAY_CUSTOMIZE_BUTTON_TEST_TAG)) {
+                Icon(Icons.Outlined.Tune, contentDescription = stringResource(R.string.today_customize))
+            }
         }
+        // Null until the choice is read: the cards appear once, in the right order.
+        enabled?.forEach { id -> cards[id]?.invoke() }
+    }
+}
+
+/** The user's choice of Today cards; the cards themselves read their own data. */
+@HiltViewModel
+class TodayCardsViewModel @Inject constructor(
+    observeTodayCards: ObserveTodayCardsUseCase,
+) : ViewModel() {
+
+    val cards: StateFlow<List<TodayCardId>?> = observeTodayCards().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(STATE_TIMEOUT_MILLIS),
+        initialValue = null,
+    )
+
+    private companion object {
+        const val STATE_TIMEOUT_MILLIS = 5_000L
     }
 }

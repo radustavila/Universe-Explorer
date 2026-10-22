@@ -91,6 +91,8 @@ Boundary rules the code relies on:
 - Notification switches use `rememberNotificationPermissionToggle` (`:core:designsystem` `notification/`).
 - Settings measures storage through `@IntoSet StorageUsageSource` and "Clear cache" runs every `@IntoSet CacheCleaner`
   (contracts in `:core:domain` `storage/`); neither may touch favourites or their offline copies.
+- Today's cards are the user's choice (Customize Today in `:feature:settings`, `today_cards` DataStore). A new card
+  needs a `TodayCardId` (stored by name: never rename), its label in Customize Today and a line in `TodayCards.kt`.
 - Backups include only the favourites database and the user-choice DataStores (`app/src/main/res/xml/`); a new
   DataStore holding user choices goes into both rule files and `BackupRulesTest`.
 

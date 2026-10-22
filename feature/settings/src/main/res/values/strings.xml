@@ -106,4 +106,33 @@
     <string name="credit_astronomy_engine_description">Rise and set times, Moon phases and planet positions, computed on the device</string>
     <string name="credit_maplibre">MapLibre Native</string>
     <string name="credit_maplibre_description">Map rendering</string>
+
+    <!-- Today -->
+    <string name="settings_today_title">Today</string>
+    <string name="settings_customize_today">Customize Today</string>
+    <string name="settings_customize_today_description">Choose the cards above the pictures and their order</string>
+
+    <!-- Customize Today -->
+    <string name="customize_today_title">Customize Today</string>
+    <string name="customize_today_reset">Reset</string>
+    <string name="customize_today_intro">Choose the cards shown above the pictures of the day and drag them into order. Search always stays at the top.</string>
+    <string name="customize_today_shown_title">On Today</string>
+    <string name="customize_today_hidden_title">More cards</string>
+    <string name="customize_today_none_shown">No cards: Today shows search and the pictures only.</string>
+    <string name="customize_today_all_shown">Every card is on Today.</string>
+    <string name="customize_today_drag">Drag to reorder</string>
+    <string name="customize_today_move_up">Move up</string>
+    <string name="customize_today_move_down">Move down</string>
+    <string name="customize_today_card_earth_today">Earth today</string>
+    <string name="customize_today_card_earth_today_description">The latest photo of the whole sunlit Earth</string>
+    <string name="customize_today_card_earth_events">Right now on Earth</string>
+    <string name="customize_today_card_earth_events_description">Open wildfires, storms, volcanoes and more</string>
+    <string name="customize_today_card_launches">Next launches</string>
+    <string name="customize_today_card_launches_description">Upcoming rocket launches with a countdown</string>
+    <string name="customize_today_card_iss">ISS now</string>
+    <string name="customize_today_card_iss_description">Where the space station is and its next visible pass over you</string>
+    <string name="customize_today_card_sky">Sky tonight</string>
+    <string name="customize_today_card_sky_description">The Moon, when it gets dark and the planets you can see</string>
+    <string name="customize_today_card_space_weather">Space weather</string>
+    <string name="customize_today_card_space_weather_description">The Kp index and the chance of aurora</string>
 </resources>
