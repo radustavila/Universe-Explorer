@@ -34,6 +34,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +44,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -59,129 +62,23 @@ import java.time.Duration
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
-const val SKY_MAP_SEARCH_FIELD_TEST_TAG = "sky-map-search-field"
 const val SKY_MAP_TIME_SLIDER_TEST_TAG = "sky-map-time-slider"
-const val SKY_MAP_SELECTION_TEST_TAG = "sky-map-selection"
 
-private val SURFACE_ALPHA = 0.88f
+private const val SURFACE_ALPHA = 0.88f
+
+/** Controls float over the sky: see-through, with the theme's text colour (red in night mode). */
+@Composable
+internal fun translucentSurface(): Color = MaterialTheme.colorScheme.surface.copy(alpha = SURFACE_ALPHA)
+
+@Composable
+internal fun translucentCardColors() = CardDefaults.cardColors(
+    containerColor = translucentSurface(),
+    contentColor = MaterialTheme.colorScheme.onSurface,
+)
+
 private const val MAX_OFFSET_MINUTES = 12 * 60f
 private const val SLIDER_STEP_MINUTES = 5
 private val ONE_HOUR: Duration = Duration.ofHours(1)
-
-@Composable
-internal fun SkyMapTopBar(
-    uiState: SkyMapUiState,
-    camera: SkyCameraState,
-    hasCompass: Boolean,
-    onBackClick: () -> Unit,
-    onSelect: (SkyTarget?) -> Unit,
-    onNightModeChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    var isSearching by rememberSaveable { mutableStateOf(false) }
-    var query by rememberSaveable { mutableStateOf("") }
-    val names = rememberSkyNames()
-    Column(modifier.statusBarsPadding().widthIn(max = 720.dp).fillMaxWidth().padding(horizontal = 4.dp)) {
-        Surface(color = MaterialTheme.colorScheme.surface.copy(alpha = SURFACE_ALPHA), shape = MaterialTheme.shapes.extraLarge) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = onBackClick) {
-                    Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.sky_map_back))
-                }
-                if (isSearching) {
-                    TextField(
-                        value = query,
-                        onValueChange = { query = it },
-                        placeholder = { Text(stringResource(R.string.sky_map_search_hint)) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                        ),
-                        modifier = Modifier.weight(1f).testTag(SKY_MAP_SEARCH_FIELD_TEST_TAG),
-                    )
-                    IconButton(onClick = {
-                        isSearching = false
-                        query = ""
-                    }) {
-                        Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.sky_map_close_search))
-                    }
-                } else {
-                    Text(
-                        text = stringResource(R.string.sky_map_title),
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.weight(1f).padding(start = 4.dp),
-                    )
-                    IconButton(onClick = { isSearching = true }, enabled = uiState.sky != null) {
-                        Icon(Icons.Outlined.Search, contentDescription = stringResource(R.string.sky_map_search))
-                    }
-                }
-                if (hasCompass) {
-                    val isCompass = camera.mode == CameraMode.COMPASS
-                    IconToggleButton(
-                        checked = isCompass,
-                        onCheckedChange = { camera.mode = if (it) CameraMode.COMPASS else CameraMode.TOUCH },
-                    ) {
-                        Icon(
-                            imageVector = if (isCompass) Icons.Outlined.Explore else Icons.Outlined.TouchApp,
-                            contentDescription = stringResource(if (isCompass) R.string.sky_map_touch_mode else R.string.sky_map_compass_mode),
-                        )
-                    }
-                }
-                IconToggleButton(checked = uiState.isNightMode, onCheckedChange = onNightModeChange) {
-                    Icon(
-                        imageVector = Icons.Outlined.DarkMode,
-                        contentDescription = stringResource(
-                            if (uiState.isNightMode) R.string.sky_map_night_mode_off else R.string.sky_map_night_mode_on,
-                        ),
-                    )
-                }
-            }
-        }
-        val sky = uiState.sky
-        if (isSearching && sky != null && query.isNotBlank()) {
-            val results = remember(query, sky.chart, uiState.bodies?.satellites, names) {
-                searchSky(query, sky.chart.catalog, uiState.bodies, names)
-            }
-            SearchResults(results, onResultClick = { target ->
-                isSearching = false
-                query = ""
-                onSelect(target)
-            })
-        }
-    }
-}
-
-@Composable
-private fun SearchResults(results: List<SkySearchResult>, onResultClick: (SkyTarget) -> Unit) {
-    Surface(
-        color = MaterialTheme.colorScheme.surface.copy(alpha = SURFACE_ALPHA),
-        shape = MaterialTheme.shapes.large,
-        modifier = Modifier.padding(top = 4.dp).fillMaxWidth(),
-    ) {
-        if (results.isEmpty()) {
-            Text(stringResource(R.string.sky_map_no_results), Modifier.padding(16.dp))
-        } else {
-            LazyColumn(Modifier.heightIn(max = 360.dp)) {
-                items(results, key = { it.target.toString() }) { result ->
-                    Column(
-                        Modifier
-                            .fillMaxWidth()
-                            .clickable { onResultClick(result.target) }
-                            .padding(horizontal = 16.dp, vertical = 10.dp),
-                    ) {
-                        Text(result.name, style = MaterialTheme.typography.bodyLarge)
-                        Text(
-                            text = stringResource(result.target.kindRes()),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
 
 /** Where the map looks, and what to do when the compass is not up to it. */
 @Composable
@@ -194,10 +91,19 @@ internal fun DirectionHint(looking: String, camera: SkyCameraState, hasCompass: 
         else -> null
     }
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Surface(color = MaterialTheme.colorScheme.surface.copy(alpha = SURFACE_ALPHA), shape = MaterialTheme.shapes.small) {
-            Column(Modifier.padding(horizontal = 12.dp, vertical = 6.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Surface(
+            color = translucentSurface(),
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            shape = MaterialTheme.shapes.small,
+        ) {
+            Column(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 Text(looking, style = MaterialTheme.typography.labelLarge)
-                hint?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary) }
+                hint?.let {
+                    Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
+                }
             }
         }
     }
@@ -205,79 +111,30 @@ internal fun DirectionHint(looking: String, camera: SkyCameraState, hasCompass: 
 
 private const val POINT_UP_BELOW = -45.0
 
-/** Name, kind, place in the sky and brightness of the selection. */
-@Composable
-internal fun SelectionCard(uiState: SkyMapUiState, selected: SkyTarget, names: SkyNames, onClose: () -> Unit) {
-    val sky = uiState.sky ?: return
-    val formatter = rememberUnitFormatter()
-    val catalog = sky.chart.catalog
-    val title = when (selected) {
-        is SkyTarget.StarTarget -> catalog.stars.getOrNull(selected.index)?.name ?: stringResource(R.string.sky_map_unnamed_star)
-        is SkyTarget.Body -> names.bodies[selected.body].orEmpty()
-        is SkyTarget.Constellation -> catalog.constellations.getOrNull(selected.index)?.name.orEmpty()
-        is SkyTarget.Satellite -> names.iss
-    }
-    val constellation = uiState.selectedConstellation?.let { id -> catalog.constellations.firstOrNull { it.id == id }?.name }
-    val kind = stringResource(selected.kindRes())
-    val subtitle = constellation?.let { stringResource(R.string.sky_map_kind_in, kind, it) } ?: kind
-    val horizontal = selected.direction(sky, uiState.bodies)?.toHorizontal()
-    val position = horizontal?.let {
-        val towards = stringResource(compassPointRes(it.azimuthDegrees))
-        if (it.altitudeDegrees >= 0.0) {
-            stringResource(R.string.sky_map_position, it.altitudeDegrees.roundToInt().toString(), towards)
-        } else {
-            stringResource(R.string.sky_map_below_horizon, towards)
-        }
-    }
-    val brightness = when (selected) {
-        is SkyTarget.StarTarget -> catalog.stars.getOrNull(selected.index)?.magnitude?.toDouble()
-        is SkyTarget.Body -> uiState.bodies?.solarSystem?.firstOrNull { it.body == selected.body }?.magnitude
-        else -> null
-    }?.let { stringResource(R.string.sky_map_magnitude, formatter.number(it, 1)) }
-    val lit = (selected as? SkyTarget.Body)?.takeIf { it.body == SolarSystemBody.MOON }?.let {
-        uiState.bodies?.solarSystem?.firstOrNull { body -> body.body == SolarSystemBody.MOON }?.illuminatedFraction
-    }?.let { stringResource(R.string.sky_map_moon_lit, (it * PERCENT).roundToLong().toString()) }
-
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = SURFACE_ALPHA)),
-        modifier = Modifier.fillMaxWidth().testTag(SKY_MAP_SELECTION_TEST_TAG),
-    ) {
-        Row(Modifier.padding(start = 16.dp, top = 8.dp, bottom = 12.dp), verticalAlignment = Alignment.Top) {
-            Column(Modifier.weight(1f).padding(top = 6.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(title, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                position?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
-                listOfNotNull(brightness, lit).takeIf { it.isNotEmpty() }?.let {
-                    Text(it.joinToString(" · "), style = MaterialTheme.typography.bodySmall)
-                }
-            }
-            IconButton(onClick = onClose) {
-                Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.sky_map_close_details))
-            }
-        }
-    }
-}
-
-private const val PERCENT = 100.0
-
 /** The time the map shows: a slider 12 hours either way, hour steps, and back to now. */
 @Composable
 internal fun TimeBar(uiState: SkyMapUiState, onTimeOffsetChange: (Duration) -> Unit, onBackToNow: () -> Unit) {
     val formatter = rememberUnitFormatter()
     val sliderDescription = stringResource(R.string.sky_map_time_slider)
     Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = SURFACE_ALPHA)),
+        colors = translucentCardColors(),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 val time = uiState.instant?.let { formatter.dayAndTime(it) }.orEmpty()
                 Text(
-                    text = if (uiState.isLive) stringResource(R.string.sky_map_now) else stringResource(R.string.sky_map_time_shown, time),
+                    text = if (uiState.isLive) {
+                        stringResource(R.string.sky_map_now)
+                    } else {
+                        stringResource(R.string.sky_map_time_shown, time)
+                    },
                     style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                 )
-                if (!uiState.isLive) TextButton(onClick = onBackToNow) { Text(stringResource(R.string.sky_map_back_to_now)) }
+                if (!uiState.isLive) {
+                    TextButton(onClick = onBackToNow) { Text(stringResource(R.string.sky_map_back_to_now)) }
+                }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = { onTimeOffsetChange(uiState.timeOffset.minus(ONE_HOUR).clamped()) }) {
@@ -377,5 +234,10 @@ internal fun SkyMapTheme(isNightMode: Boolean, content: @Composable () -> Unit) 
         inverseSurface = RED,
         inverseOnSurface = Color.Black,
     )
-    MaterialTheme(colorScheme = colors, typography = MaterialTheme.typography, shapes = MaterialTheme.shapes, content = content)
+    MaterialTheme(
+        colorScheme = colors,
+        typography = MaterialTheme.typography,
+        shapes = MaterialTheme.shapes,
+        content = content,
+    )
 }

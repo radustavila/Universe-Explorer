@@ -116,6 +116,10 @@ class SkyProjection(
 
     fun project(direction: SkyVector): Boolean = project(direction.x, direction.y, direction.z)
 
+    /** Projects the vector stored at [offset] (east, north, up) of a flat array like [HorizontalSky.stars]. */
+    fun project(vectors: FloatArray, offset: Int): Boolean =
+        project(vectors[offset].toDouble(), vectors[offset + 1].toDouble(), vectors[offset + 2].toDouble())
+
     /**
      * Projects any direction, however far behind the viewer; null only straight behind. For arrows
      * and gestures, which need a screen direction even off screen.

@@ -23,7 +23,13 @@ internal object SkyHitTest {
         projection: SkyProjection,
     ): SkyTarget? = findBody(x, y, radius, bodies, projection) ?: findStar(x, y, radius, sky, projection)
 
-    private fun findBody(x: Float, y: Float, radius: Float, bodies: SkyMapBodies?, projection: SkyProjection): SkyTarget? {
+    private fun findBody(
+        x: Float,
+        y: Float,
+        radius: Float,
+        bodies: SkyMapBodies?,
+        projection: SkyProjection,
+    ): SkyTarget? {
         var best: SkyTarget? = null
         var bestDistance = radius
         bodies?.solarSystem?.forEach { position ->
@@ -46,21 +52,25 @@ internal object SkyHitTest {
     }
 
     private fun findStar(x: Float, y: Float, radius: Float, sky: HorizontalSky, projection: SkyProjection): SkyTarget? {
-        val limit = StarStyle.magnitudeLimit(projection.fieldOfViewDegrees)
         val magnitudes = sky.chart.starMagnitudes
         var best = -1
         var bestScore = Float.MAX_VALUE
-        for (i in 0 until sky.chart.starCount) {
-            if (magnitudes[i] > limit) break
-            if (!projection.project(sky.star(i))) continue
-            val distance = hypot(projection.x - x, projection.y - y)
-            if (distance > radius) continue
+        // Only the stars drawn at this zoom, a prefix of the brightest-first catalogue.
+        for (i in 0 until sky.chart.starsBrighterThan(StarStyle.magnitudeLimit(projection.fieldOfViewDegrees))) {
+            val distance = screenDistance(sky, projection, i, x, y)
             val score = distance + magnitudes[i] * PIXELS_PER_MAGNITUDE
-            if (score < bestScore) {
+            if (distance <= radius && score < bestScore) {
                 bestScore = score
                 best = i
             }
         }
         return if (best >= 0) SkyTarget.StarTarget(best) else null
     }
+
+    private fun screenDistance(sky: HorizontalSky, projection: SkyProjection, star: Int, x: Float, y: Float): Float =
+        if (projection.project(sky.stars, star * SkyChart.VECTOR_FLOATS)) {
+            hypot(projection.x - x, projection.y - y)
+        } else {
+            Float.MAX_VALUE
+        }
 }

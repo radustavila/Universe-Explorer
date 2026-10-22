@@ -48,12 +48,11 @@ class ObserveSkyMapBodiesUseCase @Inject constructor(
             )
         }.conflate().flowOn(computeDispatcher)
 
-    private fun satellite(elements: OrbitalElements, observer: GeoCoordinate, at: Instant): SatelliteSkyPosition? {
-        // Elements propagated far from their epoch put the station in the wrong part of the sky.
-        if (elements.isTooOldAt(at)) return null
-        val horizontal = ephemeris.satellite(elements, observer, at) ?: return null
-        return SatelliteSkyPosition(elements.noradId, elements.name, horizontal)
-    }
+    // Elements propagated far from their epoch put the station in the wrong part of the sky.
+    private fun satellite(elements: OrbitalElements, observer: GeoCoordinate, at: Instant): SatelliteSkyPosition? =
+        elements.takeUnless { it.isTooOldAt(at) }
+            ?.let { ephemeris.satellite(it, observer, at) }
+            ?.let { SatelliteSkyPosition(elements.noradId, elements.name, it) }
 }
 
 /** IAU abbreviation of the constellation a direction falls in. */

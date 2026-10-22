@@ -60,4 +60,12 @@ class SkyChartTest {
         // The celestial pole, precessed to 2026, sits a few arcminutes off true north at the latitude.
         assertEquals(44.43 + CelestialFrames.refraction(44.43), pole.altitudeDegrees, 0.2)
     }
+
+    @Test
+    fun `counts the stars down to a magnitude`() {
+        // Sirius -1.44, Rigel 0.18, Betelgeuse 0.45, Bellatrix 1.64, Polaris 1.97, Saiph 2.07.
+        assertEquals(0, chart.starsBrighterThan(-2f))
+        assertEquals(3, chart.starsBrighterThan(0.45f))
+        assertEquals(6, chart.starsBrighterThan(6.5f))
+    }
 }

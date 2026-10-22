@@ -24,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -100,7 +102,12 @@ internal fun SkyMapContent(
             when {
                 !uiState.isLocationLoaded -> Unit
                 uiState.location == null -> LocationNeeded(locationSection, Modifier.align(Alignment.Center))
-                sky == null -> CircularProgressIndicator(Modifier.align(Alignment.Center))
+                sky == null -> {
+                    val loading = stringResource(R.string.sky_map_loading)
+                    CircularProgressIndicator(
+                        Modifier.align(Alignment.Center).semantics { contentDescription = loading },
+                    )
+                }
                 else -> SkyMapLayers(
                     uiState = uiState,
                     camera = camera,

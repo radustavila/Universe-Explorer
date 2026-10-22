@@ -60,7 +60,8 @@ class SkyCameraState(
         val from = projection.unproject(fromX, fromY).toHorizontal()
         val to = projection.unproject(toX, toY).toHorizontal()
         azimuthDegrees = (azimuthDegrees + shortestTurn(to.azimuthDegrees, from.azimuthDegrees)).mod(FULL_TURN)
-        altitudeDegrees = (altitudeDegrees + from.altitudeDegrees - to.altitudeDegrees).coerceIn(-MAX_ALTITUDE, MAX_ALTITUDE)
+        val climb = from.altitudeDegrees - to.altitudeDegrees
+        altitudeDegrees = (altitudeDegrees + climb).coerceIn(-MAX_ALTITUDE, MAX_ALTITUDE)
     }
 
     /** Pinch: a [zoom] above 1 narrows the view. */

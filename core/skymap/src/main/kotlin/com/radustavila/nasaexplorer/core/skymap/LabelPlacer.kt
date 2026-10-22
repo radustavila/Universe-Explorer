@@ -69,12 +69,14 @@ class LabelPlacer(initialCapacity: Int = DEFAULT_CAPACITY) {
         val candidateTop = centerY - labelHeight / 2f
         val candidateRight = candidateLeft + labelWidth
         val candidateBottom = candidateTop + labelHeight
-        if (!fitsOnScreen(candidateLeft, candidateTop, candidateRight, candidateBottom)) return false
-        if (overlapsAny(candidateLeft, candidateTop, candidateRight, candidateBottom)) return false
-        add(candidateLeft, candidateTop, candidateRight, candidateBottom)
-        left = candidateLeft
-        top = candidateTop
-        return true
+        val isFree = fitsOnScreen(candidateLeft, candidateTop, candidateRight, candidateBottom) &&
+            !overlapsAny(candidateLeft, candidateTop, candidateRight, candidateBottom)
+        if (isFree) {
+            add(candidateLeft, candidateTop, candidateRight, candidateBottom)
+            left = candidateLeft
+            top = candidateTop
+        }
+        return isFree
     }
 
     private fun fitsOnScreen(left: Float, top: Float, right: Float, bottom: Float): Boolean =

@@ -3,7 +3,8 @@ package com.radustavila.nasaexplorer.feature.skymap
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalResources
 import com.radustavila.nasaexplorer.core.model.SkyCatalog
 import com.radustavila.nasaexplorer.core.model.SkyMapBodies
 import com.radustavila.nasaexplorer.core.model.SolarSystemBody
@@ -31,13 +32,25 @@ internal fun SolarSystemBody.kindRes(): Int = when (this) {
 }
 
 private val COMPASS = intArrayOf(
-    R.string.sky_map_compass_n, R.string.sky_map_compass_ne, R.string.sky_map_compass_e, R.string.sky_map_compass_se,
-    R.string.sky_map_compass_s, R.string.sky_map_compass_sw, R.string.sky_map_compass_w, R.string.sky_map_compass_nw,
+    R.string.sky_map_compass_n,
+    R.string.sky_map_compass_ne,
+    R.string.sky_map_compass_e,
+    R.string.sky_map_compass_se,
+    R.string.sky_map_compass_s,
+    R.string.sky_map_compass_sw,
+    R.string.sky_map_compass_w,
+    R.string.sky_map_compass_nw,
 )
 
 private val CARDINALS = intArrayOf(
-    R.string.sky_map_cardinal_n, R.string.sky_map_cardinal_ne, R.string.sky_map_cardinal_e, R.string.sky_map_cardinal_se,
-    R.string.sky_map_cardinal_s, R.string.sky_map_cardinal_sw, R.string.sky_map_cardinal_w, R.string.sky_map_cardinal_nw,
+    R.string.sky_map_cardinal_n,
+    R.string.sky_map_cardinal_ne,
+    R.string.sky_map_cardinal_e,
+    R.string.sky_map_cardinal_se,
+    R.string.sky_map_cardinal_s,
+    R.string.sky_map_cardinal_sw,
+    R.string.sky_map_cardinal_w,
+    R.string.sky_map_cardinal_nw,
 )
 
 private const val COMPASS_SECTOR = 45.0
@@ -51,12 +64,13 @@ internal fun compassPointRes(azimuth: Double): Int =
 /** The names the renderer draws, resolved once per configuration. */
 @Composable
 internal fun rememberSkyNames(): SkyNames {
-    val context = LocalContext.current
-    return remember(context.resources.configuration) {
+    val resources = LocalResources.current
+    val configuration = LocalConfiguration.current
+    return remember(resources, configuration) {
         SkyNames(
-            bodies = SolarSystemBody.entries.associateWith { context.getString(it.nameRes()) },
-            iss = context.getString(R.string.sky_map_iss),
-            cardinals = CARDINALS.map(context::getString),
+            bodies = SolarSystemBody.entries.associateWith { resources.getString(it.nameRes()) },
+            iss = resources.getString(R.string.sky_map_iss),
+            cardinals = CARDINALS.map(resources::getString),
         )
     }
 }
@@ -79,15 +93,20 @@ internal fun searchSky(
     val needle = query.foldForSearch()
     if (needle.isEmpty()) return emptyList()
     val candidates = buildList {
-        SolarSystemBody.entries.forEach { body -> names.bodies[body]?.let { add(SkySearchResult(SkyTarget.Body(body), it)) } }
+        SolarSystemBody.entries.forEach { body ->
+            names.bodies[body]?.let { add(SkySearchResult(SkyTarget.Body(body), it)) }
+        }
         bodies?.satellites?.forEach { add(SkySearchResult(SkyTarget.Satellite(it.noradId), names.iss)) }
         val seen = mutableSetOf<String>()
         catalog.constellations.forEachIndexed { index, figure ->
             if (seen.add(figure.id)) add(SkySearchResult(SkyTarget.Constellation(index), figure.name))
         }
-        catalog.stars.forEachIndexed { index, star -> star.name?.let { add(SkySearchResult(SkyTarget.StarTarget(index), it)) } }
+        catalog.stars.forEachIndexed { index, star ->
+            star.name?.let { add(SkySearchResult(SkyTarget.StarTarget(index), it)) }
+        }
     }
-    val abbreviations = catalog.constellations.withIndex().associate { (index, figure) -> index to figure.id.foldForSearch() }
+    val abbreviations = catalog.constellations.withIndex()
+        .associate { (index, figure) -> index to figure.id.foldForSearch() }
     val matches = candidates.filter { result ->
         result.name.foldForSearch().contains(needle) ||
             (result.target as? SkyTarget.Constellation)?.let { abbreviations[it.index] == needle } == true

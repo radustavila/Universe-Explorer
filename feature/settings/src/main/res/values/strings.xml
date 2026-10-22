@@ -108,6 +108,10 @@
     <string name="credit_launch_library_description">Upcoming launches and people in space</string>
     <string name="credit_astronomy_engine">Astronomy Engine by Don Cross</string>
     <string name="credit_astronomy_engine_description">Rise and set times, Moon phases and planet positions, computed on the device</string>
+    <string name="credit_hyg">HYG star database by David Nash</string>
+    <string name="credit_hyg_description">The sky map\'s stars, licensed CC BY-SA 4.0; the trimmed star file in the app is CC BY-SA 4.0 too</string>
+    <string name="credit_d3_celestial">d3-celestial by Olaf Frohn</string>
+    <string name="credit_d3_celestial_description">The sky map\'s constellation figures (BSD licence)</string>
     <string name="credit_maplibre">MapLibre Native</string>
     <string name="credit_maplibre_description">Map rendering</string>
 

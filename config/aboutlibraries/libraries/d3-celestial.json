@@ -1,0 +1,15 @@
+{
+  "uniqueId": "ofrohn:d3-celestial",
+  "artifactVersion": "data",
+  "name": "d3-celestial constellation data",
+  "description": "The sky map's constellation stick figures, names and label positions, from d3-celestial's data files.",
+  "website": "https://github.com/ofrohn/d3-celestial",
+  "developers": [
+    {
+      "name": "Olaf Frohn"
+    }
+  ],
+  "licenses": [
+    "d3-celestial-BSD-3-Clause"
+  ]
+}

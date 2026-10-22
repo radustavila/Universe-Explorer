@@ -54,6 +54,17 @@ class SkyChart(val catalog: SkyCatalog) {
 
     val segmentCount: Int get() = segmentFigures.size
 
+    /** How many stars, from the brightest, are at [limit] magnitude or brighter. */
+    fun starsBrighterThan(limit: Float): Int {
+        var low = 0
+        var high = starCount
+        while (low < high) {
+            val middle = (low + high) ushr 1
+            if (starMagnitudes[middle] <= limit) low = middle + 1 else high = middle
+        }
+        return low
+    }
+
     private val labelVectors = FloatArray(catalog.constellations.size * VECTOR_FLOATS).also { vectors ->
         catalog.constellations.forEachIndexed { i, figure -> vectors.put(i, SkyVector.of(figure.labelPosition)) }
     }

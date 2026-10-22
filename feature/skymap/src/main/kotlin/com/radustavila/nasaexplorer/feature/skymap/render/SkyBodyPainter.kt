@@ -9,7 +9,6 @@ import androidx.compose.ui.graphics.drawscope.rotateRad
 import androidx.compose.ui.unit.dp
 import com.radustavila.nasaexplorer.core.model.SolarSystemBody
 import com.radustavila.nasaexplorer.core.model.SolarSystemPosition
-import com.radustavila.nasaexplorer.core.skymap.LabelPlacer
 import com.radustavila.nasaexplorer.core.skymap.SkyChart
 import com.radustavila.nasaexplorer.core.skymap.SkyProjection
 import kotlin.math.abs
@@ -43,17 +42,15 @@ internal class SkyBodyPainter(
         frame.bodies?.satellites?.forEach { satellite ->
             if (!projection.project(SkyChart.apparent(satellite.horizontal))) return@forEach
             val center = Offset(projection.x, projection.y)
-            val radius = ISS_RADIUS_DP.dp.toPx()
-            drawCircle(frame.palette.iss, radius, center)
-            drawCircle(frame.palette.iss, radius * 2.2f, center, style = Stroke(width = 1.dp.toPx()), alpha = ISS_RING_ALPHA)
-            discs += center to radius * 2.2f
+            val ring = satelliteRadius(this)
+            drawCircle(frame.palette.iss, ISS_RADIUS_DP.dp.toPx(), center)
+            drawCircle(frame.palette.iss, ring, center, style = Stroke(width = 1.dp.toPx()), alpha = ISS_RING_ALPHA)
+            discs += center to ring
         }
     }
 
-    fun reserveDiscs(placer: LabelPlacer) {
-        discs.forEach { (center, radius) ->
-            placer.reserve(center.x - radius, center.y - radius, center.x + radius, center.y + radius)
-        }
+    fun reserveDiscs(labels: LabelLayer) {
+        discs.forEach { (center, radius) -> labels.reserve(center, radius) }
     }
 
     /** A ring around the selection, or an arrow at the edge pointing the way to it. */
@@ -62,10 +59,11 @@ internal class SkyBodyPainter(
         val direction = selected.direction(frame.sky, frame.bodies) ?: return
         val inset = ARROW_INSET_DP.dp.toPx()
         val onScreen = projection.project(direction) &&
-            projection.x in inset..size.width - inset && projection.y in inset..size.height - inset
+            projection.x in 0f..size.width && projection.y in 0f..size.height
         if (onScreen) {
             val center = Offset(projection.x, projection.y)
-            drawCircle(frame.palette.selection, SELECTION_RADIUS_DP.dp.toPx(), center, style = Stroke(width = 2.dp.toPx()))
+            val ring = Stroke(width = SELECTION_STROKE_DP.dp.toPx())
+            drawCircle(frame.palette.selection, SELECTION_RADIUS_DP.dp.toPx(), center, style = ring)
             return
         }
         // Straight behind has no screen direction; point down, the way most people turn first.
@@ -99,10 +97,12 @@ internal class SkyBodyPainter(
         val terminator = radius * abs(1f - 2f * lit)
         val disc = Rect(center, radius)
         val ellipse = Rect(center.x - terminator, center.y - radius, center.x + terminator, center.y + radius)
+        // A gibbous Moon's terminator bulges into the dark half, a crescent's into the lit one.
+        val terminatorSweep = if (lit > HALF_LIT) HALF_TURN else -HALF_TURN
         val litPart = Path().apply {
             // Top of the disc, round the sunward side to the bottom, then back up along the terminator.
-            arcTo(disc, startAngleDegrees = -90f, sweepAngleDegrees = 180f, forceMoveTo = true)
-            arcTo(ellipse, startAngleDegrees = 90f, sweepAngleDegrees = if (lit > 0.5f) 180f else -180f, forceMoveTo = false)
+            arcTo(disc, startAngleDegrees = -QUARTER_TURN, sweepAngleDegrees = HALF_TURN, forceMoveTo = true)
+            arcTo(ellipse, startAngleDegrees = QUARTER_TURN, sweepAngleDegrees = terminatorSweep, forceMoveTo = false)
             close()
         }
         rotateRad(towardsSun, pivot = center) { drawPath(litPart, frame.palette.moonLit) }
@@ -110,8 +110,13 @@ internal class SkyBodyPainter(
 
     companion object {
         private const val ISS_RADIUS_DP = 2.5f
+        private const val ISS_RING_DP = 5.5f
         private const val ISS_RING_ALPHA = 0.6f
         private const val SELECTION_RADIUS_DP = 14f
+        private const val SELECTION_STROKE_DP = 2f
+        private const val HALF_LIT = 0.5f
+        private const val QUARTER_TURN = 90f
+        private const val HALF_TURN = 180f
         private const val ARROW_INSET_DP = 40f
         private const val ARROW_LENGTH_DP = 22f
         private const val ARROW_HALF_WIDTH_DP = 10f
@@ -122,18 +127,27 @@ internal class SkyBodyPainter(
         private const val BRIGHTEST_PLANET = -4.5
         private const val PLANET_RADIUS_PER_MAGNITUDE = 0.4f
 
+        /** Outer radius of a satellite's marker: a dot in a ring. */
+        fun satelliteRadius(scope: DrawScope): Float = with(scope) { ISS_RING_DP.dp.toPx() }
+
         /**
          * On-screen radius of a body's disc: its true size when zoomed in enough to see it, else a
          * dot sized by brightness (planets) or a readable minimum (the Sun and the Moon).
          */
-        fun discRadius(scope: DrawScope, position: SolarSystemPosition, projection: SkyProjection): Float = with(scope) {
-            val trueRadius = (projection.scale * tan(Math.toRadians(position.angularDiameterDegrees) / 4.0)).toFloat()
-            val minimum = when (position.body) {
-                SolarSystemBody.SUN, SolarSystemBody.MOON -> MIN_DISC_DP.dp.toPx()
-                else -> (MAX_PLANET_DP - PLANET_RADIUS_PER_MAGNITUDE * (position.magnitude - BRIGHTEST_PLANET).toFloat())
-                    .coerceIn(MIN_PLANET_DP, MAX_PLANET_DP).dp.toPx()
+        fun discRadius(scope: DrawScope, position: SolarSystemPosition, projection: SkyProjection): Float =
+            with(scope) {
+                // A stereographic radius of tan(angle / 2), for half the apparent diameter.
+                val halfDiameter = Math.toRadians(position.angularDiameterDegrees) / 2.0
+                val trueRadius = (projection.scale * tan(halfDiameter / 2.0)).toFloat()
+                val minimum = when (position.body) {
+                    SolarSystemBody.SUN, SolarSystemBody.MOON -> MIN_DISC_DP.dp.toPx()
+                    else -> planetDotDp(position.magnitude).dp.toPx()
+                }
+                maxOf(trueRadius, minimum)
             }
-            maxOf(trueRadius, minimum)
-        }
+
+        private fun planetDotDp(magnitude: Double): Float =
+            (MAX_PLANET_DP - PLANET_RADIUS_PER_MAGNITUDE * (magnitude - BRIGHTEST_PLANET).toFloat())
+                .coerceIn(MIN_PLANET_DP, MAX_PLANET_DP)
     }
 }

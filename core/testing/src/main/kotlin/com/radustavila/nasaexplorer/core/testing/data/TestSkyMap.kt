@@ -9,6 +9,7 @@ import com.radustavila.nasaexplorer.core.model.SolarSystemPosition
 import com.radustavila.nasaexplorer.core.model.Star
 
 /** A small sky: Orion's brightest stars and figure, Sirius and Polaris, and a few bodies. */
+@Suppress("MagicNumber")
 object TestSkyMap {
 
     fun star(
@@ -59,7 +60,14 @@ object TestSkyMap {
 
     fun solarSystem() = listOf(
         position(SolarSystemBody.SUN, altitude = -30.0, azimuth = 0.0, magnitude = -26.7, angularDiameter = 0.53),
-        position(SolarSystemBody.MOON, altitude = 35.0, azimuth = 120.0, magnitude = -11.0, illuminatedFraction = 0.6, angularDiameter = 0.52),
+        position(
+            SolarSystemBody.MOON,
+            altitude = 35.0,
+            azimuth = 120.0,
+            magnitude = -11.0,
+            illuminatedFraction = 0.6,
+            angularDiameter = 0.52,
+        ),
         position(SolarSystemBody.JUPITER, altitude = 50.0, azimuth = 160.0, magnitude = -2.5),
         position(SolarSystemBody.SATURN, altitude = -10.0, azimuth = 270.0, magnitude = 0.8),
     )

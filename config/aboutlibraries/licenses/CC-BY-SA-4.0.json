@@ -1,0 +1,6 @@
+{
+  "hash": "CC-BY-SA-4.0",
+  "name": "Creative Commons Attribution Share Alike 4.0 International",
+  "url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "content": "Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)\n\nThe HYG star database is licensed under CC BY-SA 4.0. You are free to share and adapt it for any purpose, even commercially, as long as you give appropriate credit, indicate if changes were made, and distribute your contributions under the same licence.\n\nChanges made for this app: only stars of magnitude 6.5 or brighter are kept, with their position, magnitude, colour index and proper name, in a compact binary file. That file (stars.bin) is distributed under CC BY-SA 4.0 as well.\n\nFull legal code: https://creativecommons.org/licenses/by-sa/4.0/legalcode"
+}

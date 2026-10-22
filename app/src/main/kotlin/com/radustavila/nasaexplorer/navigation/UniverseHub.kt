@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Event
+import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.NightsStay
 import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material.icons.outlined.Public
@@ -76,7 +76,7 @@ internal fun universeHubEntries(navController: NavHostController): List<HubEntry
     }, // F12
     HubEntry(
         key = "skymap",
-        icon = Icons.Outlined.AutoAwesome,
+        icon = Icons.Outlined.Explore,
         titleRes = R.string.universe_skymap_title,
         descriptionRes = R.string.universe_skymap_description,
         onClick = { navController.navigateToSkyMap() },

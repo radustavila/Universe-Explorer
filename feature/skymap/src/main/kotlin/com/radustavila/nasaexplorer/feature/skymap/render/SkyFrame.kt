@@ -32,8 +32,10 @@ internal data class SkyNames(
 internal fun SkyTarget.direction(sky: HorizontalSky, bodies: SkyMapBodies?): SkyVector? = when (this) {
     is SkyTarget.StarTarget -> if (index in 0 until sky.chart.starCount) sky.star(index) else null
     is SkyTarget.Constellation -> if (index in sky.chart.catalog.constellations.indices) sky.label(index) else null
-    is SkyTarget.Body -> bodies?.solarSystem?.firstOrNull { it.body == body }?.let { SkyChart.apparent(it.horizontal) }
-    is SkyTarget.Satellite -> bodies?.satellites?.firstOrNull { it.noradId == noradId }?.let { SkyChart.apparent(it.horizontal) }
+    is SkyTarget.Body -> bodies?.solarSystem?.firstOrNull { it.body == body }
+        ?.let { SkyChart.apparent(it.horizontal) }
+    is SkyTarget.Satellite -> bodies?.satellites?.firstOrNull { it.noradId == noradId }
+        ?.let { SkyChart.apparent(it.horizontal) }
 }
 
 /** Apparent direction of a Sun, Moon or planet. */

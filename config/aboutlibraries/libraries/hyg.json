@@ -1,0 +1,15 @@
+{
+  "uniqueId": "astronexus:hyg",
+  "artifactVersion": "4.4",
+  "name": "HYG star database",
+  "description": "Positions, brightness, colours and names of the sky map's stars, by David Nash (astronexus). The app ships a trimmed copy (stars down to magnitude 6.5), which is itself licensed under CC BY-SA 4.0.",
+  "website": "https://codeberg.org/astronexus/hyg",
+  "developers": [
+    {
+      "name": "David Nash (astronexus)"
+    }
+  ],
+  "licenses": [
+    "CC-BY-SA-4.0"
+  ]
+}

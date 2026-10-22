@@ -58,7 +58,7 @@ internal fun SkyMapCanvas(
             .semantics { contentDescription = description }
             .pointerInput(camera) {
                 detectTransformGestures { centroid, pan, zoom, _ ->
-                    val projection = SkyProjection(camera.view, size.width.toFloat(), size.height.toFloat(), camera.fieldOfViewDegrees)
+                    val projection = camera.projection(size.width, size.height)
                     if (pan.x != 0f || pan.y != 0f) {
                         camera.drag(projection, centroid.x - pan.x, centroid.y - pan.y, centroid.x, centroid.y)
                     }
@@ -67,10 +67,16 @@ internal fun SkyMapCanvas(
             }
             .pointerInput(camera) {
                 detectTapGestures { offset ->
-                    val projection = SkyProjection(camera.view, size.width.toFloat(), size.height.toFloat(), camera.fieldOfViewDegrees)
-                    currentOnTap.value(
-                        SkyHitTest.find(offset.x, offset.y, tapRadius, currentSky.value, currentBodies.value, projection),
+                    val projection = camera.projection(size.width, size.height)
+                    val target = SkyHitTest.find(
+                        x = offset.x,
+                        y = offset.y,
+                        radius = tapRadius,
+                        sky = currentSky.value,
+                        bodies = currentBodies.value,
+                        projection = projection,
                     )
+                    currentOnTap.value(target)
                 }
             }
             .drawBehind {
@@ -91,6 +97,9 @@ internal fun SkyMapCanvas(
 }
 
 private val TAP_RADIUS = 28.dp
+
+private fun SkyCameraState.projection(width: Int, height: Int) =
+    SkyProjection(view, width.toFloat(), height.toFloat(), fieldOfViewDegrees)
 
 private fun labelStyles() = SkyTextStyles(
     star = TextStyle(fontSize = 11.sp),

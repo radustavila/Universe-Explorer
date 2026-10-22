@@ -13,7 +13,7 @@ private const val TAB_TIMEOUT_MILLIS = 10_000L
 private const val STALE_ATTEMPTS = 3
 
 // A fifth of the screen width on each side keeps flings clear of the system gesture areas.
-private const val GESTURE_MARGIN_DIVISOR = 5
+internal const val GESTURE_MARGIN_DIVISOR = 5
 
 // FEED_LIST_TEST_TAG and FEED_APOD_CARD_TEST_TAG in :feature:feed; NasaApp exposes test tags as
 // resource ids.
