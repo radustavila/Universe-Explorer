@@ -28,6 +28,8 @@ enum class SearchSource {
     /** Upcoming rocket launches. */
     LAUNCHES,
 
+    /** Sky events of the coming year, computed on the device. */
+    SKY_EVENTS,
     /** Cached NASA news: stories, science articles, Images of the Day and videos. */
     NEWS,
 }
@@ -45,6 +47,8 @@ sealed interface SearchTarget {
     /** Launches are listed on the Today tab. */
     data class LaunchEntry(val id: String) : SearchTarget
 
+    /** Opens the sky events calendar on the event (a `SkyEvent.id`). */
+    data class SkyEventEntry(val id: String) : SearchTarget
     /** A cached news item; opens on its own screen, which links to the page or video. */
     data class NewsEntry(val id: String) : SearchTarget
 

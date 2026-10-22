@@ -31,6 +31,8 @@
     <string name="universe_sky_description">Moon, planets and ISS passes above you, and who is in space</string>
     <string name="universe_dsn_title">Deep Space Network</string>
     <string name="universe_dsn_description">Which spacecraft NASA\'s antennas are talking to now, and how far Voyager is</string>
+    <string name="universe_sky_events_title">Sky events</string>
+    <string name="universe_sky_events_description">Eclipses, meteor showers, Moon phases and planets, month by month, with reminders</string>
     <string name="universe_news_title">NASA news</string>
     <string name="universe_news_description">Stories, the Image of the Day, videos and live streams</string>
     <string name="universe_search_title">Search everything</string>

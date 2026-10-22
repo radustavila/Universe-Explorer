@@ -145,6 +145,8 @@
     <string name="customize_today_card_space_weather_description">The Kp index and the chance of aurora</string>
     <string name="customize_today_card_dsn">Deep Space Network</string>
     <string name="customize_today_card_dsn_description">Which spacecraft NASA\'s antennas are talking to right now</string>
+    <string name="customize_today_card_sky_events">Next in the sky</string>
+    <string name="customize_today_card_sky_events_description">Coming eclipses, full Moons, meteor showers and planet events</string>
     <string name="customize_today_card_news">Latest from NASA</string>
     <string name="customize_today_card_news_description">NASA\'s newest stories, Image of the Day, videos and live streams</string>
 </resources>
