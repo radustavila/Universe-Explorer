@@ -94,6 +94,10 @@
     <string name="credit_donki_description">Solar flares and coronal mass ejections, from the Community Coordinated Modeling Center</string>
     <string name="credit_jpl">NASA JPL Solar System Dynamics and CNEOS</string>
     <string name="credit_jpl_description">Close approaches, the Sentry impact risk list and fireballs</string>
+    <string name="credit_dsn">NASA Deep Space Network: DSN Now</string>
+    <string name="credit_dsn_description">Live antenna activity at Goldstone, Madrid and Canberra</string>
+    <string name="credit_horizons">NASA JPL Horizons</string>
+    <string name="credit_horizons_description">Distances of Voyager, New Horizons and other far spacecraft</string>
     <string name="credit_mars">NASA Mars raw images</string>
     <string name="credit_mars_description">Raw photos from Curiosity and Perseverance</string>
     <string name="credit_celestrak">CelesTrak</string>
@@ -139,6 +143,8 @@
     <string name="customize_today_card_sky_description">The Moon, when it gets dark and the planets you can see</string>
     <string name="customize_today_card_space_weather">Space weather</string>
     <string name="customize_today_card_space_weather_description">The Kp index and the chance of aurora</string>
+    <string name="customize_today_card_dsn">Deep Space Network</string>
+    <string name="customize_today_card_dsn_description">Which spacecraft NASA\'s antennas are talking to right now</string>
     <string name="customize_today_card_news">Latest from NASA</string>
     <string name="customize_today_card_news_description">NASA\'s newest stories, Image of the Day, videos and live streams</string>
 </resources>

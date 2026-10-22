@@ -76,12 +76,14 @@ class UnitFormatter(
     }
 
     /**
-     * Distances too large to read digit by digit: "2.9 million km", or rounded to the thousand below
-     * a million ("748,000 km").
+     * Distances too large to read digit by digit: "21.6 billion km", "2.9 million km", or rounded to
+     * the thousand below a million ("748,000 km").
      */
     fun largeDistance(km: Double): String {
         val value = if (isImperial) km / KM_PER_MILE else km
-        return if (value >= MILLION) {
+        return if (value >= BILLION) {
+            string(if (isImperial) R.string.unit_billion_mi else R.string.unit_billion_km, number(value / BILLION, 1))
+        } else if (value >= MILLION) {
             string(if (isImperial) R.string.unit_million_mi else R.string.unit_million_km, number(value / MILLION, 1))
         } else {
             val rounded = (value / THOUSAND).roundToLong() * THOUSAND.toLong()
@@ -185,6 +187,7 @@ class UnitFormatter(
         private const val HECTARES_PER_ACRE = 0.40468564224
         private const val FAHRENHEIT_PER_CELSIUS = 1.8
         private const val FAHRENHEIT_OFFSET = 32.0
+        private const val BILLION = 1_000_000_000.0
         private const val MILLION = 1_000_000.0
         private const val THOUSAND = 1_000.0
 

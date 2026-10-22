@@ -9,11 +9,13 @@ import androidx.compose.material.icons.outlined.NightsStay
 import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.SettingsInputAntenna
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.radustavila.nasaexplorer.R
+import com.radustavila.nasaexplorer.feature.dsn.navigateToDsn
 import com.radustavila.nasaexplorer.feature.exoplanets.navigateToExoplanets
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhotos
@@ -55,6 +57,13 @@ internal fun universeHubEntries(navController: NavHostController): List<HubEntry
     HubEntry("sky", Icons.Outlined.NightsStay, R.string.universe_sky_title, R.string.universe_sky_description) {
         navController.navigateToSkyTonight()
     },
+    HubEntry(
+        key = "dsn",
+        icon = Icons.Outlined.SettingsInputAntenna,
+        titleRes = R.string.universe_dsn_title,
+        descriptionRes = R.string.universe_dsn_description,
+        onClick = { navController.navigateToDsn() },
+    ), // F13
     HubEntry("news", Icons.Outlined.Newspaper, R.string.universe_news_title, R.string.universe_news_description) {
         navController.navigateToNews()
     },

@@ -22,6 +22,8 @@ import androidx.navigation.NavHostController
 import com.radustavila.nasaexplorer.R
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveTodayCardsUseCase
 import com.radustavila.nasaexplorer.core.model.TodayCardId
+import com.radustavila.nasaexplorer.feature.dsn.navigateToDsn
+import com.radustavila.nasaexplorer.feature.dsn.today.DsnRightNowCard
 import com.radustavila.nasaexplorer.feature.earth.EarthTodayCard
 import com.radustavila.nasaexplorer.feature.earthevents.RightNowOnEarthCard
 import com.radustavila.nasaexplorer.feature.earthevents.navigateToEarthEvents
@@ -69,6 +71,7 @@ internal fun todayCards(navController: NavHostController): Map<TodayCardId, @Com
     TodayCardId.ISS_NOW to { IssNowCard(onClick = { navController.navigateToSkyTonight() }) }, // F5
     TodayCardId.SKY_TONIGHT to { SkyTonightSummaryCard(onClick = { navController.navigateToSkyTonight() }) }, // F5
     TodayCardId.SPACE_WEATHER to { SpaceWeatherTodayCard(onClick = { navController.navigateToSpaceWeather() }) }, // F6
+    TodayCardId.DSN_NOW to { DsnRightNowCard(onClick = { navController.navigateToDsn() }) }, // F13
     TodayCardId.NASA_NEWS to {
         LatestFromNasaCard(
             onSeeAllClick = { navController.navigateToNews() },

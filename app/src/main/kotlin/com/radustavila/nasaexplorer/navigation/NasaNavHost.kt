@@ -15,6 +15,7 @@ import com.radustavila.nasaexplorer.feature.earth.EarthTodayRoute
 import com.radustavila.nasaexplorer.feature.earth.earthTodayScreen
 import com.radustavila.nasaexplorer.feature.earthevents.earthEventsScreen
 import com.radustavila.nasaexplorer.feature.earthmap.earthMapScreen
+import com.radustavila.nasaexplorer.feature.dsn.dsnScreen
 import com.radustavila.nasaexplorer.feature.exoplanets.exoplanetDetailsScreen
 import com.radustavila.nasaexplorer.feature.exoplanets.exoplanetsScreen
 import com.radustavila.nasaexplorer.feature.exoplanets.navigateToExoplanetDetails
@@ -104,6 +105,7 @@ fun NasaNavHost(
                 },
             )
             skyTonightScreen(onBackClick = navController::popBackStack)
+            dsnScreen(onBackClick = navController::popBackStack)
             newsScreen(onBackClick = navController::popBackStack, onImageClick = navController::navigateToNewsItem)
             gallerySearchScreen(
                 onMediaClick = navController::navigateToNasaMedia,
