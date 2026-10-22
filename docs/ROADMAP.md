@@ -21,7 +21,34 @@ The app focuses on the universe and Earth. Launches stay a single small card on 
 
 Bottom bar: **Today · Universe · Earth · Favourites · More** (defined in F0).
 
-## Features, in build order
+## Next batch, in build order
+
+Chosen by comparing the app with NASA's own app and the main astronomy apps (2026-10-22). Every source
+is free and allows commercial use unless noted.
+
+| # | Section | Feature | What it adds | APIs |
+|---|---|---|---|---|
+| F11 | Universe | Stargazing forecast | Tonight's observing score from clouds, darkness and Moon; clear-night alert | MET Norway (CC BY 4.0), Astronomy Engine |
+| F16 | Earth | Live Sun | Today's Sun in several wavelengths and the last 48 hours as video | SDO, Helioviewer |
+| F12 | Universe | Sky events calendar | Eclipses, meteor showers, Moon phases, oppositions, seasons, with reminders | Astronomy Engine (offline), own meteor table |
+| F13 | Universe | Deep Space Network live | Which antennas talk to which spacecraft now; distances to Voyager and New Horizons | DSN Now, JPL Horizons |
+| F15 | Universe | More satellites | Passes for Hubble, Tiangong, bright satellites and fresh Starlink trains | CelesTrak (terms unclear, see M4) |
+| F14 | Today | NASA news and video | NASA stories, Image of the Day, NASA YouTube videos and live streams | NASA RSS, YouTube feed |
+| F17 | Universe | Sky map | Stars, constellations, planets and ISS, aimed by moving the phone; red night mode | HYG (CC BY-SA 4.0), d3-celestial, Astronomy Engine |
+| F18 | Universe | Bright comets | Comets visible now and where to look | JPL SBDB query, JPL Horizons |
+
+Do not use Open-Meteo or 7Timer (non-commercial free tiers) or Stellarium data (GPL).
+
+## Before monetizing (ads, premium)
+
+| # | Task |
+|---|---|
+| M1 | Rename the app: no "NASA" in the name, no NASA logos, add "Not affiliated with NASA" |
+| M2 | Ask the APOD editors for permission to show APOD with banner ads; until then no ads on APOD screens |
+| M3 | AdMob banners with Google UMP consent (EEA/UK), privacy policy, Play Data safety form |
+| M4 | Confirm commercial terms with Launch Library 2 and CelesTrak; replace wheretheiss.at with on-device SGP4 |
+
+## Built (F0–F10)
 
 | # | Section | Feature | What it adds | APIs |
 |---|---|---|---|---|
@@ -36,7 +63,5 @@ Bottom bar: **Today · Universe · Earth · Favourites · More** (defined in F0)
 | F6 | Earth | Aurora and space weather | Aurora forecast, map and alerts; solar storms; asteroids passing Earth | NOAA SWPC, DONKI, JPL |
 | F2 | Launches | Next launches card | Next 3 launches with countdown and livestream link | Launch Library 2 |
 | F7 | Universe | Mars photos | Latest raw rover photos | Mars raw images |
-
-F1 and F4 can run in parallel. F0 should land before the next data source. F9 builds on F10's map.
 
 None of these APIs need a key.

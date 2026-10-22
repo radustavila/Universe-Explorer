@@ -171,7 +171,7 @@ A new module must be added to `settings.gradle.kts`.
 
 ## Roadmap
 
-New features (F0–F10: Universe / Earth / Launches) are specified in a Claude Docs doc linked from `docs/ROADMAP.md`;
+New features (F0–F10 built, F11–F18 next; M1–M4 must land before ads or premium) are specified in a Claude Docs doc linked from `docs/ROADMAP.md`;
 that doc is the source of truth. Read the feature's brief there before implementing; don't copy briefs or status into
 the repo.
 
