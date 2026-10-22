@@ -30,5 +30,7 @@ interface NotificationsModule {
 
     @Binds
     fun bindSkyEventNotifier(impl: SystemTraySkyEventNotifier): SkyEventNotifier
+
+    @Binds
     fun bindStargazingAlertNotifier(impl: SystemTrayStargazingAlertNotifier): StargazingAlertNotifier
 }

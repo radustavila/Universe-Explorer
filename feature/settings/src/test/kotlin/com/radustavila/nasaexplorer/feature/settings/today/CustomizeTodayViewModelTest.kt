@@ -56,7 +56,10 @@ class CustomizeTodayViewModelTest {
             viewModel.onShownChange(EARTH_EVENTS, shown = false)
             val state = awaitItem()
             assertEquals(listOf(EARTH_TODAY, NEXT_LAUNCHES, ISS_NOW), state.shown)
-            assertEquals(listOf(EARTH_EVENTS, SKY_TONIGHT, SPACE_WEATHER, DSN_NOW, SKY_EVENTS, STARGAZING), state.hidden)
+            assertEquals(
+                listOf(EARTH_EVENTS, SKY_TONIGHT, SPACE_WEATHER, DSN_NOW, SKY_EVENTS, STARGAZING),
+                state.hidden,
+            )
             assertFalse(state.isDefault)
         }
         assertEquals(listOf(EARTH_TODAY, NEXT_LAUNCHES, ISS_NOW), repository.currentTodayCards)
