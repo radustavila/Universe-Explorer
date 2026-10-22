@@ -16,6 +16,8 @@ android {
         buildConfigField("String", "SWPC_BASE_URL", "\"https://services.swpc.noaa.gov/\"")
         // DONKI moved off api.nasa.gov on 2026-09-30; the old route redirects to a news page.
         buildConfigField("String", "DONKI_BASE_URL", "\"https://ccmc.gsfc.nasa.gov/DONKI-API/\"")
+        buildConfigField("String", "SDO_BASE_URL", "\"https://sdo.gsfc.nasa.gov/\"")
+        buildConfigField("String", "HELIOVIEWER_BASE_URL", "\"https://api.helioviewer.org/\"")
     }
 }
 

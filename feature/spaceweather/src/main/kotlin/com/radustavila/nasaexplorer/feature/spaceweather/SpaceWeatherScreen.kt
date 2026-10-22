@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,6 +51,7 @@ import com.radustavila.nasaexplorer.core.designsystem.component.LoadingState
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineState
 import com.radustavila.nasaexplorer.core.designsystem.component.SectionTitle
+import com.radustavila.nasaexplorer.core.designsystem.component.ZoomableImageDialog
 import com.radustavila.nasaexplorer.core.designsystem.motion.rememberReducedMotion
 import com.radustavila.nasaexplorer.core.designsystem.units.formatLocalDateTime
 import com.radustavila.nasaexplorer.core.map.MapCamera
@@ -59,6 +61,7 @@ import com.radustavila.nasaexplorer.core.map.overlay.GeoPoint
 import com.radustavila.nasaexplorer.core.map.overlay.MapMarker
 import com.radustavila.nasaexplorer.core.map.overlay.MapOverlay
 import com.radustavila.nasaexplorer.core.map.rememberSpaceMapState
+import com.radustavila.nasaexplorer.core.model.SunChannel
 import com.radustavila.nasaexplorer.feature.spaceweather.components.AuroraAlertCard
 import com.radustavila.nasaexplorer.feature.spaceweather.components.AuroraLocationDialog
 import com.radustavila.nasaexplorer.feature.spaceweather.components.AuroraOval
@@ -66,6 +69,8 @@ import com.radustavila.nasaexplorer.feature.spaceweather.components.CmeCard
 import com.radustavila.nasaexplorer.feature.spaceweather.components.KpForecastBars
 import com.radustavila.nasaexplorer.feature.spaceweather.components.KpGauge
 import com.radustavila.nasaexplorer.feature.spaceweather.components.SolarFlareCard
+import com.radustavila.nasaexplorer.feature.spaceweather.components.SunCard
+import com.radustavila.nasaexplorer.feature.spaceweather.components.SunViewerDialog
 
 const val SPACE_WEATHER_LIST_TEST_TAG = "space-weather-list"
 const val AURORA_MAP_TEST_TAG = "aurora-map"
@@ -95,9 +100,26 @@ internal fun SpaceWeatherScreen(
         },
         onAlertsEnabledChange = viewModel::onAlertsEnabledChange,
         onAlertLocationChange = viewModel::onAlertLocationChange,
+        sunActions = remember(viewModel) {
+            SunActions(
+                onChannelSelected = viewModel::onSunChannelSelected,
+                onVideoSelected = viewModel::onSunVideoSelected,
+                onVideoConfirmed = viewModel::onSunVideoConfirmed,
+                onVideoClosed = viewModel::onSunVideoClosed,
+            )
+        },
         map = { overlays, modifier -> AuroraSpaceMap(mapState, overlays, modifier) },
     )
 }
+
+/** What the Sun card and its full-screen view report to the view model. */
+@Immutable
+class SunActions(
+    val onChannelSelected: (SunChannel) -> Unit = {},
+    val onVideoSelected: () -> Unit = {},
+    val onVideoConfirmed: () -> Unit = {},
+    val onVideoClosed: () -> Unit = {},
+)
 
 @Composable
 private fun MapPlaceholder(@Suppress("UNUSED_PARAMETER") overlays: List<MapOverlay>, modifier: Modifier) {
@@ -124,10 +146,13 @@ fun SpaceWeatherContent(
     onAlertsEnabledChange: (Boolean) -> Unit,
     onAlertLocationChange: (latitude: Double, longitude: Double, enableAlerts: Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    sunActions: SunActions = SunActions(),
     map: @Composable (overlays: List<MapOverlay>, modifier: Modifier) -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     var editingLocation by rememberSaveable { mutableStateOf(false) }
+    var viewingSun by rememberSaveable { mutableStateOf(false) }
+    var viewingFlarePeak by rememberSaveable { mutableStateOf(false) }
     var enableAlertsAfterLocation by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
@@ -161,9 +186,12 @@ fun SpaceWeatherContent(
                         enableAlertsAfterLocation = enableAfter
                         editingLocation = true
                     },
+                    onSunChannelSelected = sunActions.onChannelSelected,
+                    onOpenSun = { viewingSun = true },
+                    onShowFlarePeak = { viewingFlarePeak = true },
                     // MapLibre's texture view and a dialog window deadlock the main thread (ANR on
-                    // emulator-5556, API 37), so the map steps aside while the dialog is up.
-                    map = if (editingLocation) ::MapPlaceholder else map,
+                    // emulator-5556, API 37), so the map steps aside while a dialog is up.
+                    map = if (editingLocation || viewingSun || viewingFlarePeak) ::MapPlaceholder else map,
                 )
 
                 uiState.isOffline -> OfflineState(
@@ -183,6 +211,15 @@ fun SpaceWeatherContent(
         }
     }
 
+    SolarDialogs(
+        uiState = uiState,
+        viewingSun = viewingSun,
+        viewingFlarePeak = viewingFlarePeak,
+        sunActions = sunActions,
+        onSunDismiss = { viewingSun = false },
+        onFlarePeakDismiss = { viewingFlarePeak = false },
+    )
+
     if (editingLocation) {
         AuroraLocationDialog(
             initialLatitude = uiState.alerts.latitude,
@@ -196,6 +233,40 @@ fun SpaceWeatherContent(
     }
 }
 
+/** The Sun full screen, and Helioviewer's picture at the latest flare's peak. */
+@Composable
+private fun SolarDialogs(
+    uiState: SpaceWeatherUiState,
+    viewingSun: Boolean,
+    viewingFlarePeak: Boolean,
+    sunActions: SunActions,
+    onSunDismiss: () -> Unit,
+    onFlarePeakDismiss: () -> Unit,
+) {
+    if (viewingSun && uiState.sun.image != null) {
+        SunViewerDialog(
+            sun = uiState.sun,
+            isOffline = uiState.isOffline,
+            onChannelSelected = sunActions.onChannelSelected,
+            onVideoSelected = sunActions.onVideoSelected,
+            onVideoConfirmed = sunActions.onVideoConfirmed,
+            onVideoClosed = sunActions.onVideoClosed,
+            onDismiss = onSunDismiss,
+        )
+    }
+
+    val flareImageUrl = uiState.flareImageUrl
+    if (viewingFlarePeak && flareImageUrl != null) {
+        ZoomableImageDialog(
+            url = flareImageUrl,
+            previewUrl = null,
+            contentDescription = stringResource(R.string.space_weather_flare_image_description),
+            onDismiss = onFlarePeakDismiss,
+            caption = stringResource(R.string.sun_helioviewer_credit),
+        )
+    }
+}
+
 @Composable
 private fun SpaceWeatherList(
     uiState: SpaceWeatherUiState,
@@ -203,6 +274,9 @@ private fun SpaceWeatherList(
     onHemisphereSelected: (Hemisphere) -> Unit,
     onAlertsEnabledChange: (Boolean) -> Unit,
     onEditLocation: (enableAlertsAfter: Boolean) -> Unit,
+    onSunChannelSelected: (SunChannel) -> Unit,
+    onOpenSun: () -> Unit,
+    onShowFlarePeak: () -> Unit,
     map: @Composable (overlays: List<MapOverlay>, modifier: Modifier) -> Unit,
 ) {
     LazyColumn(
@@ -243,7 +317,17 @@ private fun SpaceWeatherList(
         }
         item(key = "sun") {
             Section(title = stringResource(R.string.space_weather_sun_title)) {
-                SolarFlareCard(uiState.flare)
+                SunCard(
+                    sun = uiState.sun,
+                    isOffline = uiState.isOffline,
+                    onChannelSelected = onSunChannelSelected,
+                    onOpen = onOpenSun,
+                )
+                SolarFlareCard(
+                    flare = uiState.flare,
+                    // Helioviewer renders the picture on demand: nothing to show offline.
+                    onShowPeak = onShowFlarePeak.takeIf { uiState.flareImageUrl != null && !uiState.isOffline },
+                )
                 CmeCard(uiState.cme)
             }
         }

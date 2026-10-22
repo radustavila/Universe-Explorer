@@ -46,6 +46,9 @@ enum class SyncSource(val key: String) {
      * interval: the crew list changes a few times a year, the launch list several times a day.
      */
     PEOPLE_IN_SPACE("launch_library_astronauts"),
+
+    /** Solar Dynamics Observatory latest pictures of the Sun. */
+    SDO("sdo"),
     ;
 
     companion object {

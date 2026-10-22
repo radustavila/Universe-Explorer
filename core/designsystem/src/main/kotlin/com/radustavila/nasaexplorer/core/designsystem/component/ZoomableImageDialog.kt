@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -16,6 +17,8 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -39,7 +42,8 @@ import com.radustavila.nasaexplorer.core.designsystem.R
 
 /**
  * Full-screen, pinch-to-zoom image viewer: drags to pan, double-taps to zoom, and draws [url] on
- * top of an already cached [previewUrl] while it downloads.
+ * top of an already cached [previewUrl] while it downloads. [caption] (a credit, say) sits at the
+ * bottom.
  *
  * The one full-size viewer of the app: every feature that opens a picture full size uses it.
  */
@@ -49,6 +53,7 @@ fun ZoomableImageDialog(
     previewUrl: String?,
     contentDescription: String?,
     onDismiss: () -> Unit,
+    caption: String? = null,
 ) {
     Dialog(
         onDismissRequest = onDismiss,
@@ -68,6 +73,7 @@ fun ZoomableImageDialog(
                 url = url,
                 previewUrl = previewUrl,
                 contentDescription = contentDescription,
+                modifier = Modifier.fillMaxSize(),
             )
 
             FilledIconButton(
@@ -88,15 +94,32 @@ fun ZoomableImageDialog(
                     contentDescription = stringResource(R.string.action_close_full_size),
                 )
             }
+
+            if (caption != null) {
+                Text(
+                    text = caption,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White.copy(alpha = 0.7f),
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .navigationBarsPadding()
+                        .padding(16.dp),
+                )
+            }
         }
     }
 }
 
+/**
+ * The pinch-to-zoom picture of [ZoomableImageDialog], for screens that frame it themselves: drags
+ * pan, double-taps zoom, and [url] draws over the cached [previewUrl] while it downloads.
+ */
 @Composable
-private fun ZoomableImage(
+fun ZoomableImage(
     url: String,
     previewUrl: String?,
     contentDescription: String?,
+    modifier: Modifier = Modifier,
 ) {
     var scale by remember { mutableFloatStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
@@ -130,8 +153,7 @@ private fun ZoomableImage(
     val animatedScale = animateFloatAsState(targetValue = scale, label = "zoom")
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = modifier
             .onSizeChanged { size -> viewport = size }
             .transformable(state = transformState)
             .pointerInput(Unit) {

@@ -62,6 +62,36 @@
     <string name="space_weather_flare_x">X class: the strongest kind. Can cause radio blackouts on the day side of Earth.</string>
     <string name="space_weather_flare_m">M class: medium. Can cause brief radio blackouts near the poles.</string>
     <string name="space_weather_flare_minor">A small flare with little effect on Earth.</string>
+    <string name="space_weather_flare_view_peak">See the Sun at the peak</string>
+    <string name="space_weather_flare_image_description">The Sun in extreme ultraviolet at the picture nearest the flare\'s peak</string>
+
+    <!-- The Sun now (SDO). Channel names and one plain line on what each shows. -->
+    <string name="sun_now_title">The Sun now</string>
+    <string name="sun_channel_visible">Visible light</string>
+    <string name="sun_channel_magnetic">Magnetic field</string>
+    <string name="sun_channel_chromosphere">304 Å chromosphere</string>
+    <string name="sun_channel_corona">171 Å corona</string>
+    <string name="sun_channel_hot_corona">193 Å hot corona</string>
+    <string name="sun_channel_flares">131 Å flares</string>
+    <string name="sun_channel_visible_description">The surface as your eyes would see it. Dark spots are sunspots, cooler where strong magnetic fields hold heat back.</string>
+    <string name="sun_channel_magnetic_description">Magnetic polarity of the surface: white and black are opposite poles. Active regions show up as tight pairs.</string>
+    <string name="sun_channel_chromosphere_description">The layer just above the surface. Bright patches are active regions; dark threads are filaments of cooler gas.</string>
+    <string name="sun_channel_corona_description">The quiet outer atmosphere. Bright loops trace magnetic field lines rising from active regions.</string>
+    <string name="sun_channel_hot_corona_description">Hotter parts of the corona. Dark patches are coronal holes, where fast solar wind streams out towards Earth.</string>
+    <string name="sun_channel_flares_description">The hottest gas, which only glows brightly during solar flares.</string>
+    <string name="sun_image_description">%1$s: NASA\'s Solar Dynamics Observatory picture of the Sun</string>
+    <string name="sun_no_image">No picture of the Sun yet</string>
+    <string name="sun_no_image_offline">No picture of the Sun yet. It downloads once you are online.</string>
+    <string name="sun_no_image_failed">The picture of the Sun could not be downloaded.</string>
+    <string name="sun_open">Open full screen</string>
+    <string name="sun_credit">Courtesy of NASA/SDO and the AIA, EVE, and HMI science teams</string>
+    <string name="sun_helioviewer_credit">NASA/SDO via Helioviewer.org</string>
+    <string name="sun_viewer_close">Close</string>
+    <string name="sun_mode_picture">Now</string>
+    <string name="sun_mode_video">Last 48 hours</string>
+    <string name="sun_video_metered">The 48-hour video is 3 to 10 MB, and you are on mobile data.</string>
+    <string name="sun_video_play">Play video</string>
+    <string name="sun_video_offline">The video needs a connection.</string>
     <string name="space_weather_cme_title">Latest coronal mass ejection</string>
     <string name="space_weather_cme_none">No CME in the last two weeks.</string>
     <string name="space_weather_cme_started">Left the Sun %1$s</string>

@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.Cyclone
+import androidx.compose.material.icons.outlined.WbSunny
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,9 +31,10 @@ import com.radustavila.nasaexplorer.feature.spaceweather.R
 
 const val SOLAR_FLARE_TEST_TAG = "solar-flare"
 const val CME_TEST_TAG = "cme"
+const val SOLAR_FLARE_PEAK_TEST_TAG = "solar-flare-peak"
 
 @Composable
-internal fun SolarFlareCard(flare: SolarFlare?, modifier: Modifier = Modifier) {
+internal fun SolarFlareCard(flare: SolarFlare?, modifier: Modifier = Modifier, onShowPeak: (() -> Unit)? = null) {
     SolarEventCard(
         icon = Icons.Outlined.Bolt,
         title = stringResource(R.string.space_weather_flare_title),
@@ -61,6 +64,12 @@ internal fun SolarFlareCard(flare: SolarFlare?, modifier: Modifier = Modifier) {
         ).joinToString(" · ")
         if (region.isNotEmpty()) {
             Text(region, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        if (onShowPeak != null) {
+            TextButton(onClick = onShowPeak, modifier = Modifier.testTag(SOLAR_FLARE_PEAK_TEST_TAG)) {
+                Icon(Icons.Outlined.WbSunny, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+                Text(stringResource(R.string.space_weather_flare_view_peak))
+            }
         }
     }
 }

@@ -82,6 +82,10 @@ const val MEDIA_PLAYER_FULLSCREEN_TEST_TAG = "video-player-fullscreen"
  * [posterUrl] is a still frame of the same media, shown while the stream buffers. With [audioOnly]
  * there is no picture to give way to: the poster (or a placeholder) stays up under the controls,
  * which never hide, and there is no full screen.
+ *
+ * With [autoPlay] playback starts as soon as enough is buffered, and with [loop] it starts over at the
+ * end, as for a short time-lapse. Composing the player starts the download either way, so a caller
+ * that must not spend mobile data composes it only once the user asked for the video.
  */
 @OptIn(UnstableApi::class)
 @Composable
@@ -90,13 +94,15 @@ fun NasaMediaPlayer(
     posterUrl: String?,
     modifier: Modifier = Modifier,
     audioOnly: Boolean = false,
+    autoPlay: Boolean = false,
+    loop: Boolean = false,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     var status by remember(streamUrl) { mutableStateOf(PlaybackStatus.Buffering) }
     var resumePositionMillis by rememberSaveable(streamUrl) { mutableLongStateOf(0L) }
-    var resumePlaying by rememberSaveable(streamUrl) { mutableStateOf(false) }
+    var resumePlaying by rememberSaveable(streamUrl) { mutableStateOf(autoPlay) }
     var isFullscreen by rememberSaveable(streamUrl) { mutableStateOf(false) }
     // APOD and the library publish both cinema-wide footage and phone-shot verticals; which one this is decides
     // whether full screen should turn the device.
@@ -134,6 +140,7 @@ fun NasaMediaPlayer(
             .build()
             .apply {
                 setMediaItem(MediaItem.fromUri(streamUrl))
+                if (loop) repeatMode = Player.REPEAT_MODE_ONE
                 seekTo(resumePositionMillis)
                 playWhenReady = resumePlaying
                 prepare()
