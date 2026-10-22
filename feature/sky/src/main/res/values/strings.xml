@@ -136,4 +136,15 @@
     <string name="sky_today_summary_no_planets">No bright planets tonight.</string>
     <string name="sky_today_summary_no_place">Choose where you watch from to see tonight\'s Moon, darkness and planets.</string>
     <string name="sky_today_list_separator">", "</string>
+    <string name="sky_stargazing_title">Stargazing forecast</string>
+    <string name="sky_stargazing_tonight">Tonight</string>
+    <string name="sky_stargazing_tonight_rating">Tonight: %1$s</string>
+    <string name="sky_stargazing_cloud_cover">%1$d%% cloud cover on average through the dark hours</string>
+    <string name="sky_stargazing_computing">Working out tonight\'s sky…</string>
+    <string name="sky_stargazing_no_score">No forecast</string>
+    <string name="sky_stargazing_score_description">Observing score %1$d out of 100, %2$s</string>
+    <string name="sky_stargazing_credit">Based on data from MET Norway</string>
+    <string name="sky_stargazing_today_title">Stargazing tonight</string>
+    <string name="sky_stargazing_today_line">%1$s · %2$d/100</string>
+    <string name="sky_stargazing_today_no_place">Save a place in Sky tonight to see whether tonight is clear</string>
 </resources>
