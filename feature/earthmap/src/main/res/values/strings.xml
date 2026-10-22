@@ -10,6 +10,7 @@
     <string name="earth_map_date_slider">Imagery date</string>
     <string name="earth_map_night_lights_caption">City lights at night, 2016 composite</string>
     <string name="earth_map_blue_marble_caption">Cloud-free relief and ocean floor</string>
+    <string name="earth_map_mosaic_gaps">Each day is stitched from satellite passes; gaps between them show the relief map.</string>
     <string name="earth_map_tiles_failed">Can\'t load imagery right now. Showing cached tiles where available.</string>
     <string name="earth_map_imagery_unavailable">No imagery for this day yet. Try an earlier date.</string>
 </resources>

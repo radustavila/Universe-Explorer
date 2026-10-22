@@ -21,11 +21,14 @@ enum class EarthMapMode {
 @Immutable
 data class EarthMapUiState(
     val mode: EarthMapMode,
+    /** The day picked; the date label follows it at once. */
     val date: LocalDate,
     /** First selectable day of the slider. */
     val minDate: LocalDate,
     /** Yesterday: GIBS's daily mosaic for today is often still partial. */
     val maxDate: LocalDate,
+    /** The day the map draws: [date] once the picker has rested for a moment. */
+    val imageryDate: LocalDate = date,
     val isOffline: Boolean = false,
 ) {
     /** Only true colour changes with the day; the other two are single composites. */
@@ -33,9 +36,12 @@ data class EarthMapUiState(
 
     val dayCount: Int get() = ChronoUnit.DAYS.between(minDate, maxDate).toInt()
 
+    /** True while the picked day waits to be drawn. */
+    val isImageryPending: Boolean get() = isDateSelectable && imageryDate != date
+
     val imagery: GibsImagery
         get() = when (mode) {
-            EarthMapMode.TrueColor -> GibsImagery(GibsLayer.trueColorFor(date), date)
+            EarthMapMode.TrueColor -> GibsImagery.trueColor(imageryDate)
             EarthMapMode.NightLights -> GibsImagery(GibsLayer.ViirsBlackMarble)
             EarthMapMode.BlueMarble -> GibsImagery(GibsLayer.BlueMarble)
         }

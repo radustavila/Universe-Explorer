@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,11 +13,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.ImageNotSupported
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.Refresh
@@ -27,6 +30,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -41,9 +45,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -61,11 +67,14 @@ import com.radustavila.nasaexplorer.core.map.gibs.GibsImagery
 import com.radustavila.nasaexplorer.core.map.overlay.MapOverlay
 import com.radustavila.nasaexplorer.core.map.rememberSpaceMapState
 import com.radustavila.nasaexplorer.core.model.EarthEventCategory
+import com.radustavila.nasaexplorer.core.model.reportAgeDays
 
 const val EARTH_EVENTS_FILTER_TEST_TAG = "earth-events-filter"
 const val EARTH_EVENTS_IMAGERY_BAR_TEST_TAG = "earth-events-imagery-bar"
 const val EARTH_EVENTS_TILE_BANNER_TEST_TAG = "earth-events-tile-banner"
 const val EARTH_EVENTS_EMPTY_TEST_TAG = "earth-events-empty"
+const val EARTH_EVENTS_HISTORY_TOGGLE_TEST_TAG = "earth-events-history-toggle"
+const val EARTH_EVENTS_MAP_LOADING_TEST_TAG = "earth-events-map-loading"
 
 /** Zoom the map flies to when it shows an event's imagery: a region, a few hundred km across. */
 private const val EVENT_IMAGERY_ZOOM = 5.0
@@ -92,9 +101,11 @@ internal fun EarthEventsRoute(
     EarthEventsScreen(
         uiState = uiState,
         tileStatus = mapState.tileStatus,
+        isLoadingMapImagery = mapState.isLoadingImagery,
         onBackClick = onBackClick,
         onRefresh = viewModel::onRefresh,
         onCategoryToggled = viewModel::onCategoryToggled,
+        onWildfireHistoryToggled = viewModel::onWildfireHistoryToggled,
         onEventSelected = viewModel::onEventSelected,
         onEventDismissed = viewModel::onEventDismissed,
         onShowImagery = {
@@ -125,8 +136,9 @@ internal fun EarthEventsRoute(
 }
 
 /**
- * Stateless events map: banners, the category filter, the map with event overlays, and the sheet
- * of the selected event.
+ * Stateless events map: banners, the category filter, the wildfire history toggle, the map with
+ * event overlays, and the sheet of the selected event. [isLoadingMapImagery] is true while the map
+ * loads new imagery under the old.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -136,6 +148,7 @@ fun EarthEventsScreen(
     onBackClick: () -> Unit,
     onRefresh: () -> Unit,
     onCategoryToggled: (EarthEventCategory) -> Unit,
+    onWildfireHistoryToggled: () -> Unit,
     onEventSelected: (String) -> Unit,
     onEventDismissed: () -> Unit,
     onShowImagery: () -> Unit,
@@ -143,6 +156,7 @@ fun EarthEventsScreen(
     onOpenSource: (String) -> Unit,
     onMessageShown: () -> Unit,
     modifier: Modifier = Modifier,
+    isLoadingMapImagery: Boolean = false,
     map: EarthEventsMap,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -190,21 +204,35 @@ fun EarthEventsScreen(
                     onCategoryToggled = onCategoryToggled,
                 )
             }
+            if (uiState.wildfireHistoryCount > 0) {
+                WildfireHistoryToggle(
+                    count = uiState.wildfireHistoryCount,
+                    isShown = uiState.showWildfireHistory,
+                    onToggle = onWildfireHistoryToggled,
+                )
+            }
             FreshnessLabel(uiState.freshness, modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
 
             BoxWithConstraints(Modifier.fillMaxWidth().weight(1f)) {
+                val shownEvents = uiState.shownEvents
                 // The selection lives in its own overlay, so picking an event leaves the (large) base
                 // overlays untouched and the map only redraws the highlight.
-                val baseOverlays = remember(uiState.events, uiState.hiddenCategories) {
-                    baseEventOverlays(uiState.events, uiState.hiddenCategories)
+                val baseOverlays = remember(shownEvents, uiState.hiddenCategories, uiState.today) {
+                    baseEventOverlays(shownEvents, uiState.hiddenCategories, uiState.today)
                 }
-                val selection = remember(uiState.events, uiState.hiddenCategories, uiState.selectedEventId) {
-                    selectionOverlay(uiState.events, uiState.hiddenCategories, uiState.selectedEventId)
+                val selection = remember(shownEvents, uiState.hiddenCategories, uiState.selectedEventId) {
+                    selectionOverlay(shownEvents, uiState.hiddenCategories, uiState.selectedEventId)
                 }
                 val overlays = remember(baseOverlays, selection) { baseOverlays + selection }
                 map(uiState.imagery, overlays, onEventSelected, onEventDismissed, Modifier.fillMaxSize())
 
-                if (uiState.isLoaded && uiState.events.isEmpty()) {
+                MapNotes(
+                    isLoadingImagery = isLoadingMapImagery,
+                    // The sheet covers the bottom of the map; the note can wait until it closes.
+                    showsGapNote = uiState.imagery.layers.any { it.hasNoDataGaps } && uiState.selectedEvent == null,
+                )
+
+                if (uiState.isLoaded && shownEvents.isEmpty()) {
                     EmptyNotice(
                         isOffline = uiState.isOffline,
                         isRefreshing = uiState.isRefreshing,
@@ -216,6 +244,7 @@ fun EarthEventsScreen(
                     val isLandscape = maxWidth > maxHeight
                     EventSheet(
                         event = event,
+                        reportAgeDays = event.reportAgeDays(uiState.today),
                         isShowingImagery = uiState.eventImagery?.eventId == event.id,
                         isLoadingImagery = uiState.isLoadingImagery,
                         onShowImagery = onShowImagery,
@@ -291,6 +320,71 @@ private fun InfoBar(
 }
 
 @Composable
+private fun WildfireHistoryToggle(count: Int, isShown: Boolean, onToggle: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.History,
+            contentDescription = null,
+            modifier = Modifier.size(18.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            text = pluralStringResource(
+                if (isShown) R.plurals.earth_events_history_shown else R.plurals.earth_events_history_hidden,
+                count,
+                count,
+            ),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(1f),
+        )
+        TextButton(onClick = onToggle, modifier = Modifier.testTag(EARTH_EVENTS_HISTORY_TOGGLE_TEST_TAG)) {
+            val label = if (isShown) R.string.earth_events_history_hide else R.string.earth_events_history_show
+            Text(stringResource(label))
+        }
+    }
+}
+
+/** The progress bar over the map while new imagery loads, and the note on daily mosaics' gaps. */
+@Composable
+private fun BoxScope.MapNotes(isLoadingImagery: Boolean, showsGapNote: Boolean) {
+    if (isLoadingImagery) {
+        LinearProgressIndicator(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
+                .testTag(EARTH_EVENTS_MAP_LOADING_TEST_TAG),
+        )
+    }
+    if (showsGapNote) {
+        MapCaption(
+            text = stringResource(R.string.earth_events_mosaic_gaps),
+            modifier = Modifier.align(Alignment.BottomEnd),
+        )
+    }
+}
+
+/** A short note over the map, styled like the map's attribution in the opposite corner. */
+@Composable
+private fun MapCaption(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelSmall,
+        color = Color.White,
+        textAlign = TextAlign.End,
+        modifier = modifier
+            .padding(8.dp)
+            .widthIn(max = MAP_CAPTION_MAX_WIDTH)
+            .background(Color.Black.copy(alpha = MAP_CAPTION_SCRIM_ALPHA), MaterialTheme.shapes.small)
+            .padding(horizontal = 6.dp, vertical = 2.dp),
+    )
+}
+
+@Composable
 private fun CategoryFilter(
     counts: List<Pair<EarthEventCategory, Int>>,
     hidden: Set<EarthEventCategory>,
@@ -355,3 +449,5 @@ private val EarthEventsMessage.textRes: Int
     }
 
 private val SHEET_LANDSCAPE_WIDTH = 380.dp
+private val MAP_CAPTION_MAX_WIDTH = 220.dp
+private const val MAP_CAPTION_SCRIM_ALPHA = 0.55f

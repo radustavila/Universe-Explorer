@@ -49,11 +49,13 @@ class EarthMapScreenTest {
         tileStatus: TileLoadStatus = TileLoadStatus.Loaded,
         onModeSelected: (EarthMapMode) -> Unit = {},
         onPreviousDay: () -> Unit = {},
+        isLoadingImagery: Boolean = false,
     ) {
         composeTestRule.setContent {
             EarthMapScreen(
                 uiState = uiState,
                 tileStatus = tileStatus,
+                isLoadingImagery = isLoadingImagery,
                 onBackClick = {},
                 onModeSelected = onModeSelected,
                 onDateSelected = {},
@@ -77,7 +79,9 @@ class EarthMapScreenTest {
         composeTestRule.onNodeWithText(yesterday.formatMedium()).assertIsDisplayed()
         composeTestRule.onNodeWithTag(EARTH_MAP_DATE_SLIDER_TEST_TAG).assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("Next day").assertIsNotEnabled()
-        assertEquals(GibsImagery(GibsLayer.ViirsSnppTrueColor, yesterday), shownImagery)
+        assertEquals(GibsImagery.trueColor(yesterday), shownImagery)
+        composeTestRule.onNodeWithText("gaps between them show the relief map", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(EARTH_MAP_LOADING_TEST_TAG).assertDoesNotExist()
     }
 
     @Test
@@ -145,6 +149,23 @@ class EarthMapScreenTest {
 
         composeTestRule.onNodeWithTag(EARTH_MAP_TILE_BANNER_TEST_TAG).assertDoesNotExist()
         composeTestRule.onNodeWithTag(OFFLINE_BANNER_TEST_TAG).assertDoesNotExist()
+    }
+
+    @Test
+    fun `a picked day shows at once while the map keeps the previous day and a progress bar`() {
+        val dayBefore = yesterday.minusDays(1)
+        setContent(uiState = baseState.copy(date = dayBefore))
+
+        composeTestRule.onNodeWithText(dayBefore.formatMedium()).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(EARTH_MAP_LOADING_TEST_TAG).assertIsDisplayed()
+        assertEquals(GibsImagery.trueColor(yesterday), shownImagery)
+    }
+
+    @Test
+    fun `a progress bar shows while the map loads the new day's tiles`() {
+        setContent(isLoadingImagery = true)
+
+        composeTestRule.onNodeWithTag(EARTH_MAP_LOADING_TEST_TAG).assertIsDisplayed()
     }
 
     private companion object {

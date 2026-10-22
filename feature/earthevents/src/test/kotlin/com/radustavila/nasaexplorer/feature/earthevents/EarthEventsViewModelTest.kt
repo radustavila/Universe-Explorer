@@ -20,6 +20,7 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import kotlinx.coroutines.launch
@@ -52,7 +53,7 @@ class EarthEventsViewModelTest {
     private fun TestScope.createViewModel(savedStateHandle: SavedStateHandle = SavedStateHandle()): EarthEventsViewModel {
         val viewModel = EarthEventsViewModel(
             savedStateHandle = savedStateHandle,
-            observeOpenEvents = ObserveOpenEarthEventsUseCase(repository),
+            observeOpenEvents = ObserveOpenEarthEventsUseCase(repository, clock),
             refreshEarthEvents = RefreshEarthEventsUseCase(repository, RefreshSourceUseCase(metadata, clock)),
             getEventImageryLayer = GetEventImageryLayerUseCase(repository),
             timeProvider = clock,
@@ -74,7 +75,7 @@ class EarthEventsViewModelTest {
             listOf(EarthEventCategory.SEVERE_STORMS to 1, EarthEventCategory.VOLCANOES to 1, EarthEventCategory.WILDFIRES to 1),
             state.categoryCounts,
         )
-        assertEquals(GibsImagery(GibsLayer.ViirsSnppTrueColor, yesterday), state.imagery)
+        assertEquals(GibsImagery.trueColor(yesterday), state.imagery)
     }
 
     @Test
@@ -173,7 +174,7 @@ class EarthEventsViewModelTest {
         assertFalse(state.isLoadingImagery)
 
         viewModel.onHideImagery()
-        assertEquals(GibsImagery(GibsLayer.ViirsSnppTrueColor, yesterday), viewModel.uiState.value.imagery)
+        assertEquals(GibsImagery.trueColor(yesterday), viewModel.uiState.value.imagery)
     }
 
     @Test
@@ -199,7 +200,7 @@ class EarthEventsViewModelTest {
 
         val state = viewModel.uiState.value
         val stormDay = LocalDate.of(2026, 10, 19).minusDays(1)
-        assertEquals(GibsImagery(GibsLayer.ViirsSnppTrueColor, stormDay), state.imagery)
+        assertEquals(GibsImagery.trueColor(stormDay), state.imagery)
         assertEquals(EarthEventsMessage.ImageryFallback, state.message)
     }
 
@@ -218,6 +219,66 @@ class EarthEventsViewModelTest {
         assertEquals(setOf(EarthEventCategory.WILDFIRES), restored.hiddenCategories)
         assertEquals(storm.id, restored.selectedEventId)
         assertEquals(first.uiState.value.eventImagery, restored.eventImagery)
+    }
+
+    private fun wildfireReportedDaysAgo(id: String, days: Long) =
+        TestEarthEvents.wildfire(id = id, at = TestEarthEvents.NOW.minus(Duration.ofDays(days)))
+
+    @Test
+    fun `wildfires from the last two weeks are shown, 2 to 6 week old ones only on request, older never`() = runTest {
+        val current = wildfireReportedDaysAgo("current", 7)
+        val latest = wildfireReportedDaysAgo("latest", 14)
+        val history = wildfireReportedDaysAgo("history", 42)
+        val expired = wildfireReportedDaysAgo("expired", 43)
+        repository.setEvents(listOf(current, latest, history, expired, storm))
+        val viewModel = createViewModel()
+
+        val hidden = viewModel.uiState.value
+        assertFalse(hidden.showWildfireHistory)
+        assertEquals(listOf(storm, current, latest), hidden.shownEvents)
+        assertEquals(1, hidden.wildfireHistoryCount)
+        assertEquals(EarthEventCategory.WILDFIRES to 2, hidden.categoryCounts.first())
+
+        viewModel.onWildfireHistoryToggled()
+
+        val shown = viewModel.uiState.value
+        assertTrue(shown.showWildfireHistory)
+        assertEquals(listOf(storm, current, latest, history), shown.shownEvents)
+        assertEquals(EarthEventCategory.WILDFIRES to 3, shown.categoryCounts.first())
+
+        viewModel.onWildfireHistoryToggled()
+        assertEquals(listOf(storm, current, latest), viewModel.uiState.value.shownEvents)
+    }
+
+    @Test
+    fun `hiding the history closes the sheet of a history wildfire, not of a recent one`() = runTest {
+        val recent = wildfireReportedDaysAgo("recent", 3)
+        val history = wildfireReportedDaysAgo("history", 20)
+        repository.setEvents(listOf(recent, history))
+        val viewModel = createViewModel()
+        viewModel.onWildfireHistoryToggled()
+
+        viewModel.onEventSelected(history.id)
+        assertEquals(history, viewModel.uiState.value.selectedEvent)
+        viewModel.onWildfireHistoryToggled()
+        assertNull(viewModel.uiState.value.selectedEvent)
+
+        viewModel.onWildfireHistoryToggled()
+        viewModel.onEventSelected(recent.id)
+        viewModel.onWildfireHistoryToggled()
+        assertEquals(recent, viewModel.uiState.value.selectedEvent)
+    }
+
+    @Test
+    fun `the history toggle survives rotation and process death`() = runTest {
+        repository.setEvents(listOf(wildfireReportedDaysAgo("history", 30)))
+        val handle = SavedStateHandle()
+        createViewModel(handle).onWildfireHistoryToggled()
+
+        val restored = createViewModel(SavedStateHandle(handle.keys().associateWith { handle.get<Any>(it) })).uiState.value
+
+        assertTrue(restored.showWildfireHistory)
+        assertEquals(1, restored.shownEvents.size)
     }
 
     @Test

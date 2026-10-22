@@ -1,21 +1,37 @@
 package com.radustavila.nasaexplorer.core.domain.usecase
 
 import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.common.time.TimeProvider
 import com.radustavila.nasaexplorer.core.domain.repository.EarthEventRepository
 import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
 import com.radustavila.nasaexplorer.core.model.EarthEvent
 import com.radustavila.nasaexplorer.core.model.EarthEventCategory
 import com.radustavila.nasaexplorer.core.model.EventImageryLayer
+import com.radustavila.nasaexplorer.core.model.EventRecency
 import com.radustavila.nasaexplorer.core.model.SyncSource
+import com.radustavila.nasaexplorer.core.model.recency
 import java.time.Duration
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-/** Open natural events, straight from the local cache. */
+/**
+ * Open natural events from the local cache, without the ones gone quiet: a wildfire with no report
+ * for six weeks is [EventRecency.Expired] even while EONET keeps it open. Wildfires last reported 2
+ * to 6 weeks ago ([EventRecency.History]) are only included with [includeHistory].
+ */
 class ObserveOpenEarthEventsUseCase @Inject constructor(
     private val repository: EarthEventRepository,
+    private val timeProvider: TimeProvider,
 ) {
-    operator fun invoke(): Flow<List<EarthEvent>> = repository.observeOpenEvents()
+    operator fun invoke(includeHistory: Boolean = false): Flow<List<EarthEvent>> =
+        repository.observeOpenEvents().map { events ->
+            val today = timeProvider.today()
+            events.filter { event ->
+                val recency = event.recency(today)
+                recency.isShownByDefault || (includeHistory && recency == EventRecency.History)
+            }
+        }
 }
 
 /**

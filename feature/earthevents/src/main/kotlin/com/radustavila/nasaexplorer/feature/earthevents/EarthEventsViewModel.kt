@@ -13,6 +13,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEarthEventsUseCas
 import com.radustavila.nasaexplorer.core.model.EarthEvent
 import com.radustavila.nasaexplorer.core.model.EarthEventCategory
 import com.radustavila.nasaexplorer.core.model.EventImageryLayer
+import com.radustavila.nasaexplorer.core.model.EventRecency
 import com.radustavila.nasaexplorer.core.model.SyncSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
@@ -29,7 +30,8 @@ import kotlinx.coroutines.launch
 /**
  * The live events map. Events come from the cache only; opening the screen asks for a refresh,
  * which [RefreshEarthEventsUseCase] skips while the cache is fresh, and the refresh button forces
- * one. Filter, selection and shown imagery survive rotation and process death.
+ * one. Filter, wildfire history toggle, selection and shown imagery survive rotation and process
+ * death.
  */
 @HiltViewModel
 class EarthEventsViewModel @Inject constructor(
@@ -41,25 +43,27 @@ class EarthEventsViewModel @Inject constructor(
     observeDataFreshness: ObserveDataFreshnessUseCase,
 ) : ViewModel() {
 
-    private val latestImageryDate: LocalDate = timeProvider.today().minusDays(1)
+    private val today: LocalDate = timeProvider.today()
 
     private val hidden = savedStateHandle.getStateFlow(KEY_HIDDEN, emptyList<String>())
+    private val showHistory = savedStateHandle.getStateFlow(KEY_HISTORY, false)
     private val selectedId = savedStateHandle.getStateFlow<String?>(KEY_SELECTED, null)
     private val imagery = savedStateHandle.getStateFlow<List<String>?>(KEY_IMAGERY, null)
     private val transient = MutableStateFlow(Transient())
 
     val uiState: StateFlow<EarthEventsUiState> = combine(
-        observeOpenEvents(),
-        combine(hidden, selectedId, imagery, ::Selection),
+        observeOpenEvents(includeHistory = true),
+        combine(hidden, showHistory, selectedId, imagery, ::Selection),
         transient,
         observeDataFreshness(SyncSource.EONET),
     ) { events, selection, transient, freshness ->
         EarthEventsUiState(
             events = events,
             hiddenCategories = selection.hidden.mapNotNull(EarthEventCategory::fromKey).toSet(),
+            showWildfireHistory = selection.showHistory,
             selectedEventId = selection.selectedId?.takeIf { id -> events.any { it.id == id } },
             eventImagery = selection.imagery?.let(::decodeImagery),
-            latestImageryDate = latestImageryDate,
+            today = today,
             isLoaded = true,
             isRefreshing = transient.isRefreshing,
             isLoadingImagery = transient.isLoadingImagery,
@@ -70,7 +74,7 @@ class EarthEventsViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(STATE_TIMEOUT_MILLIS),
-        initialValue = EarthEventsUiState(latestImageryDate = latestImageryDate),
+        initialValue = EarthEventsUiState(today = today, showWildfireHistory = showHistory.value),
     )
 
     init {
@@ -82,6 +86,14 @@ class EarthEventsViewModel @Inject constructor(
     fun onCategoryToggled(category: EarthEventCategory) {
         val current = hidden.value
         savedStateHandle[KEY_HIDDEN] = ArrayList(if (category.key in current) current - category.key else current + category.key)
+    }
+
+    /** Shows or hides wildfires last reported 2 to 6 weeks ago; hiding one closes its sheet. */
+    fun onWildfireHistoryToggled() {
+        val show = !showHistory.value
+        savedStateHandle[KEY_HISTORY] = show
+        val selected = uiState.value.run { events.firstOrNull { it.id == selectedEventId }?.let(::recencyOf) }
+        if (!show && selected == EventRecency.History) savedStateHandle[KEY_SELECTED] = null
     }
 
     fun onEventSelected(eventId: String) {
@@ -141,9 +153,14 @@ class EarthEventsViewModel @Inject constructor(
      * is still being assembled and mostly empty.
      */
     private fun imageryDateOf(event: EarthEvent): LocalDate =
-        minOf(event.lastUpdate.atOffset(ZoneOffset.UTC).toLocalDate(), latestImageryDate)
+        minOf(event.lastUpdate.atOffset(ZoneOffset.UTC).toLocalDate(), today.minusDays(1))
 
-    private data class Selection(val hidden: List<String>, val selectedId: String?, val imagery: List<String>?)
+    private data class Selection(
+        val hidden: List<String>,
+        val showHistory: Boolean,
+        val selectedId: String?,
+        val imagery: List<String>?,
+    )
 
     private data class Transient(
         val isRefreshing: Boolean = false,
@@ -153,6 +170,7 @@ class EarthEventsViewModel @Inject constructor(
 
     companion object {
         private const val KEY_HIDDEN = "hidden_categories"
+        private const val KEY_HISTORY = "show_wildfire_history"
         private const val KEY_SELECTED = "selected_event"
         private const val KEY_IMAGERY = "event_imagery"
         private const val STATE_TIMEOUT_MILLIS = 5_000L

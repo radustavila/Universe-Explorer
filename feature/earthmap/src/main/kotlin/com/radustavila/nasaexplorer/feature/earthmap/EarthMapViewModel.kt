@@ -8,16 +8,21 @@ import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.stateIn
 
 /**
  * Layer and day of the satellite map. Nothing is fetched here: the map streams GIBS tiles itself
  * and MapLibre caches them, so the screen only needs the selection (kept across process death)
- * and connectivity for the offline banner.
+ * and connectivity for the offline banner. The map's day trails the picked day by
+ * [IMAGERY_DEBOUNCE_MILLIS], so tapping through days or dragging the slider does not load every day
+ * passed on the way.
  */
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class EarthMapViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
@@ -29,13 +34,20 @@ class EarthMapViewModel @Inject constructor(
 
     private val mode = savedStateHandle.getStateFlow(KEY_MODE, EarthMapMode.TrueColor.name)
     private val date = savedStateHandle.getStateFlow(KEY_DATE, maxDate.toString())
+    private val imageryDate = date.debounce(IMAGERY_DEBOUNCE_MILLIS)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, date.value)
 
-    val uiState: StateFlow<EarthMapUiState> = combine(mode, date, networkMonitor.isOnline) { mode, date, online ->
-        stateOf(mode, date).copy(isOffline = !online)
+    val uiState: StateFlow<EarthMapUiState> = combine(
+        mode,
+        date,
+        imageryDate,
+        networkMonitor.isOnline,
+    ) { mode, date, imageryDate, online ->
+        stateOf(mode, date, imageryDate).copy(isOffline = !online)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(STATE_TIMEOUT_MILLIS),
-        initialValue = stateOf(mode.value, date.value),
+        initialValue = stateOf(mode.value, date.value, imageryDate.value),
     )
 
     fun onModeSelected(mode: EarthMapMode) {
@@ -52,9 +64,10 @@ class EarthMapViewModel @Inject constructor(
 
     private fun currentDate() = LocalDate.parse(date.value)
 
-    private fun stateOf(mode: String, date: String) = EarthMapUiState(
+    private fun stateOf(mode: String, date: String, imageryDate: String) = EarthMapUiState(
         mode = EarthMapMode.entries.firstOrNull { it.name == mode } ?: EarthMapMode.TrueColor,
         date = LocalDate.parse(date).coerceIn(MIN_DATE, maxDate),
+        imageryDate = LocalDate.parse(imageryDate).coerceIn(MIN_DATE, maxDate),
         minDate = MIN_DATE,
         maxDate = maxDate,
     )
@@ -66,5 +79,8 @@ class EarthMapViewModel @Inject constructor(
         private const val KEY_MODE = "mode"
         private const val KEY_DATE = "date"
         private const val STATE_TIMEOUT_MILLIS = 5_000L
+
+        /** How long the picked day has to stay put before the map loads it. */
+        const val IMAGERY_DEBOUNCE_MILLIS = 400L
     }
 }

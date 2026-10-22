@@ -15,6 +15,7 @@ import com.radustavila.nasaexplorer.core.map.gibs.GibsImagery
 import com.radustavila.nasaexplorer.core.map.overlay.MapOverlay
 import com.radustavila.nasaexplorer.core.model.EarthEventCategory
 import com.radustavila.nasaexplorer.core.testing.data.TestEarthEvents
+import java.time.Duration
 import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -31,12 +32,16 @@ class EarthEventsScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private val yesterday = LocalDate.of(2026, 10, 18)
+    private val today = LocalDate.of(2026, 10, 19)
     private val storm = TestEarthEvents.storm()
     private val fire = TestEarthEvents.wildfire()
+    private val oldFire = TestEarthEvents.wildfire(
+        id = "EONET_old",
+        at = TestEarthEvents.NOW.minus(Duration.ofDays(20)),
+    )
     private val loaded = EarthEventsUiState(
         events = listOf(storm, fire),
-        latestImageryDate = yesterday,
+        today = today,
         isLoaded = true,
     )
 
@@ -49,12 +54,19 @@ class EarthEventsScreenTest {
     private val openedUrls = mutableListOf<String>()
     private var showImageryClicks = 0
     private var hideImageryClicks = 0
+    private var historyToggles = 0
 
-    private fun setContent(uiState: EarthEventsUiState, tileStatus: TileLoadStatus = TileLoadStatus.Loaded) {
+    private fun setContent(
+        uiState: EarthEventsUiState,
+        tileStatus: TileLoadStatus = TileLoadStatus.Loaded,
+        isLoadingMapImagery: Boolean = false,
+    ) {
         composeTestRule.setContent {
             EarthEventsScreen(
                 uiState = uiState,
                 tileStatus = tileStatus,
+                isLoadingMapImagery = isLoadingMapImagery,
+                onWildfireHistoryToggled = { historyToggles++ },
                 onBackClick = {},
                 onRefresh = {},
                 onCategoryToggled = { toggled += it },
@@ -111,6 +123,7 @@ class EarthEventsScreenTest {
         composeTestRule.onNodeWithText("Severe storms").assertIsDisplayed()
         // 45 kts, in the units of Robolectric's default en-US region.
         composeTestRule.onNodeWithText("Magnitude: 52 mph", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Last report today").assertIsDisplayed()
         composeTestRule.onNodeWithText("Last update:", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithText("Track: 3 positions since", substring = true).assertIsDisplayed()
 
@@ -142,7 +155,7 @@ class EarthEventsScreenTest {
 
     @Test
     fun `offline with nothing cached says how to get events`() {
-        setContent(EarthEventsUiState(latestImageryDate = yesterday, isLoaded = true, isOffline = true))
+        setContent(EarthEventsUiState(today = today, isLoaded = true, isOffline = true))
 
         composeTestRule.onNodeWithTag(OFFLINE_BANNER_TEST_TAG).assertIsDisplayed()
         composeTestRule.onNodeWithTag(EARTH_EVENTS_EMPTY_TEST_TAG).assertIsDisplayed()
@@ -163,6 +176,56 @@ class EarthEventsScreenTest {
         setContent(loaded, tileStatus = TileLoadStatus.ImageryUnavailable)
 
         composeTestRule.onNodeWithTag(EARTH_EVENTS_TILE_BANNER_TEST_TAG).assertIsDisplayed()
+    }
+
+    @Test
+    fun `older wildfires stay off the map until the history toggle shows them`() {
+        setContent(loaded.copy(events = listOf(storm, fire, oldFire)))
+
+        composeTestRule.onNodeWithText("1 wildfire last reported 2–6 weeks ago is hidden").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Wildfires · 1").assertIsDisplayed()
+        assertTrue(shownOverlays.none { overlay -> overlay.shapes.any { it.id == oldFire.id } })
+
+        composeTestRule.onNodeWithTag(EARTH_EVENTS_HISTORY_TOGGLE_TEST_TAG).performClick()
+        assertEquals(1, historyToggles)
+    }
+
+    @Test
+    fun `with the history shown, older wildfires are drawn and counted`() {
+        setContent(loaded.copy(events = listOf(storm, fire, oldFire), showWildfireHistory = true))
+
+        composeTestRule.onNodeWithText("Showing 1 wildfire last reported 2–6 weeks ago, faded").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Hide").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Wildfires · 2").assertIsDisplayed()
+        assertTrue(shownOverlays.any { overlay -> overlay.shapes.any { it.id == oldFire.id } })
+    }
+
+    @Test
+    fun `without older wildfires there is no history toggle`() {
+        setContent(loaded)
+
+        composeTestRule.onNodeWithTag(EARTH_EVENTS_HISTORY_TOGGLE_TEST_TAG).assertDoesNotExist()
+    }
+
+    @Test
+    fun `the sheet says how many days ago the event was last reported`() {
+        setContent(loaded.copy(events = listOf(oldFire), showWildfireHistory = true, selectedEventId = oldFire.id))
+
+        composeTestRule.onNodeWithText("Last report 20 days ago").assertIsDisplayed()
+    }
+
+    @Test
+    fun `a progress bar tops the map while new imagery loads`() {
+        setContent(loaded, isLoadingMapImagery = true)
+        composeTestRule.onNodeWithTag(EARTH_EVENTS_MAP_LOADING_TEST_TAG).assertIsDisplayed()
+    }
+
+    @Test
+    fun `daily true colour comes with a note on its gaps`() {
+        setContent(loaded)
+
+        composeTestRule.onNodeWithText("Daily mosaic", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(EARTH_EVENTS_MAP_LOADING_TEST_TAG).assertDoesNotExist()
     }
 
     private companion object {

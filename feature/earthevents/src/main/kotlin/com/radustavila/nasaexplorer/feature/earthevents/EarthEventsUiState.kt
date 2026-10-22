@@ -9,19 +9,28 @@ import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.EarthEvent
 import com.radustavila.nasaexplorer.core.model.EarthEventCategory
 import com.radustavila.nasaexplorer.core.model.EventImageryLayer
+import com.radustavila.nasaexplorer.core.model.EventRecency
+import com.radustavila.nasaexplorer.core.model.recency
 import java.time.LocalDate
 
 @Immutable
 data class EarthEventsUiState(
-    /** Open events from the cache, most recently updated first. */
+    /**
+     * Open events from the cache, most recently updated first: everything not
+     * [expired][EventRecency.Expired], including wildfire [history][EventRecency.History].
+     */
     val events: List<EarthEvent> = emptyList(),
     /** Categories the filter switched off. */
     val hiddenCategories: Set<EarthEventCategory> = emptySet(),
+    /** Whether wildfires last reported 2 to 6 weeks ago are drawn too. */
+    val showWildfireHistory: Boolean = false,
     val selectedEventId: String? = null,
     /** An event's own imagery, after "Show imagery"; `null` shows the latest true colour. */
     val eventImagery: EventImagery? = null,
+    /** The UTC day events' ages are counted to. */
+    val today: LocalDate,
     /** Day of the default true colour imagery: yesterday, as on the satellite map. */
-    val latestImageryDate: LocalDate,
+    val latestImageryDate: LocalDate = today.minusDays(1),
     /** False until the cache has been read once, so an empty map is not mistaken for no events. */
     val isLoaded: Boolean = false,
     val isRefreshing: Boolean = false,
@@ -31,17 +40,26 @@ data class EarthEventsUiState(
     /** When the events last synced, for the "Updated …" line over the map. */
     val freshness: DataFreshness = DataFreshness(),
 ) {
-    /** The categories with open events and how many, largest first, for the filter. */
+    /** The events the map draws (before the category filter): history only while switched on. */
+    val shownEvents: List<EarthEvent>
+        get() = if (showWildfireHistory) events else events.filter { recencyOf(it).isShownByDefault }
+
+    /** Wildfires the history toggle shows or hides. */
+    val wildfireHistoryCount: Int get() = events.count { recencyOf(it) == EventRecency.History }
+
+    /** The categories with shown events and how many, largest first, for the filter. */
     val categoryCounts: List<Pair<EarthEventCategory, Int>>
-        get() = countByCategory(events)
+        get() = countByCategory(shownEvents)
 
-    val visibleEvents: List<EarthEvent> get() = events.filter { it.category !in hiddenCategories }
+    val visibleEvents: List<EarthEvent> get() = shownEvents.filter { it.category !in hiddenCategories }
 
-    val selectedEvent: EarthEvent? get() = events.firstOrNull { it.id == selectedEventId }
+    val selectedEvent: EarthEvent? get() = shownEvents.firstOrNull { it.id == selectedEventId }
+
+    fun recencyOf(event: EarthEvent): EventRecency = event.recency(today)
 
     /** What the map draws under the events. */
     val imagery: GibsImagery
-        get() = eventImagery?.toGibsImagery() ?: GibsImagery(GibsLayer.trueColorFor(latestImageryDate), latestImageryDate)
+        get() = eventImagery?.toGibsImagery() ?: GibsImagery.trueColor(latestImageryDate)
 }
 
 /**
@@ -59,7 +77,7 @@ data class EventImagery(
             GibsTileMatrixSet.fromId(layer.tileMatrixSet)?.let { matrixSet ->
                 GibsLayer(id = layer.id, matrixSet = matrixSet, format = layer.fileExtension, time = GibsTime.Daily())
             }
-        } ?: GibsLayer.trueColorFor(date)
+        } ?: return GibsImagery.trueColor(date)
         return GibsImagery(gibsLayer, date)
     }
 

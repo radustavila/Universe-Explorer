@@ -48,7 +48,15 @@ class SpaceMapState(initialCamera: MapCamera = MapCamera.World) {
     var camera: MapCamera by mutableStateOf(initialCamera)
         internal set
 
+    /** Tile health of the imagery last passed to [SpaceMap]. */
     var tileStatus: TileLoadStatus by mutableStateOf(TileLoadStatus.Loaded)
+        internal set
+
+    /**
+     * True while new imagery (another day or layer) loads under the imagery still on screen; screens
+     * show a progress indicator for it.
+     */
+    var isLoadingImagery: Boolean by mutableStateOf(false)
         internal set
 
     internal var pendingMove: CameraMove? by mutableStateOf(null)
