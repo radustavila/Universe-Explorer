@@ -77,6 +77,7 @@ private const val MAP_ZOOM = 0.0
 fun SkyTonightScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    nextInTheSky: (@Composable () -> Unit)? = null,
     viewModel: SkyTonightViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -133,6 +134,7 @@ fun SkyTonightScreen(
         onRefresh = viewModel::onRefresh,
         snackbarHostState = snackbarHostState,
         modifier = modifier,
+        nextInTheSky = nextInTheSky,
     )
 
     if (showLocationDialog) {
@@ -168,6 +170,7 @@ fun SkyTonightContent(
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    nextInTheSky: (@Composable () -> Unit)? = null,
 ) {
     Scaffold(
         modifier = modifier,
@@ -200,6 +203,7 @@ fun SkyTonightContent(
                         onUseMyLocation = onUseMyLocation,
                         onChooseLocation = onChooseLocation,
                         onRemindersClick = onRemindersClick,
+                        nextInTheSky = nextInTheSky,
                     )
                 }
             }
@@ -215,6 +219,7 @@ private fun SkyList(
     onUseMyLocation: () -> Unit,
     onChooseLocation: () -> Unit,
     onRemindersClick: () -> Unit,
+    nextInTheSky: (@Composable () -> Unit)?,
 ) {
     val location = uiState.location
     // One column on a phone held upright; side by side on wider windows (a phone in landscape
@@ -262,6 +267,8 @@ private fun SkyList(
                 }
             }
         }
+        // Works without a place too: the calendar then shows the global facts.
+        nextInTheSky?.let { card -> item(key = "next-in-the-sky") { card() } }
         item(key = "track") { IssTrackCard(track = uiState.track, observer = location?.coordinate, map = trackMap) }
         item(key = "people") {
             PeopleInSpaceCard(people = uiState.people, now = uiState.sky?.computedAt ?: Instant.now())

@@ -24,6 +24,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Image
@@ -484,6 +485,7 @@ internal val SearchSource.labelRes: Int
         SearchSource.SMALL_BODIES -> R.string.search_source_small_bodies
         SearchSource.EARTH_EVENTS -> R.string.search_source_earth_events
         SearchSource.LAUNCHES -> R.string.search_source_launches
+        SearchSource.SKY_EVENTS -> R.string.search_source_sky_events
     }
 
 private val FavoriteSource.labelRes: Int
@@ -504,4 +506,5 @@ private val SearchSource.icon: ImageVector
         SearchSource.SMALL_BODIES -> Icons.Outlined.Explore
         SearchSource.EARTH_EVENTS -> Icons.Outlined.Public
         SearchSource.LAUNCHES -> Icons.Outlined.RocketLaunch
+        SearchSource.SKY_EVENTS -> Icons.Outlined.Event
     }

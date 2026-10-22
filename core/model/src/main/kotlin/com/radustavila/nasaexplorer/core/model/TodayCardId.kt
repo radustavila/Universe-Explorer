@@ -14,6 +14,7 @@ enum class TodayCardId {
     SKY_TONIGHT,
     SPACE_WEATHER,
     DSN_NOW,
+    SKY_EVENTS,
     ;
 
     companion object {
