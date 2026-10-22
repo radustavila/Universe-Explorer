@@ -11,6 +11,7 @@ import com.radustavila.nasaexplorer.core.domain.storage.CacheCleaner
 import com.radustavila.nasaexplorer.core.domain.storage.StorageEntry
 import com.radustavila.nasaexplorer.core.domain.storage.StorageKind
 import com.radustavila.nasaexplorer.core.domain.storage.StorageUsageSource
+import com.radustavila.nasaexplorer.data.dsn.local.DsnDatabase
 import com.radustavila.nasaexplorer.data.earthevents.local.EarthEventsDatabase
 import com.radustavila.nasaexplorer.data.exoplanets.local.ExoplanetsDatabase
 import com.radustavila.nasaexplorer.data.launches.local.LaunchesDatabase
@@ -98,6 +99,7 @@ class DatabaseStorage @Inject constructor(
             SmallBodiesDatabase.NAME,
             SpaceWeatherDatabase.NAME,
             SkyDatabase.NAME,
+            DsnDatabase.NAME,
         )
 
         private val SQLITE_SUFFIXES = listOf("-wal", "-shm", "-journal")

@@ -1,0 +1,286 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "7d46a23e2ecc75d2801352758a242841",
+    "entities": [
+      {
+        "tableName": "dsn_dish",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`dish_name` TEXT NOT NULL, `site_code` TEXT NOT NULL, `site_name` TEXT, `site_order` INTEGER NOT NULL, `dish_order` INTEGER NOT NULL, `azimuth_deg` REAL, `elevation_deg` REAL, `activity` TEXT, `observed_at` INTEGER NOT NULL, `fetched_at` INTEGER NOT NULL, PRIMARY KEY(`dish_name`))",
+        "fields": [
+          {
+            "fieldPath": "dishName",
+            "columnName": "dish_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "siteCode",
+            "columnName": "site_code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "siteName",
+            "columnName": "site_name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "siteOrder",
+            "columnName": "site_order",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dishOrder",
+            "columnName": "dish_order",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "azimuthDegrees",
+            "columnName": "azimuth_deg",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "elevationDegrees",
+            "columnName": "elevation_deg",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "activity",
+            "columnName": "activity",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "observedAtMillis",
+            "columnName": "observed_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fetchedAtMillis",
+            "columnName": "fetched_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "dish_name"
+          ]
+        }
+      },
+      {
+        "tableName": "dsn_link",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`dish_name` TEXT NOT NULL, `spacecraft_code` TEXT NOT NULL, `link_order` INTEGER NOT NULL, `naif_id` INTEGER, `range_km` REAL, PRIMARY KEY(`dish_name`, `spacecraft_code`))",
+        "fields": [
+          {
+            "fieldPath": "dishName",
+            "columnName": "dish_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "spacecraftCode",
+            "columnName": "spacecraft_code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "linkOrder",
+            "columnName": "link_order",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "naifId",
+            "columnName": "naif_id",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "rangeKm",
+            "columnName": "range_km",
+            "affinity": "REAL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "dish_name",
+            "spacecraft_code"
+          ]
+        }
+      },
+      {
+        "tableName": "dsn_signal",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dish_name` TEXT NOT NULL, `spacecraft_code` TEXT NOT NULL, `is_uplink` INTEGER NOT NULL, `band` TEXT, `data_rate_bps` REAL, `is_active` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dishName",
+            "columnName": "dish_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "spacecraftCode",
+            "columnName": "spacecraft_code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isUplink",
+            "columnName": "is_uplink",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "band",
+            "columnName": "band",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "dataRateBitsPerSecond",
+            "columnName": "data_rate_bps",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "isActive",
+            "columnName": "is_active",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "dsn_spacecraft",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`code` TEXT NOT NULL, `name` TEXT NOT NULL, `fetched_at` INTEGER NOT NULL, PRIMARY KEY(`code`))",
+        "fields": [
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fetchedAtMillis",
+            "columnName": "fetched_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "code"
+          ]
+        }
+      },
+      {
+        "tableName": "dsn_dish_info",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`dish_name` TEXT NOT NULL, `site_code` TEXT NOT NULL, `diameter_m` INTEGER, `fetched_at` INTEGER NOT NULL, PRIMARY KEY(`dish_name`))",
+        "fields": [
+          {
+            "fieldPath": "dishName",
+            "columnName": "dish_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "siteCode",
+            "columnName": "site_code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "diameterMeters",
+            "columnName": "diameter_m",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "fetchedAtMillis",
+            "columnName": "fetched_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "dish_name"
+          ]
+        }
+      },
+      {
+        "tableName": "probe_distance",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`horizons_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `distance_au` REAL NOT NULL, `range_rate_km_s` REAL, `epoch` INTEGER NOT NULL, `fetched_at` INTEGER NOT NULL, PRIMARY KEY(`horizons_id`))",
+        "fields": [
+          {
+            "fieldPath": "horizonsId",
+            "columnName": "horizons_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "distanceAu",
+            "columnName": "distance_au",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rangeRateKmPerSecond",
+            "columnName": "range_rate_km_s",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "epochMillis",
+            "columnName": "epoch",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fetchedAtMillis",
+            "columnName": "fetched_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "horizons_id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7d46a23e2ecc75d2801352758a242841')"
+    ]
+  }
+}

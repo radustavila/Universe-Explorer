@@ -5,6 +5,7 @@ import app.cash.turbine.test
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveTodayCardsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetTodayCardsUseCase
 import com.radustavila.nasaexplorer.core.model.TodayCardId
+import com.radustavila.nasaexplorer.core.model.TodayCardId.DSN_NOW
 import com.radustavila.nasaexplorer.core.model.TodayCardId.EARTH_EVENTS
 import com.radustavila.nasaexplorer.core.model.TodayCardId.EARTH_TODAY
 import com.radustavila.nasaexplorer.core.model.TodayCardId.ISS_NOW
@@ -37,7 +38,7 @@ class CustomizeTodayViewModelTest {
         viewModel.uiState.test {
             val state = awaitLoaded()
             assertEquals(TodayCardId.DEFAULT, state.shown)
-            assertEquals(listOf(ISS_NOW, SKY_TONIGHT, SPACE_WEATHER), state.hidden)
+            assertEquals(listOf(ISS_NOW, SKY_TONIGHT, SPACE_WEATHER, DSN_NOW), state.hidden)
             assertTrue(state.isDefault)
         }
     }
@@ -53,7 +54,7 @@ class CustomizeTodayViewModelTest {
             viewModel.onShownChange(EARTH_EVENTS, shown = false)
             val state = awaitItem()
             assertEquals(listOf(EARTH_TODAY, NEXT_LAUNCHES, ISS_NOW), state.shown)
-            assertEquals(listOf(EARTH_EVENTS, SKY_TONIGHT, SPACE_WEATHER), state.hidden)
+            assertEquals(listOf(EARTH_EVENTS, SKY_TONIGHT, SPACE_WEATHER, DSN_NOW), state.hidden)
             assertFalse(state.isDefault)
         }
         assertEquals(listOf(EARTH_TODAY, NEXT_LAUNCHES, ISS_NOW), repository.currentTodayCards)

@@ -7,6 +7,7 @@ import androidx.compose.material.icons.outlined.NightsStay
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.RocketLaunch
 import androidx.compose.material.icons.outlined.SatelliteAlt
+import androidx.compose.material.icons.outlined.SettingsInputAntenna
 import androidx.compose.material.icons.outlined.WbSunny
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.radustavila.nasaexplorer.core.model.TodayCardId
@@ -29,6 +30,7 @@ internal val TodayCardId.titleRes: Int
         TodayCardId.ISS_NOW -> R.string.customize_today_card_iss
         TodayCardId.SKY_TONIGHT -> R.string.customize_today_card_sky
         TodayCardId.SPACE_WEATHER -> R.string.customize_today_card_space_weather
+        TodayCardId.DSN_NOW -> R.string.customize_today_card_dsn
     }
 
 @get:StringRes
@@ -40,6 +42,7 @@ internal val TodayCardId.descriptionRes: Int
         TodayCardId.ISS_NOW -> R.string.customize_today_card_iss_description
         TodayCardId.SKY_TONIGHT -> R.string.customize_today_card_sky_description
         TodayCardId.SPACE_WEATHER -> R.string.customize_today_card_space_weather_description
+        TodayCardId.DSN_NOW -> R.string.customize_today_card_dsn_description
     }
 
 internal val TodayCardId.icon: ImageVector
@@ -50,4 +53,5 @@ internal val TodayCardId.icon: ImageVector
         TodayCardId.ISS_NOW -> Icons.Outlined.SatelliteAlt
         TodayCardId.SKY_TONIGHT -> Icons.Outlined.NightsStay
         TodayCardId.SPACE_WEATHER -> Icons.Outlined.WbSunny
+        TodayCardId.DSN_NOW -> Icons.Outlined.SettingsInputAntenna
     }
