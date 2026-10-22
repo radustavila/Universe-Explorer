@@ -1,8 +1,6 @@
 package com.radustavila.nasaexplorer.core.notifications
 
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -48,7 +46,7 @@ class SystemTrayIssPassNotifier @Inject constructor(
             .setContentTitle(context.getString(R.string.iss_pass_notification_title, start))
             .setContentText(text)
             .setStyle(NotificationCompat.BigTextStyle().bigText(text))
-            .setContentIntent(openAppIntent())
+            .setContentIntent(context.openAppIntent(REQUEST_CODE))
             .setAutoCancel(true)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             // Useless after the pass: gone once it has ended.
@@ -70,31 +68,9 @@ class SystemTrayIssPassNotifier @Inject constructor(
         notificationManager.createNotificationChannel(channel)
     }
 
-    private fun openAppIntent(): PendingIntent? =
-        context.packageManager.getLaunchIntentForPackage(context.packageName)?.let { intent ->
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            PendingIntent.getActivity(
-                context,
-                REQUEST_CODE,
-                intent,
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-            )
-        }
-
     private companion object {
         const val CHANNEL_ID = "iss_passes"
         const val NOTIFICATION_ID = 2
         const val REQUEST_CODE = 1
-        const val COMPASS_SECTOR = 45.0
-
-        val COMPASS_POINTS = intArrayOf(
-            R.string.iss_pass_compass_n, R.string.iss_pass_compass_ne, R.string.iss_pass_compass_e, R.string.iss_pass_compass_se,
-            R.string.iss_pass_compass_s, R.string.iss_pass_compass_sw, R.string.iss_pass_compass_w, R.string.iss_pass_compass_nw,
-        )
-
-        fun compassPoint(azimuth: Double): Int {
-            val index = (((azimuth % 360.0 + 360.0) % 360.0 + COMPASS_SECTOR / 2) / COMPASS_SECTOR).toInt() % 8
-            return COMPASS_POINTS[index]
-        }
     }
 }

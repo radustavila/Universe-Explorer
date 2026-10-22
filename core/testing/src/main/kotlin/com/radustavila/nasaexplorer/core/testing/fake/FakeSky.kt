@@ -5,15 +5,19 @@ import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.sky.IssPassNotifier
 import com.radustavila.nasaexplorer.core.domain.sky.IssPassReminderScheduler
 import com.radustavila.nasaexplorer.core.domain.sky.PeopleInSpaceRepository
+import com.radustavila.nasaexplorer.core.domain.sky.SatellitePassNotifier
+import com.radustavila.nasaexplorer.core.domain.sky.SatellitePassReminderScheduler
 import com.radustavila.nasaexplorer.core.domain.sky.SatellitePassPredictor
 import com.radustavila.nasaexplorer.core.domain.sky.SatelliteRepository
 import com.radustavila.nasaexplorer.core.domain.sky.SkyCalculator
 import com.radustavila.nasaexplorer.core.domain.sky.SkyPreferencesRepository
+import com.radustavila.nasaexplorer.core.domain.sky.UpcomingPass
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.model.OrbitalElements
 import com.radustavila.nasaexplorer.core.model.PersonInSpace
 import com.radustavila.nasaexplorer.core.model.SatellitePass
 import com.radustavila.nasaexplorer.core.model.SatellitePosition
+import com.radustavila.nasaexplorer.core.model.SatelliteSet
 import com.radustavila.nasaexplorer.core.model.SkyTonight
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import java.time.Duration
@@ -33,11 +37,15 @@ class FakeSkyCalculator(var sky: SkyTonight = TestSky.skyTonight()) : SkyCalcula
     }
 }
 
-/** Returns [passes] filtered to the requested window, and [position] / [track] as set. */
+/**
+ * Returns [passes] filtered to the requested window - or, for a catalogue number in
+ * [passesByNoradId], that satellite's own list - and [position] / [track] as set.
+ */
 class FakeSatellitePassPredictor(
     var passes: List<SatellitePass> = emptyList(),
     var position: SatellitePosition? = null,
     var track: List<SatellitePosition> = emptyList(),
+    var passesByNoradId: Map<Int, List<SatellitePass>> = emptyMap(),
 ) : SatellitePassPredictor {
 
     /** The `from` of every ground track asked for, oldest first. */
@@ -49,7 +57,8 @@ class FakeSatellitePassPredictor(
         from: Instant,
         to: Instant,
         minElevationDegrees: Double,
-    ): List<SatellitePass> = passes.filter { it.end.isAfter(from) && !it.peak.isAfter(to) }
+    ): List<SatellitePass> = (passesByNoradId[elements.noradId] ?: passes)
+        .filter { it.end.isAfter(from) && !it.peak.isAfter(to) }
 
     override fun position(elements: OrbitalElements, at: Instant): SatellitePosition? = position?.copy(at = at)
 
@@ -67,6 +76,14 @@ class FakeSatellitePassPredictor(
 class FakeSatelliteRepository : SatelliteRepository {
 
     private val elements = MutableStateFlow<Map<Int, OrbitalElements>>(emptyMap())
+    private val sets = MutableStateFlow<Map<SatelliteSet, List<OrbitalElements>>>(emptyMap())
+
+    /** What [refreshSet] answers; a success stores [setsOnRefresh]'s entry for the set, if any. */
+    var refreshSetResult: DataResult<Int> = DataResult.Success(0)
+    var setsOnRefresh: Map<SatelliteSet, List<OrbitalElements>> = emptyMap()
+
+    /** Every set refreshed, in order. */
+    val refreshedSets = mutableListOf<SatelliteSet>()
 
     var refreshResult: DataResult<Unit> = DataResult.Success(Unit)
 
@@ -96,6 +113,18 @@ class FakeSatelliteRepository : SatelliteRepository {
     override suspend fun fetchLivePosition(noradId: Int): DataResult<SatellitePosition> {
         livePositionCallCount++
         return livePosition
+    }
+
+    fun setSet(set: SatelliteSet, value: List<OrbitalElements>) {
+        sets.value += set to value
+    }
+
+    override fun observeSet(set: SatelliteSet): Flow<List<OrbitalElements>> = sets.map { it[set].orEmpty() }
+
+    override suspend fun refreshSet(set: SatelliteSet): DataResult<Int> {
+        refreshedSets += set
+        if (refreshSetResult is DataResult.Success) setsOnRefresh[set]?.let { setSet(set, it) }
+        return refreshSetResult
     }
 }
 
@@ -136,6 +165,28 @@ class FakeSkyPreferencesRepository : SkyPreferencesRepository {
     override suspend fun setLastRemindedPassStart(start: Instant) {
         lastReminded.value = start
     }
+
+    private val enabledSets = MutableStateFlow<Set<SatelliteSet>>(emptySet())
+    private val reminders = MutableStateFlow<Set<SatelliteSet>>(emptySet())
+    private val lastRemindedSatellite = MutableStateFlow<Instant?>(null)
+
+    override val enabledSatelliteSets: Flow<Set<SatelliteSet>> = enabledSets
+
+    override suspend fun setSatelliteSetEnabled(set: SatelliteSet, enabled: Boolean) {
+        enabledSets.value = if (enabled) enabledSets.value + set else enabledSets.value - set
+    }
+
+    override val satellitePassReminders: Flow<Set<SatelliteSet>> = reminders
+
+    override suspend fun setSatellitePassRemindersEnabled(set: SatelliteSet, enabled: Boolean) {
+        reminders.value = if (enabled) reminders.value + set else reminders.value - set
+    }
+
+    override val lastRemindedSatellitePassStart: Flow<Instant?> = lastRemindedSatellite
+
+    override suspend fun setLastRemindedSatellitePassStart(start: Instant) {
+        lastRemindedSatellite.value = start
+    }
 }
 
 /** Remembers the pending wake-up; null after [cancel]. */
@@ -158,6 +209,30 @@ class FakeIssPassNotifier : IssPassNotifier {
     val notified = mutableListOf<SatellitePass>()
 
     override suspend fun notifyUpcomingPass(pass: SatellitePass) {
+        notified += pass
+    }
+}
+
+/** Remembers the pending wake-up; null after [cancel]. */
+class FakeSatellitePassReminderScheduler : SatellitePassReminderScheduler {
+
+    var scheduledAt: Instant? = null
+        private set
+
+    override fun scheduleAt(at: Instant) {
+        scheduledAt = at
+    }
+
+    override fun cancel() {
+        scheduledAt = null
+    }
+}
+
+class FakeSatellitePassNotifier : SatellitePassNotifier {
+
+    val notified = mutableListOf<UpcomingPass>()
+
+    override suspend fun notifyUpcomingPass(pass: UpcomingPass) {
         notified += pass
     }
 }

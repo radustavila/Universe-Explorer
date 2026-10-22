@@ -20,6 +20,7 @@ import com.radustavila.nasaexplorer.core.domain.sync.ExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
 import com.radustavila.nasaexplorer.core.domain.usecase.RescheduleSkyEventRemindersOnLocationChangeUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ScheduleAuroraAlertRefreshUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ScheduleStargazingAlertUseCase
 import com.radustavila.nasaexplorer.data.earthevents.sync.EarthEventsSyncScheduler
 import dagger.Lazy
 import dagger.hilt.android.HiltAndroidApp
@@ -60,6 +61,9 @@ class NasaExplorerApplication :
 
     @Inject
     lateinit var scheduleAuroraAlertRefresh: Lazy<ScheduleAuroraAlertRefreshUseCase>
+
+    @Inject
+    lateinit var scheduleStargazingAlert: Lazy<ScheduleStargazingAlertUseCase>
 
     @Inject
     lateinit var imageLoader: Lazy<ImageLoader>
@@ -113,6 +117,8 @@ class NasaExplorerApplication :
             // Keeps the 30-minute space-weather job only while aurora alerts are on, which also drops
             // it from installs that registered it when the screen opened.
             launch { scheduleAuroraAlertRefresh.get().invoke() }
+            // The clear-night check runs only while its alert is on.
+            launch { scheduleStargazingAlert.get().invoke() }
         }
         startupPreferences.edit { putString(KEY_PERIODIC_WORK_REGISTERED_FOR, installedApk) }
     }

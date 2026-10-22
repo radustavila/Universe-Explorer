@@ -15,6 +15,7 @@ import com.radustavila.nasaexplorer.core.common.dispatchers.AppDispatcher
 import com.radustavila.nasaexplorer.core.common.dispatchers.ApplicationScope
 import com.radustavila.nasaexplorer.core.common.dispatchers.Dispatcher
 import com.radustavila.nasaexplorer.core.domain.sky.IssPassReminderScheduler
+import com.radustavila.nasaexplorer.core.domain.sky.SatellitePassReminderScheduler
 import com.radustavila.nasaexplorer.core.domain.sky.SatellitePassPredictor
 import com.radustavila.nasaexplorer.core.domain.sky.SatelliteRepository
 import com.radustavila.nasaexplorer.core.domain.sky.SkyCalculator
@@ -27,6 +28,7 @@ import com.radustavila.nasaexplorer.data.sky.local.OrbitalElementsDao
 import com.radustavila.nasaexplorer.data.sky.local.SkyDatabase
 import com.radustavila.nasaexplorer.data.sky.preferences.SkyPreferencesDataSource
 import com.radustavila.nasaexplorer.data.sky.reminder.WorkManagerIssPassReminderScheduler
+import com.radustavila.nasaexplorer.data.sky.reminder.WorkManagerSatellitePassReminderScheduler
 import com.radustavila.nasaexplorer.data.sky.remote.CelesTrakService
 import com.radustavila.nasaexplorer.data.sky.remote.RetrofitSkyRemoteDataSource
 import com.radustavila.nasaexplorer.data.sky.remote.SkyRemoteDataSource
@@ -69,6 +71,11 @@ interface SkyDataModule {
 
     @Binds
     fun bindIssPassReminderScheduler(impl: WorkManagerIssPassReminderScheduler): IssPassReminderScheduler
+
+    @Binds
+    fun bindSatellitePassReminderScheduler(
+        impl: WorkManagerSatellitePassReminderScheduler,
+    ): SatellitePassReminderScheduler
 
     @Binds
     @IntoSet
@@ -114,13 +121,14 @@ object SkyInfrastructureModule {
 
     /**
      * CelesTrak publishes no number, only "do not download the same data more than once every
-     * two hours"; refreshes are twice a day, and this stops a loop from getting the IP blocked.
+     * two hours"; the ISS is refreshed twice a day and every other set once (up to five requests
+     * when all are due at once), and this stops a loop from getting the IP blocked.
      */
     @Provides
     @IntoSet
     fun provideCelesTrakRateBudget(): HostRateBudget = HostRateBudget(
         host = URI(BuildConfig.CELESTRAK_BASE_URL).host,
-        maxRequests = 6,
+        maxRequests = 10,
         window = Duration.ofHours(1),
     )
 

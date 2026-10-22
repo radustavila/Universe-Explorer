@@ -72,7 +72,7 @@ class DatabaseStorageTest {
         assertEquals(
             setOf(
                 "launches.db", "earth_events.db", "exoplanets.db", "mars.db", "nasa_images.db",
-                "small_bodies.db", "space_weather.db", "sky.db", "dsn.db",
+                "small_bodies.db", "space_weather.db", "sky.db", "dsn.db", "forecast.db",
             ),
             DatabaseStorage.MIRROR_DATABASES.toSet(),
         )

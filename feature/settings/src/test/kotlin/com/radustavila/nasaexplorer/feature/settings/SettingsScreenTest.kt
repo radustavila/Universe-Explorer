@@ -128,6 +128,21 @@ class SettingsScreenTest {
     }
 
     @Test
+    fun `clear night alerts switch on for the saved place and offer a minimum score`() = runTest {
+        fixture.location.setLocation(TestSky.location())
+        setScreen()
+
+        scrollTo(SETTINGS_STARGAZING_SWITCH_TEST_TAG)
+        composeTestRule.onNodeWithTag(SETTINGS_STARGAZING_SWITCH_TEST_TAG).assertIsOff().performClick()
+        composeTestRule.onNodeWithTag(SETTINGS_STARGAZING_SWITCH_TEST_TAG).assertIsOn()
+        scrollTo(stargazingMinimumOptionTestTag(75))
+        composeTestRule.onNodeWithTag(stargazingMinimumOptionTestTag(75)).performClick()
+
+        composeTestRule.onNodeWithText("score is 75/100 or more", substring = true).assertExists()
+        assertEquals(75, fixture.stargazing.settings.first().minimumScore)
+    }
+
+    @Test
     fun `aurora alerts without any place explain what is missing`() {
         setScreen()
 

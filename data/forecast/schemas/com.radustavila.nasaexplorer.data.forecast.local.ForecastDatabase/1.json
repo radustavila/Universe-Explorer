@@ -1,0 +1,133 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "7fa76d45e0a2f6157319f7f5bbbc1d5b",
+    "entities": [
+      {
+        "tableName": "forecast_place",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`latitude_e2` INTEGER NOT NULL, `longitude_e2` INTEGER NOT NULL, `fetched_at` INTEGER NOT NULL, `expires_at` INTEGER NOT NULL, `last_modified` TEXT, `updated_at` INTEGER, PRIMARY KEY(`latitude_e2`, `longitude_e2`))",
+        "fields": [
+          {
+            "fieldPath": "latitudeE2",
+            "columnName": "latitude_e2",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitudeE2",
+            "columnName": "longitude_e2",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fetchedAt",
+            "columnName": "fetched_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expiresAt",
+            "columnName": "expires_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastModified",
+            "columnName": "last_modified",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updated_at",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "latitude_e2",
+            "longitude_e2"
+          ]
+        }
+      },
+      {
+        "tableName": "forecast_step",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`latitude_e2` INTEGER NOT NULL, `longitude_e2` INTEGER NOT NULL, `time` INTEGER NOT NULL, `cloud_cover` REAL NOT NULL, `low_cloud_cover` REAL, `medium_cloud_cover` REAL, `high_cloud_cover` REAL, `fog_cover` REAL, `relative_humidity` REAL, `wind_speed` REAL, `air_temperature` REAL, PRIMARY KEY(`latitude_e2`, `longitude_e2`, `time`))",
+        "fields": [
+          {
+            "fieldPath": "latitudeE2",
+            "columnName": "latitude_e2",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitudeE2",
+            "columnName": "longitude_e2",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "time",
+            "columnName": "time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cloudCover",
+            "columnName": "cloud_cover",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lowCloudCover",
+            "columnName": "low_cloud_cover",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "mediumCloudCover",
+            "columnName": "medium_cloud_cover",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "highCloudCover",
+            "columnName": "high_cloud_cover",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "fogCover",
+            "columnName": "fog_cover",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "relativeHumidity",
+            "columnName": "relative_humidity",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "windSpeed",
+            "columnName": "wind_speed",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "airTemperature",
+            "columnName": "air_temperature",
+            "affinity": "REAL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "latitude_e2",
+            "longitude_e2",
+            "time"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7fa76d45e0a2f6157319f7f5bbbc1d5b')"
+    ]
+  }
+}

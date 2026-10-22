@@ -21,6 +21,12 @@
     <string name="iss_pass_compass_sw">south-west</string>
     <string name="iss_pass_compass_w">west</string>
     <string name="iss_pass_compass_nw">north-west</string>
+    <string name="satellite_pass_channel_name">Satellite passes</string>
+    <string name="satellite_pass_channel_description">A reminder a few minutes before Hubble, Tiangong or a Starlink train passes visibly over your location, for the ones you turned reminders on for.</string>
+    <string name="satellite_pass_notification_title_hubble">Hubble passes over you at %1$s</string>
+    <string name="satellite_pass_notification_title_tiangong">Tiangong passes over you at %1$s</string>
+    <string name="satellite_pass_notification_title_starlink">A Starlink train passes over you at %1$s</string>
+    <string name="satellite_pass_notification_title_named">%1$s passes over you at %2$s</string>
     <string name="sky_event_channel_name">Sky event reminders</string>
     <string name="sky_event_channel_description">The reminders you set in the sky events calendar: eclipses, meteor showers, Moon phases and more.</string>
     <!-- %1$s: a day and time, e.g. "Wed 12 Aug, 19:34". -->
@@ -29,4 +35,8 @@
     <string name="sky_event_notification_at">%1$s.</string>
     <!-- %1$s: day and time darkness falls; %2$s: the best time to watch. -->
     <string name="sky_event_notification_meteors">Dark from %1$s, best around %2$s. Find a dark spot away from lights.</string>
+    <string name="stargazing_alert_channel_name">Clear night alerts</string>
+    <string name="stargazing_alert_channel_description">Tells you when tonight looks clear and dark enough to observe from your place.</string>
+    <string name="stargazing_alert_title">Clear night ahead</string>
+    <string name="stargazing_alert_text">%1$s. Observing score: %2$d/100. Based on data from MET Norway.</string>
 </resources>
