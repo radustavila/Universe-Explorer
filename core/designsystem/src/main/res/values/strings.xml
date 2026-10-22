@@ -29,6 +29,8 @@
     <string name="unit_ft">%1$s ft</string>
     <string name="unit_million_km">%1$s million km</string>
     <string name="unit_million_mi">%1$s million mi</string>
+    <string name="unit_billion_km">%1$s billion km</string>
+    <string name="unit_billion_mi">%1$s billion mi</string>
     <string name="unit_km_per_hour">%1$s km/h</string>
     <string name="unit_mph">%1$s mph</string>
     <string name="unit_km_per_second">%1$s km/s</string>

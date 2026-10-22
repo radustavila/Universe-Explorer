@@ -14,7 +14,7 @@
     <string name="earth_live_events_title">Live Earth events</string>
     <string name="earth_live_events_description">Wildfires, storms, volcanoes and ice on the map, with satellite imagery</string>
     <string name="earth_space_weather_title">Aurora &amp; space weather</string>
-    <string name="earth_space_weather_description">Kp index, 3-day forecast, the aurora oval on the map, solar flares, aurora alerts</string>
+    <string name="earth_space_weather_description">Kp index, 3-day forecast, the aurora oval on the map, the Sun live, solar flares, aurora alerts</string>
     <string name="earth_neighbourhood_title">Earth\'s neighbourhood</string>
     <string name="earth_neighbourhood_description">Asteroids passing close this month and recent fireballs</string>
     <string name="more_settings_title">Settings</string>
@@ -29,6 +29,8 @@
     <string name="universe_exoplanets_description">The newest worlds beyond the Solar System, their size and distance</string>
     <string name="universe_sky_title">Sky tonight</string>
     <string name="universe_sky_description">Moon, planets and ISS passes above you, and who is in space</string>
+    <string name="universe_dsn_title">Deep Space Network</string>
+    <string name="universe_dsn_description">Which spacecraft NASA\'s antennas are talking to now, and how far Voyager is</string>
     <string name="universe_sky_events_title">Sky events</string>
     <string name="universe_sky_events_description">Eclipses, meteor showers, Moon phases and planets, month by month, with reminders</string>
     <string name="universe_search_title">Search everything</string>

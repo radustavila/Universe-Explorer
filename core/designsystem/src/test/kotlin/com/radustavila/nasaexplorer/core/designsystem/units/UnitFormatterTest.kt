@@ -40,6 +40,8 @@ class UnitFormatterTest {
         assertEquals("1.8 million mi", imperial.largeDistance(2_900_000.0))
         assertEquals("748,000 km", metric.largeDistance(748_200.0))
         assertEquals("465,000 mi", imperial.largeDistance(748_200.0))
+        assertEquals("21.6 billion km", metric.largeDistance(21_600_000_000.0))
+        assertEquals("13.4 billion mi", imperial.largeDistance(21_600_000_000.0))
     }
 
     @Test

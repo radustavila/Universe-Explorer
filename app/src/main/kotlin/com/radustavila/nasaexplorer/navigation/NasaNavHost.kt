@@ -11,6 +11,7 @@ import com.radustavila.nasaexplorer.feature.debug.debugScreen
 import com.radustavila.nasaexplorer.feature.details.detailsPane
 import com.radustavila.nasaexplorer.feature.details.detailsScreen
 import com.radustavila.nasaexplorer.feature.details.navigateToDetails
+import com.radustavila.nasaexplorer.feature.dsn.dsnScreen
 import com.radustavila.nasaexplorer.feature.earth.EarthTodayRoute
 import com.radustavila.nasaexplorer.feature.earth.earthTodayScreen
 import com.radustavila.nasaexplorer.feature.earthevents.earthEventsScreen
@@ -117,6 +118,7 @@ fun NasaNavHost(
                 onBackClick = navController::popBackStack,
                 onSetLocation = { navController.navigateToSkyTonight() },
             )
+            dsnScreen(onBackClick = navController::popBackStack)
             gallerySearchScreen(
                 onMediaClick = navController::navigateToNasaMedia,
                 listDetail = listDetail(

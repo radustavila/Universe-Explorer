@@ -62,7 +62,7 @@ class AboutScreenTest {
         listOf(
             "apod.nasa.gov", "epic.gsfc.nasa.gov", "gibs", "eonet", "images.nasa.gov", "exoplanetarchive",
             "swpc.noaa.gov", "DONKI", "jpl.nasa.gov", "mars.nasa.gov", "celestrak", "wheretheiss.at",
-            "thespacedevs", "cosinekitty", "maplibre",
+            "thespacedevs", "cosinekitty", "maplibre", "eyes.nasa.gov/dsn", "ssd.jpl.nasa.gov/horizons",
         ).forEach { source -> assertTrue(source, urls.any { it.contains(source) }) }
     }
 }
