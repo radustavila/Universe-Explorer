@@ -71,9 +71,11 @@ class EpicRepositoryImpl @Inject constructor(
                     .map { entities.size }
             }
 
-    override suspend fun prefetchLatestThumbnails(collection: EpicCollection) {
+    override suspend fun prefetchLatestImages(collection: EpicCollection, includeHd: Boolean) {
         val images = localDataSource.latestDay(collection).getOrNull().orEmpty()
-        imagePrefetcher.prefetch(images.map(EpicImage::thumbnailUrl))
+        // Thumbnails first: they are what the rotation needs to play at all.
+        val hdUrls = if (includeHd) images.map(EpicImage::imageUrl) else emptyList()
+        imagePrefetcher.prefetch(images.map(EpicImage::thumbnailUrl) + hdUrls)
     }
 
     /**

@@ -173,10 +173,23 @@ class EpicRepositoryImplTest {
         responses[ALL] = RecordedResponses.NATURAL_ALL
         repository.refreshLatest(EpicCollection.NATURAL)
 
-        repository.prefetchLatestThumbnails(EpicCollection.NATURAL)
+        repository.prefetchLatestImages(EpicCollection.NATURAL, includeHd = false)
 
         assertEquals(13, prefetcher.urls.size)
         assertTrue(prefetcher.urls.all { it.contains("/archive/natural/2026/10/16/thumbs/") })
+    }
+
+    @Test
+    fun `prefetching with HD warms the HD images after the thumbnails`() = runTest {
+        responses[LATEST] = RecordedResponses.NATURAL_LATEST
+        responses[ALL] = RecordedResponses.NATURAL_ALL
+        repository.refreshLatest(EpicCollection.NATURAL)
+
+        repository.prefetchLatestImages(EpicCollection.NATURAL, includeHd = true)
+
+        assertEquals(26, prefetcher.urls.size)
+        assertTrue(prefetcher.urls.take(13).all { it.contains("/archive/natural/2026/10/16/thumbs/") })
+        assertTrue(prefetcher.urls.drop(13).all { it.contains("/archive/natural/2026/10/16/jpg/") })
     }
 
     private fun dayJson(date: String, prefix: String = "epic_1b"): String {

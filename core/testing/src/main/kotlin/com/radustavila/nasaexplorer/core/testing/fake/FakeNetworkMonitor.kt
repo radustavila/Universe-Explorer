@@ -10,6 +10,11 @@ class FakeNetworkMonitor(initiallyOnline: Boolean = true) : NetworkMonitor {
 
     override val isOnline: Flow<Boolean> = online
 
+    /** What [isUnmetered] answers; a metered (mobile) network by default. */
+    var unmetered: Boolean = false
+
+    override suspend fun isUnmetered(): Boolean = unmetered
+
     fun setOnline(isOnline: Boolean) {
         online.value = isOnline
     }

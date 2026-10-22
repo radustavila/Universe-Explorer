@@ -156,6 +156,48 @@ class EarthTodayScreenTest {
     }
 
     @Test
+    fun `playing, each photo stays on screen for two and a half seconds`() {
+        composeTestRule.mainClock.autoAdvance = false
+        setContent(EarthTodayUiState(images = TestEpicImages.day(size = 3)), autoPlayOverride = true)
+
+        composeTestRule.mainClock.advanceTimeBy(FRAME_DURATION_MILLIS - 100)
+        composeTestRule.onNodeWithText("Photo 1 of 3").assertIsDisplayed()
+
+        composeTestRule.mainClock.advanceTimeBy(100 + SLIDE_MILLIS)
+        composeTestRule.onNodeWithText("Photo 2 of 3").assertIsDisplayed()
+    }
+
+    @Test
+    fun `the rotation plays the HD photos, downloading the whole day when it opens`() {
+        val day = TestEpicImages.day(size = 3)
+        val loader = RecordingFrameImageLoader()
+        composeTestRule.mainClock.autoAdvance = false
+        setContent(EarthTodayUiState(images = day), autoPlayOverride = true, frameImageLoader = loader)
+
+        composeTestRule.mainClock.advanceTimeBy(FRAME_DURATION_MILLIS + SLIDE_MILLIS)
+
+        assertEquals(listOf(day[1], day[2], day[0]).map(EpicImage::imageUrl), loader.downloads)
+        // Photo 2 was decoded at the frame's size before it turned into view.
+        assertEquals(day[1].imageUrl, loader.decodes.first().first)
+        assertTrue(loader.decodes.first().second > 0)
+    }
+
+    @Test
+    fun `a photo stays on screen while the next HD photo loads, but only so long`() {
+        val day = TestEpicImages.day(size = 3)
+        val loader = RecordingFrameImageLoader(pending = setOf(day[1].imageUrl))
+        composeTestRule.mainClock.autoAdvance = false
+        setContent(EarthTodayUiState(images = day), autoPlayOverride = true, frameImageLoader = loader)
+
+        composeTestRule.mainClock.advanceTimeBy(FRAME_DURATION_MILLIS + SLIDE_MILLIS)
+        composeTestRule.onNodeWithText("Photo 1 of 3").assertIsDisplayed()
+
+        // Past the limit it moves on, showing the photo's thumbnail until the HD file arrives.
+        composeTestRule.mainClock.advanceTimeBy(MAX_HD_WAIT_MILLIS)
+        composeTestRule.onNodeWithText("Photo 2 of 3").assertIsDisplayed()
+    }
+
+    @Test
     fun `the play button and the heart are 48 dp to touch`() {
         setContent(EarthTodayUiState(images = TestEpicImages.day(size = 3)))
 
@@ -219,8 +261,10 @@ class EarthTodayScreenTest {
         onRetry: () -> Unit = {},
         onToggleFavorite: (EpicImage) -> Unit = {},
         footer: (@Composable () -> Unit)? = null,
-        // Only safe where something else stops the rotation (a focused photo holds still).
+        // Only safe where something else stops the rotation (a focused photo holds still, or a
+        // paused test clock).
         autoPlayOverride: Boolean = false,
+        frameImageLoader: FrameImageLoader = RecordingFrameImageLoader(),
     ) {
         composeTestRule.setContent {
             EarthTodayContent(
@@ -234,7 +278,13 @@ class EarthTodayScreenTest {
                 onToggleFavorite = onToggleFavorite,
                 footer = footer,
                 autoPlay = autoPlayOverride,
+                frameImageLoader = frameImageLoader,
             )
         }
+    }
+
+    private companion object {
+        /** Comfortably longer than the pager's slide to the next photo. */
+        const val SLIDE_MILLIS = 1_000L
     }
 }
