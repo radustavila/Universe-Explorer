@@ -14,7 +14,7 @@ import org.junit.runner.RunWith
  * ```
  *
  * The journey is a cold start to Today's cached feed, an entry's details, a scroll through the
- * feed, and every other tab's first screen.
+ * feed, every other tab's first screen, and dragging the sky map around.
  */
 @RunWith(AndroidJUnit4::class)
 class BaselineProfileGenerator {
@@ -33,6 +33,11 @@ class BaselineProfileGenerator {
         openTab("Earth")
         openTab("Favorites")
         openTab("More")
+        openTab("Today")
+        openTab("Universe")
+        openSkyMap()
+        panSkyMap()
+        device.pressBack()
         openTab("Today")
     }
 }

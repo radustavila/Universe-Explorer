@@ -25,6 +25,7 @@ dependencies {
     implementation(projects.core.network)
     implementation(projects.core.cache)
     implementation(projects.core.astro)
+    implementation(projects.core.skymap)
 
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.retrofit)

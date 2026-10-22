@@ -1,0 +1,14 @@
+stars.bin
+
+Derived from the HYG Database, version 4.4, by David Nash (astronexus):
+https://codeberg.org/astronexus/hyg
+
+The HYG Database is licensed under the Creative Commons Attribution-ShareAlike 4.0
+International License (CC BY-SA 4.0): https://creativecommons.org/licenses/by-sa/4.0/
+
+Changes: only stars of magnitude 6.5 or brighter are kept, without the Sun; each keeps its right
+ascension and declination (J2000), visual magnitude, B-V colour index and proper name, in the
+binary format written by core/skymap/tools/build_sky_catalog.py.
+
+This file (stars.bin) is therefore also licensed under CC BY-SA 4.0. Anyone may reuse it under
+those terms. The licence covers this data file only, not the app that reads it.

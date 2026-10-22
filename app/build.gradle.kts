@@ -44,6 +44,13 @@ baselineProfile {
     dexLayoutOptimization = true
 }
 
+aboutLibraries {
+    // Bundled data that is not a Gradle dependency (the sky map's star and constellation files).
+    collect {
+        configPath = rootProject.file("config/aboutlibraries")
+    }
+}
+
 dependencies {
     implementation(projects.core.model)
     implementation(projects.core.common)
@@ -91,6 +98,7 @@ dependencies {
     implementation(projects.feature.dsn)
     implementation(projects.feature.events)
     implementation(projects.feature.news)
+    implementation(projects.feature.skymap)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
