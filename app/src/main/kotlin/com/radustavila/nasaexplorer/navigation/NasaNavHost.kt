@@ -27,7 +27,9 @@ import com.radustavila.nasaexplorer.feature.mars.marsPhotosScreen
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
 import com.radustavila.nasaexplorer.feature.search.searchScreen
 import com.radustavila.nasaexplorer.feature.settings.aboutScreen
+import com.radustavila.nasaexplorer.feature.settings.customizeTodayScreen
 import com.radustavila.nasaexplorer.feature.settings.licencesScreen
+import com.radustavila.nasaexplorer.feature.settings.navigateToCustomizeToday
 import com.radustavila.nasaexplorer.feature.settings.navigateToLicences
 import com.radustavila.nasaexplorer.feature.settings.settingsScreen
 import com.radustavila.nasaexplorer.feature.sky.location.ObserverLocationSection
@@ -150,6 +152,7 @@ fun NasaNavHost(
             }
             settingsScreen(
                 onBackClick = navController::popBackStack,
+                onCustomizeTodayClick = navController::navigateToCustomizeToday,
                 locationSection = { modifier -> ObserverLocationSection(modifier) },
             )
             aboutScreen(onBackClick = navController::popBackStack, onLicencesClick = navController::navigateToLicences)
@@ -165,6 +168,8 @@ fun NasaNavHost(
         nasaMediaDetailsScreen(onBackClick = navController::popBackStack)
         marsPhotoScreen(onBackClick = navController::popBackStack)
         exoplanetDetailsScreen(onBackClick = navController::popBackStack)
+        // From Settings and from Today's header, without switching tabs.
+        customizeTodayScreen(onBackClick = navController::popBackStack)
         searchScreen(
             onBackClick = navController::popBackStack,
             onResultClick = navController::openSearchTarget,

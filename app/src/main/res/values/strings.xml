@@ -43,4 +43,5 @@
     <string name="shortcut_space_weather_long">Space weather and aurora</string>
     <string name="shortcut_earth_map_short">Earth map</string>
     <string name="shortcut_earth_map_long">Satellite map of Earth</string>
+    <string name="today_customize">Customize Today</string>
 </resources>

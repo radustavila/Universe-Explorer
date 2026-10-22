@@ -147,6 +147,33 @@ class ObserveIssTrackUseCase @Inject constructor(
 }
 
 /**
+ * Where the ISS is, propagated from the cached elements every [INTERVAL] while collected: no
+ * network, unlike [ObserveIssTrackUseCase], so a card on Today can show it without polling the
+ * live tracker. Null without elements, or when they are too old to trust.
+ */
+class ObserveIssPositionUseCase @Inject constructor(
+    private val satelliteRepository: SatelliteRepository,
+    private val predictor: SatellitePassPredictor,
+    private val timeProvider: TimeProvider,
+    @Dispatcher(AppDispatcher.Default) private val computeDispatcher: CoroutineDispatcher,
+) {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    operator fun invoke(): Flow<SatellitePosition?> =
+        satelliteRepository.observeElements(ISS_NORAD_ID).transformLatest { elements ->
+            while (true) {
+                val now = timeProvider.now()
+                emit(elements?.takeUnless { it.isTooOldAt(now) }?.let { predictor.position(it, now) })
+                delay(INTERVAL.toMillis())
+            }
+        }.flowOn(computeDispatcher)
+
+    companion object {
+        /** The station covers about 75 km in this time: enough to see the numbers move. */
+        val INTERVAL: Duration = Duration.ofSeconds(10)
+    }
+}
+
+/**
  * Refreshes the cached ISS elements at most once per [MIN_REFRESH_INTERVAL], as CelesTrak asks.
  * New elements move the next pass, so a successful refresh re-renders the sky tonight widget.
  *

@@ -230,8 +230,13 @@ selected and the bar visible. Universe, Earth and More start on a hub screen who
 in `UniverseHub.kt`, `EarthHub.kt` and `MoreHub.kt` — one `HubEntry` per feature. A feature that
 should *be* a tab's first screen replaces the hub as that graph's `startDestination`.
 
-**Today cards (`:app`).** `TodayCards.kt` is the list of composables shown above the APOD feed (the
-feed's `header` slot). A feature exposes a card composable and adds one line there.
+**Today cards (`:app`).** `TodayCards.kt` maps each `TodayCardId` (`:core:model`) to a composable
+shown above the APOD feed (the feed's `header` slot), below the fixed universal search. Which cards
+show, and their order, is the user's choice from Customize Today (`:feature:settings`, reachable from
+Settings and Today's tune button), stored in the `today_cards` DataStore through `TodayCardsRepository`;
+the default is Earth today, Right now on Earth and Next launches. A new card needs an id (never
+renamed: stored by name, unknown names are skipped), its label in Customize Today, and one line in
+`TodayCards.kt` calling a composable the feature exposes.
 
 **Favourites (`:core:model`, `:core:domain`).** `FavoriteSource` already lists APOD, EPIC,
 NASA_LIBRARY, MARS and EXOPLANET (persisted keys — never rename). Features save with

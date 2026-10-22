@@ -137,13 +137,14 @@ class ObserveSpaceWeatherSyncStatusUseCase @Inject constructor(
 }
 
 /**
- * Asks for a one-off refresh with the aurora map, e.g. when the screen opens. It registers no
- * background refresh: only aurora alerts need one (see [ScheduleAuroraAlertRefreshUseCase]).
+ * Asks for a one-off refresh, with the aurora map unless [includeAuroraMap] is off (the Today card
+ * shows only Kp), e.g. when the screen opens. It registers no background refresh: only aurora
+ * alerts need one (see [ScheduleAuroraAlertRefreshUseCase]).
  */
 class RequestSpaceWeatherSyncUseCase @Inject constructor(
     private val scheduler: SpaceWeatherSyncScheduler,
 ) {
-    operator fun invoke(force: Boolean = false) {
-        scheduler.requestSync(force = force, includeAuroraMap = true)
+    operator fun invoke(force: Boolean = false, includeAuroraMap: Boolean = true) {
+        scheduler.requestSync(force = force, includeAuroraMap = includeAuroraMap)
     }
 }

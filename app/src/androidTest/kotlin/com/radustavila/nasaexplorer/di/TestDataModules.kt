@@ -18,6 +18,7 @@ import com.radustavila.nasaexplorer.core.domain.repository.NasaMediaRepository
 import com.radustavila.nasaexplorer.core.domain.repository.SmallBodiesRepository
 import com.radustavila.nasaexplorer.core.domain.repository.SpaceWeatherRepository
 import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepository
+import com.radustavila.nasaexplorer.core.domain.repository.TodayCardsRepository
 import com.radustavila.nasaexplorer.core.domain.repository.UserPreferencesRepository
 import com.radustavila.nasaexplorer.core.domain.sky.IssPassReminderScheduler
 import com.radustavila.nasaexplorer.core.domain.sky.PeopleInSpaceRepository
@@ -57,6 +58,7 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeSpaceWeatherRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSpaceWeatherSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
+import com.radustavila.nasaexplorer.core.testing.fake.FakeTodayCardsRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeUserPreferencesRepository
 import com.radustavila.nasaexplorer.data.earthevents.di.EarthEventsDataModule
 import com.radustavila.nasaexplorer.data.epic.di.EpicDataModule
@@ -253,6 +255,10 @@ object TestDataStoreModule {
     @Provides
     @Singleton
     fun provideUserPreferencesRepository(): UserPreferencesRepository = FakeUserPreferencesRepository()
+
+    @Provides
+    @Singleton
+    fun provideTodayCardsRepository(): TodayCardsRepository = FakeTodayCardsRepository()
 }
 
 /**

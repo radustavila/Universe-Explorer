@@ -36,6 +36,7 @@ class SettingsScreenshotTest {
         composeTestRule.captureScreen(name) {
             SettingsScreen(
                 onBackClick = {},
+                onCustomizeTodayClick = {},
                 locationSection = { modifier -> Text("Location slot", modifier) },
                 viewModel = viewModel,
             )
