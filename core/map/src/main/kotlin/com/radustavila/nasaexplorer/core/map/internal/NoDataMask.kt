@@ -22,6 +22,9 @@ internal object NoDataMask {
     /** Below this share of no-data pixels a tile is left as it is: a few black specks don't show. */
     private const val MIN_NO_DATA_SHARE = 0.01
 
+    /** PNG is lossless; the quality argument is ignored but must be in 0..100. */
+    private const val PNG_QUALITY = 100
+
     /** Makes the near-black pixels of [pixels] (ARGB) transparent, in place; returns how many. */
     fun clear(pixels: IntArray): Int {
         var cleared = 0
@@ -43,24 +46,32 @@ internal object NoDataMask {
      * no-data or cannot be decoded; the original bytes are then the better tile.
      */
     fun transcode(tile: ByteArray): ByteArray? {
+        val bitmap = decodeMutable(tile) ?: return null
+        try {
+            val pixels = IntArray(bitmap.width * bitmap.height)
+            bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+            val worthMasking = clear(pixels) >= pixels.size * MIN_NO_DATA_SHARE
+            return if (worthMasking) {
+                bitmap.setHasAlpha(true)
+                bitmap.setPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+                ByteArrayOutputStream().use { out ->
+                    bitmap.compress(Bitmap.CompressFormat.PNG, PNG_QUALITY, out)
+                    out.toByteArray()
+                }
+            } else {
+                null
+            }
+        } finally {
+            bitmap.recycle()
+        }
+    }
+
+    private fun decodeMutable(tile: ByteArray): Bitmap? {
         if (tile.isEmpty()) return null
         val options = BitmapFactory.Options().apply {
             inMutable = true
             inPreferredConfig = Bitmap.Config.ARGB_8888
         }
-        val bitmap = BitmapFactory.decodeByteArray(tile, 0, tile.size, options) ?: return null
-        try {
-            val pixels = IntArray(bitmap.width * bitmap.height)
-            bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
-            if (clear(pixels) < pixels.size * MIN_NO_DATA_SHARE) return null
-            bitmap.setHasAlpha(true)
-            bitmap.setPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
-            return ByteArrayOutputStream().use { out ->
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
-                out.toByteArray()
-            }
-        } finally {
-            bitmap.recycle()
-        }
+        return BitmapFactory.decodeByteArray(tile, 0, tile.size, options)
     }
 }

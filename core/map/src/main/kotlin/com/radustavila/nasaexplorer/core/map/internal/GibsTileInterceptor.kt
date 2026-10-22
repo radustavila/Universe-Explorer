@@ -59,7 +59,9 @@ internal class GibsTileInterceptor(
             .removeHeader("Pragma")
             .removeHeader("Expires")
             .header("Cache-Control", "max-age=$maxAgeSeconds")
-            .apply { if (response.code == HttpURLConnection.HTTP_OK && isImageryJpeg(request.url)) maskNoData(response) }
+            .apply {
+                if (response.code == HttpURLConnection.HTTP_OK && isImageryJpeg(request.url)) maskNoData(response)
+            }
             .build()
     }
 

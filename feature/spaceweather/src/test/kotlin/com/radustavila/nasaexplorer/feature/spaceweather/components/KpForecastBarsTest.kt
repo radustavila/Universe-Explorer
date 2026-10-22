@@ -74,7 +74,12 @@ class KpForecastBarsTest {
             val days = forecast.groupBy { it.start.atZone(ZoneOffset.UTC).toLocalDate() }.values
             val starts = days.runningFold(0) { first, day -> first + day.size }.dropLast(1)
             // Labels about as wide as "Today" on a 360-px row with 15-px slots.
-            val positions = dayLabelPositions(starts.map { it * 15 }, List(starts.size) { 32 }, rowWidth = 360, minGap = 4)
+            val positions = dayLabelPositions(
+                starts = starts.map { it * 15 },
+                widths = List(starts.size) { 32 },
+                rowWidth = 360,
+                minGap = 4,
+            )
             val kept = positions.withIndex().mapNotNull { (index, x) -> x?.let { it..(it + 32) } }
             kept.zipWithNext().forEach { (a, b) -> assertTrue("$hour h: $a overlaps $b", a.last + 4 <= b.first) }
             kept.forEach { assertTrue("$hour h: $it runs past the row", it.last <= 360) }
@@ -85,7 +90,12 @@ class KpForecastBarsTest {
     fun `dayLabelPositions keeps labels that fit and drops the ones that don't`() {
         assertEquals(
             listOf(null, 15, 135, null),
-            dayLabelPositions(starts = listOf(0, 15, 135, 345), widths = listOf(32, 30, 30, 30), rowWidth = 360, minGap = 4),
+            dayLabelPositions(
+                starts = listOf(0, 15, 135, 345),
+                widths = listOf(32, 30, 30, 30),
+                rowWidth = 360,
+                minGap = 4,
+            ),
         )
     }
 }
