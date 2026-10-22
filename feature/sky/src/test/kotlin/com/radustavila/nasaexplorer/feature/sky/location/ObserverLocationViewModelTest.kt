@@ -7,6 +7,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.ClearObserverLocationUse
 import com.radustavila.nasaexplorer.core.domain.usecase.LocateDeviceUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveObserverLocationUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RescheduleIssPassReminderUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RescheduleSatellitePassReminderUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SearchCitiesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetManualLocationUseCase
 import com.radustavila.nasaexplorer.core.model.City
@@ -19,6 +20,7 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeIssPassReminderScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSatellitePassPredictor
+import com.radustavila.nasaexplorer.core.testing.fake.FakeSatellitePassReminderScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSatelliteRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSkyPreferencesRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
@@ -63,6 +65,14 @@ class ObserverLocationViewModelTest {
             clearLocation = ClearObserverLocationUseCase(location, reschedule, widgets),
             searchCities = SearchCitiesUseCase(cities),
             rescheduleReminder = reschedule,
+            rescheduleSatelliteReminder = RescheduleSatellitePassReminderUseCase(
+                preferences = preferences,
+                locationRepository = location,
+                satelliteRepository = satellites,
+                predictor = FakeSatellitePassPredictor(passes = listOf(pass)),
+                scheduler = FakeSatellitePassReminderScheduler(),
+                timeProvider = clock,
+            ),
         )
     }
 

@@ -31,6 +31,20 @@ class Sgp4PassPredictor @Inject constructor() : SatellitePassPredictor {
         from: Instant,
         to: Instant,
         minElevationDegrees: Double,
+    ): List<SatellitePass> = scan(elements, observer, from, to, minElevationDegrees, skipFarBelow = false)
+
+    /**
+     * With [skipFarBelow], the step grows while the satellite is far below the threshold: seen from
+     * the ground, a satellite under the horizon climbs at most [MAX_ELEVATION_RATE], so a pass
+     * cannot begin before the gap could have closed at that rate.
+     */
+    private fun scan(
+        elements: OrbitalElements,
+        observer: GeoCoordinate,
+        from: Instant,
+        to: Instant,
+        minElevationDegrees: Double,
+        skipFarBelow: Boolean,
     ): List<SatellitePass> {
         val sgp4 = elements.propagatorOrNull() ?: return emptyList()
         val observerEcef = EarthFrames.geodeticToEcef(observer)
@@ -47,7 +61,7 @@ class Sgp4PassPredictor @Inject constructor() : SatellitePassPredictor {
         var rise: Instant? = null
         try {
             while (previous.isBefore(scanEnd)) {
-                val current = previous.plus(SCAN_STEP)
+                val current = previous.plus(if (skipFarBelow) stepBelow(previousValue) else SCAN_STEP)
                 val value = aboveThreshold(current)
                 if (previousValue < 0.0 && value >= 0.0) {
                     rise = crossing(previous, current, aboveThreshold)
@@ -64,6 +78,58 @@ class Sgp4PassPredictor @Inject constructor() : SatellitePassPredictor {
             // The elements propagate into a decayed or degenerate orbit: keep what was found.
         }
         return passes
+    }
+
+    /**
+     * Searches only the dark hours (Sun at least 6 degrees down, padded by the longest pass), found
+     * once for every satellite: nothing is visible in daylight, and most of a day is daylight or
+     * twilight, which makes a set of 150 satellites a few times cheaper.
+     */
+    override fun visiblePasses(
+        elements: List<OrbitalElements>,
+        observer: GeoCoordinate,
+        from: Instant,
+        to: Instant,
+        minElevationDegrees: Double,
+    ): Map<Int, List<SatellitePass>> {
+        val darkWindows = darkWindows(observer, from, to)
+        return elements.associate { satellite ->
+            satellite.noradId to darkWindows.flatMap { (start, end) ->
+                scan(satellite, observer, start, end, minElevationDegrees, skipFarBelow = true)
+            }.filter(SatellitePass::isVisible)
+        }
+    }
+
+    /**
+     * Spans between [from] and [to] (each widened by [MAX_PASS_DURATION]) where the Sun is at
+     * least 6 degrees down at some sample, so a pass that starts in twilight and peaks in the dark
+     * is still found.
+     */
+    private fun darkWindows(observer: GeoCoordinate, from: Instant, to: Instant): List<Pair<Instant, Instant>> {
+        val windows = mutableListOf<Pair<Instant, Instant>>()
+        var windowStart: Instant? = null
+        var at = from
+        while (!at.isAfter(to)) {
+            val isDark = sunAltitude(observer, at) <= DARK_SKY_SUN_ALTITUDE + DARK_SAMPLE_MARGIN
+            if (isDark && windowStart == null) windowStart = maxOf(from, at.minus(DARK_SAMPLE_STEP))
+            if (!isDark && windowStart != null) {
+                windows.addMerged(windowStart, minOf(to, at.plus(MAX_PASS_DURATION)))
+                windowStart = null
+            }
+            at = at.plus(DARK_SAMPLE_STEP)
+        }
+        windowStart?.let { windows.addMerged(it, to) }
+        return windows
+    }
+
+    /** Joins a window that overlaps the previous one, so no pass is found twice. */
+    private fun MutableList<Pair<Instant, Instant>>.addMerged(start: Instant, end: Instant) {
+        val last = lastOrNull()
+        if (last != null && !start.isAfter(last.second)) {
+            set(lastIndex, last.first to maxOf(last.second, end))
+        } else {
+            add(start to end)
+        }
     }
 
     override fun position(elements: OrbitalElements, at: Instant): SatellitePosition? {
@@ -135,6 +201,23 @@ class Sgp4PassPredictor @Inject constructor() : SatellitePassPredictor {
         val SCAN_STEP: Duration = Duration.ofSeconds(20)
         val VISIBILITY_STEP: Duration = Duration.ofSeconds(30)
         val MAX_PASS_DURATION: Duration = Duration.ofMinutes(20)
+
+        /** Faster than a low satellite rises at the horizon (about 12 degrees a minute), for margin. */
+        const val MAX_ELEVATION_RATE = 20.0
+        val MAX_SKIP_STEP: Duration = Duration.ofMinutes(5)
+
+        /** [SCAN_STEP] near or above the threshold; longer the further below it [degreesAbove] is. */
+        fun stepBelow(degreesAbove: Double): Duration {
+            if (degreesAbove >= 0.0) return SCAN_STEP
+            val millis = (-degreesAbove / MAX_ELEVATION_RATE * MILLIS_PER_MINUTE).toLong()
+            return Duration.ofMillis(millis.coerceIn(SCAN_STEP.toMillis(), MAX_SKIP_STEP.toMillis()))
+        }
+
+        const val MILLIS_PER_MINUTE = 60_000.0
+
+        /** The Sun moves about a degree in this time, which [DARK_SAMPLE_MARGIN] covers. */
+        val DARK_SAMPLE_STEP: Duration = Duration.ofMinutes(5)
+        const val DARK_SAMPLE_MARGIN = 1.5
         val CROSSING_PRECISION: Duration = Duration.ofMillis(100)
         const val DARK_SKY_SUN_ALTITUDE = -6.0
         const val EARTH_RADIUS_KM = 6378.137

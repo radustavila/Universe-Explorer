@@ -119,6 +119,10 @@ Boundary rules the code relies on:
   `RefreshSourceUseCase` (skips while not due, records the outcome). Rate limits are enforced per host by
   `RateLimitInterceptor` on the shared OkHttp client (429 → cooldown until `Retry-After`, local refusal →
   `AppError.RateLimited`); register a quota with `@IntoSet HostRateBudget`.
+- Satellite passes (Sky tonight) are SGP4 on the device from CelesTrak elements in `sky.db`. The ISS refreshes at most
+  twice a day (`SyncSource.CELESTRAK`); every other `SatelliteSet` the user picked at most once a day, one request
+  each and never forced (`RefreshSatelliteSetsUseCase`), as CelesTrak asks. Many-satellite searches go through
+  `SatellitePassPredictor.visiblePasses`, which skips daylight.
 - **All APOD syncing goes through one unique WorkManager job** (`WorkManagerSyncScheduler` → `ApodSyncWorker` →
   `SynchronizeApodsUseCase`): app start, pull-to-refresh, debug button and the 12 h periodic sync share constraints,
   backoff and observability. Never sync from a Composable or ViewModel directly. The worker retries only when

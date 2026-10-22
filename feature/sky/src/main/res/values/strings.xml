@@ -92,6 +92,32 @@
     <string name="sky_track_map_offline">Map imagery is not available offline; the track is still drawn.</string>
     <string name="sky_track_map_description">Map of the ISS ground track, its current position and yours</string>
 
+    <!-- More satellites -->
+    <string name="sky_satellites_title">More satellites</string>
+    <string name="sky_satellites_set_iss">ISS</string>
+    <string name="sky_satellites_set_hubble">Hubble</string>
+    <string name="sky_satellites_set_tiangong">Tiangong</string>
+    <string name="sky_satellites_set_starlink">Starlink trains</string>
+    <string name="sky_satellites_set_bright">Bright satellites</string>
+    <string name="sky_satellites_pick">Pick what to look for. Visible passes are predicted on your phone from orbit data downloaded at most once a day.</string>
+    <string name="sky_satellites_computing">Working out the passes…</string>
+    <!-- %1$s is a satellite set, e.g. "Hubble". -->
+    <string name="sky_satellites_status_no_passes">%1$s: no visible pass in the coming days from here.</string>
+    <string name="sky_satellites_status_no_data">%1$s: orbit data has not been downloaded yet. It is fetched when you are online.</string>
+    <string name="sky_satellites_status_stale">%1$s: the downloaded orbit data is too old to predict passes. It is updated when you are online.</string>
+    <string name="sky_satellites_status_no_launch">No Starlink launch in the last 10 days, so no train to look for.</string>
+    <!-- %1$s is a satellite count ("24 satellites"), %2$s the launch day. -->
+    <string name="sky_satellites_train">Starlink train · %1$s, launched %2$s</string>
+    <plurals name="sky_satellites_train_size">
+        <item quantity="one">%1$d satellite</item>
+        <item quantity="other">%1$d satellites</item>
+    </plurals>
+    <!-- %1$s is an astronomical magnitude, e.g. "-1.0"; lower is brighter. -->
+    <string name="sky_satellites_magnitude">typically magnitude %1$s</string>
+    <!-- %1$s is a satellite set, e.g. "Hubble" or "Starlink trains". -->
+    <string name="sky_satellites_reminder">%1$s: remind me 10 minutes before visible passes</string>
+    <string name="sky_satellites_track_description">Map of the ground track under this pass, and your location</string>
+
     <!-- People -->
     <string name="sky_people_title">People in space</string>
     <plurals name="sky_people_count">
