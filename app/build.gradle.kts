@@ -67,6 +67,7 @@ dependencies {
     implementation(projects.core.location)
     implementation(projects.data.sky)
     implementation(projects.data.epic)
+    implementation(projects.data.skyevents)
 
     implementation(projects.feature.feed)
     implementation(projects.feature.details)
@@ -84,6 +85,7 @@ dependencies {
     implementation(projects.feature.earth)
     implementation(projects.feature.search)
     implementation(projects.feature.settings)
+    implementation(projects.feature.events)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

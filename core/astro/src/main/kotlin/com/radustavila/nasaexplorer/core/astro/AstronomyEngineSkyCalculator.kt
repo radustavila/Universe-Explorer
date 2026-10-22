@@ -181,4 +181,4 @@ class AstronomyEngineSkyCalculator @Inject constructor() : SkyCalculator {
     }
 }
 
-private fun Time.toInstant(): Instant = Instant.ofEpochMilli(toMillisecondsSince1970())
+internal fun Time.toInstant(): Instant = Instant.ofEpochMilli(toMillisecondsSince1970())
