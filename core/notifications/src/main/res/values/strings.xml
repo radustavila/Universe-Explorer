@@ -27,4 +27,12 @@
     <string name="satellite_pass_notification_title_tiangong">Tiangong passes over you at %1$s</string>
     <string name="satellite_pass_notification_title_starlink">A Starlink train passes over you at %1$s</string>
     <string name="satellite_pass_notification_title_named">%1$s passes over you at %2$s</string>
+    <string name="sky_event_channel_name">Sky event reminders</string>
+    <string name="sky_event_channel_description">The reminders you set in the sky events calendar: eclipses, meteor showers, Moon phases and more.</string>
+    <!-- %1$s: a day and time, e.g. "Wed 12 Aug, 19:34". -->
+    <string name="sky_event_notification_starts">Starts %1$s from your place.</string>
+    <!-- %1$s: a day and time. For instants such as a full Moon or an equinox. -->
+    <string name="sky_event_notification_at">%1$s.</string>
+    <!-- %1$s: day and time darkness falls; %2$s: the best time to watch. -->
+    <string name="sky_event_notification_meteors">Dark from %1$s, best around %2$s. Find a dark spot away from lights.</string>
 </resources>

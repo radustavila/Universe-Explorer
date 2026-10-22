@@ -11,11 +11,14 @@ import com.radustavila.nasaexplorer.feature.debug.debugScreen
 import com.radustavila.nasaexplorer.feature.details.detailsPane
 import com.radustavila.nasaexplorer.feature.details.detailsScreen
 import com.radustavila.nasaexplorer.feature.details.navigateToDetails
+import com.radustavila.nasaexplorer.feature.dsn.dsnScreen
 import com.radustavila.nasaexplorer.feature.earth.EarthTodayRoute
 import com.radustavila.nasaexplorer.feature.earth.earthTodayScreen
 import com.radustavila.nasaexplorer.feature.earthevents.earthEventsScreen
 import com.radustavila.nasaexplorer.feature.earthmap.earthMapScreen
-import com.radustavila.nasaexplorer.feature.dsn.dsnScreen
+import com.radustavila.nasaexplorer.feature.events.navigateToSkyEvents
+import com.radustavila.nasaexplorer.feature.events.next.NextInTheSkyCard
+import com.radustavila.nasaexplorer.feature.events.skyEventsScreen
 import com.radustavila.nasaexplorer.feature.exoplanets.exoplanetDetailsScreen
 import com.radustavila.nasaexplorer.feature.exoplanets.exoplanetsScreen
 import com.radustavila.nasaexplorer.feature.exoplanets.navigateToExoplanetDetails
@@ -34,6 +37,7 @@ import com.radustavila.nasaexplorer.feature.settings.navigateToCustomizeToday
 import com.radustavila.nasaexplorer.feature.settings.navigateToLicences
 import com.radustavila.nasaexplorer.feature.settings.settingsScreen
 import com.radustavila.nasaexplorer.feature.sky.location.ObserverLocationSection
+import com.radustavila.nasaexplorer.feature.sky.navigateToSkyTonight
 import com.radustavila.nasaexplorer.feature.sky.skyTonightScreen
 import com.radustavila.nasaexplorer.feature.spaceweather.navigateToSmallBody
 import com.radustavila.nasaexplorer.feature.spaceweather.neighbourhoodScreen
@@ -101,7 +105,19 @@ fun NasaNavHost(
                     exoplanetDetailsScreen(onBackClick = onBackClick)
                 },
             )
-            skyTonightScreen(onBackClick = navController::popBackStack)
+            skyTonightScreen(
+                onBackClick = navController::popBackStack,
+                nextInTheSky = {
+                    NextInTheSkyCard(
+                        onOpenCalendar = { navController.navigateToSkyEvents() },
+                        onEventClick = { id -> navController.navigateToSkyEvents(id) },
+                    )
+                },
+            )
+            skyEventsScreen(
+                onBackClick = navController::popBackStack,
+                onSetLocation = { navController.navigateToSkyTonight() },
+            )
             dsnScreen(onBackClick = navController::popBackStack)
             gallerySearchScreen(
                 onMediaClick = navController::navigateToNasaMedia,

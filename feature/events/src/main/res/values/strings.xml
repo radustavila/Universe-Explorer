@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sky_events_title">Sky events</string>
+    <string name="sky_events_back">Back</string>
+    <string name="sky_events_previous_month">Previous month</string>
+    <string name="sky_events_next_month">Next month</string>
+    <string name="sky_events_this_month">This month</string>
+    <string name="sky_events_empty">Nothing in this category this month.</string>
+    <string name="sky_events_no_place">Set your place to see which eclipses you can see, local times and the best night for each meteor shower.</string>
+    <string name="sky_events_set_place">Set place</string>
+    <!-- %1$s: the user's place, e.g. "Bucharest", or coordinates. -->
+    <string name="sky_events_for_place">Times and visibility for %1$s</string>
+    <!-- A week's first and last day, e.g. "5 Oct – 11 Oct". -->
+    <string name="sky_events_week">%1$s – %2$s</string>
+    <string name="sky_events_reminder_set">Reminder set</string>
+    <string name="sky_events_notifications_blocked">Notifications are blocked for this app. Allow them in system settings to get reminders.</string>
+
+    <string name="sky_events_category_eclipses">Eclipses</string>
+    <string name="sky_events_category_moon">Moon</string>
+    <string name="sky_events_category_planets">Planets</string>
+    <string name="sky_events_category_meteors">Meteors</string>
+    <string name="sky_events_category_seasons">Seasons</string>
+
+    <!-- List rows: one short line under the event's name. -->
+    <string name="sky_events_solar_local_total">Total from your place</string>
+    <string name="sky_events_solar_local_annular">Annular from your place</string>
+    <!-- %1$d: percent of the Sun covered. -->
+    <string name="sky_events_solar_local_partial">Partial from your place, %1$d%% covered</string>
+    <string name="sky_events_not_visible_here">Not visible from your place</string>
+    <string name="sky_events_solar_somewhere">Visible from part of the Earth</string>
+    <string name="sky_events_lunar_visible_here">Visible from your place</string>
+    <string name="sky_events_lunar_somewhere">Visible wherever the Moon is up</string>
+    <!-- %1$s: a distance such as "356,729 km". -->
+    <string name="sky_events_moon_distance">%1$s away</string>
+    <!-- %1$s: a magnitude such as "-2.7"; %2$s: a constellation. -->
+    <string name="sky_events_planet_details">Magnitude %1$s, in %2$s</string>
+    <string name="sky_events_elongation_evening">In the evening sky after sunset</string>
+    <string name="sky_events_elongation_morning">In the morning sky before sunrise</string>
+    <string name="sky_events_march_equinox_meaning">Spring begins in the north, autumn in the south</string>
+    <string name="sky_events_june_solstice_meaning">Longest day in the north, shortest in the south</string>
+    <string name="sky_events_september_equinox_meaning">Autumn begins in the north, spring in the south</string>
+    <string name="sky_events_december_solstice_meaning">Shortest day in the north, longest in the south</string>
+    <!-- %1$d: meteors an hour at best; %2$d: percent of the Moon lit. -->
+    <string name="sky_events_meteor_summary">Up to %1$d an hour, Moon %2$d%% lit</string>
+
+    <!-- Event sheet. -->
+    <string name="sky_events_from_your_place">From your place</string>
+    <string name="sky_events_details">Details</string>
+    <string name="sky_events_solar_safety">Never look at the Sun without certified eclipse glasses or a solar filter, except during totality.</string>
+    <string name="sky_events_transit_safety">Only safe to watch through a telescope with a solar filter.</string>
+    <!-- %1$d: percent. -->
+    <string name="sky_events_sun_covered">%1$d%% of the Sun covered</string>
+    <!-- %1$d: degrees above the horizon. -->
+    <string name="sky_events_sun_altitude">The Sun is %1$d° above the horizon at maximum</string>
+    <string name="sky_events_sun_low">The Sun is low: find a clear view of the horizon.</string>
+    <!-- %1$d: degrees above the horizon. -->
+    <string name="sky_events_moon_altitude">The Moon is %1$d° above the horizon at maximum</string>
+    <string name="sky_events_moon_below">The Moon is below your horizon during the eclipse.</string>
+    <!-- %1$s: coordinates. -->
+    <string name="sky_events_greatest_at">Greatest eclipse at %1$s</string>
+    <string name="sky_events_partial_begins">Partial phase begins</string>
+    <string name="sky_events_total_begins">Totality begins</string>
+    <string name="sky_events_annular_begins">Ring of fire begins</string>
+    <string name="sky_events_maximum">Maximum</string>
+    <string name="sky_events_total_ends">Totality ends</string>
+    <string name="sky_events_annular_ends">Ring of fire ends</string>
+    <string name="sky_events_partial_ends">Partial phase ends</string>
+    <string name="sky_events_penumbral_begins">Faint shading begins</string>
+    <string name="sky_events_penumbral_ends">Faint shading ends</string>
+    <string name="sky_events_transit_begins">Transit begins</string>
+    <string name="sky_events_transit_ends">Transit ends</string>
+    <string name="sky_events_supermoon_meaning">Full Moon close to perigee: a little bigger and brighter than usual.</string>
+    <string name="sky_events_micromoon_meaning">Full Moon close to apogee: a little smaller than usual.</string>
+    <string name="sky_events_opposition_meaning">Opposite the Sun: up all night and at its brightest of the year.</string>
+    <!-- %1$s: an angle in degrees such as "45.9". -->
+    <string name="sky_events_elongation_angle">%1$s° from the Sun, its best showing</string>
+    <!-- %1$s: a distance in astronomical units such as "8.43". -->
+    <string name="sky_events_distance_au">%1$s AU from the Earth</string>
+    <!-- %1$s: first day; %2$s: last day. -->
+    <string name="sky_events_meteor_active">Active from %1$s to %2$s</string>
+    <!-- %1$d: meteors an hour. -->
+    <plurals name="sky_events_meteor_rate">
+        <item quantity="one">Up to %1$d meteor an hour under a dark sky</item>
+        <item quantity="other">Up to %1$d meteors an hour under a dark sky</item>
+    </plurals>
+    <!-- %1$d: percent of the Moon lit. -->
+    <string name="sky_events_meteor_moon">Moon %1$d%% lit at the peak</string>
+    <string name="sky_events_meteor_moon_bright">Bright moonlight will hide the fainter meteors.</string>
+    <!-- %1$s: a constellation. -->
+    <string name="sky_events_meteor_radiant">Meteors seem to come from %1$s</string>
+    <!-- %1$s: a comet or asteroid, e.g. "109P/Swift–Tuttle". -->
+    <string name="sky_events_meteor_parent">Debris of %1$s</string>
+    <!-- %1$s: start of darkness; %2$s: end. -->
+    <string name="sky_events_meteor_dark">Dark from %1$s to %2$s</string>
+    <!-- %1$s: a time; %2$d: degrees; %3$s: a compass direction. -->
+    <string name="sky_events_meteor_best">Best around %1$s, radiant %2$d° up in the %3$s</string>
+    <string name="sky_events_meteor_radiant_low">The radiant stays low from your place: expect few meteors.</string>
+    <string name="sky_events_remind_me">Remind me</string>
+    <string name="sky_events_lead_fifteen_minutes">15 min before</string>
+    <string name="sky_events_lead_one_hour">1 hour before</string>
+    <string name="sky_events_lead_one_day">1 day before</string>
+
+    <string name="sky_events_compass_n">north</string>
+    <string name="sky_events_compass_ne">north-east</string>
+    <string name="sky_events_compass_e">east</string>
+    <string name="sky_events_compass_se">south-east</string>
+    <string name="sky_events_compass_s">south</string>
+    <string name="sky_events_compass_sw">south-west</string>
+    <string name="sky_events_compass_w">west</string>
+    <string name="sky_events_compass_nw">north-west</string>
+
+    <!-- "Next in the sky" card on Today and Sky tonight. -->
+    <string name="sky_events_next_title">Next in the sky</string>
+    <!-- Between a day and a short line, e.g. "Tue 24 Nov · 356,729 km away". -->
+    <string name="sky_events_separator">" · "</string>
+    <string name="sky_events_next_open">Open the sky events calendar</string>
+
+    <!-- Extra words universal search matches, per category; space separated. -->
+    <string name="sky_events_search_words_eclipses">eclipse eclipses</string>
+    <string name="sky_events_search_words_moon">moon phase lunar</string>
+    <string name="sky_events_search_words_planets">planet planets</string>
+    <string name="sky_events_search_words_meteors">meteor meteors shower shooting stars</string>
+    <string name="sky_events_search_words_seasons">season equinox solstice</string>
+</resources>

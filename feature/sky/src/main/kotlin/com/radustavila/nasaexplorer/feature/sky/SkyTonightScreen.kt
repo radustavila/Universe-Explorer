@@ -78,6 +78,7 @@ private const val MAP_ZOOM = 0.0
 fun SkyTonightScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    nextInTheSky: (@Composable () -> Unit)? = null,
     viewModel: SkyTonightViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -134,6 +135,7 @@ fun SkyTonightScreen(
         onRefresh = viewModel::onRefresh,
         snackbarHostState = snackbarHostState,
         modifier = modifier,
+        nextInTheSky = nextInTheSky,
         moreSatellites = { MoreSatellitesSection(snackbarHostState) },
     )
 
@@ -170,6 +172,7 @@ fun SkyTonightContent(
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    nextInTheSky: (@Composable () -> Unit)? = null,
     moreSatellites: (@Composable () -> Unit)? = null,
 ) {
     Scaffold(
@@ -203,6 +206,7 @@ fun SkyTonightContent(
                         onUseMyLocation = onUseMyLocation,
                         onChooseLocation = onChooseLocation,
                         onRemindersClick = onRemindersClick,
+                        nextInTheSky = nextInTheSky,
                         moreSatellites = moreSatellites,
                     )
                 }
@@ -219,6 +223,7 @@ private fun SkyList(
     onUseMyLocation: () -> Unit,
     onChooseLocation: () -> Unit,
     onRemindersClick: () -> Unit,
+    nextInTheSky: (@Composable () -> Unit)?,
     moreSatellites: (@Composable () -> Unit)?,
 ) {
     val location = uiState.location
@@ -269,6 +274,8 @@ private fun SkyList(
             // Passes are computed for a place, like the ISS's.
             moreSatellites?.let { card -> item(key = "more-satellites") { card() } }
         }
+        // Works without a place too: the calendar then shows the global facts.
+        nextInTheSky?.let { card -> item(key = "next-in-the-sky") { card() } }
         item(key = "track") { IssTrackCard(track = uiState.track, observer = location?.coordinate, map = trackMap) }
         item(key = "people") {
             PeopleInSpaceCard(people = uiState.people, now = uiState.sky?.computedAt ?: Instant.now())

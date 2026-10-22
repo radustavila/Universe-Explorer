@@ -27,6 +27,9 @@ enum class SearchSource {
 
     /** Upcoming rocket launches. */
     LAUNCHES,
+
+    /** Sky events of the coming year, computed on the device. */
+    SKY_EVENTS,
 }
 
 /** Where opening a [SearchHit] leads; `:app` maps each target to its feature's route. */
@@ -41,6 +44,9 @@ sealed interface SearchTarget {
 
     /** Launches are listed on the Today tab. */
     data class LaunchEntry(val id: String) : SearchTarget
+
+    /** Opens the sky events calendar on the event (a `SkyEvent.id`). */
+    data class SkyEventEntry(val id: String) : SearchTarget
 
     /** Opens the favourite in the screen of the feature it was saved from. */
     data class Favorite(val item: FavoriteItem) : SearchTarget
