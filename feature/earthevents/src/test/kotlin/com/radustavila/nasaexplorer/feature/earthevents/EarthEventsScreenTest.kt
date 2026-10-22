@@ -18,6 +18,7 @@ import com.radustavila.nasaexplorer.core.testing.data.TestEarthEvents
 import java.time.Duration
 import java.time.LocalDate
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -87,11 +88,13 @@ class EarthEventsScreenTest {
     }
 
     @Test
-    fun `the map shows the events over yesterday's imagery`() {
+    fun `the map shows the events over the plain map, without imagery or its notes`() {
         setContent(loaded)
 
         composeTestRule.onNodeWithTag(FAKE_MAP_TAG).assertIsDisplayed()
-        assertEquals(loaded.imagery, shownImagery)
+        assertNull(shownImagery)
+        composeTestRule.onNodeWithTag(EARTH_EVENTS_IMAGERY_BAR_TEST_TAG).assertDoesNotExist()
+        composeTestRule.onNodeWithText("Daily mosaic", substring = true).assertDoesNotExist()
         assertTrue(shownOverlays.any { overlay -> overlay.shapes.any { it.id == storm.id } })
     }
 
@@ -141,7 +144,7 @@ class EarthEventsScreenTest {
     }
 
     @Test
-    fun `while an event's imagery shows, a bar names it and leads back to the latest`() {
+    fun `while an event's imagery shows, a bar names it and leads back to the plain map`() {
         val imagery = EventImagery(fire.id, TestEarthEvents.TRUE_COLOR_LAYER, LocalDate.of(2026, 10, 14))
         setContent(loaded.copy(eventImagery = imagery))
 
@@ -149,7 +152,7 @@ class EarthEventsScreenTest {
         composeTestRule.onNodeWithText("VIIRS SNPP Corrected Reflectance True Color", substring = true).assertIsDisplayed()
         assertEquals(imagery.toGibsImagery(), shownImagery)
 
-        composeTestRule.onNodeWithText("Latest imagery").performClick()
+        composeTestRule.onNodeWithText("Hide imagery").performClick()
         assertEquals(1, hideImageryClicks)
     }
 
@@ -221,8 +224,9 @@ class EarthEventsScreenTest {
     }
 
     @Test
-    fun `daily true colour comes with a note on its gaps`() {
-        setContent(loaded)
+    fun `an event's daily true colour comes with a note on its gaps`() {
+        val imagery = EventImagery(fire.id, TestEarthEvents.TRUE_COLOR_LAYER, today.minusDays(1))
+        setContent(loaded.copy(eventImagery = imagery))
 
         composeTestRule.onNodeWithText("Daily mosaic", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithTag(EARTH_EVENTS_MAP_LOADING_TEST_TAG).assertDoesNotExist()

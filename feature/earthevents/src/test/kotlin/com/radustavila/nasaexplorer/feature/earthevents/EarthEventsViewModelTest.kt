@@ -64,7 +64,7 @@ class EarthEventsViewModelTest {
     }
 
     @Test
-    fun `shows the cached events over yesterday's true colour`() = runTest {
+    fun `shows the cached events over the plain, cloud-free map`() = runTest {
         repository.setEvents(listOf(fire, storm, volcano))
 
         val state = createViewModel().uiState.value
@@ -75,7 +75,7 @@ class EarthEventsViewModelTest {
             listOf(EarthEventCategory.SEVERE_STORMS to 1, EarthEventCategory.VOLCANOES to 1, EarthEventCategory.WILDFIRES to 1),
             state.categoryCounts,
         )
-        assertEquals(GibsImagery.trueColor(yesterday), state.imagery)
+        assertNull(state.imagery)
     }
 
     @Test
@@ -174,7 +174,7 @@ class EarthEventsViewModelTest {
         assertFalse(state.isLoadingImagery)
 
         viewModel.onHideImagery()
-        assertEquals(GibsImagery.trueColor(yesterday), viewModel.uiState.value.imagery)
+        assertNull(viewModel.uiState.value.imagery)
     }
 
     @Test
