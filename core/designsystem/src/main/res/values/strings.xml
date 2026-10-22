@@ -59,6 +59,46 @@
     <string name="freshness_just_now">just now</string>
     <!-- %1$s: a time of day such as "14:03", or a date and time. -->
     <string name="freshness_offline">Offline · showing data from %1$s</string>
+    <!-- Sky events (F12): names shared by the calendar, its reminders and universal search. -->
+    <string name="sky_event_solar_eclipse_total">Total solar eclipse</string>
+    <string name="sky_event_solar_eclipse_annular">Annular solar eclipse</string>
+    <string name="sky_event_solar_eclipse_partial">Partial solar eclipse</string>
+    <string name="sky_event_lunar_eclipse_total">Total lunar eclipse</string>
+    <string name="sky_event_lunar_eclipse_partial">Partial lunar eclipse</string>
+    <string name="sky_event_lunar_eclipse_penumbral">Penumbral lunar eclipse</string>
+    <string name="sky_event_new_moon">New Moon</string>
+    <string name="sky_event_first_quarter">First quarter Moon</string>
+    <string name="sky_event_full_moon">Full Moon</string>
+    <string name="sky_event_last_quarter">Last quarter Moon</string>
+    <string name="sky_event_supermoon">Supermoon</string>
+    <string name="sky_event_micromoon">Micromoon</string>
+    <!-- %1$s: a planet, e.g. "Mars". -->
+    <string name="sky_event_opposition">%1$s at opposition</string>
+    <!-- %1$s: Mercury or Venus. The planet is as far from the Sun in the sky as it gets. -->
+    <string name="sky_event_elongation">%1$s at greatest elongation</string>
+    <!-- %1$s: Mercury or Venus crossing the Sun's disc. -->
+    <string name="sky_event_transit">Transit of %1$s</string>
+    <string name="sky_event_march_equinox">March equinox</string>
+    <string name="sky_event_june_solstice">June solstice</string>
+    <string name="sky_event_september_equinox">September equinox</string>
+    <string name="sky_event_december_solstice">December solstice</string>
+    <!-- %1$s: a meteor shower, e.g. "Perseids". -->
+    <string name="sky_event_meteor_peak">%1$s peak</string>
+    <string name="sky_event_planet_mercury">Mercury</string>
+    <string name="sky_event_planet_venus">Venus</string>
+    <string name="sky_event_planet_mars">Mars</string>
+    <string name="sky_event_planet_jupiter">Jupiter</string>
+    <string name="sky_event_planet_saturn">Saturn</string>
+    <string name="sky_event_shower_quadrantids">Quadrantids</string>
+    <string name="sky_event_shower_lyrids">Lyrids</string>
+    <string name="sky_event_shower_eta_aquariids">Eta Aquariids</string>
+    <string name="sky_event_shower_southern_delta_aquariids">Southern Delta Aquariids</string>
+    <string name="sky_event_shower_perseids">Perseids</string>
+    <string name="sky_event_shower_draconids">Draconids</string>
+    <string name="sky_event_shower_orionids">Orionids</string>
+    <string name="sky_event_shower_leonids">Leonids</string>
+    <string name="sky_event_shower_geminids">Geminids</string>
+    <string name="sky_event_shower_ursids">Ursids</string>
     <!-- Stargazing outlook (F11), shared by Sky tonight, Today and the clear-night notification. -->
     <string name="stargazing_window">Clear from %1$s to %2$s, %3$s</string>
     <string name="stargazing_moon_down">Moon down</string>

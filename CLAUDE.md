@@ -56,9 +56,13 @@ Clean Architecture, dependencies pointing inward:
   `RoomFavoritesRepository`), `:core:datastore`, `:core:cache` (`CacheEvictor` + daily `CacheEvictionWorker`).
   `:data:launches` (Launch Library 2) keeps its own small `launches.db`, refreshed from `ApodSyncWorker` at most
   once an hour. `:data:earthevents` (NASA EONET) keeps `earth_events.db`, refreshed by its own 3-hourly
-  `EarthEventsSyncWorker` and when the events screen opens. `:data:forecast` (MET Norway cloud forecast, F11)
-  keeps `forecast.db` per rounded place, honours `Expires`/`If-Modified-Since`, and runs its 3-hourly
-  `StargazingAlertWorker` only while the clear-night alert is on; the score is `StargazingScorer` (`:core:domain`).
+  `EarthEventsSyncWorker` and when the events screen opens. `:core:astro` (pure Kotlin) computes the sky offline:
+  `AstronomyEngineSkyCalculator`, SGP4 passes, and the sky events calendar (`EventCalendar` behind
+  `SkyEventCalendar`, `MeteorShowerTable`); `:data:skyevents` holds that calendar's reminders (DataStore + one
+  WorkManager job, re-armed by `NasaExplorerApplication` whenever the saved place changes). `:data:forecast`
+  (MET Norway cloud forecast, F11) keeps `forecast.db` per rounded place, honours `Expires`/`If-Modified-Since`,
+  and runs its 3-hourly `StargazingAlertWorker` only while the clear-night alert is on; the score is
+  `StargazingScorer` (`:core:domain`), the nights' darkness `AstronomyEngineDarkSkyCalculator` (`:core:astro`).
 - **Presentation**: `:feature:*` (one screen each: Compose UI, ViewModel, immutable `UiState`, own type-safe
   `@Serializable` route + `NavGraphBuilder` extension), `:feature:widget` (Glance), `:core:notifications`,
   `:core:designsystem` (theme, shared components like `ApodCard`/`NasaAsyncImage`, `AppError`→`UiError` mapping),
@@ -125,7 +129,8 @@ Boundary rules the code relies on:
   mapped to `SyncState`. After success, `AnnounceLatestApodUseCase` refreshes the widget and posts the opt-in new-entry
   notification.
 - **Universal search is local-only.** `UniversalSearchUseCase` asks every `SearchableSource` (Hilt `@IntoSet`, one per
-  data module, fakes in `:core:testing`) concurrently, each with a time limit; a failing source only lands in
+  data module, or a feature module when the names are the app's own words, as with `:feature:events`; fakes in
+  `:core:testing`) concurrently, each with a time limit; a failing source only lands in
   `failedSources`. `SearchText` holds the shared matching/ranking/highlight rules. `:app`'s `SearchNavigation.kt` maps
   each `SearchTarget` to a route; online library search goes through the gallery (`GallerySearchRoute`).
 - `apod.nasa.gov/apod/apYYMMDD.html` and `astropix.html` open the app (unverified intent filter); `MainActivity`
