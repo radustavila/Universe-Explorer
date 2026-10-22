@@ -1,18 +1,28 @@
 name: CI
 
+# Docs-only changes skip CI: nothing they touch is compiled, tested or packaged. There is no required status check on
+# develop, so a skipped run never blocks a merge.
 on:
   push:
     branches: [ develop, main ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
   pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Three jobs on three runners in parallel; the wall-clock time is the slowest one (the tests), not their sum. Each
+# restores the Gradle caches that develop's runs save (PRs only read them), so unchanged modules come FROM-CACHE.
 jobs:
-  build:
+  tests:
+    name: Unit and screenshot tests
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -25,23 +35,13 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      # The repo's 3 GB heap suits a laptop running several builds; a runner has 16 GB and runs this build alone.
+      - name: Raise the Gradle heap
+        run: mkdir -p ~/.gradle && echo "org.gradle.jvmargs=-Xmx6g -XX:+UseParallelGC -Dfile.encoding=UTF-8" >> ~/.gradle/gradle.properties
+
       # verifyRoborazziDebug runs the screenshot modules' unit tests once, comparing against the goldens.
       - name: Unit and screenshot tests
         run: ./gradlew test testDebugUnitTest verifyRoborazziDebug --stacktrace
-
-      - name: Lint
-        run: ./gradlew lint --stacktrace
-
-      # Fails on findings missing from each module's detekt-baseline.xml.
-      - name: Detekt
-        run: ./gradlew detekt --stacktrace
-
-      - name: Assemble debug
-        run: ./gradlew assembleDebug --stacktrace
-
-      # Minified with R8 and debug-signed: catches keep rules that only break the shrunk build.
-      - name: Assemble release
-        run: ./gradlew assembleRelease --stacktrace
 
       - name: Upload test reports
         if: always()
@@ -50,5 +50,58 @@ jobs:
           name: test-reports
           path: |
             **/build/reports/tests/**
-            **/build/reports/detekt/**
             **/build/outputs/roborazzi/**
+
+  checks:
+    name: Lint and detekt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Raise the Gradle heap
+        run: mkdir -p ~/.gradle && echo "org.gradle.jvmargs=-Xmx6g -XX:+UseParallelGC -Dfile.encoding=UTF-8" >> ~/.gradle/gradle.properties
+
+      # Lint treats warnings as errors; detekt fails on findings missing from each module's detekt-baseline.xml.
+      - name: Lint and detekt
+        run: ./gradlew lint detekt --continue --stacktrace
+
+      - name: Upload lint and detekt reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: check-reports
+          path: |
+            **/build/reports/lint-results-*.html
+            **/build/reports/detekt/**
+
+  release:
+    name: Release build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Raise the Gradle heap
+        run: mkdir -p ~/.gradle && echo "org.gradle.jvmargs=-Xmx6g -XX:+UseParallelGC -Dfile.encoding=UTF-8" >> ~/.gradle/gradle.properties
+
+      # Minified with R8 and debug-signed: catches keep rules that only break the shrunk build. It also packages the
+      # whole app, which is why there is no separate assembleDebug: the tests already compile the debug variant.
+      - name: Assemble release
+        run: ./gradlew assembleRelease --stacktrace

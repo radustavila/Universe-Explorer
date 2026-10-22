@@ -180,8 +180,13 @@ the repo.
 1. **Prompt → questions only if needed.** Ask for context only when the request is unclear or a decision is genuinely
    the owner's; otherwise pick the sensible default, say so, and go.
 2. **Implement** on a branch off `develop` (parallel sessions each in their own worktree, never editing the same files).
-3. **Test yourself, end to end.** `./gradlew test testDebugUnitTest lint detekt verifyRoborazziDebug assembleRelease`
-   (add `--max-workers=4` when several builds run at once; the 32 GB host runs out of memory otherwise), then on
+3. **Test yourself, end to end.** Locally, check only the modules you changed: their tests, `lint` and `detekt`
+   (`./gradlew :feature:sky:testDebugUnitTest :feature:sky:lint :feature:sky:detekt`, `test` for pure Kotlin modules),
+   `verifyRoborazziDebug` for those with screenshot tests (record and review the goldens after an intended UI
+   change), plus `:app:testDebugUnitTest` when you touched `:app`. `./gradlew assembleDebug`, which the emulator
+   install needs anyway, compiles every dependent module. CI runs the full suite and the R8 `assembleRelease` on the PR,
+   so don't repeat them locally unless you changed build logic, Gradle files or R8 keep rules. Add `--max-workers=4`
+   when several builds run at once; the 32 GB host runs out of memory otherwise. Then test on
    emulators: **up to 3 in parallel**, `adb -s <serial>` always, uninstall before installing another branch (Room
    versions differ). Never use `Pixel_9_Pro_XL_API_37` (fails to boot) or `Legacy_API_35` (holds the owner's work
    app). Cold-boot an emulator whose `system_server` died under load. The physical phone is used only when the owner
@@ -194,9 +199,10 @@ the repo.
 
 ## Repo notes
 
-- Main/integration branch is `develop`; CI (`.github/workflows/ci.yml`) runs unit tests, Roborazzi screenshot
-  verification, lint, detekt, `assembleDebug` and `assembleRelease` (R8-minified, debug-signed) on JDK 21, for PRs and
-  pushes to `develop`/`main`.
+- Main/integration branch is `develop`; CI (`.github/workflows/ci.yml`) runs three parallel jobs on JDK 21: unit and
+  Roborazzi screenshot tests, lint + detekt, and `assembleRelease` (R8-minified, debug-signed). It runs for PRs and
+  pushes to `develop`/`main` and skips changes that only touch Markdown or `docs/`. PRs read the Gradle caches that
+  `develop` runs save.
 - `LEARNING_GUIDE.md` is a Romanian step-by-step study log for guided review sessions; when the user is working through
   it, explain code rather than change it unless asked.
 - Some README sections are stale (e.g. "only one database version" — there are now three schema versions and
