@@ -35,4 +35,8 @@
     <string name="sky_event_notification_at">%1$s.</string>
     <!-- %1$s: day and time darkness falls; %2$s: the best time to watch. -->
     <string name="sky_event_notification_meteors">Dark from %1$s, best around %2$s. Find a dark spot away from lights.</string>
+    <string name="stargazing_alert_channel_name">Clear night alerts</string>
+    <string name="stargazing_alert_channel_description">Tells you when tonight looks clear and dark enough to observe from your place.</string>
+    <string name="stargazing_alert_title">Clear night ahead</string>
+    <string name="stargazing_alert_text">%1$s. Observing score: %2$d/100. Based on data from MET Norway.</string>
 </resources>

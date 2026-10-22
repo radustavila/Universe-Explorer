@@ -31,6 +31,8 @@ class SettingsViewModelTest {
     private val spaceWeatherScheduler = fixture.spaceWeatherScheduler
     private val skyPreferences = fixture.skyPreferences
     private val location = fixture.location
+    private val stargazing = fixture.stargazing
+    private val stargazingScheduler = fixture.stargazingScheduler
     private val syncScheduler = fixture.syncScheduler
     private val images = fixture.images
     private val http = fixture.http
@@ -139,6 +141,26 @@ class SettingsViewModelTest {
             awaitUntil { it.message == null }
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun `clear night alerts need a saved place, then schedule their check`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            viewModel.onStargazingAlertsChange(true)
+            assertEquals(SettingsMessage.STARGAZING_NEEDS_PLACE, awaitUntil { it.message != null }.message)
+            assertFalse(stargazing.settings.first().enabled)
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        location.setLocation(TestSky.location())
+        viewModel.onStargazingAlertsChange(true)
+        viewModel.onStargazingMinimumScoreChange(75)
+
+        assertTrue(stargazing.settings.first().enabled)
+        assertEquals(75, stargazing.settings.first().minimumScore)
+        assertTrue(stargazingScheduler.isPeriodicCheckScheduled)
     }
 
     @Test

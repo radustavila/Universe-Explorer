@@ -99,4 +99,17 @@
     <string name="sky_event_shower_leonids">Leonids</string>
     <string name="sky_event_shower_geminids">Geminids</string>
     <string name="sky_event_shower_ursids">Ursids</string>
+    <!-- Stargazing outlook (F11), shared by Sky tonight, Today and the clear-night notification. -->
+    <string name="stargazing_window">Clear from %1$s to %2$s, %3$s</string>
+    <string name="stargazing_moon_down">Moon down</string>
+    <string name="stargazing_moon_up">Moon up (%1$d%% lit)</string>
+    <string name="stargazing_moon_rises">Moon rises (%1$d%% lit)</string>
+    <string name="stargazing_moon_sets">Moon sets (%1$d%% lit)</string>
+    <string name="stargazing_no_window">No clear spell expected</string>
+    <string name="stargazing_not_dark">Never fully dark</string>
+    <string name="stargazing_no_forecast">No cloud forecast yet</string>
+    <string name="stargazing_rating_poor">Poor</string>
+    <string name="stargazing_rating_fair">Fair</string>
+    <string name="stargazing_rating_good">Good</string>
+    <string name="stargazing_rating_excellent">Excellent</string>
 </resources>
