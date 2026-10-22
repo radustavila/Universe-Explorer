@@ -20,6 +20,12 @@ data class GibsLayer(
     /** Deepest zoom level GIBS serves; MapLibre overzooms past it instead of requesting 400s. */
     val maxZoom: Int get() = matrixSet.maxZoom
 
+    /**
+     * Whether the layer is a daily orbital mosaic whose areas without data (between swaths, in
+     * polar night) are opaque black. The map makes those pixels transparent.
+     */
+    val hasNoDataGaps: Boolean get() = CORRECTED_REFLECTANCE in id
+
     /** Raster tile URL with MapLibre's `{z}/{y}/{x}` placeholders, for the given day. */
     fun tileUrlTemplate(date: LocalDate?): String = buildString {
         append(GIBS_WMTS_BASE_URL)
@@ -67,6 +73,14 @@ data class GibsLayer(
             time = GibsTime.Daily(firstDate = LocalDate.of(2000, 2, 24)),
         )
 
+        /** Daily true colour from Aqua MODIS, Terra's afternoon twin; archive from mid-2002. */
+        val ModisAquaTrueColor = GibsLayer(
+            id = "MODIS_Aqua_CorrectedReflectance_TrueColor",
+            matrixSet = GibsTileMatrixSet.GoogleMapsCompatibleLevel9,
+            format = "jpg",
+            time = GibsTime.Daily(firstDate = LocalDate.of(2002, 7, 4)),
+        )
+
         /** City lights at night, a single 2016 composite. */
         val ViirsBlackMarble = GibsLayer(
             id = "VIIRS_Black_Marble",
@@ -90,6 +104,15 @@ data class GibsLayer(
         fun trueColorFor(date: LocalDate): GibsLayer {
             val snppStart = (ViirsSnppTrueColor.time as GibsTime.Daily).firstDate
             return if (snppStart == null || date >= snppStart) ViirsSnppTrueColor else ModisTerraTrueColor
+        }
+
+        /**
+         * The layer drawn under [trueColorFor] to fill its swath gaps: NOAA-20, which flies half an
+         * orbit behind Suomi NPP, from its first day; Aqua MODIS before that.
+         */
+        fun trueColorGapFillFor(date: LocalDate): GibsLayer {
+            val noaa20Start = (ViirsNoaa20TrueColor.time as GibsTime.Daily).firstDate
+            return if (noaa20Start == null || date >= noaa20Start) ViirsNoaa20TrueColor else ModisAquaTrueColor
         }
     }
 }
@@ -120,6 +143,8 @@ sealed interface GibsTime {
     /** Timeless layer; the URL has no date segment. */
     data object None : GibsTime
 }
+
+internal const val CORRECTED_REFLECTANCE = "_CorrectedReflectance_"
 
 internal const val GIBS_HOST = "gibs.earthdata.nasa.gov"
 internal const val GIBS_WMTS_BASE_URL = "https://$GIBS_HOST/wmts/epsg3857/best"

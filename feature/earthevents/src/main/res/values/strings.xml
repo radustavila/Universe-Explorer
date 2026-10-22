@@ -15,6 +15,22 @@
     <string name="earth_events_loading">Loading events…</string>
     <string name="earth_events_close_event">Close</string>
     <string name="earth_events_last_update">Last update: %1$s</string>
+    <string name="earth_events_last_report_today">Last report today</string>
+    <plurals name="earth_events_last_report_days">
+        <item quantity="one">Last report %1$d day ago</item>
+        <item quantity="other">Last report %1$d days ago</item>
+    </plurals>
+    <plurals name="earth_events_history_hidden">
+        <item quantity="one">%1$d wildfire last reported 2–6 weeks ago is hidden</item>
+        <item quantity="other">%1$d wildfires last reported 2–6 weeks ago are hidden</item>
+    </plurals>
+    <plurals name="earth_events_history_shown">
+        <item quantity="one">Showing %1$d wildfire last reported 2–6 weeks ago, faded</item>
+        <item quantity="other">Showing %1$d wildfires last reported 2–6 weeks ago, faded</item>
+    </plurals>
+    <string name="earth_events_history_show">Show</string>
+    <string name="earth_events_history_hide">Hide</string>
+    <string name="earth_events_mosaic_gaps">Daily mosaic: gaps between satellite passes show the relief map</string>
     <string name="earth_events_magnitude">Magnitude: %1$s</string>
     <string name="earth_events_show_imagery">Show imagery</string>
     <string name="earth_events_source">Source: %1$s</string>

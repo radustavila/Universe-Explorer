@@ -8,6 +8,7 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
 import java.time.LocalDate
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -38,7 +39,8 @@ class EarthMapViewModelTest {
             assertEquals(yesterday, state.date)
             assertEquals(yesterday, state.maxDate)
             assertEquals(LocalDate.of(2015, 1, 1), state.minDate)
-            assertEquals(GibsImagery(GibsLayer.ViirsSnppTrueColor, yesterday), state.imagery)
+            assertEquals(GibsImagery.trueColor(yesterday), state.imagery)
+            assertFalse(state.isImageryPending)
             assertTrue(state.isDateSelectable)
         }
     }
@@ -69,9 +71,7 @@ class EarthMapViewModelTest {
             assertEquals(yesterday.minusDays(1), awaitItem().date)
 
             viewModel.onDateSelected(LocalDate.of(2015, 6, 1))
-            val early = awaitItem()
-            assertEquals(LocalDate.of(2015, 6, 1), early.date)
-            assertEquals(GibsLayer.ModisTerraTrueColor, early.imagery.layer)
+            assertEquals(LocalDate.of(2015, 6, 1), awaitItem().date)
 
             viewModel.onDateSelected(LocalDate.of(2010, 1, 1))
             assertEquals(LocalDate.of(2015, 1, 1), awaitItem().date)
@@ -81,6 +81,43 @@ class EarthMapViewModelTest {
 
             viewModel.onNextDay()
             expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `the map loads a picked day only once the picker rests`() = runTest {
+        val viewModel = createViewModel()
+        viewModel.uiState.test {
+            awaitItem()
+
+            viewModel.onPreviousDay()
+            viewModel.onPreviousDay()
+            viewModel.onPreviousDay()
+            val picked = yesterday.minusDays(3)
+            var state = awaitItem()
+            while (state.date != picked) state = awaitItem()
+            assertTrue(state.isImageryPending)
+            assertEquals(GibsImagery.trueColor(yesterday), state.imagery)
+
+            advanceTimeBy(EarthMapViewModel.IMAGERY_DEBOUNCE_MILLIS + 1)
+            val loaded = awaitItem()
+            assertFalse(loaded.isImageryPending)
+            assertEquals(GibsImagery.trueColor(picked), loaded.imagery)
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `days before Suomi NPP use Terra, with Aqua filling the gaps`() = runTest {
+        val viewModel = createViewModel()
+        viewModel.uiState.test {
+            awaitItem()
+            viewModel.onDateSelected(LocalDate.of(2015, 6, 1))
+            advanceTimeBy(EarthMapViewModel.IMAGERY_DEBOUNCE_MILLIS + 1)
+
+            val imagery = expectMostRecentItem().imagery
+            assertEquals(GibsLayer.ModisTerraTrueColor, imagery.layer)
+            assertEquals(GibsLayer.ModisAquaTrueColor, imagery.gapFill)
         }
     }
 

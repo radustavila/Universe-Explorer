@@ -54,6 +54,7 @@ internal fun SpaceMapHostEffects(state: SpaceMapState) {
         context.registerComponentCallbacks(callbacks)
         onDispose {
             context.unregisterComponentCallbacks(callbacks)
+            host.controller.release()
             if (state.host === host) state.host = null
         }
     }
@@ -66,8 +67,8 @@ internal fun SpaceMapHostEffects(state: SpaceMapState) {
         }
     }
 
-    LaunchedEffect(state) {
-        TileLoadMonitor.status.collect { state.tileStatus = it }
+    LaunchedEffect(host) {
+        host.controller.tileStatus.collect { state.tileStatus = it }
     }
 }
 

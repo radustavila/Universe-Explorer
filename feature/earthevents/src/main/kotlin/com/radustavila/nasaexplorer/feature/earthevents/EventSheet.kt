@@ -52,6 +52,7 @@ const val EARTH_EVENT_SOURCE_TEST_TAG = "earth-event-source"
 @Composable
 internal fun EventSheet(
     event: EarthEvent,
+    reportAgeDays: Long,
     isShowingImagery: Boolean,
     isLoadingImagery: Boolean,
     onShowImagery: () -> Unit,
@@ -95,6 +96,14 @@ internal fun EventSheet(
                 text = event.title,
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(end = 12.dp),
+            )
+            Detail(
+                if (reportAgeDays == 0L) {
+                    stringResource(R.string.earth_events_last_report_today)
+                } else {
+                    val days = reportAgeDays.toInt()
+                    pluralStringResource(R.plurals.earth_events_last_report_days, days, days)
+                },
             )
             Detail(stringResource(R.string.earth_events_last_update, event.lastUpdate.formatLocalDateTime()))
             event.latest.magnitude?.let { magnitude ->

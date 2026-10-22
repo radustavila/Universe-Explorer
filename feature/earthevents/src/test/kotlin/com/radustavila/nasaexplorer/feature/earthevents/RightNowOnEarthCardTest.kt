@@ -9,7 +9,10 @@ import com.radustavila.nasaexplorer.core.domain.usecase.ObserveOpenEarthEventsUs
 import com.radustavila.nasaexplorer.core.model.EarthEventCategory
 import com.radustavila.nasaexplorer.core.testing.data.TestEarthEvents
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthEventRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
+import java.time.Duration
+import java.time.LocalDate
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -65,16 +68,20 @@ class RightNowOnEarthViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     @Test
-    fun `counts open events per category, largest first`() = runTest {
+    fun `counts the events shown by default per category, largest first`() = runTest {
         val repository = FakeEarthEventRepository()
         repository.setEvents(
             listOf(
                 TestEarthEvents.wildfire(id = "f1"),
                 TestEarthEvents.wildfire(id = "f2"),
                 TestEarthEvents.storm(),
+                // Last reported 15 and 43 days ago: history is left out of the card, expired everywhere.
+                TestEarthEvents.wildfire(id = "f3", at = TestEarthEvents.NOW.minus(Duration.ofDays(15))),
+                TestEarthEvents.wildfire(id = "f4", at = TestEarthEvents.NOW.minus(Duration.ofDays(43))),
             ),
         )
-        val viewModel = RightNowOnEarthViewModel(ObserveOpenEarthEventsUseCase(repository))
+        val timeProvider = FakeTimeProvider(currentDate = LocalDate.of(2026, 10, 19))
+        val viewModel = RightNowOnEarthViewModel(ObserveOpenEarthEventsUseCase(repository, timeProvider))
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.counts.collect {} }
 
         assertEquals(

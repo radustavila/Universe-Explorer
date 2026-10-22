@@ -2,6 +2,7 @@ package com.radustavila.nasaexplorer.feature.earthmap
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.outlined.SyncProblem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -63,6 +65,7 @@ import kotlin.math.roundToInt
 const val EARTH_MAP_TILE_BANNER_TEST_TAG = "earth-map-tile-banner"
 const val EARTH_MAP_DATE_SLIDER_TEST_TAG = "earth-map-date-slider"
 const val EARTH_MAP_DATE_LABEL_TEST_TAG = "earth-map-date-label"
+const val EARTH_MAP_LOADING_TEST_TAG = "earth-map-loading"
 
 @Composable
 internal fun EarthMapRoute(
@@ -75,6 +78,7 @@ internal fun EarthMapRoute(
     EarthMapScreen(
         uiState = uiState,
         tileStatus = mapState.tileStatus,
+        isLoadingImagery = mapState.isLoadingImagery,
         onBackClick = onBackClick,
         onModeSelected = viewModel::onModeSelected,
         onDateSelected = viewModel::onDateSelected,
@@ -86,7 +90,8 @@ internal fun EarthMapRoute(
 
 /**
  * Stateless satellite map screen. The map itself comes in through [map] so tests can render the
- * controls without MapLibre's native renderer.
+ * controls without MapLibre's native renderer. A thin progress bar tops the map while a new day
+ * waits to be drawn or [isLoadingImagery] (the map keeps the previous day until the new one loaded).
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,6 +104,7 @@ fun EarthMapScreen(
     onPreviousDay: () -> Unit,
     onNextDay: () -> Unit,
     modifier: Modifier = Modifier,
+    isLoadingImagery: Boolean = false,
     map: @Composable (imagery: GibsImagery, modifier: Modifier) -> Unit,
 ) {
     Scaffold(
@@ -130,10 +136,13 @@ fun EarthMapScreen(
                 )
             }
             val mapWithBanner = @Composable { mapModifier: Modifier ->
-                Column(mapModifier) {
-                    MapBanner(isOffline = uiState.isOffline, tileStatus = tileStatus)
-                    map(uiState.imagery, Modifier.fillMaxWidth().weight(1f))
-                }
+                MapWithBanner(
+                    uiState = uiState,
+                    tileStatus = tileStatus,
+                    isLoading = uiState.isImageryPending || isLoadingImagery,
+                    map = map,
+                    modifier = mapModifier,
+                )
             }
 
             if (isLandscape) {
@@ -151,6 +160,30 @@ fun EarthMapScreen(
                     mapWithBanner(Modifier.weight(1f).fillMaxWidth())
                     controls(Modifier.fillMaxWidth())
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MapWithBanner(
+    uiState: EarthMapUiState,
+    tileStatus: TileLoadStatus,
+    isLoading: Boolean,
+    map: @Composable (imagery: GibsImagery, modifier: Modifier) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier) {
+        MapBanner(isOffline = uiState.isOffline, tileStatus = tileStatus)
+        Box(Modifier.fillMaxWidth().weight(1f)) {
+            map(uiState.imagery, Modifier.fillMaxSize())
+            if (isLoading) {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopCenter)
+                        .testTag(EARTH_MAP_LOADING_TEST_TAG),
+                )
             }
         }
     }
@@ -255,7 +288,8 @@ private fun DateSelector(
     onPreviousDay: () -> Unit,
     onNextDay: () -> Unit,
 ) {
-    // While dragging, only the label follows the thumb; the map reloads once the finger lifts.
+    // The thumb and label follow the finger; each day passed is picked, and the view model only
+    // loads the one the finger rests on.
     var draggedDays by remember { mutableStateOf<Float?>(null) }
     val shownDate = draggedDays?.let { uiState.minDate.plusDays(it.roundToInt().toLong()) } ?: uiState.date
     val selectedDays = (uiState.date.toEpochDay() - uiState.minDate.toEpochDay()).toFloat()
@@ -283,7 +317,11 @@ private fun DateSelector(
     val sliderDescription = stringResource(R.string.earth_map_date_slider)
     Slider(
         value = draggedDays ?: selectedDays,
-        onValueChange = { draggedDays = it },
+        onValueChange = { days ->
+            val day = uiState.minDate.plusDays(days.roundToInt().toLong())
+            if (day != shownDate) onDateSelected(day)
+            draggedDays = days
+        },
         onValueChangeFinished = {
             draggedDays?.let { onDateSelected(uiState.minDate.plusDays(it.roundToInt().toLong())) }
             draggedDays = null
@@ -293,6 +331,13 @@ private fun DateSelector(
             .fillMaxWidth()
             .semantics { contentDescription = sliderDescription }
             .testTag(EARTH_MAP_DATE_SLIDER_TEST_TAG),
+    )
+    Text(
+        text = stringResource(R.string.earth_map_mosaic_gaps),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth(),
     )
 }
 
@@ -315,4 +360,4 @@ private val EarthMapMode.labelRes: Int
     }
 
 private val LANDSCAPE_PANEL_WIDTH = 360.dp
-private val DATE_AREA_MIN_HEIGHT = 96.dp
+private val DATE_AREA_MIN_HEIGHT = 128.dp

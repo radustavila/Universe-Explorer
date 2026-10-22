@@ -1,5 +1,6 @@
 package com.radustavila.nasaexplorer.feature.earthevents
 
+import com.radustavila.nasaexplorer.core.map.gibs.GibsImagery
 import com.radustavila.nasaexplorer.core.map.gibs.GibsLayer
 import com.radustavila.nasaexplorer.core.map.overlay.GeoPoint
 import com.radustavila.nasaexplorer.core.map.overlay.MapMarker
@@ -21,12 +22,16 @@ import org.junit.Test
 
 class EventOverlaysTest {
 
+    private companion object {
+        val TODAY: LocalDate = LocalDate.of(2026, 10, 19)
+    }
+
     private val storm = TestEarthEvents.storm(points = 4)
     private val fire = TestEarthEvents.wildfire()
 
     @Test
     fun `areas, then tracks, then markers, one overlay per category, selection on top`() {
-        val overlays = eventOverlays(listOf(fire, storm), hiddenCategories = emptySet(), selectedEventId = null)
+        val overlays = eventOverlays(listOf(fire, storm), emptySet(), selectedEventId = null, today = TODAY)
 
         assertEquals(
             listOf(
@@ -42,7 +47,7 @@ class EventOverlaysTest {
 
     @Test
     fun `markers sit at the latest report, coloured by category`() {
-        val markers = eventOverlays(listOf(storm), emptySet(), null)
+        val markers = eventOverlays(listOf(storm), emptySet(), null, TODAY)
             .single { it.id == "event-markers-severeStorms" }.shapes
 
         val marker = markers.single() as MapMarker
@@ -53,7 +58,7 @@ class EventOverlaysTest {
 
     @Test
     fun `a storm track runs through every report, oldest first`() {
-        val track = eventOverlays(listOf(storm), emptySet(), null)
+        val track = eventOverlays(listOf(storm), emptySet(), null, TODAY)
             .single { it.id == "event-tracks-severeStorms" }.shapes.single() as MapPolyline
 
         assertEquals(storm.geometry.sortedBy { it.date }.map { it.shape.center.latitude }, track.points.map { it.latitude })
@@ -63,7 +68,7 @@ class EventOverlaysTest {
 
     @Test
     fun `single reports get no track`() {
-        val tracks = eventOverlays(listOf(fire), emptySet(), null).single { it.id == "event-tracks-wildfires" }
+        val tracks = eventOverlays(listOf(fire), emptySet(), null, TODAY).single { it.id == "event-tracks-wildfires" }
 
         assertTrue(tracks.shapes.isEmpty())
     }
@@ -80,7 +85,7 @@ class EventOverlaysTest {
             },
         )
 
-        val lines = eventOverlays(listOf(crossing), emptySet(), null)
+        val lines = eventOverlays(listOf(crossing), emptySet(), null, TODAY)
             .single { it.id == "event-tracks-severeStorms" }.shapes.map { it as MapPolyline }
 
         assertEquals(listOf(listOf(178.0, 179.5), listOf(-179.5, -178.0)), lines.map { line -> line.points.map { it.longitude } })
@@ -104,7 +109,7 @@ class EventOverlaysTest {
             ),
         )
 
-        val overlays = eventOverlays(listOf(flood), emptySet(), null)
+        val overlays = eventOverlays(listOf(flood), emptySet(), null, TODAY)
 
         val area = overlays.single { it.id == "event-areas-floods" }.shapes.single() as MapPolygon
         assertEquals(flood.id, eventIdOf(area.id))
@@ -114,7 +119,7 @@ class EventOverlaysTest {
 
     @Test
     fun `the filter hides a category's overlays without removing them`() {
-        val overlays = eventOverlays(listOf(fire, storm), hiddenCategories = setOf(EarthEventCategory.WILDFIRES), null)
+        val overlays = eventOverlays(listOf(fire, storm), setOf(EarthEventCategory.WILDFIRES), null, TODAY)
 
         assertFalse(overlays.single { it.id == "event-markers-wildfires" }.visible)
         assertTrue(overlays.single { it.id == "event-markers-severeStorms" }.visible)
@@ -123,13 +128,39 @@ class EventOverlaysTest {
 
     @Test
     fun `the selected event is drawn again, larger, unless its category is hidden`() {
-        val selected = eventOverlays(listOf(fire, storm), emptySet(), selectedEventId = fire.id)
+        val selected = eventOverlays(listOf(fire, storm), emptySet(), selectedEventId = fire.id, today = TODAY)
             .single { it.id == SELECTED_OVERLAY_ID }.shapes.single() as MapMarker
         assertEquals(fire.id, selected.id)
         assertTrue(selected.radius.value > 6f)
 
-        val hidden = eventOverlays(listOf(fire, storm), setOf(EarthEventCategory.WILDFIRES), selectedEventId = fire.id)
+        val hidden = eventOverlays(listOf(fire, storm), setOf(EarthEventCategory.WILDFIRES), fire.id, TODAY)
         assertTrue(hidden.single { it.id == SELECTED_OVERLAY_ID }.shapes.isEmpty())
+    }
+
+    @Test
+    fun `older wildfires fade and shrink, and newer ones are drawn on top`() {
+        fun wildfire(id: String, daysAgo: Long) =
+            TestEarthEvents.wildfire(id = id, at = TestEarthEvents.NOW.minus(Duration.ofDays(daysAgo)))
+        val current = wildfire("current", daysAgo = 7)
+        val latest = wildfire("latest", daysAgo = 8)
+        val history = wildfire("history", daysAgo = 15)
+
+        val markers = eventOverlays(listOf(current, history, latest), emptySet(), null, TODAY)
+            .single { it.id == "event-markers-wildfires" }.shapes.map { it as MapMarker }
+
+        assertEquals(listOf("history", "latest", "current"), markers.map { it.id })
+        val (faded, muted, full) = markers
+        assertEquals(1f, full.color.alpha)
+        assertTrue(muted.color.alpha < full.color.alpha && faded.color.alpha < muted.color.alpha)
+        assertTrue(muted.radius < full.radius && faded.radius < muted.radius)
+    }
+
+    @Test
+    fun `other categories keep the full style however old`() {
+        val marker = eventOverlays(listOf(TestEarthEvents.volcano()), emptySet(), null, TODAY)
+            .single { it.id == "event-markers-volcanoes" }.shapes.single() as MapMarker
+
+        assertEquals(1f, marker.color.alpha)
     }
 
     @Test
@@ -145,7 +176,7 @@ class EventOverlaysTest {
             imagery.toGibsImagery().layer.tileUrl(date, zoom = 3, x = 1, y = 2),
         )
         assertEquals("MODIS Terra Corrected Reflectance Bands721", imagery.layerName)
-        assertEquals(GibsLayer.ViirsSnppTrueColor, EventImagery("E1", null, date).toGibsImagery().layer)
+        assertEquals(GibsImagery.trueColor(date), EventImagery("E1", null, date).toGibsImagery())
         assertEquals(
             GibsLayer.ViirsSnppTrueColor,
             EventImagery("E1", layer.copy(tileMatrixSet = "unknown"), date).toGibsImagery().layer,

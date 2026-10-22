@@ -2,7 +2,9 @@ package com.radustavila.nasaexplorer.core.map.gibs
 
 import java.time.LocalDate
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class GibsLayerTest {
@@ -83,5 +85,23 @@ class GibsLayerTest {
         assertEquals(GibsLayer.ViirsSnppTrueColor, GibsLayer.trueColorFor(day))
         assertEquals(GibsLayer.ModisTerraTrueColor, GibsLayer.trueColorFor(LocalDate.of(2015, 11, 23)))
         assertEquals(GibsLayer.ModisTerraTrueColor, GibsLayer.trueColorFor(LocalDate.of(2015, 1, 1)))
+    }
+
+    @Test
+    fun `NOAA-20 fills the true colour gaps from its first day, Aqua before`() {
+        assertEquals(GibsLayer.ViirsNoaa20TrueColor, GibsLayer.trueColorGapFillFor(LocalDate.of(2018, 1, 1)))
+        assertEquals(GibsLayer.ModisAquaTrueColor, GibsLayer.trueColorGapFillFor(LocalDate.of(2017, 12, 31)))
+
+        val imagery = GibsImagery.trueColor(day)
+        assertEquals(listOf(GibsLayer.ViirsNoaa20TrueColor, GibsLayer.ViirsSnppTrueColor), imagery.layers)
+        assertEquals(listOf(GibsLayer.BlueMarble), GibsImagery(GibsLayer.BlueMarble).layers)
+    }
+
+    @Test
+    fun `daily corrected reflectance mosaics have no-data gaps, composites do not`() {
+        assertTrue(GibsLayer.ViirsSnppTrueColor.hasNoDataGaps)
+        assertTrue(GibsLayer.ModisAquaTrueColor.hasNoDataGaps)
+        assertFalse(GibsLayer.BlueMarble.hasNoDataGaps)
+        assertFalse(GibsLayer.ViirsBlackMarble.hasNoDataGaps)
     }
 }
