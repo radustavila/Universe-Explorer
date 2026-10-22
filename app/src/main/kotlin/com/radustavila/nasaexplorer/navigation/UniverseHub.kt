@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.NightsStay
 import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material.icons.outlined.Public
@@ -21,6 +22,7 @@ import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhotos
 import com.radustavila.nasaexplorer.feature.mars.rail.MarsRail
 import com.radustavila.nasaexplorer.feature.search.navigateToSearch
 import com.radustavila.nasaexplorer.feature.sky.navigateToSkyTonight
+import com.radustavila.nasaexplorer.feature.skymap.navigateToSkyMap
 import com.radustavila.nasaexplorer.ui.hub.HubEntry
 import com.radustavila.nasaexplorer.ui.hub.HubEntryCards
 
@@ -62,6 +64,13 @@ internal fun universeHubEntries(navController: NavHostController): List<HubEntry
         descriptionRes = R.string.universe_dsn_description,
         onClick = { navController.navigateToDsn() },
     ), // F13
+    HubEntry(
+        key = "skymap",
+        icon = Icons.Outlined.AutoAwesome,
+        titleRes = R.string.universe_skymap_title,
+        descriptionRes = R.string.universe_skymap_description,
+        onClick = { navController.navigateToSkyMap() },
+    ), // F17
 )
 
 /**

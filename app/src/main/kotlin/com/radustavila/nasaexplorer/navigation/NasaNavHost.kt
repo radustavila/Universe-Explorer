@@ -35,6 +35,7 @@ import com.radustavila.nasaexplorer.feature.settings.navigateToLicences
 import com.radustavila.nasaexplorer.feature.settings.settingsScreen
 import com.radustavila.nasaexplorer.feature.sky.location.ObserverLocationSection
 import com.radustavila.nasaexplorer.feature.sky.skyTonightScreen
+import com.radustavila.nasaexplorer.feature.skymap.skyMapScreen
 import com.radustavila.nasaexplorer.feature.spaceweather.navigateToSmallBody
 import com.radustavila.nasaexplorer.feature.spaceweather.neighbourhoodScreen
 import com.radustavila.nasaexplorer.feature.spaceweather.smallBodyScreen
@@ -103,6 +104,7 @@ fun NasaNavHost(
             )
             skyTonightScreen(onBackClick = navController::popBackStack)
             dsnScreen(onBackClick = navController::popBackStack)
+            skyMapScreen(onBackClick = navController::popBackStack, locationSection = { ObserverLocationSection() })
             gallerySearchScreen(
                 onMediaClick = navController::navigateToNasaMedia,
                 listDetail = listDetail(

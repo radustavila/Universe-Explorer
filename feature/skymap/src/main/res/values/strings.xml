@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sky_map_title">Sky map</string>
+    <string name="sky_map_back">Back</string>
+    <string name="sky_map_loading">Loading the stars</string>
+    <string name="sky_map_location_needed">Choose where you are to see the sky above you.</string>
+
+    <!-- Top bar actions -->
+    <string name="sky_map_search">Search the sky</string>
+    <string name="sky_map_search_hint">Star, planet or constellation</string>
+    <string name="sky_map_close_search">Close search</string>
+    <string name="sky_map_no_results">Nothing by that name on the map</string>
+    <string name="sky_map_night_mode_on">Red night mode</string>
+    <string name="sky_map_night_mode_off">Leave red night mode</string>
+    <string name="sky_map_compass_mode">Follow the phone</string>
+    <string name="sky_map_touch_mode">Move the map by touch</string>
+
+    <!-- Where the map looks. %1$s is a compass direction ("south-east"), %2$s an altitude in degrees ("32"). -->
+    <string name="sky_map_looking">Looking %1$s, %2$s° up</string>
+    <!-- Same, looking below the horizon. %2$s is a positive number of degrees. -->
+    <string name="sky_map_looking_down">Looking %1$s, %2$s° down</string>
+    <string name="sky_map_point_at_sky">Hold the phone up towards the sky</string>
+    <string name="sky_map_calibrate">The compass is unsure. Wave the phone in a figure of eight.</string>
+    <!-- Content description of the map. %1$s is the "Looking …" sentence. -->
+    <string name="sky_map_description">Sky map. %1$s</string>
+
+    <!-- Time -->
+    <string name="sky_map_now">Now</string>
+    <string name="sky_map_back_to_now">Back to now</string>
+    <string name="sky_map_time_slider">Time shown on the map</string>
+    <!-- %1$s is a day and time ("Thu 23:40"). -->
+    <string name="sky_map_time_shown">Sky at %1$s</string>
+    <string name="sky_map_earlier_hour">One hour earlier</string>
+    <string name="sky_map_later_hour">One hour later</string>
+
+    <!-- Bodies -->
+    <string name="sky_map_sun">Sun</string>
+    <string name="sky_map_moon">Moon</string>
+    <string name="sky_map_mercury">Mercury</string>
+    <string name="sky_map_venus">Venus</string>
+    <string name="sky_map_mars">Mars</string>
+    <string name="sky_map_jupiter">Jupiter</string>
+    <string name="sky_map_saturn">Saturn</string>
+    <string name="sky_map_uranus">Uranus</string>
+    <string name="sky_map_neptune">Neptune</string>
+    <string name="sky_map_iss">ISS</string>
+
+    <!-- What a search result or the selection is -->
+    <string name="sky_map_kind_star">Star</string>
+    <string name="sky_map_kind_our_star">Our star</string>
+    <string name="sky_map_kind_moon">Earth\'s moon</string>
+    <string name="sky_map_kind_planet">Planet</string>
+    <string name="sky_map_kind_constellation">Constellation</string>
+    <string name="sky_map_kind_station">International Space Station</string>
+    <string name="sky_map_unnamed_star">Unnamed star</string>
+
+    <!-- Details of the selection -->
+    <!-- %1$s is a kind ("Star"), %2$s a constellation name ("Orion"). -->
+    <string name="sky_map_kind_in">%1$s in %2$s</string>
+    <!-- %1$s is a magnitude ("-1.4"). -->
+    <string name="sky_map_magnitude">Magnitude %1$s</string>
+    <!-- %1$s an altitude in degrees ("32"), %2$s a compass direction ("south-east"). -->
+    <string name="sky_map_position">%1$s° above the horizon, towards the %2$s</string>
+    <!-- %1$s a compass direction ("north-west"). -->
+    <string name="sky_map_below_horizon">Below the horizon, towards the %1$s</string>
+    <!-- %1$s is a percentage ("64"). -->
+    <string name="sky_map_moon_lit">%1$s%% lit</string>
+    <string name="sky_map_close_details">Close details</string>
+
+    <!-- Compass -->
+    <string name="sky_map_compass_n">north</string>
+    <string name="sky_map_compass_ne">north-east</string>
+    <string name="sky_map_compass_e">east</string>
+    <string name="sky_map_compass_se">south-east</string>
+    <string name="sky_map_compass_s">south</string>
+    <string name="sky_map_compass_sw">south-west</string>
+    <string name="sky_map_compass_w">west</string>
+    <string name="sky_map_compass_nw">north-west</string>
+    <string name="sky_map_cardinal_n">N</string>
+    <string name="sky_map_cardinal_ne">NE</string>
+    <string name="sky_map_cardinal_e">E</string>
+    <string name="sky_map_cardinal_se">SE</string>
+    <string name="sky_map_cardinal_s">S</string>
+    <string name="sky_map_cardinal_sw">SW</string>
+    <string name="sky_map_cardinal_w">W</string>
+    <string name="sky_map_cardinal_nw">NW</string>
+</resources>

@@ -86,6 +86,7 @@ dependencies {
     implementation(projects.feature.search)
     implementation(projects.feature.settings)
     implementation(projects.feature.dsn)
+    implementation(projects.feature.skymap)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

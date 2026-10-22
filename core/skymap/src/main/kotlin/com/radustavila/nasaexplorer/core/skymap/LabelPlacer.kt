@@ -63,6 +63,20 @@ class LabelPlacer(initialCapacity: Int = DEFAULT_CAPACITY) {
         return false
     }
 
+    /** Places a label centred on ([centerX], [centerY]), or nowhere: for names of areas, like constellations. */
+    fun placeCentered(centerX: Float, centerY: Float, labelWidth: Float, labelHeight: Float): Boolean {
+        val candidateLeft = centerX - labelWidth / 2f
+        val candidateTop = centerY - labelHeight / 2f
+        val candidateRight = candidateLeft + labelWidth
+        val candidateBottom = candidateTop + labelHeight
+        if (!fitsOnScreen(candidateLeft, candidateTop, candidateRight, candidateBottom)) return false
+        if (overlapsAny(candidateLeft, candidateTop, candidateRight, candidateBottom)) return false
+        add(candidateLeft, candidateTop, candidateRight, candidateBottom)
+        left = candidateLeft
+        top = candidateTop
+        return true
+    }
+
     private fun fitsOnScreen(left: Float, top: Float, right: Float, bottom: Float): Boolean =
         left >= 0f && top >= 0f && right <= width && bottom <= height
 
