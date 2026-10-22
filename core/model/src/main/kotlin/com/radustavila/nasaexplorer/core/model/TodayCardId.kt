@@ -15,6 +15,7 @@ enum class TodayCardId {
     SPACE_WEATHER,
     DSN_NOW,
     SKY_EVENTS,
+    STARGAZING,
     NASA_NEWS,
     ;
 

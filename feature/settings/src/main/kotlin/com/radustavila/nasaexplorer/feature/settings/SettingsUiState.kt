@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.radustavila.nasaexplorer.core.domain.storage.StorageEntry
 import com.radustavila.nasaexplorer.core.model.AuroraAlertSettings
 import com.radustavila.nasaexplorer.core.model.ObserverLocation
+import com.radustavila.nasaexplorer.core.model.StargazingAlertSettings
 import com.radustavila.nasaexplorer.core.model.UnitPreferences
 
 @Immutable
@@ -12,7 +13,8 @@ data class SettingsUiState(
     val newApodNotificationsEnabled: Boolean = false,
     val auroraAlerts: AuroraAlertSettings = AuroraAlertSettings(),
     val issRemindersEnabled: Boolean = false,
-    /** The saved observer location, which ISS reminders need and aurora alerts can use. */
+    val stargazingAlerts: StargazingAlertSettings = StargazingAlertSettings(),
+    /** The saved observer location, which ISS reminders and clear-night alerts need and aurora alerts can use. */
     val observerLocation: ObserverLocation? = null,
     val dailyWallpaperEnabled: Boolean = false,
     val storage: StorageUiState = StorageUiState(),
@@ -42,4 +44,7 @@ enum class SettingsMessage {
 
     /** Aurora alerts were turned on without any place to compute them for. */
     AURORA_NEEDS_PLACE,
+
+    /** Clear-night alerts were turned on without a saved place. */
+    STARGAZING_NEEDS_PLACE,
 }

@@ -25,6 +25,7 @@ internal val DATA_CREDITS: List<DataCredit> = listOf(
     DataCredit(R.string.credit_horizons, R.string.credit_horizons_description, "https://ssd.jpl.nasa.gov/horizons/"),
     DataCredit(R.string.credit_mars, R.string.credit_mars_description, "https://mars.nasa.gov/"),
     DataCredit(R.string.credit_celestrak, R.string.credit_celestrak_description, "https://celestrak.org/"),
+    DataCredit(R.string.credit_met_norway, R.string.credit_met_norway_description, "https://api.met.no/"),
     DataCredit(R.string.credit_wheretheiss, R.string.credit_wheretheiss_description, "https://wheretheiss.at/"),
     DataCredit(R.string.credit_launch_library, R.string.credit_launch_library_description, "https://thespacedevs.com/llapi"),
     DataCredit(R.string.credit_nasa_news, R.string.credit_nasa_news_description, "https://www.nasa.gov/news/"),

@@ -71,6 +71,9 @@ enum class SyncSource(val key: String) {
     /** Solar Dynamics Observatory latest pictures of the Sun. */
     SDO("sdo"),
 
+    /** MET Norway Locationforecast cloud cover, for the stargazing forecast. */
+    MET_NORWAY("met_norway"),
+
     /** NASA news (F14), one source per feed: nasa.gov stories. */
     NASA_NEWS("nasa_news"),
 

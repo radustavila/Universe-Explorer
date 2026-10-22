@@ -59,10 +59,13 @@ Clean Architecture, dependencies pointing inward:
   `EarthEventsSyncWorker` and when the events screen opens. `:core:astro` (pure Kotlin) computes the sky offline:
   `AstronomyEngineSkyCalculator`, SGP4 passes, and the sky events calendar (`EventCalendar` behind
   `SkyEventCalendar`, `MeteorShowerTable`); `:data:skyevents` holds that calendar's reminders (DataStore + one
-  WorkManager job, re-armed by `NasaExplorerApplication` whenever the saved place changes). `:data:news` (F14)
-  parses NASA's RSS feeds and YouTube's Atom feed with one `FeedParser` into `news.db`, with no background job:
-  the News screen and the Today card refresh it (3 h interval, one `SyncSource` per feed); stories open in a
-  Custom Tab, videos in YouTube.
+  WorkManager job, re-armed by `NasaExplorerApplication` whenever the saved place changes). `:data:forecast`
+  (MET Norway cloud forecast, F11) keeps `forecast.db` per rounded place, honours `Expires`/`If-Modified-Since`,
+  and runs its 3-hourly `StargazingAlertWorker` only while the clear-night alert is on; the score is
+  `StargazingScorer` (`:core:domain`), the nights' darkness `AstronomyEngineDarkSkyCalculator` (`:core:astro`).
+  `:data:news` (F14) parses NASA's RSS feeds and YouTube's Atom feed with one `FeedParser` into `news.db`, with no
+  background job: the News screen and the Today card refresh it (3 h interval, one `SyncSource` per feed);
+  stories open in a Custom Tab, videos in YouTube.
 - **Presentation**: `:feature:*` (one screen each: Compose UI, ViewModel, immutable `UiState`, own type-safe
   `@Serializable` route + `NavGraphBuilder` extension), `:feature:widget` (Glance), `:core:notifications`,
   `:core:designsystem` (theme, shared components like `ApodCard`/`NasaAsyncImage`, `AppError`→`UiError` mapping),

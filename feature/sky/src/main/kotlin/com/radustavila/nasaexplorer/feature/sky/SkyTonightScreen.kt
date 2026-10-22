@@ -67,6 +67,7 @@ import com.radustavila.nasaexplorer.feature.sky.component.PeopleInSpaceCard
 import com.radustavila.nasaexplorer.feature.sky.component.PlanetsCard
 import com.radustavila.nasaexplorer.feature.sky.component.rememberCoarseLocationRequest
 import com.radustavila.nasaexplorer.feature.sky.satellites.MoreSatellitesSection
+import com.radustavila.nasaexplorer.feature.sky.stargazing.StargazingForecastCard
 import java.time.Instant
 
 const val SKY_LIST_TEST_TAG = "sky-list"
@@ -137,6 +138,7 @@ fun SkyTonightScreen(
         modifier = modifier,
         nextInTheSky = nextInTheSky,
         moreSatellites = { MoreSatellitesSection(snackbarHostState) },
+        stargazing = { StargazingForecastCard() },
     )
 
     if (showLocationDialog) {
@@ -174,6 +176,7 @@ fun SkyTonightContent(
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     nextInTheSky: (@Composable () -> Unit)? = null,
     moreSatellites: (@Composable () -> Unit)? = null,
+    stargazing: @Composable () -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier,
@@ -208,6 +211,7 @@ fun SkyTonightContent(
                         onRemindersClick = onRemindersClick,
                         nextInTheSky = nextInTheSky,
                         moreSatellites = moreSatellites,
+                        stargazing = stargazing,
                     )
                 }
             }
@@ -225,6 +229,7 @@ private fun SkyList(
     onRemindersClick: () -> Unit,
     nextInTheSky: (@Composable () -> Unit)?,
     moreSatellites: (@Composable () -> Unit)?,
+    stargazing: @Composable () -> Unit,
 ) {
     val location = uiState.location
     // One column on a phone held upright; side by side on wider windows (a phone in landscape
@@ -258,6 +263,8 @@ private fun SkyList(
                     onChangeLocation = onChooseLocation,
                 )
             }
+            // Tonight's observing outlook comes first: whether it is worth going out at all.
+            item(key = "stargazing", span = StaggeredGridItemSpan.FullLine) { stargazing() }
             val sky = uiState.sky
             if (sky == null) {
                 item(key = "computing", span = StaggeredGridItemSpan.FullLine) { Box(Modifier.padding(24.dp)) { LoadingState() } }

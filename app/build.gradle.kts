@@ -69,6 +69,7 @@ dependencies {
     implementation(projects.data.epic)
     implementation(projects.data.dsn)
     implementation(projects.data.skyevents)
+    implementation(projects.data.forecast)
     implementation(projects.data.news)
 
     implementation(projects.feature.feed)

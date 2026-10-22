@@ -5,11 +5,13 @@ import com.radustavila.nasaexplorer.core.domain.announcement.NewApodNotifier
 import com.radustavila.nasaexplorer.core.domain.sky.IssPassNotifier
 import com.radustavila.nasaexplorer.core.domain.sky.SatellitePassNotifier
 import com.radustavila.nasaexplorer.core.domain.sky.SkyEventNotifier
+import com.radustavila.nasaexplorer.core.domain.stargazing.StargazingAlertNotifier
 import com.radustavila.nasaexplorer.core.notifications.SystemTrayAuroraAlertNotifier
 import com.radustavila.nasaexplorer.core.notifications.SystemTrayIssPassNotifier
 import com.radustavila.nasaexplorer.core.notifications.SystemTrayNewApodNotifier
 import com.radustavila.nasaexplorer.core.notifications.SystemTraySatellitePassNotifier
 import com.radustavila.nasaexplorer.core.notifications.SystemTraySkyEventNotifier
+import com.radustavila.nasaexplorer.core.notifications.SystemTrayStargazingAlertNotifier
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -33,4 +35,7 @@ interface NotificationsModule {
 
     @Binds
     fun bindSkyEventNotifier(impl: SystemTraySkyEventNotifier): SkyEventNotifier
+
+    @Binds
+    fun bindStargazingAlertNotifier(impl: SystemTrayStargazingAlertNotifier): StargazingAlertNotifier
 }

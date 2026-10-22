@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Status bar icon: a four-pointed star and a smaller one over a horizon; the system tints it. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M10,2L11.4,7.6L17,9L11.4,10.4L10,16L8.6,10.4L3,9L8.6,7.6Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M18,10L18.7,12.3L21,13L18.7,13.7L18,16L17.3,13.7L15,13L17.3,12.3Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M2,18L22,18L22,20L2,20Z" />
+</vector>

@@ -55,6 +55,7 @@ include(":data:sky")
 include(":data:epic")
 include(":data:dsn")
 include(":data:skyevents")
+include(":data:forecast")
 include(":data:news")
 
 include(":feature:feed")
