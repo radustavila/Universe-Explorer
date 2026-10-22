@@ -27,6 +27,8 @@ import com.radustavila.nasaexplorer.feature.dsn.today.DsnRightNowCard
 import com.radustavila.nasaexplorer.feature.earth.EarthTodayCard
 import com.radustavila.nasaexplorer.feature.earthevents.RightNowOnEarthCard
 import com.radustavila.nasaexplorer.feature.earthevents.navigateToEarthEvents
+import com.radustavila.nasaexplorer.feature.events.navigateToSkyEvents
+import com.radustavila.nasaexplorer.feature.events.next.NextInTheSkyCard
 import com.radustavila.nasaexplorer.feature.launches.NextLaunchesCard
 import com.radustavila.nasaexplorer.feature.search.SearchLauncher
 import com.radustavila.nasaexplorer.feature.search.navigateToSearch
@@ -69,6 +71,12 @@ internal fun todayCards(navController: NavHostController): Map<TodayCardId, @Com
     TodayCardId.SKY_TONIGHT to { SkyTonightSummaryCard(onClick = { navController.navigateToSkyTonight() }) }, // F5
     TodayCardId.SPACE_WEATHER to { SpaceWeatherTodayCard(onClick = { navController.navigateToSpaceWeather() }) }, // F6
     TodayCardId.DSN_NOW to { DsnRightNowCard(onClick = { navController.navigateToDsn() }) }, // F13
+    TodayCardId.SKY_EVENTS to {
+        NextInTheSkyCard(
+            onOpenCalendar = { navController.navigateToSkyEvents() },
+            onEventClick = navController::navigateToSkyEvents,
+        )
+    }, // F12
 )
 
 /**
