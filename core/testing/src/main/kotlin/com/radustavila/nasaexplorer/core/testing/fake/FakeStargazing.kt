@@ -101,7 +101,7 @@ object TestStargazing {
     fun darkNight(
         darkStart: Instant = Instant.parse("2026-09-10T20:00:00Z"),
         darkHours: Long = 8,
-        moonAltitude: Double = -20.0,
+        moonAltitude: Double = MOON_BELOW_HORIZON,
         moonIlluminated: Double = 0.0,
         darkness: NightDarkness = NightDarkness.ASTRONOMICAL,
         moonAltitudes: List<Double> = List(darkHours.toInt()) { moonAltitude },
@@ -128,7 +128,7 @@ object TestStargazing {
     fun cloudForecast(
         from: Instant = Instant.parse("2026-09-10T12:00:00Z"),
         hours: Int = 48,
-        coordinate: GeoCoordinate = GeoCoordinate(44.43, 26.1),
+        coordinate: GeoCoordinate = BUCHAREST,
         fetchedAt: Instant = from,
         lowCloud: (Int) -> Double? = { null },
         fog: (Int) -> Double? = { null },
@@ -147,4 +147,6 @@ object TestStargazing {
     )
 
     private val TWILIGHT: Duration = Duration.ofMinutes(90)
+    private const val MOON_BELOW_HORIZON = -20.0
+    private val BUCHAREST = GeoCoordinate(latitude = 44.43, longitude = 26.1)
 }

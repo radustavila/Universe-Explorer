@@ -14,12 +14,14 @@ import java.time.format.DateTimeParseException
 internal fun LocationForecastDto.toStepEntities(place: ForecastPlace): List<ForecastStepEntity> =
     properties.timeseries.mapNotNull { it.toEntityOrNull(place) }.distinctBy { it.time }
 
-internal fun LocationForecastDto.updatedAtMillis(): Long? = properties.meta?.updatedAt?.parseInstantOrNull()?.toEpochMilli()
+internal fun LocationForecastDto.updatedAtMillis(): Long? =
+    properties.meta?.updatedAt?.parseInstantOrNull()?.toEpochMilli()
 
 private fun ForecastTimeStepDto.toEntityOrNull(place: ForecastPlace): ForecastStepEntity? {
-    val time = time.parseInstantOrNull() ?: return null
+    val time = time.parseInstantOrNull()
     val details = data.instant.details
-    val cloudCover = details.cloudAreaFraction?.takeIf { it in PERCENT_RANGE } ?: return null
+    val cloudCover = details.cloudAreaFraction?.takeIf { it in PERCENT_RANGE }
+    if (time == null || cloudCover == null) return null
     return ForecastStepEntity(
         latitudeE2 = place.latitudeE2,
         longitudeE2 = place.longitudeE2,

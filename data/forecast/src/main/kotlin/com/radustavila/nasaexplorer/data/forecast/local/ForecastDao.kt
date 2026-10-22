@@ -7,6 +7,8 @@ import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
+/** The module's one DAO: reads per place, whole-forecast writes, and the evictor's and cleaner's deletes. */
+@Suppress("TooManyFunctions")
 @Dao
 interface ForecastDao {
 

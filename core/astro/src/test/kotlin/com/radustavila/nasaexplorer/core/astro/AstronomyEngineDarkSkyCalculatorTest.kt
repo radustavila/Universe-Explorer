@@ -116,7 +116,8 @@ class AstronomyEngineDarkSkyCalculatorTest {
         val newMoon = moonPhase(NEW_MOON)
         val night = calculator.nights(bucharest, newMoon.minus(Duration.ofHours(6)), 1).single()
 
-        val scored = StargazingScorer.score(night, clearForecast(night.darkStart!!, cover = 100.0), now = night.sunset!!)
+        val overcast = clearForecast(night.darkStart!!, cover = 100.0)
+        val scored = StargazingScorer.score(night, overcast, now = night.sunset!!)
 
         assertEquals(0, scored.score)
         assertEquals(StargazingRating.POOR, scored.rating)

@@ -8,10 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,10 +39,8 @@ import com.radustavila.nasaexplorer.core.model.StargazingNight
 import com.radustavila.nasaexplorer.core.model.StargazingRating
 import com.radustavila.nasaexplorer.feature.sky.R
 import com.radustavila.nasaexplorer.feature.sky.component.SkySection
-import com.radustavila.nasaexplorer.feature.sky.today.TodaySkyCard
 
 const val STARGAZING_CARD_TEST_TAG = "stargazing-card"
-const val STARGAZING_TODAY_CARD_TEST_TAG = "stargazing-today-card"
 
 fun stargazingNightTestTag(index: Int) = "stargazing-night-$index"
 
@@ -93,7 +88,7 @@ private fun TonightRow(night: StargazingNight, modifier: Modifier = Modifier) {
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
                 text = night.rating?.let { rating ->
-                    stringResource(R.string.sky_stargazing_tonight_rating, stringResource(StargazingText.ratingRes(rating)))
+                    stringResource(R.string.sky_stargazing_tonight_rating, ratingLabel(rating))
                 } ?: stringResource(R.string.sky_stargazing_tonight),
                 style = MaterialTheme.typography.titleMedium,
             )
@@ -113,7 +108,11 @@ private fun TonightRow(night: StargazingNight, modifier: Modifier = Modifier) {
 private fun LaterNight(night: StargazingNight, modifier: Modifier = Modifier) {
     val formatter = rememberUnitFormatter()
     val evening = night.night.sunset ?: night.night.darkStart
-    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
         Text(
             text = evening?.let(formatter::weekday).orEmpty(),
             style = MaterialTheme.typography.labelMedium,
@@ -121,7 +120,8 @@ private fun LaterNight(night: StargazingNight, modifier: Modifier = Modifier) {
         )
         ScoreBadge(night, size = 40.dp)
         Text(
-            text = night.rating?.let { stringResource(StargazingText.ratingRes(it)) } ?: stringResource(R.string.sky_stargazing_no_score),
+            text = night.rating?.let { ratingLabel(it) }
+                ?: stringResource(R.string.sky_stargazing_no_score),
             style = MaterialTheme.typography.labelSmall,
             textAlign = TextAlign.Center,
         )
@@ -135,7 +135,7 @@ private fun ScoreBadge(night: StargazingNight, size: Dp) {
     val rating = night.rating
     val (container, content) = ratingColors(rating)
     val description = if (score != null && rating != null) {
-        stringResource(R.string.sky_stargazing_score_description, score, stringResource(StargazingText.ratingRes(rating)))
+        stringResource(R.string.sky_stargazing_score_description, score, ratingLabel(rating))
     } else {
         stringResource(R.string.sky_stargazing_no_score)
     }
@@ -159,10 +159,18 @@ private fun ratingColors(rating: StargazingRating?): Pair<Color, Color> {
     val colors = MaterialTheme.colorScheme
     return when (rating) {
         StargazingRating.EXCELLENT -> colors.primary to colors.onPrimary
-        StargazingRating.GOOD -> colors.primaryContainer to colors.onPrimaryContainer
+        StargazingRating.GOOD -> colors.tertiaryContainer to colors.onTertiaryContainer
         StargazingRating.FAIR -> colors.secondaryContainer to colors.onSecondaryContainer
         StargazingRating.POOR, null -> colors.surfaceVariant to colors.onSurfaceVariant
     }
+}
+
+@Composable
+internal fun ratingLabel(rating: StargazingRating): String = stringResource(StargazingText.ratingRes(rating))
+
+@Composable
+internal fun BodyText(text: String) {
+    Text(text, style = MaterialTheme.typography.bodyMedium)
 }
 
 /** MET Norway's CC BY 4.0 credit, linked as its terms ask. */
@@ -182,55 +190,4 @@ internal fun MetNorwayCredit(modifier: Modifier = Modifier) {
         style = MaterialTheme.typography.bodySmall,
         modifier = modifier,
     )
-}
-
-/** The stargazing line on Today: tonight's rating and best window, or a nudge to save a place. */
-@Composable
-fun StargazingTodayCard(onClick: () -> Unit, modifier: Modifier = Modifier, viewModel: StargazingViewModel = hiltViewModel()) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    StargazingTodayCardContent(uiState = uiState, onClick = onClick, modifier = modifier)
-}
-
-@Composable
-fun StargazingTodayCardContent(uiState: StargazingUiState, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    if (!uiState.isLoaded) return
-    val resources = LocalResources.current
-    val formatter = rememberUnitFormatter()
-    val tonight = uiState.forecast?.nights?.firstOrNull()
-    TodaySkyCard(
-        title = stringResource(R.string.sky_stargazing_today_title),
-        icon = {
-            Icon(
-                imageVector = Icons.Outlined.AutoAwesome,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(20.dp),
-            )
-        },
-        onClick = onClick,
-        modifier = modifier.testTag(STARGAZING_TODAY_CARD_TEST_TAG),
-    ) {
-        when {
-            !uiState.hasLocation -> Text(stringResource(R.string.sky_stargazing_today_no_place), style = MaterialTheme.typography.bodyMedium)
-            tonight == null -> Text(stringResource(R.string.sky_stargazing_computing), style = MaterialTheme.typography.bodyMedium)
-            else -> {
-                val score = tonight.score
-                val rating = tonight.rating
-                Text(
-                    text = if (score != null && rating != null) {
-                        stringResource(R.string.sky_stargazing_today_line, stringResource(StargazingText.ratingRes(rating)), score)
-                    } else {
-                        stringResource(R.string.sky_stargazing_tonight)
-                    },
-                    style = MaterialTheme.typography.titleSmall,
-                )
-                Text(StargazingText.summary(resources, formatter, tonight), style = MaterialTheme.typography.bodyMedium)
-                Text(
-                    text = stringResource(R.string.sky_stargazing_credit),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-    }
 }

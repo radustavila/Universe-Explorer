@@ -34,7 +34,8 @@ class StargazingUseCasesTest {
     private val noon = Instant.parse("2026-09-10T12:00:00Z")
     private val clock = FakeTimeProvider(currentInstant = noon)
     private val bucharest = GeoCoordinate(44.43, 26.1)
-    private val location = FakeObserverLocationRepository(ObserverLocation(bucharest, "Bucharest", LocationSource.MANUAL))
+    private val location =
+        FakeObserverLocationRepository(ObserverLocation(bucharest, "Bucharest", LocationSource.MANUAL))
     private val tonight = TestStargazing.darkNight(darkStart = Instant.parse("2026-09-10T20:00:00Z"))
     private val tomorrowNight = TestStargazing.darkNight(darkStart = Instant.parse("2026-09-11T20:00:00Z"))
     private val calculator = FakeDarkSkyCalculator(listOf(tonight, tomorrowNight))
@@ -48,7 +49,8 @@ class StargazingUseCasesTest {
     fun `the outlook scores each night from the cached forecast`() = runTest {
         // Clear tonight, overcast tomorrow night (hours 32 onwards).
         forecasts.forecast.value = TestStargazing.cloudForecast(from = noon) { hour -> if (hour < 30) 0.0 else 100.0 }
-        val observe = ObserveStargazingForecastUseCase(forecasts, calculator, clock, StandardTestDispatcher(testScheduler))
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        val observe = ObserveStargazingForecastUseCase(forecasts, calculator, clock, dispatcher)
 
         observe(bucharest, nights = 2).test {
             val outlook = awaitItem()

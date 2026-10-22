@@ -49,9 +49,13 @@ class MetNorwayRemoteDataSource @Inject constructor(
                 when {
                     response.code() == HTTP_NOT_MODIFIED -> ForecastDownload.NotModified(expiresAt)
                     !response.isSuccessful -> throw HttpException(response)
-                    else -> response.body()?.let { ForecastDownload.Updated(it, response.headers()[LAST_MODIFIED], expiresAt) }
+                    else -> response.body()?.let { forecast ->
+                        ForecastDownload.Updated(forecast, response.headers()[LAST_MODIFIED], expiresAt)
+                    }
                 }
-            }.flatMap { download -> download?.let { DataResult.Success(it) } ?: DataResult.Failure(AppError.EmptyResponse) }
+            }.flatMap { download ->
+                download?.let { DataResult.Success(it) } ?: DataResult.Failure(AppError.EmptyResponse)
+            }
         }
 
     private companion object {

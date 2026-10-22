@@ -138,7 +138,7 @@ class SettingsScreenTest {
         scrollTo(stargazingMinimumOptionTestTag(75))
         composeTestRule.onNodeWithTag(stargazingMinimumOptionTestTag(75)).performClick()
 
-        composeTestRule.onNodeWithText("scores 75 out of 100 or more", substring = true).assertExists()
+        composeTestRule.onNodeWithText("score is 75/100 or more", substring = true).assertExists()
         assertEquals(75, fixture.stargazing.settings.first().minimumScore)
     }
 

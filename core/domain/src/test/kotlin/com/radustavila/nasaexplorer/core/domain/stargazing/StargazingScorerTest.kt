@@ -85,7 +85,8 @@ class StargazingScorerTest {
     fun `fog spoils an otherwise clear night`() {
         val night = TestStargazing.darkNight(darkStart = darkStart)
 
-        val scored = StargazingScorer.score(night, TestStargazing.cloudForecast(from = noon, fog = { 80.0 }) { 0.0 }, noon)
+        val foggy = TestStargazing.cloudForecast(from = noon, fog = { 80.0 }) { 0.0 }
+        val scored = StargazingScorer.score(night, foggy, noon)
 
         assertEquals(20, scored.score)
         assertNull(scored.bestWindow)

@@ -45,7 +45,7 @@ class SystemTrayStargazingAlertNotifierTest {
         val text = posted.extras.getCharSequence(Notification.EXTRA_TEXT).toString()
         val start = window.start.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("HH:mm"))
         assertTrue(text, text.startsWith("Clear from $start to "))
-        assertTrue(text, text.contains("Moon sets (42% lit). Observing score 86 out of 100."))
+        assertTrue(text, text.contains("Moon sets (42% lit). Observing score: 86/100."))
         assertEquals("Clear night ahead", posted.extras.getCharSequence(Notification.EXTRA_TITLE).toString())
         assertEquals("stargazing_alerts", posted.channelId)
     }
@@ -56,7 +56,7 @@ class SystemTrayStargazingAlertNotifierTest {
         notifier.notifyClearNight(alert.copy(score = 70))
 
         val posted = shadowOf(notificationManager).allNotifications.single()
-        assertTrue(posted.extras.getCharSequence(Notification.EXTRA_TEXT).toString().contains("score 70 "))
+        assertTrue(posted.extras.getCharSequence(Notification.EXTRA_TEXT).toString().contains("score: 70/100"))
     }
 
     @Test

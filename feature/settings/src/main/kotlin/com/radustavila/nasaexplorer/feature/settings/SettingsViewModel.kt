@@ -38,6 +38,8 @@ import kotlinx.coroutines.launch
  * aurora alert settings, Sky preferences), so the screens that own a feature and this one always
  * agree; turning a notification on goes through the same use case as the feature's own switch.
  */
+// One handler per choice on the screen.
+@Suppress("TooManyFunctions")
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     observeUnitPreferences: ObserveUnitPreferencesUseCase,

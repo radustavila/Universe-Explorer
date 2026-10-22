@@ -44,7 +44,8 @@ class MetNorwayRemoteDataSourceTest {
     fun `the recorded forecast comes back with its Last-Modified and Expires`() = runTest {
         server.enqueueFixture("metnorway/complete_bucharest.json", headers = RECORDED_HEADERS)
 
-        val download = (dataSource.fetchForecast(bucharest, null) as DataResult.Success).data as ForecastDownload.Updated
+        val result = dataSource.fetchForecast(bucharest, null) as DataResult.Success
+        val download = result.data as ForecastDownload.Updated
 
         assertEquals(91, download.forecast.properties.timeseries.size)
         assertEquals("2026-10-22T19:17:32Z", download.forecast.properties.meta?.updatedAt)

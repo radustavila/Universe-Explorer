@@ -40,7 +40,7 @@
     <string name="settings_iss_description">A few minutes before the station passes overhead, visibly</string>
     <string name="settings_iss_needs_place">Reminders start once a location is saved</string>
     <string name="settings_stargazing_title">Clear night alerts</string>
-    <string name="settings_stargazing_description">When tonight scores %1$d out of 100 or more at your saved place. Based on data from MET Norway</string>
+    <string name="settings_stargazing_description">When tonight\'s observing score is %1$d/100 or more at your saved place. Based on data from MET Norway</string>
     <string name="settings_stargazing_needs_place">Alerts start once a location is saved</string>
     <string name="settings_stargazing_needs_place_message">Save a location first: the forecast is for your place</string>
     <string name="settings_stargazing_minimum_title">Alert from</string>

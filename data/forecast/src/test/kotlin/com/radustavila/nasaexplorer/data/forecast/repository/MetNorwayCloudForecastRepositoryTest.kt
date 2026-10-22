@@ -43,7 +43,8 @@ class MetNorwayCloudForecastRepositoryTest {
 
     @Before
     fun setUp() {
-        database = Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), ForecastDatabase::class.java)
+        database = Room
+            .inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), ForecastDatabase::class.java)
             .allowMainThreadQueries()
             .build()
         repository = MetNorwayCloudForecastRepository(

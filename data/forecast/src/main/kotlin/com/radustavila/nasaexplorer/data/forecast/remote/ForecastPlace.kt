@@ -12,10 +12,13 @@ import kotlin.math.roundToInt
  */
 data class ForecastPlace(val latitudeE2: Int, val longitudeE2: Int) {
 
-    val latitude: String get() = BigDecimal.valueOf(latitudeE2.toLong(), DECIMALS).stripTrailingZeros().toPlainString()
-    val longitude: String get() = BigDecimal.valueOf(longitudeE2.toLong(), DECIMALS).stripTrailingZeros().toPlainString()
+    val latitude: String get() = decimal(latitudeE2)
+    val longitude: String get() = decimal(longitudeE2)
 
     val coordinate: GeoCoordinate get() = GeoCoordinate(latitude.toDouble(), longitude.toDouble())
+
+    private fun decimal(hundredths: Int): String =
+        BigDecimal.valueOf(hundredths.toLong(), DECIMALS).stripTrailingZeros().toPlainString()
 
     companion object {
         private const val DECIMALS = 2

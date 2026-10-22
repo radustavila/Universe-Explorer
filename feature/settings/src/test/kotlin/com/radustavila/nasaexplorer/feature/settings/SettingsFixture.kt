@@ -95,7 +95,8 @@ internal class SettingsFixture {
             setAuroraAlertEnabled = SetAuroraAlertEnabledUseCase(aurora, spaceWeatherScheduler, checkAurora),
             setAuroraAlertLocation = SetAuroraAlertLocationUseCase(aurora, checkAurora),
             setIssReminders = SetIssPassRemindersEnabledUseCase(skyPreferences, reschedule),
-            setStargazingAlertEnabled = SetStargazingAlertEnabledUseCase(stargazing, stargazingScheduler, checkStargazing),
+            setStargazingAlertEnabled =
+                SetStargazingAlertEnabledUseCase(stargazing, stargazingScheduler, checkStargazing),
             setStargazingAlertMinimumScore = SetStargazingAlertMinimumScoreUseCase(stargazing),
             setDailyWallpaper = SetDailyWallpaperEnabledUseCase(preferences, metadata, syncScheduler),
             measureStorage = MeasureStorageUseCase(setOf(images, http, feeds, offlineFavorites)),

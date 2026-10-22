@@ -59,8 +59,8 @@ class StargazingCardsTest {
 
         composeTestRule.onNodeWithText("Tonight: Fair").assertIsDisplayed()
         composeTestRule.onNodeWithText("Moon up (100% lit)", substring = true).assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Observing score 50 out of 100, Fair").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Observing score 0 out of 100, Poor").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Observing score: 50/100, Fair").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Observing score: 0/100, Poor").assertIsDisplayed()
         composeTestRule.onNodeWithTag(stargazingNightTestTag(4)).assertIsDisplayed()
         assertEquals(2, composeTestRule.onAllNodesWithText("No forecast").fetchSemanticsNodes().size)
         composeTestRule.onNodeWithText("Based on data from MET Norway").assertIsDisplayed()

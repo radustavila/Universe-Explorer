@@ -20,7 +20,8 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class ForecastCacheEvictorTest {
 
-    private val database = Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), ForecastDatabase::class.java)
+    private val database = Room
+        .inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), ForecastDatabase::class.java)
         .allowMainThreadQueries()
         .build()
     private val dao = database.forecastDao()
@@ -61,9 +62,14 @@ class ForecastCacheEvictorTest {
     }
 
     private suspend fun store(latitudeE2: Int, fetchedAt: Instant) {
-        val place = ForecastPlaceEntity(latitudeE2, 1075, fetchedAt.toEpochMilli(), fetchedAt.toEpochMilli(), null, null)
+        val fetched = fetchedAt.toEpochMilli()
+        val place = ForecastPlaceEntity(latitudeE2, 1075, fetched, fetched, lastModified = null, updatedAt = null)
         val steps = listOf(Duration.ofDays(-2), Duration.ZERO, Duration.ofHours(1)).map { offset ->
-            ForecastStepEntity(latitudeE2, 1075, now.plus(offset).toEpochMilli(), 0.0, null, null, null, null, null, null, null)
+            ForecastStepEntity(
+                latitudeE2, 1075, now.plus(offset).toEpochMilli(), cloudCover = 0.0, lowCloudCover = null,
+                mediumCloudCover = null, highCloudCover = null, fogCover = null, relativeHumidity = null,
+                windSpeed = null, airTemperature = null,
+            )
         }
         dao.replaceForecast(place, steps)
     }

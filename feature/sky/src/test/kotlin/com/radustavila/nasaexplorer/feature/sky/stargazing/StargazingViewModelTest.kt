@@ -46,7 +46,8 @@ class StargazingViewModelTest {
     private fun createViewModel() = StargazingViewModel(
         observeLocation = ObserveObserverLocationUseCase(location),
         observeForecast = ObserveStargazingForecastUseCase(forecasts, calculator, clock, UnconfinedTestDispatcher()),
-        refreshForecast = RefreshCloudForecastUseCase(forecasts, RefreshSourceUseCase(FakeSyncMetadataRepository(), clock)),
+        refreshForecast =
+            RefreshCloudForecastUseCase(forecasts, RefreshSourceUseCase(FakeSyncMetadataRepository(), clock)),
         observeConnectivity = ObserveConnectivityUseCase(network),
     )
 

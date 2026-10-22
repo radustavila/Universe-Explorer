@@ -11,10 +11,12 @@ import com.radustavila.nasaexplorer.core.domain.stargazing.StargazingAlertReposi
 import com.radustavila.nasaexplorer.core.domain.stargazing.StargazingAlertScheduler
 import com.radustavila.nasaexplorer.core.domain.stargazing.StargazingScorer
 import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
+import com.radustavila.nasaexplorer.core.model.DarkNight
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.model.StargazingAlert
 import com.radustavila.nasaexplorer.core.model.StargazingAlertSettings
 import com.radustavila.nasaexplorer.core.model.StargazingForecast
+import com.radustavila.nasaexplorer.core.model.StargazingNight
 import com.radustavila.nasaexplorer.core.model.SyncSource
 import java.time.Duration
 import javax.inject.Inject
@@ -98,26 +100,43 @@ class CheckStargazingAlertUseCase @Inject constructor(
 ) {
     /** @return the alert that was posted, or null when none was due. */
     suspend operator fun invoke(): StargazingAlert? {
-        val settings = alertRepository.settings.first()
-        if (!settings.enabled) return null
-        val observer = locationRepository.location.first()?.coordinate ?: return null
-        val forecast = forecastRepository.observeForecast(observer).first() ?: return null
-
-        val now = timeProvider.now()
-        val night = calculator.nights(observer, now, count = 1).firstOrNull() ?: return null
-        val nightStart = night.darkStart ?: return null
-        val alertedUntil = alertRepository.alertedUntil()
-        if (alertedUntil != null && nightStart.isBefore(alertedUntil)) return null
-
-        val tonight = StargazingScorer.score(night, forecast, now)
-        val score = tonight.score?.takeIf { it >= settings.minimumScore } ?: return null
-        val window = tonight.bestWindow?.takeIf { it.end.isAfter(now.plus(MIN_REMAINING)) } ?: return null
-
-        val alert = StargazingAlert(score = score, window = window, moonIlluminatedFraction = night.moonIlluminatedFraction)
+        val (night, alert) = dueAlert() ?: return null
         notifier.notifyClearNight(alert)
-        alertRepository.setAlertedUntil(night.sunrise ?: night.darkEnd ?: window.end)
+        alertRepository.setAlertedUntil(night.sunrise ?: night.darkEnd ?: alert.window.end)
         return alert
     }
+
+    /** Tonight, scored, when the alert is on, a place is saved and tonight was not announced yet. */
+    private suspend fun unannouncedTonight(): Pair<DarkNight, StargazingNight>? {
+        val settings = alertRepository.settings.first()
+        val observer = locationRepository.location.first()?.coordinate?.takeIf { settings.enabled }
+        val forecast = observer?.let { forecastRepository.observeForecast(it).first() }
+        val now = timeProvider.now()
+        val night = if (observer != null && forecast != null) {
+            calculator.nights(observer, now, count = 1).firstOrNull()
+        } else {
+            null
+        }
+        val alertedUntil = alertRepository.alertedUntil()
+        val announced = alertedUntil != null && night?.darkStart?.isBefore(alertedUntil) == true
+        return night?.takeIf { it.darkStart != null && !announced }
+            ?.let { it to StargazingScorer.score(it, forecast, now).withMinimum(settings.minimumScore) }
+    }
+
+    private suspend fun dueAlert(): Pair<DarkNight, StargazingAlert>? {
+        val (night, tonight) = unannouncedTonight() ?: return null
+        val score = tonight.score
+        val window = tonight.bestWindow?.takeIf { it.end.isAfter(timeProvider.now().plus(MIN_REMAINING)) }
+        return if (score != null && window != null) {
+            night to StargazingAlert(score, window, moonIlluminatedFraction = night.moonIlluminatedFraction)
+        } else {
+            null
+        }
+    }
+
+    /** The night with its score dropped when below [minimum], so it cannot alert. */
+    private fun StargazingNight.withMinimum(minimum: Int): StargazingNight =
+        if ((score ?: 0) >= minimum) this else copy(score = null)
 
     companion object {
         /** Too little left to be worth getting the telescope out. */
@@ -138,8 +157,8 @@ class RunStargazingAlertCheckUseCase @Inject constructor(
 ) {
     /** @return the refresh's outcome, or null when nothing was refreshed. */
     suspend operator fun invoke(): SourceRefreshResult<Unit>? {
-        if (!alertRepository.settings.first().enabled) return null
-        val observer = locationRepository.location.first()?.coordinate ?: return null
+        val enabled = alertRepository.settings.first().enabled
+        val observer = locationRepository.location.first()?.coordinate?.takeIf { enabled } ?: return null
         val outcome = refreshCloudForecast(observer)
         // A failed refresh still leaves the cached forecast to check.
         checkStargazingAlert()

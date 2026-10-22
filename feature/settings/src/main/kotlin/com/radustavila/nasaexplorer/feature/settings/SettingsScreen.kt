@@ -389,6 +389,10 @@ private fun LazyListScope.notificationsSection(
             testTag = SETTINGS_ISS_SWITCH_TEST_TAG,
         )
     }
+    stargazingAlertItem(uiState, notifications)
+}
+
+private fun LazyListScope.stargazingAlertItem(uiState: SettingsUiState, notifications: NotificationSwitches) {
     item(key = "stargazing") {
         val minimum = uiState.stargazingAlerts.minimumScore
         Column {

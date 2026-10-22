@@ -48,21 +48,9 @@ object StargazingScorer {
     private val MAX_STEP_DISTANCE: Duration = Duration.ofHours(3)
 
     fun score(night: DarkNight, forecast: CloudForecast?, now: Instant): StargazingNight {
-        val darkEnd = night.darkEnd
-        if (night.darkness == NightDarkness.NONE || night.darkStart == null || darkEnd == null) {
-            return StargazingNight(night = night, score = null, bestWindow = null, meanCloudCover = null)
-        }
-        val sampleLength = Duration.ofMinutes(MoonSample.STEP_MINUTES)
-        val hours = night.moonSamples.mapNotNull { sample ->
-            val end = minOf(sample.time.plus(sampleLength), darkEnd)
-            // Hours already over do not count; the hour under way counts from now.
-            if (!end.isAfter(now)) return@mapNotNull null
-            val start = maxOf(sample.time, now)
-            val middle = start.plus(Duration.between(start, end).dividedBy(2))
-            DarkHour(start = start, end = end, moon = sample, weather = forecast?.stepNear(middle))
-        }
+        val hours = darkHoursAhead(night, forecast, now)
         val forecastHours = hours.count { it.weather != null }
-        // A forecast that ends partway through the night cannot vouch for it.
+        // Never dark, already over, or past the end of the forecast: nothing to vouch for.
         if (hours.isEmpty() || forecastHours * 2 < hours.size) {
             return StargazingNight(night = night, score = null, bestWindow = null, meanCloudCover = null)
         }
@@ -75,6 +63,21 @@ object StargazingScorer {
             bestWindow = bestWindow(scored),
             meanCloudCover = hours.mapNotNull { it.weather?.cloudCover }.average(),
         )
+    }
+
+    /** The night's dark hours not over yet; the hour under way counts from [now]. Empty if never dark. */
+    private fun darkHoursAhead(night: DarkNight, forecast: CloudForecast?, now: Instant): List<DarkHour> {
+        val darkEnd = night.darkEnd
+        if (night.darkness == NightDarkness.NONE || night.darkStart == null || darkEnd == null) return emptyList()
+        val sampleLength = Duration.ofMinutes(MoonSample.STEP_MINUTES)
+        return night.moonSamples.mapNotNull { sample ->
+            val end = minOf(sample.time.plus(sampleLength), darkEnd)
+            end.takeIf { it.isAfter(now) }?.let {
+                val start = maxOf(sample.time, now)
+                val middle = start.plus(Duration.between(start, end).dividedBy(2))
+                DarkHour(start = start, end = end, moon = sample, weather = forecast?.stepNear(middle))
+            }
+        }
     }
 
     private fun bestSessionScore(hours: List<ScoredHour>): Int {
