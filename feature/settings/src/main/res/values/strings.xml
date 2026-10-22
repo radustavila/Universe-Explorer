@@ -101,7 +101,7 @@
     <string name="credit_mars">NASA Mars raw images</string>
     <string name="credit_mars_description">Raw photos from Curiosity and Perseverance</string>
     <string name="credit_celestrak">CelesTrak</string>
-    <string name="credit_celestrak_description">Orbital elements for ISS pass predictions</string>
+    <string name="credit_celestrak_description">Orbital elements for ISS, Hubble, Tiangong, Starlink and bright satellite pass predictions</string>
     <string name="credit_wheretheiss">wheretheiss.at</string>
     <string name="credit_wheretheiss_description">The International Space Station\'s live position</string>
     <string name="credit_launch_library">Launch Library 2 by The Space Devs</string>

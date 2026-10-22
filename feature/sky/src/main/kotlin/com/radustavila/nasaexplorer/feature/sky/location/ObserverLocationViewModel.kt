@@ -8,6 +8,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.ClearObserverLocationUse
 import com.radustavila.nasaexplorer.core.domain.usecase.LocateDeviceUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveObserverLocationUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RescheduleIssPassReminderUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RescheduleSatellitePassReminderUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SearchCitiesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetManualLocationUseCase
 import com.radustavila.nasaexplorer.core.model.City
@@ -48,8 +49,8 @@ enum class ObserverLocationMessage {
 
 /**
  * The saved observer location outside Sky tonight (Settings): the same city picker and coarse
- * device fix, plus forgetting the place. Every change re-arms the ISS reminder, which Sky tonight
- * would otherwise only do while it is open.
+ * device fix, plus forgetting the place. Every change re-arms the ISS and other satellites'
+ * reminders, which Sky tonight would otherwise only do while it is open.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -60,6 +61,7 @@ class ObserverLocationViewModel @Inject constructor(
     private val clearLocation: ClearObserverLocationUseCase,
     private val searchCities: SearchCitiesUseCase,
     private val rescheduleReminder: RescheduleIssPassReminderUseCase,
+    private val rescheduleSatelliteReminder: RescheduleSatellitePassReminderUseCase,
 ) : ViewModel() {
 
     private val cityQuery = MutableStateFlow("")
@@ -86,7 +88,7 @@ class ObserverLocationViewModel @Inject constructor(
         viewModelScope.launch {
             val message = when (locateDevice()) {
                 is DeviceLocationResult.Located -> {
-                    rescheduleReminder()
+                    rescheduleReminders()
                     null
                 }
 
@@ -116,15 +118,23 @@ class ObserverLocationViewModel @Inject constructor(
 
     fun onClear() {
         transient.update { it.copy(message = null) }
-        viewModelScope.launch { clearLocation() }
+        viewModelScope.launch {
+            clearLocation()
+            rescheduleSatelliteReminder()
+        }
     }
 
     private fun save(block: suspend () -> Unit) {
         transient.update { it.copy(message = null) }
         viewModelScope.launch {
             block()
-            rescheduleReminder()
+            rescheduleReminders()
         }
+    }
+
+    private suspend fun rescheduleReminders() {
+        rescheduleReminder()
+        rescheduleSatelliteReminder()
     }
 
     private data class Loaded(val location: ObserverLocation?)

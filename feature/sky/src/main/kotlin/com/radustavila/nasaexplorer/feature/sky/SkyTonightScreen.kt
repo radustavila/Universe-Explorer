@@ -66,6 +66,7 @@ import com.radustavila.nasaexplorer.feature.sky.component.NightCard
 import com.radustavila.nasaexplorer.feature.sky.component.PeopleInSpaceCard
 import com.radustavila.nasaexplorer.feature.sky.component.PlanetsCard
 import com.radustavila.nasaexplorer.feature.sky.component.rememberCoarseLocationRequest
+import com.radustavila.nasaexplorer.feature.sky.satellites.MoreSatellitesSection
 import java.time.Instant
 
 const val SKY_LIST_TEST_TAG = "sky-list"
@@ -135,6 +136,7 @@ fun SkyTonightScreen(
         snackbarHostState = snackbarHostState,
         modifier = modifier,
         nextInTheSky = nextInTheSky,
+        moreSatellites = { MoreSatellitesSection(snackbarHostState) },
     )
 
     if (showLocationDialog) {
@@ -171,6 +173,7 @@ fun SkyTonightContent(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     nextInTheSky: (@Composable () -> Unit)? = null,
+    moreSatellites: (@Composable () -> Unit)? = null,
 ) {
     Scaffold(
         modifier = modifier,
@@ -204,6 +207,7 @@ fun SkyTonightContent(
                         onChooseLocation = onChooseLocation,
                         onRemindersClick = onRemindersClick,
                         nextInTheSky = nextInTheSky,
+                        moreSatellites = moreSatellites,
                     )
                 }
             }
@@ -220,6 +224,7 @@ private fun SkyList(
     onChooseLocation: () -> Unit,
     onRemindersClick: () -> Unit,
     nextInTheSky: (@Composable () -> Unit)?,
+    moreSatellites: (@Composable () -> Unit)?,
 ) {
     val location = uiState.location
     // One column on a phone held upright; side by side on wider windows (a phone in landscape
@@ -266,6 +271,8 @@ private fun SkyList(
                     IssPassesCard(forecast = forecast, remindersOn = remindersOn, onRemindersClick = onRemindersClick)
                 }
             }
+            // Passes are computed for a place, like the ISS's.
+            moreSatellites?.let { card -> item(key = "more-satellites") { card() } }
         }
         // Works without a place too: the calendar then shows the global facts.
         nextInTheSky?.let { card -> item(key = "next-in-the-sky") { card() } }

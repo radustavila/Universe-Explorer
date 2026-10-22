@@ -5,7 +5,5 @@
     <ID>MaxLineLength:SystemTrayAuroraAlertNotifierTest.kt:SystemTrayAuroraAlertNotifierTest$assertEquals(NotificationManager.IMPORTANCE_HIGH, notificationManager.getNotificationChannel("aurora_alerts").importance)</ID>
     <ID>MaxLineLength:SystemTrayAuroraAlertNotifierTest.kt:SystemTrayAuroraAlertNotifierTest$val twelve = shadowOf(notificationManager).allNotifications.single().extras.getCharSequence(Notification.EXTRA_TEXT).toString()</ID>
     <ID>MaxLineLength:SystemTrayAuroraAlertNotifierTest.kt:SystemTrayAuroraAlertNotifierTest$val twentyFour = shadowOf(notificationManager).allNotifications.single().extras.getCharSequence(Notification.EXTRA_TEXT).toString()</ID>
-    <ID>MaxLineLength:SystemTrayIssPassNotifier.kt:SystemTrayIssPassNotifier.Companion$R.string.iss_pass_compass_n</ID>
-    <ID>MaxLineLength:SystemTrayIssPassNotifier.kt:SystemTrayIssPassNotifier.Companion$R.string.iss_pass_compass_s</ID>
   </CurrentIssues>
 </SmellBaseline>

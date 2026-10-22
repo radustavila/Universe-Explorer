@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.core.domain.sky
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.model.OrbitalElements
 import com.radustavila.nasaexplorer.core.model.SatellitePosition
+import com.radustavila.nasaexplorer.core.model.SatelliteSet
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -14,8 +15,18 @@ interface SatelliteRepository {
     /** Cached elements of [noradId], or null until a first refresh succeeds. */
     fun observeElements(noradId: Int): Flow<OrbitalElements?>
 
-    /** Replaces the cached elements with CelesTrak's current set, in one call. */
+    /** Replaces the cached ISS elements with CelesTrak's current set, in one call. */
     suspend fun refreshElements(): DataResult<Unit>
+
+    /** Cached elements of every object in [set]; empty until its first refresh succeeds. */
+    fun observeSet(set: SatelliteSet): Flow<List<OrbitalElements>>
+
+    /**
+     * Replaces [set]'s cached elements with CelesTrak's current ones, in one call.
+     *
+     * @return how many objects the set now holds.
+     */
+    suspend fun refreshSet(set: SatelliteSet): DataResult<Int>
 
     /** Where the satellite is right now, according to a live tracking service. */
     suspend fun fetchLivePosition(noradId: Int): DataResult<SatellitePosition>
