@@ -56,7 +56,9 @@ Clean Architecture, dependencies pointing inward:
   `RoomFavoritesRepository`), `:core:datastore`, `:core:cache` (`CacheEvictor` + daily `CacheEvictionWorker`).
   `:data:launches` (Launch Library 2) keeps its own small `launches.db`, refreshed from `ApodSyncWorker` at most
   once an hour. `:data:earthevents` (NASA EONET) keeps `earth_events.db`, refreshed by its own 3-hourly
-  `EarthEventsSyncWorker` and when the events screen opens.
+  `EarthEventsSyncWorker` and when the events screen opens. `:data:forecast` (MET Norway cloud forecast, F11)
+  keeps `forecast.db` per rounded place, honours `Expires`/`If-Modified-Since`, and runs its 3-hourly
+  `StargazingAlertWorker` only while the clear-night alert is on; the score is `StargazingScorer` (`:core:domain`).
 - **Presentation**: `:feature:*` (one screen each: Compose UI, ViewModel, immutable `UiState`, own type-safe
   `@Serializable` route + `NavGraphBuilder` extension), `:feature:widget` (Glance), `:core:notifications`,
   `:core:designsystem` (theme, shared components like `ApodCard`/`NasaAsyncImage`, `AppError`→`UiError` mapping),

@@ -32,6 +32,7 @@ import com.radustavila.nasaexplorer.feature.search.SearchLauncher
 import com.radustavila.nasaexplorer.feature.search.navigateToSearch
 import com.radustavila.nasaexplorer.feature.settings.navigateToCustomizeToday
 import com.radustavila.nasaexplorer.feature.sky.navigateToSkyTonight
+import com.radustavila.nasaexplorer.feature.sky.stargazing.StargazingTodayCard
 import com.radustavila.nasaexplorer.feature.sky.today.IssNowCard
 import com.radustavila.nasaexplorer.feature.sky.today.SkyTonightSummaryCard
 import com.radustavila.nasaexplorer.feature.spaceweather.navigateToSpaceWeather
@@ -69,6 +70,7 @@ internal fun todayCards(navController: NavHostController): Map<TodayCardId, @Com
     TodayCardId.SKY_TONIGHT to { SkyTonightSummaryCard(onClick = { navController.navigateToSkyTonight() }) }, // F5
     TodayCardId.SPACE_WEATHER to { SpaceWeatherTodayCard(onClick = { navController.navigateToSpaceWeather() }) }, // F6
     TodayCardId.DSN_NOW to { DsnRightNowCard(onClick = { navController.navigateToDsn() }) }, // F13
+    TodayCardId.STARGAZING to { StargazingTodayCard(onClick = { navController.navigateToSkyTonight() }) }, // F11
 )
 
 /**

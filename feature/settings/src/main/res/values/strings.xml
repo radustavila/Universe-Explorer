@@ -151,4 +151,6 @@
     <string name="customize_today_card_space_weather_description">The Kp index and the chance of aurora</string>
     <string name="customize_today_card_dsn">Deep Space Network</string>
     <string name="customize_today_card_dsn_description">Which spacecraft NASA\'s antennas are talking to right now</string>
+    <string name="customize_today_card_stargazing">Stargazing tonight</string>
+    <string name="customize_today_card_stargazing_description">Tonight\'s observing score and clearest hours at your place</string>
 </resources>

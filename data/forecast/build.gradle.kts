@@ -25,6 +25,7 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.network)
     implementation(projects.core.cache)
+    implementation(projects.core.astro)
 
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)

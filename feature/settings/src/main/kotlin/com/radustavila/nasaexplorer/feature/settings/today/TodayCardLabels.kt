@@ -2,6 +2,7 @@ package com.radustavila.nasaexplorer.feature.settings.today
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.LocalFireDepartment
 import androidx.compose.material.icons.outlined.NightsStay
 import androidx.compose.material.icons.outlined.Public
@@ -31,6 +32,7 @@ internal val TodayCardId.titleRes: Int
         TodayCardId.SKY_TONIGHT -> R.string.customize_today_card_sky
         TodayCardId.SPACE_WEATHER -> R.string.customize_today_card_space_weather
         TodayCardId.DSN_NOW -> R.string.customize_today_card_dsn
+        TodayCardId.STARGAZING -> R.string.customize_today_card_stargazing
     }
 
 @get:StringRes
@@ -43,6 +45,7 @@ internal val TodayCardId.descriptionRes: Int
         TodayCardId.SKY_TONIGHT -> R.string.customize_today_card_sky_description
         TodayCardId.SPACE_WEATHER -> R.string.customize_today_card_space_weather_description
         TodayCardId.DSN_NOW -> R.string.customize_today_card_dsn_description
+        TodayCardId.STARGAZING -> R.string.customize_today_card_stargazing_description
     }
 
 internal val TodayCardId.icon: ImageVector
@@ -54,4 +57,5 @@ internal val TodayCardId.icon: ImageVector
         TodayCardId.SKY_TONIGHT -> Icons.Outlined.NightsStay
         TodayCardId.SPACE_WEATHER -> Icons.Outlined.WbSunny
         TodayCardId.DSN_NOW -> Icons.Outlined.SettingsInputAntenna
+        TodayCardId.STARGAZING -> Icons.Outlined.AutoAwesome
     }

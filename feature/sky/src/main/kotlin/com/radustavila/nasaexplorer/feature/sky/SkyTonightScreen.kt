@@ -66,6 +66,7 @@ import com.radustavila.nasaexplorer.feature.sky.component.NightCard
 import com.radustavila.nasaexplorer.feature.sky.component.PeopleInSpaceCard
 import com.radustavila.nasaexplorer.feature.sky.component.PlanetsCard
 import com.radustavila.nasaexplorer.feature.sky.component.rememberCoarseLocationRequest
+import com.radustavila.nasaexplorer.feature.sky.stargazing.StargazingForecastCard
 import java.time.Instant
 
 const val SKY_LIST_TEST_TAG = "sky-list"
@@ -133,6 +134,7 @@ fun SkyTonightScreen(
         onRefresh = viewModel::onRefresh,
         snackbarHostState = snackbarHostState,
         modifier = modifier,
+        stargazing = { StargazingForecastCard() },
     )
 
     if (showLocationDialog) {
@@ -168,6 +170,7 @@ fun SkyTonightContent(
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    stargazing: @Composable () -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier,
@@ -200,6 +203,7 @@ fun SkyTonightContent(
                         onUseMyLocation = onUseMyLocation,
                         onChooseLocation = onChooseLocation,
                         onRemindersClick = onRemindersClick,
+                        stargazing = stargazing,
                     )
                 }
             }
@@ -215,6 +219,7 @@ private fun SkyList(
     onUseMyLocation: () -> Unit,
     onChooseLocation: () -> Unit,
     onRemindersClick: () -> Unit,
+    stargazing: @Composable () -> Unit,
 ) {
     val location = uiState.location
     // One column on a phone held upright; side by side on wider windows (a phone in landscape
@@ -248,6 +253,8 @@ private fun SkyList(
                     onChangeLocation = onChooseLocation,
                 )
             }
+            // Tonight's observing outlook comes first: whether it is worth going out at all.
+            item(key = "stargazing", span = StaggeredGridItemSpan.FullLine) { stargazing() }
             val sky = uiState.sky
             if (sky == null) {
                 item(key = "computing", span = StaggeredGridItemSpan.FullLine) { Box(Modifier.padding(24.dp)) { LoadingState() } }

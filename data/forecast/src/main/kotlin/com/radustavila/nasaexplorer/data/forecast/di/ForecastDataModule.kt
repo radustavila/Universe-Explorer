@@ -8,11 +8,13 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
+import com.radustavila.nasaexplorer.core.astro.AstronomyEngineDarkSkyCalculator
 import com.radustavila.nasaexplorer.core.cache.CacheEvictor
 import com.radustavila.nasaexplorer.core.common.dispatchers.AppDispatcher
 import com.radustavila.nasaexplorer.core.common.dispatchers.ApplicationScope
 import com.radustavila.nasaexplorer.core.common.dispatchers.Dispatcher
 import com.radustavila.nasaexplorer.core.domain.stargazing.CloudForecastRepository
+import com.radustavila.nasaexplorer.core.domain.stargazing.DarkSkyCalculator
 import com.radustavila.nasaexplorer.core.domain.stargazing.StargazingAlertRepository
 import com.radustavila.nasaexplorer.core.domain.stargazing.StargazingAlertScheduler
 import com.radustavila.nasaexplorer.core.domain.storage.CacheCleaner
@@ -61,6 +63,10 @@ internal interface ForecastDataModule {
 
     @Binds
     fun bindCloudForecastRepository(impl: MetNorwayCloudForecastRepository): CloudForecastRepository
+
+    /** The nights' darkness and Moon, for the score; the forecast is what this module adds to them. */
+    @Binds
+    fun bindDarkSkyCalculator(impl: AstronomyEngineDarkSkyCalculator): DarkSkyCalculator
 
     @Binds
     fun bindForecastLocalDataSource(impl: RoomForecastLocalDataSource): ForecastLocalDataSource
