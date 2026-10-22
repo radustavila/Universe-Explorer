@@ -54,6 +54,7 @@ include(":data:exoplanets")
 include(":data:sky")
 include(":data:epic")
 include(":data:dsn")
+include(":data:forecast")
 
 include(":feature:feed")
 include(":feature:details")
