@@ -175,10 +175,28 @@ New features (F0–F10 built, F11–F18 next; M1–M4 must land before ads or pr
 that doc is the source of truth. Read the feature's brief there before implementing; don't copy briefs or status into
 the repo.
 
+## Workflow (the owner's standing rules)
+
+1. **Prompt → questions only if needed.** Ask for context only when the request is unclear or a decision is genuinely
+   the owner's; otherwise pick the sensible default, say so, and go.
+2. **Implement** on a branch off `develop` (parallel sessions each in their own worktree, never editing the same files).
+3. **Test yourself, end to end.** `./gradlew test testDebugUnitTest lint detekt verifyRoborazziDebug assembleRelease`
+   (add `--max-workers=4` when several builds run at once; the 32 GB host runs out of memory otherwise), then on
+   emulators: **up to 3 in parallel**, `adb -s <serial>` always, uninstall before installing another branch (Room
+   versions differ). Never use `Pixel_9_Pro_XL_API_37` (fails to boot) or `Legacy_API_35` (holds the owner's work
+   app). Cold-boot an emulator whose `system_server` died under load. The physical phone is used only when the owner
+   says it is connected for testing: back up app data first and only `install -r` over it, never uninstall, and never
+   run Gradle `connected*` tasks on it (they uninstall the app afterwards).
+4. **Merge yourself when everything passed:** open a PR to `develop`, wait for CI to be green, merge it
+   (`gh pr merge <n> --merge`), fast-forward the local `develop`, then remove the merged worktrees and their build
+   output. Don't merge anything that failed or wasn't tested; report it instead.
+5. **Report status:** what changed, how it was tested (tests, devices, numbers), PR links, and anything left open.
+
 ## Repo notes
 
-- Main/integration branch is `develop`; CI (`.github/workflows/ci.yml`) runs unit tests, lint, `assembleDebug` and
-  `assembleRelease` (R8-minified, debug-signed) on JDK 21, for PRs and pushes to `develop`/`main`.
+- Main/integration branch is `develop`; CI (`.github/workflows/ci.yml`) runs unit tests, Roborazzi screenshot
+  verification, lint, detekt, `assembleDebug` and `assembleRelease` (R8-minified, debug-signed) on JDK 21, for PRs and
+  pushes to `develop`/`main`.
 - `LEARNING_GUIDE.md` is a Romanian step-by-step study log for guided review sessions; when the user is working through
   it, explain code rather than change it unless asked.
 - Some README sections are stale (e.g. "only one database version" — there are now three schema versions and
