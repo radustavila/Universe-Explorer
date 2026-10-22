@@ -122,7 +122,7 @@ class EarthEventsViewModel @Inject constructor(
         }
     }
 
-    /** Back to the latest true colour. */
+    /** Back to the plain map. */
     fun onHideImagery() {
         savedStateHandle[KEY_IMAGERY] = null
     }
