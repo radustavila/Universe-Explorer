@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MaxLineLength:ApodBasicDto.kt:return absolute.takeIf { it.startsWith("https://", ignoreCase = true) || it.startsWith("http://", ignoreCase = true) }</ID>
+    <ID>MaxLineLength:ApodCacheEvictorTest.kt:ApodCacheEvictorTest$assertEquals(edge.minusDays(2).toString(), database.apodDao().findByDate(edge.minusDays(2).toString())?.date)</ID>
+    <ID>MaxLineLength:ApodSyncWorker.kt:ApodSyncWorker$*</ID>
+    <ID>ReturnCount:ApodMappers.kt:fun ApodDto.toEntityOrNull: ApodEntity?</ID>
+    <ID>TooGenericExceptionCaught:RoomApodLocalDataSource.kt:RoomApodLocalDataSource$throwable: Throwable</ID>
+    <ID>TooManyFunctions:ApodRepositoryImpl.kt:ApodRepositoryImpl : ApodRepository</ID>
+  </CurrentIssues>
+</SmellBaseline>

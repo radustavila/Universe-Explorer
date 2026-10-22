@@ -1,0 +1,52 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "schedule:weekly",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "description": "AndroidX libraries and plugins, one PR a week",
+      "matchPackageNames": ["/^androidx\\./"],
+      "groupName": "AndroidX"
+    },
+    {
+      "description": "The Compose BOM and the adaptive artifacts the catalog pins to the BOM's release",
+      "matchPackageNames": [
+        "androidx.compose:compose-bom",
+        "/^androidx\\.compose\\.material3\\.adaptive:/"
+      ],
+      "groupName": "Compose BOM"
+    },
+    {
+      "description": "Kotlin, its compiler plugins (Compose compiler, serialization) and KSP move together",
+      "matchPackageNames": [
+        "/^org\\.jetbrains\\.kotlin[.:]/",
+        "/^com\\.google\\.devtools\\.ksp/"
+      ],
+      "groupName": "Kotlin, KSP and Compose compiler"
+    },
+    {
+      "description": "Dagger Hilt and the AndroidX Hilt extensions",
+      "matchPackageNames": [
+        "/^com\\.google\\.dagger/",
+        "/^androidx\\.hilt/"
+      ],
+      "groupName": "Hilt"
+    },
+    {
+      "description": "Test-only libraries (test artifacts sharing a version with a main library follow that library)",
+      "matchPackageNames": [
+        "junit:junit",
+        "/^org\\.robolectric/",
+        "/^io\\.github\\.takahirom\\.roborazzi/",
+        "/^app\\.cash\\.turbine/",
+        "/^io\\.mockk/",
+        "/^androidx\\.test/"
+      ],
+      "groupName": "Test libraries"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 plugins {
     id("nasaexplorer.android.library")
     id("nasaexplorer.android.compose")
+    id("nasaexplorer.android.roborazzi")
 }
 
 android {
@@ -18,4 +19,6 @@ dependencies {
     implementation(libs.coil.network.okhttp)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
+
+    testImplementation(projects.core.testing)
 }

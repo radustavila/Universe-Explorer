@@ -2,6 +2,7 @@ plugins {
     id("nasaexplorer.android.application")
     id("nasaexplorer.android.compose")
     id("nasaexplorer.android.hilt")
+    id("nasaexplorer.android.roborazzi")
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.baselineprofile)
     // Generates res/raw/aboutlibraries.json (the licences screen) from the release dependencies.

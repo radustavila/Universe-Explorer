@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:FakeTimeProvider.kt:FakeTimeProvider$10</ID>
+    <ID>MagicNumber:FakeTimeProvider.kt:FakeTimeProvider$2026</ID>
+    <ID>MagicNumber:FakeTimeProvider.kt:FakeTimeProvider$9</ID>
+    <ID>MagicNumber:TestApods.kt:TestApods$10</ID>
+    <ID>MagicNumber:TestApods.kt:TestApods$2026</ID>
+    <ID>MagicNumber:TestApods.kt:TestApods$8</ID>
+    <ID>MagicNumber:TestApods.kt:TestApods$9</ID>
+    <ID>MagicNumber:TestEarthEvents.kt:TestEarthEvents$30</ID>
+    <ID>MagicNumber:TestEarthEvents.kt:TestEarthEvents$35.0</ID>
+    <ID>MagicNumber:TestEarthEvents.kt:TestEarthEvents$4</ID>
+    <ID>MagicNumber:TestEarthEvents.kt:TestEarthEvents$5</ID>
+    <ID>MagicNumber:TestEarthEvents.kt:TestEarthEvents$6</ID>
+    <ID>MagicNumber:TestEarthEvents.kt:TestEarthEvents$751.0</ID>
+    <ID>MagicNumber:TestExoplanets.kt:TestExoplanets$9</ID>
+    <ID>MagicNumber:TestNasaMedia.kt:TestNasaMedia$10</ID>
+    <ID>MagicNumber:TestNasaMedia.kt:TestNasaMedia$14</ID>
+    <ID>MagicNumber:TestNasaMedia.kt:TestNasaMedia$15</ID>
+    <ID>MagicNumber:TestNasaMedia.kt:TestNasaMedia$2021</ID>
+    <ID>MagicNumber:TestNasaMedia.kt:TestNasaMedia$2026</ID>
+    <ID>MagicNumber:TestNasaMedia.kt:TestNasaMedia$26</ID>
+    <ID>MagicNumber:TestNasaMedia.kt:TestNasaMedia$8</ID>
+    <ID>MagicNumber:TestSearchHits.kt:TestSearchHits$2024</ID>
+    <ID>MagicNumber:TestSky.kt:TestSky$155.14</ID>
+    <ID>MagicNumber:TestSky.kt:TestSky$180.0</ID>
+    <ID>MagicNumber:TestSky.kt:TestSky$30</ID>
+    <ID>MagicNumber:TestSky.kt:TestSky$64</ID>
+    <ID>MagicNumber:TestSky.kt:TestSky$695</ID>
+    <ID>MagicNumber:TestSky.kt:TestSky$729</ID>
+    <ID>MagicNumber:TestSky.kt:TestSky$762</ID>
+    <ID>MagicNumber:TestSky.kt:TestSky$792</ID>
+    <ID>MagicNumber:TestSky.kt:TestSky$97</ID>
+    <ID>MagicNumber:TestSpaceWeather.kt:TestSpaceWeather$10</ID>
+    <ID>MagicNumber:TestSpaceWeather.kt:TestSpaceWeather$6</ID>
+    <ID>MagicNumber:TestSpaceWeather.kt:TestSpaceWeather$60</ID>
+    <ID>MagicNumber:TestSpaceWeather.kt:TestSpaceWeather$70</ID>
+    <ID>MatchingDeclarationName:FakeStorage.kt:FakeCacheStorage : StorageUsageSourceCacheCleaner</ID>
+    <ID>MaxLineLength:TestSpaceWeather.kt:TestSpaceWeather$return AuroraForecast(observedAt = observedAt, forecastFor = observedAt.plus(Duration.ofMinutes(70)), probabilities = grid)</ID>
+    <ID>ReturnCount:FakeSmallBodiesRepository.kt:FakeSmallBodiesRepository$override suspend fun fetchDetails: DataResult&lt;SmallBodyDetails&gt;</ID>
+    <ID>TooManyFunctions:FakeApodRepository.kt:FakeApodRepository : ApodRepository</ID>
+  </CurrentIssues>
+</SmellBaseline>

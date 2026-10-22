@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MaxLineLength:LaunchesDatabase.kt:LaunchesDatabase$*</ID>
+    <ID>MaxLineLength:PeopleInSpaceRepositoryImplTest.kt:PeopleInSpaceRepositoryImplTest$assertEquals(DataResult.Failure(AppError.RateLimited(retryAfterSeconds = 1800)), repository.refreshPeopleInSpace())</ID>
+    <ID>ReturnCount:LaunchMappers.kt:fun LaunchDto.toEntityOrNull: LaunchEntity?</ID>
+    <ID>ReturnCount:PersonInSpaceMappers.kt:fun AstronautDto.toEntityOrNull: PersonInSpaceEntity?</ID>
+    <ID>TooGenericExceptionCaught:LaunchLocalDataSource.kt:RoomLaunchLocalDataSource$throwable: Throwable</ID>
+    <ID>TooGenericExceptionCaught:PeopleInSpaceLocalDataSource.kt:RoomPeopleInSpaceLocalDataSource$throwable: Throwable</ID>
+  </CurrentIssues>
+</SmellBaseline>

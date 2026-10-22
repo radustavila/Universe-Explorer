@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongMethod:LocationComponents.kt:@Composable internal fun LocationDialog</ID>
+    <ID>LongMethod:SkyTonightScreen.kt:@Composable fun SkyTonightScreen</ID>
+    <ID>MagicNumber:LocationComponents.kt:180.0</ID>
+    <ID>MagicNumber:LocationComponents.kt:90.0</ID>
+    <ID>MatchingDeclarationName:SkyNavigation.kt:SkyTonightRoute</ID>
+    <ID>MaxLineLength:IssCards.kt:stringResource(R.string.sky_track_live, units.distance(position.altitudeKm), units.speedPerHour(position.speedKmPerHour))</ID>
+    <ID>MaxLineLength:MoonPhaseIcon.kt:arcTo(ellipse, startAngleDegrees = 90f, sweepAngleDegrees = if (gibbous) 180f else -180f, forceMoveTo = false)</ID>
+    <ID>MaxLineLength:ObserverLocationSection.kt:val onUseMyLocation = rememberCoarseLocationRequest(onGranted = onLocateDevice, onDenied = onLocationPermissionDenied)</ID>
+    <ID>MaxLineLength:ObserverLocationViewModel.kt:ObserverLocationViewModel$cityQuery.mapLatest { query -&gt; CitySearchUiState(query, searchCities(query)) }.onStart { emit(CitySearchUiState()) }</ID>
+    <ID>MaxLineLength:ObserverLocationViewModelTest.kt:ObserverLocationViewModelTest$assertEquals(clock.currentInstant.plus(RescheduleIssPassReminderUseCase.RECHECK_INTERVAL), scheduler.scheduledAt)</ID>
+    <ID>MaxLineLength:ObserverLocationViewModelTest.kt:ObserverLocationViewModelTest$private val satellites = FakeSatelliteRepository().apply { setElements(TestSky.issElements(epoch = clock.currentInstant)) }</ID>
+    <ID>MaxLineLength:SkyCards.kt:SkySection</ID>
+    <ID>MaxLineLength:SkyCards.kt:Text(details, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)</ID>
+    <ID>MaxLineLength:SkyCards.kt:Text(stringResource(R.string.sky_planet_not_visible), style = MaterialTheme.typography.bodyMedium, color = color)</ID>
+    <ID>MaxLineLength:SkyTonightScreen.kt:Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.sky_back))</ID>
+    <ID>MaxLineLength:SkyTonightScreen.kt:if (result == SnackbarResult.ActionPerformed) context.openSettings(Settings.ACTION_LOCATION_SOURCE_SETTINGS)</ID>
+    <ID>MaxLineLength:SkyTonightScreen.kt:item(key = "computing", span = StaggeredGridItemSpan.FullLine) { Box(Modifier.padding(24.dp)) { LoadingState() } }</ID>
+    <ID>MaxLineLength:SkyTonightScreen.kt:val result = snackbarHostState.showSnackbar(denied, actionLabel = chooseCity, duration = SnackbarDuration.Long)</ID>
+    <ID>MaxLineLength:SkyTonightScreen.kt:val result = snackbarHostState.showSnackbar(unavailable, actionLabel = settings, duration = SnackbarDuration.Long)</ID>
+    <ID>MaxLineLength:SkyTonightScreenTest.kt:SkyTonightScreenTest$setContent(located.copy(sky = located.sky?.copy(computedAt = TestSky.person().launchedAt!!.plus(Duration.ofDays(18)))))</ID>
+    <ID>MaxLineLength:SkyTonightScreenTest.kt:SkyTonightScreenTest$track = IssTrack(TestSky.position(), groundTrack = listOf(TestSky.position(), TestSky.position(longitude = -150.0)))</ID>
+    <ID>MaxLineLength:SkyTonightViewModelTest.kt:SkyTonightViewModelTest$val reschedule = RescheduleIssPassReminderUseCase(preferences, location, satellites, predictor, scheduler, clock)</ID>
+    <ID>ReturnCount:LocationComponents.kt:internal fun parseCoordinate: GeoCoordinate?</ID>
+  </CurrentIssues>
+</SmellBaseline>

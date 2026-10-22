@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:FeedScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable internal fun FeedContent</ID>
+    <ID>LongMethod:FeedScreen.kt:@Composable private fun FeedList</ID>
+    <ID>LongMethod:FeedScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable internal fun FeedContent</ID>
+    <ID>MagicNumber:FeedScreen.kt:10</ID>
+    <ID>MagicNumber:FeedScreen.kt:2026</ID>
+    <ID>MagicNumber:FeedScreen.kt:9</ID>
+    <ID>MatchingDeclarationName:FeedNavigation.kt:FeedRoute</ID>
+  </CurrentIssues>
+</SmellBaseline>

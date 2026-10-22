@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:AuroraWidgetState.kt:0xFF4CAF50</ID>
+    <ID>MagicNumber:AuroraWidgetState.kt:0xFF8BC34A</ID>
+    <ID>MagicNumber:AuroraWidgetState.kt:0xFFCDDC39</ID>
+    <ID>MagicNumber:AuroraWidgetState.kt:0xFFD32F2F</ID>
+    <ID>MagicNumber:AuroraWidgetState.kt:0xFFFF5722</ID>
+    <ID>MagicNumber:AuroraWidgetState.kt:0xFFFF9800</ID>
+    <ID>MagicNumber:AuroraWidgetState.kt:0xFFFFC107</ID>
+    <ID>MagicNumber:AuroraWidgetState.kt:0xFFFFEB3B</ID>
+    <ID>MagicNumber:AuroraWidgetState.kt:3</ID>
+    <ID>MagicNumber:AuroraWidgetState.kt:4</ID>
+    <ID>MagicNumber:AuroraWidgetState.kt:5</ID>
+    <ID>MagicNumber:AuroraWidgetState.kt:6</ID>
+    <ID>MagicNumber:AuroraWidgetState.kt:7</ID>
+    <ID>MagicNumber:AuroraWidgetState.kt:8</ID>
+    <ID>MaxLineLength:AuroraWidgetStateTest.kt:AuroraWidgetStateTest$val state = checkNotNull(state(place = fairbanks, auroraMap = TestSpaceWeather.auroraForecast(probability = 40)))</ID>
+    <ID>MaxLineLength:NextLaunchWidgetStateTest.kt:NextLaunchWidgetStateTest$val justPast = TestLaunches.launch(id = "past", name = "Electron | Just past", net = NOW.minus(Duration.ofMinutes(30)))</ID>
+    <ID>MaxLineLength:NextLaunchWidgetStateTest.kt:NextLaunchWidgetStateTest$val longPast = TestLaunches.launch(id = "old", name = "Electron | Long past", net = NOW.minus(Duration.ofHours(2)))</ID>
+    <ID>MaxLineLength:NextLaunchWidgetStateTest.kt:NextLaunchWidgetStateTest$val state = checkNotNull(state(TestLaunches.launch(net = NOW.plus(Duration.ofDays(3)), status = LaunchStatus.TBC)))</ID>
+    <ID>MaxLineLength:SkyTonightWidgetStateTest.kt:SkyTonightWidgetStateTest$skyTonightWidgetState(TestSky.moon(), TestSky.location(), forecast, now, testWidgetFormat(), testResources).iss</ID>
+    <ID>MaxLineLength:WidgetFormatTest.kt:WidgetFormatTest$assertEquals("Tue 2:07 am", twelve.weekdayAndTime(Instant.parse("2026-10-20T02:07:31Z"), now).replace('\u202F', ' '))</ID>
+    <ID>MaxLineLength:WidgetFormatTest.kt:WidgetFormatTest$val twelve = WidgetFormat(testResources, zone = java.time.ZoneOffset.UTC, locale = java.util.Locale.UK, is24Hour = false)</ID>
+    <ID>ReturnCount:AuroraWidgetState.kt:private fun localOutlook: String</ID>
+  </CurrentIssues>
+</SmellBaseline>

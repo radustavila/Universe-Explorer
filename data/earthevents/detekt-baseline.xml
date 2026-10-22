@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:EarthEventMappers.kt:180.0</ID>
+    <ID>MagicNumber:EarthEventMappers.kt:90.0</ID>
+    <ID>MagicNumber:EarthEventsSyncWorker.kt:EarthEventsSyncWorker.Companion$5</ID>
+    <ID>MaxLineLength:EarthEventMappersTest.kt:EarthEventMappersTest$val</ID>
+    <ID>MaxLineLength:EarthEventsCacheEvictorTest.kt:EarthEventsCacheEvictorTest$assertEquals(DataResult.Success(listOf(TestEarthEvents.TRUE_COLOR_LAYER)), local.layersFor(EarthEventCategory.FLOODS))</ID>
+    <ID>MaxLineLength:EarthEventsCacheEvictorTest.kt:EarthEventsCacheEvictorTest$val stale = TestEarthEvents.wildfire(id = "stale", at = now.minus(EarthEventsCacheEvictor.EVENT_RETENTION).minusSeconds(1))</ID>
+    <ID>MaxLineLength:EarthEventsLocalDataSource.kt:EarthEventsLocalDataSource$suspend fun replaceLayers: DataResult&lt;Unit&gt;</ID>
+    <ID>MaxLineLength:EarthEventsSyncWorkerTest.kt:EarthEventsSyncWorkerTest$assertEquals(42, (result as ListenableWorker.Result.Success).outputData.getInt(EarthEventsSyncWorker.KEY_EVENT_COUNT, 0))</ID>
+    <ID>ReturnCount:EarthEventMappers.kt:internal fun EventDto.toDomainOrNull: EarthEvent?</ID>
+    <ID>ReturnCount:EarthEventMappers.kt:private fun GeometryDto.toDomainOrNull: EarthEventGeometry?</ID>
+    <ID>ReturnCount:EarthEventMappers.kt:private fun JsonElement.toCoordinateOrNull: GeoCoordinate?</ID>
+    <ID>ReturnCount:EarthEventRepositoryImpl.kt:EarthEventRepositoryImpl$override suspend fun imageryLayerFor: DataResult&lt;EventImageryLayer?&gt;</ID>
+    <ID>ReturnCount:EarthEventRepositoryImpl.kt:EarthEventRepositoryImpl$override suspend fun refreshOpenEvents: DataResult&lt;Int&gt;</ID>
+    <ID>ReturnCount:ImageryLayerMappers.kt:private fun LayerDto.toImageryLayerOrNull: EventImageryLayer?</ID>
+    <ID>TooGenericExceptionCaught:EarthEventsLocalDataSource.kt:RoomEarthEventsLocalDataSource$throwable: Throwable</ID>
+    <ID>TooManyFunctions:EarthEventMappers.kt:com.radustavila.nasaexplorer.data.earthevents.mapper.EarthEventMappers.kt</ID>
+  </CurrentIssues>
+</SmellBaseline>

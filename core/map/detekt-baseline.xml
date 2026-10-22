@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:GibsLayer.kt:GibsTileMatrixSet.GoogleMapsCompatibleLevel12$12</ID>
+    <ID>MagicNumber:GibsLayer.kt:GibsTileMatrixSet.GoogleMapsCompatibleLevel13$13</ID>
+    <ID>MagicNumber:GibsLayer.kt:GibsTileMatrixSet.GoogleMapsCompatibleLevel6$6</ID>
+    <ID>MagicNumber:GibsLayer.kt:GibsTileMatrixSet.GoogleMapsCompatibleLevel7$7</ID>
+    <ID>MagicNumber:GibsLayer.kt:GibsTileMatrixSet.GoogleMapsCompatibleLevel8$8</ID>
+    <ID>MagicNumber:GibsLayer.kt:GibsTileMatrixSet.GoogleMapsCompatibleLevel9$9</ID>
+    <ID>MagicNumber:MapOverlay.kt:GeoPoint$180.0</ID>
+    <ID>MagicNumber:MapOverlay.kt:GeoPoint$90.0</ID>
+    <ID>MagicNumber:MapOverlay.kt:MapPolygon$3</ID>
+    <ID>MagicNumber:SpaceMapController.kt:180.0</ID>
+    <ID>MagicNumber:SpaceMapController.kt:90.0</ID>
+    <ID>MatchingDeclarationName:OverlayFeatures.kt:OverlayProperties</ID>
+    <ID>MaxLineLength:GibsLayerTest.kt:GibsLayerTest$"$base/VIIRS_NOAA20_CorrectedReflectance_TrueColor/default/2026-10-18/GoogleMapsCompatible_Level9/3/2/5.jpg"</ID>
+    <ID>MaxLineLength:GibsLayerTest.kt:GibsLayerTest$"$base/VIIRS_SNPP_CorrectedReflectance_TrueColor/default/2026-10-18/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg"</ID>
+    <ID>MaxLineLength:OverlayFeaturesTest.kt:OverlayFeaturesTest$assertEquals(listOf(20.0 to 10.0, 21.0 to 11.0, 23.0 to 12.0), line.coordinates().map { it.longitude() to it.latitude() })</ID>
+    <ID>MaxLineLength:OverlayFeaturesTest.kt:OverlayFeaturesTest$holes = listOf(listOf(GeoPoint(64.0, -1.0), GeoPoint(64.0, 1.0), GeoPoint(65.0, 0.0), GeoPoint(64.0, -1.0)))</ID>
+    <ID>MaxLineLength:SpaceMapController.kt:SpaceMapController$.</ID>
+    <ID>ReturnCount:GibsTileInterceptor.kt:GibsTileInterceptor$override fun intercept: Response</ID>
+    <ID>ReturnCount:SpaceMapController.kt:SpaceMapController$private fun handleClick: Boolean</ID>
+  </CurrentIssues>
+</SmellBaseline>

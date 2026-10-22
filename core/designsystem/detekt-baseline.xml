@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongMethod:ApodCard.kt:@Composable fun ApodCard</ID>
+    <ID>LongMethod:NasaMediaPlayer.kt:@OptIn(UnstableApi::class) @Composable fun NasaMediaPlayer</ID>
+    <ID>MagicNumber:UnitFormatter.kt:10</ID>
+    <ID>MagicNumber:UnitFormatter.kt:100</ID>
+    <ID>MaxLineLength:UnitFormatter.kt:UnitFormatter$string(if (latitude &gt;= 0) R.string.coordinate_north else R.string.coordinate_south, number(abs(latitude), fractionDigits))</ID>
+    <ID>MaxLineLength:UnitFormatter.kt:UnitFormatter$string(if (longitude &gt;= 0) R.string.coordinate_east else R.string.coordinate_west, number(abs(longitude), fractionDigits))</ID>
+    <ID>MaxLineLength:UnitFormatter.kt:UnitFormatter$val text = if (minMeters == maxMeters) value(minMeters) else string(R.string.unit_range, value(minMeters), value(maxMeters))</ID>
+    <ID>MaxLineLength:UnitFormatter.kt:UnitFormatter.Companion$fun</ID>
+    <ID>MaxLineLength:UnitFormatterTest.kt:UnitFormatterTest$assertEquals("21 Oct 2026, 21:30", formatter(locale = Locale.UK, is24Hour = true).dateTime(evening).normalizeSpaces())</ID>
+    <ID>MaxLineLength:UnitFormatterTest.kt:UnitFormatterTest$assertEquals("Oct 21, 2026, 9:30 PM", formatter(locale = Locale.US, is24Hour = false).dateTime(evening).normalizeSpaces())</ID>
+    <ID>TooManyFunctions:UnitFormatter.kt:UnitFormatter</ID>
+  </CurrentIssues>
+</SmellBaseline>

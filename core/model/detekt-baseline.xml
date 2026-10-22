@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:ApodLink.kt:ApodLink.Companion$4</ID>
+    <ID>MagicNumber:ApodLink.kt:ApodLink.Companion$6</ID>
+    <ID>MagicNumber:Launch.kt:LaunchStatus.FAILURE$4</ID>
+    <ID>MagicNumber:Launch.kt:LaunchStatus.HOLD$5</ID>
+    <ID>MagicNumber:Launch.kt:LaunchStatus.IN_FLIGHT$6</ID>
+    <ID>MagicNumber:Launch.kt:LaunchStatus.PARTIAL_FAILURE$7</ID>
+    <ID>MagicNumber:Launch.kt:LaunchStatus.SUCCESS$3</ID>
+    <ID>MagicNumber:Launch.kt:LaunchStatus.TBC$8</ID>
+    <ID>MagicNumber:SpaceWeather.kt:AuroraForecast$90</ID>
+    <ID>MagicNumber:SpaceWeather.kt:AuroraForecast.Companion$90</ID>
+    <ID>MagicNumber:SpaceWeather.kt:GeomagneticStorm.G1$5</ID>
+    <ID>MagicNumber:SpaceWeather.kt:GeomagneticStorm.G2$6</ID>
+    <ID>MagicNumber:SpaceWeather.kt:GeomagneticStorm.G3$7</ID>
+    <ID>MagicNumber:SpaceWeather.kt:GeomagneticStorm.G4$8</ID>
+    <ID>MagicNumber:SpaceWeather.kt:GeomagneticStorm.G5$9</ID>
+    <ID>MaxLineLength:ApodLink.kt:ApodLink.Companion$private val ARTICLE_PAGE = Regex("""^/image-article/apod-(\d{4})-([a-z]+)-(\d{1,2})(?:-|/|$)""", RegexOption.IGNORE_CASE)</ID>
+    <ID>MaxLineLength:ApodWebLinkTest.kt:ApodWebLinkTest$assertEquals(LocalDate.of(2024, 1, 1), ApodWebLink.dateOf("https://www.apod.nasa.gov/apod/AP240101.HTML", today))</ID>
+    <ID>ReturnCount:Apod.kt:Apod.Companion$private fun youTubeVideoId: String?</ID>
+    <ID>ReturnCount:ApodLink.kt:ApodLink.Companion$fun apodDateOf: LocalDate?</ID>
+    <ID>ReturnCount:ApodWebLink.kt:ApodWebLink$fun dateOf: LocalDate?</ID>
+    <ID>ReturnCount:EpicImage.kt:EpicPhotoRef.Companion$fun fromFavoriteId: EpicPhotoRef?</ID>
+  </CurrentIssues>
+</SmellBaseline>

@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:SmallBodyScreen.kt:@Composable private fun DetailsCard</ID>
+    <ID>LongMethod:KpForecastBars.kt:@Composable internal fun KpForecastBars</ID>
+    <ID>LongMethod:SpaceWeatherScreen.kt:@Composable private fun SpaceWeatherList</ID>
+    <ID>LongMethod:SpaceWeatherScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable fun SpaceWeatherContent</ID>
+    <ID>MagicNumber:AuroraOval.kt:AuroraOval$89</ID>
+    <ID>MagicNumber:KpStyle.kt:0xFF4CAF50</ID>
+    <ID>MagicNumber:KpStyle.kt:0xFF8BC34A</ID>
+    <ID>MagicNumber:KpStyle.kt:0xFFCDDC39</ID>
+    <ID>MagicNumber:KpStyle.kt:0xFFD32F2F</ID>
+    <ID>MagicNumber:KpStyle.kt:0xFFFF5722</ID>
+    <ID>MagicNumber:KpStyle.kt:0xFFFF9800</ID>
+    <ID>MagicNumber:KpStyle.kt:0xFFFFC107</ID>
+    <ID>MagicNumber:KpStyle.kt:0xFFFFEB3B</ID>
+    <ID>MagicNumber:KpStyle.kt:3</ID>
+    <ID>MagicNumber:KpStyle.kt:4</ID>
+    <ID>MagicNumber:KpStyle.kt:5</ID>
+    <ID>MagicNumber:KpStyle.kt:6</ID>
+    <ID>MagicNumber:KpStyle.kt:7</ID>
+    <ID>MagicNumber:KpStyle.kt:8</ID>
+    <ID>MagicNumber:SmallBodyFormatting.kt:10</ID>
+    <ID>MagicNumber:SmallBodyFormatting.kt:100</ID>
+    <ID>MagicNumber:SolarActivity.kt:0xFFFF5252</ID>
+    <ID>MagicNumber:SolarActivity.kt:0xFFFFB74D</ID>
+    <ID>MagicNumber:SolarActivity.kt:0xFFFFC107</ID>
+    <ID>MagicNumber:SolarActivity.kt:0xFFFFEB3B</ID>
+    <ID>MaxLineLength:AuroraAlertCard.kt:if (settings.hasLocation) R.string.space_weather_alerts_change_place else R.string.space_weather_alerts_set_place</ID>
+    <ID>MaxLineLength:NeighbourhoodScreen.kt:Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.space_weather_back))</ID>
+    <ID>MaxLineLength:NeighbourhoodScreen.kt:Text(details, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)</ID>
+    <ID>MaxLineLength:NeighbourhoodScreen.kt:fireball.altitudeKm?.let { stringResource(R.string.neighbourhood_fireball_altitude, units.distance(it)) }</ID>
+    <ID>MaxLineLength:NeighbourhoodScreen.kt:item(key = "approaches-empty", contentType = "note") { Note(stringResource(R.string.neighbourhood_approaches_empty)) }</ID>
+    <ID>MaxLineLength:NeighbourhoodScreen.kt:item(key = "fireballs-empty", contentType = "note") { Note(stringResource(R.string.neighbourhood_fireballs_empty)) }</ID>
+    <ID>MaxLineLength:NeighbourhoodScreen.kt:stringResource(R.string.neighbourhood_distance_ld, formatLunarDistance(approach.distanceLunar, units.locale))</ID>
+    <ID>MaxLineLength:NeighbourhoodScreen.kt:text = stringResource(R.string.neighbourhood_fireball_energy, formatKilotons(fireball.impactEnergyKilotons, currentLocale()))</ID>
+    <ID>MaxLineLength:NeighbourhoodViewModel.kt:NeighbourhoodUiState$get() = DataFreshness(lastUpdatedAt = lastUpdatedAt, isOffline = isOffline, lastRefreshFailed = lastRefreshFailed)</ID>
+    <ID>MaxLineLength:SmallBodyScreen.kt:Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.space_weather_back))</ID>
+    <ID>MaxLineLength:SmallBodyScreen.kt:Text(label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f))</ID>
+    <ID>MaxLineLength:SmallBodyScreen.kt:details.absoluteMagnitude?.let { Fact(stringResource(R.string.small_body_magnitude), String.format(currentLocale(), "%.1f", it)) }</ID>
+    <ID>MaxLineLength:SmallBodyScreen.kt:details.eccentricity?.let { Fact(stringResource(R.string.small_body_eccentricity), String.format(currentLocale(), "%.3f", it)) }</ID>
+    <ID>MaxLineLength:SmallBodyScreen.kt:details.inclinationDegrees?.let { Fact(stringResource(R.string.small_body_inclination), String.format(currentLocale(), "%.1f°", it)) }</ID>
+    <ID>MaxLineLength:SmallBodyScreen.kt:pluralStringResource(R.plurals.small_body_days, days, NumberFormat.getIntegerInstance(currentLocale()).format(days))</ID>
+    <ID>MaxLineLength:SmallBodyScreen.kt:private</ID>
+    <ID>MaxLineLength:SmallBodyScreen.kt:sentry.palermoMax?.let { Fact(stringResource(R.string.small_body_sentry_palermo), String.format(currentLocale(), "%.2f", it)) }</ID>
+    <ID>MaxLineLength:SmallBodyScreen.kt:stringResource(R.string.small_body_ld, formatLunarDistance(moid * SmallBodyUnits.LUNAR_DISTANCES_PER_AU, currentLocale()))</ID>
+    <ID>MaxLineLength:SmallBodyViewModelTest.kt:SmallBodyViewModelTest$closeApproaches.value = listOf(TestSmallBodies.closeApproach("2025 UK9", sentry = TestSmallBodies.sentry("2025 UK9")))</ID>
+    <ID>MaxLineLength:SolarActivity.kt:text = stringResource(R.string.space_weather_flare_peak, (flare.peakTime ?: flare.beginTime).formatLocalDateTime())</ID>
+    <ID>MaxLineLength:SpaceWeatherScreen.kt:Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.space_weather_back))</ID>
+    <ID>MaxLineLength:SpaceWeatherScreen.kt:KpGauge(kp = uiState.currentKp, modifier = Modifier.widthIn(max = GAUGE_MAX_WIDTH).fillMaxWidth(GAUGE_WIDTH_FRACTION))</ID>
+    <ID>MaxLineLength:SpaceWeatherScreen.kt:if (hemisphere == Hemisphere.North) R.string.space_weather_north else R.string.space_weather_south</ID>
+    <ID>MaxLineLength:SpaceWeatherScreen.kt:uiState.aurora?.let { stringResource(R.string.space_weather_aurora_caption, it.forecastFor.formatLocalDateTime()) }</ID>
+    <ID>MaxLineLength:SpaceWeatherScreen.kt:val bands = uiState.aurora?.overlays ?: AuroraOval.BANDS.map { MapOverlay("aurora-${it.minProbability}", emptyList()) }</ID>
+    <ID>MaxLineLength:SpaceWeatherUiState.kt:SpaceWeatherUiState$get() = DataFreshness(lastUpdatedAt = lastUpdatedAt, isOffline = isOffline, lastRefreshFailed = lastRefreshFailed)</ID>
+    <ID>ReturnCount:AuroraAlertCard.kt:internal fun parsePlace: Pair&lt;Double, Double&gt;?</ID>
+  </CurrentIssues>
+</SmellBaseline>

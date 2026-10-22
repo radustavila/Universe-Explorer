@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongMethod:NextLaunchesCard.kt:@Composable private fun LaunchRow</ID>
+    <ID>MagicNumber:NextLaunchesCard.kt:30</ID>
+    <ID>MagicNumber:NextLaunchesCard.kt:9</ID>
+    <ID>MaxLineLength:LaunchCountdownTest.kt:LaunchCountdownTest$assertEquals(Countdown(afterLiftoff = false, days = 0, clock = "02:03:04"), countdown(net = now + Duration.parse("PT2H3M4S"), now = now))</ID>
+    <ID>MaxLineLength:LaunchCountdownTest.kt:LaunchCountdownTest$assertEquals(Countdown(afterLiftoff = false, days = 3, clock = "00:00:05"), countdown(net = now + Duration.parse("P3DT5S"), now = now))</ID>
+    <ID>MaxLineLength:NextLaunchesCardTest.kt:NextLaunchesCardTest$NextLaunchesCardContent(launches = launches, now = { now }, onOpenUrl = onOpenUrl, freshness = freshness)</ID>
+    <ID>MaxLineLength:NextLaunchesCardTest.kt:NextLaunchesCardTest$composeTestRule.onNodeWithText(local.format(DateTimeFormatter.ofPattern("HH:mm")), substring = true).assertExists()</ID>
+    <ID>MaxLineLength:NextLaunchesCardTest.kt:NextLaunchesCardTest$setCard(listOf(TestLaunches.launch(net = net, status = LaunchStatus.GO)), timeFormat = TimeFormat.TWENTY_FOUR_HOUR)</ID>
+  </CurrentIssues>
+</SmellBaseline>

@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MaxLineLength:NasaMediaSearchableSourceTest.kt:NasaMediaSearchableSourceTest$TestNasaMedia.image(nasaId = "old", title = "Webb Deep Field").copy(dateCreated = LocalDate.of(2022, 7, 12))</ID>
+    <ID>MaxLineLength:NasaMediaSearchableSourceTest.kt:NasaMediaSearchableSourceTest$TestNasaMedia.image(nasaId = "other", title = "Apollo 11").copy(keywords = listOf("Moon"), description = "Moon walk")</ID>
+    <ID>ReturnCount:NasaMediaMappers.kt:fun SearchItemDto.toDomainOrNull: NasaMedia?</ID>
+    <ID>ReturnCount:NasaMediaRepositoryImpl.kt:NasaMediaRepositoryImpl$override suspend fun refreshRails: DataResult&lt;Unit&gt;</ID>
+    <ID>ReturnCount:SearchPageCache.kt:SearchPageCache$@Synchronized fun get: NasaMediaPage?</ID>
+    <ID>TooGenericExceptionCaught:NasaImagesLocalDataSource.kt:RoomNasaImagesLocalDataSource$throwable: Throwable</ID>
+  </CurrentIssues>
+</SmellBaseline>
