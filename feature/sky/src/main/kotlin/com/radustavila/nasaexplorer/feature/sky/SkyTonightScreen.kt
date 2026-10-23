@@ -291,11 +291,7 @@ private fun SkyList(
             } else {
                 item(key = "night") { NightCard(sky.night) }
                 item(key = "moon") {
-                    MoonCard(
-                        moon = sky.moon,
-                        southernHemisphere = location.coordinate.latitude < 0,
-                        onMapClick = onMoonMapClick,
-                    )
+                    MoonCard(sky.moon, location.coordinate.latitude < 0, onMapClick = onMoonMapClick)
                 }
                 item(key = "planets") { PlanetsCard(sky.planets) }
             }
