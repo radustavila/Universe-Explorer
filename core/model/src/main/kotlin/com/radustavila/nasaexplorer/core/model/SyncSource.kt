@@ -103,6 +103,9 @@ enum class SyncSource(val key: String) {
 
     /** Small Steps, Giant Leaps. */
     NASA_PODCAST_SMALL_STEPS("nasa_podcast_small_steps"),
+
+    /** STScI's weekly JWST observing schedule (F24): the index page and the newest week's file, daily. */
+    JWST_SCHEDULE("stsci_jwst_schedule"),
     ;
 
     companion object {

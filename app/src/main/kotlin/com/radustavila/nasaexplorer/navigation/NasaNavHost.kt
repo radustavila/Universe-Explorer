@@ -64,6 +64,7 @@ import com.radustavila.nasaexplorer.feature.universe.gallerySearchScreen
 import com.radustavila.nasaexplorer.feature.universe.nasaMediaDetailsScreen
 import com.radustavila.nasaexplorer.feature.universe.navigateToGallerySearch
 import com.radustavila.nasaexplorer.feature.universe.navigateToNasaMedia
+import com.radustavila.nasaexplorer.feature.webb.webbScreen
 import com.radustavila.nasaexplorer.ui.hub.HubScreen
 
 /**
@@ -164,6 +165,10 @@ fun NasaNavHost(
                 onBackClick = navController::popBackStack,
                 onSetLocation = { navController.navigateToSkyTonight() },
                 onShowOnSkyMap = { navController.navigateToSkyMap(showGalacticCentre = true) },
+            )
+            webbScreen(
+                onBackClick = navController::popBackStack,
+                onTargetClick = { query -> navController.navigateToGallerySearch(query) },
             )
             gallerySearchScreen(
                 onMediaClick = navController::navigateToNasaMedia,
