@@ -20,6 +20,8 @@ class SkySearchTest {
         bodies = SolarSystemBody.entries.associateWith { it.name.lowercase().replaceFirstChar(Char::uppercase) },
         satellites = mapOf(25544 to "ISS"),
         cardinals = listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW"),
+        galacticCentre = "Galactic centre",
+        milkyWayCore = "Milky Way core",
     )
     private val bodies = SkyMapBodies(
         solarSystem = emptyList(),
@@ -32,6 +34,15 @@ class SkySearchTest {
         assertEquals(listOf(sirius), search("siri").map { it.target })
         assertEquals(listOf(SkyTarget.Body(SolarSystemBody.SATURN)), search("SAT").map { it.target })
         assertEquals(listOf(SkyTarget.Constellation(0)), search("orion").map { it.target })
+    }
+
+    @Test
+    fun `the galactic centre is found by either of its names, once`() {
+        assertEquals(listOf(SkyTarget.GalacticCentre), search("milky").map { it.target })
+        assertEquals(listOf(SkyTarget.GalacticCentre), search("galactic").map { it.target })
+        // "c" is in both names; the centre is listed once.
+        val all = searchSky("c", catalog, bodies, names, limit = Int.MAX_VALUE)
+        assertEquals(1, all.count { it.target == SkyTarget.GalacticCentre })
     }
 
     @Test

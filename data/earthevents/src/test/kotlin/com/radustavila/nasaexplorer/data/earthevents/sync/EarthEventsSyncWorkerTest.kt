@@ -8,10 +8,16 @@ import androidx.work.WorkerParameters
 import androidx.work.testing.TestListenableWorkerBuilder
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.domain.usecase.CheckEarthquakeAlertUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEarthEventsUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEarthquakesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshSourceUseCase
 import com.radustavila.nasaexplorer.core.model.SyncSource
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthEventRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeAlertNotifier
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeAlertRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import kotlinx.coroutines.flow.first
@@ -27,6 +33,7 @@ import org.robolectric.RobolectricTestRunner
 class EarthEventsSyncWorkerTest {
 
     private val repository = FakeEarthEventRepository()
+    private val quakes = FakeEarthquakeRepository()
     private val metadata = FakeSyncMetadataRepository()
     private val clock = FakeTimeProvider()
 
@@ -41,6 +48,24 @@ class EarthEventsSyncWorkerTest {
     }
 
     @Test
+    fun `earthquakes are refreshed in the same run and recorded for their own source`() = runTest {
+        quakes.refreshResult = DataResult.Success(370)
+
+        val result = buildWorker().doWork() as ListenableWorker.Result.Success
+
+        assertEquals(370, result.outputData.getInt(EarthEventsSyncWorker.KEY_EARTHQUAKE_COUNT, 0))
+        assertEquals(1, quakes.refreshCallCount)
+        assertNotNull(metadata.observeSourceStatus(SyncSource.EARTHQUAKES).first().lastSuccessAt)
+    }
+
+    @Test
+    fun `a transient earthquake failure is retried even when the events refreshed`() = runTest {
+        quakes.refreshResult = DataResult.Failure(AppError.NoConnection)
+
+        assertTrue(buildWorker().doWork() is ListenableWorker.Result.Retry)
+    }
+
+    @Test
     fun `a run while the cache is fresh calls nothing`() = runTest {
         buildWorker().doWork()
 
@@ -48,6 +73,7 @@ class EarthEventsSyncWorkerTest {
 
         assertTrue(result is ListenableWorker.Result.Success)
         assertEquals(1, repository.refreshCallCount)
+        assertEquals(1, quakes.refreshCallCount)
     }
 
     @Test
@@ -86,6 +112,17 @@ class EarthEventsSyncWorkerTest {
                         refreshEarthEvents = RefreshEarthEventsUseCase(
                             repository = repository,
                             refreshSource = RefreshSourceUseCase(metadata, clock),
+                        ),
+                        refreshEarthquakes = RefreshEarthquakesUseCase(
+                            repository = quakes,
+                            refreshSource = RefreshSourceUseCase(metadata, clock),
+                            checkEarthquakeAlert = CheckEarthquakeAlertUseCase(
+                                FakeEarthquakeAlertRepository(),
+                                FakeObserverLocationRepository(),
+                                quakes,
+                                FakeEarthquakeAlertNotifier(),
+                                clock,
+                            ),
                         ),
                     )
                 },

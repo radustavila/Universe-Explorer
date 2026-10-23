@@ -27,6 +27,7 @@ import com.radustavila.nasaexplorer.core.model.CometPerihelion
 import com.radustavila.nasaexplorer.core.model.GreatestElongation
 import com.radustavila.nasaexplorer.core.model.LunarEclipse
 import com.radustavila.nasaexplorer.core.model.MeteorShowerPeak
+import com.radustavila.nasaexplorer.core.model.MilkyWayNightEvent
 import com.radustavila.nasaexplorer.core.model.MoonPhaseEvent
 import com.radustavila.nasaexplorer.core.model.MoonSize
 import com.radustavila.nasaexplorer.core.model.PlanetOpposition
@@ -40,6 +41,7 @@ import kotlin.math.roundToInt
 
 const val SKY_EVENT_REMINDER_SWITCH_TEST_TAG = "sky-event-reminder"
 const val SKY_EVENT_COMET_DETAILS_TEST_TAG = "sky-event-comet-details"
+const val SKY_EVENT_MILKY_WAY_PLANNER_TEST_TAG = "sky-event-milky-way-planner"
 
 /**
  * Everything the calendar knows about one event: when (in the user's time zone and clock format),
@@ -56,6 +58,7 @@ internal fun SkyEventDetails(
     onLeadChange: (SkyEventReminderLead) -> Unit,
     onCometClick: (designation: String) -> Unit,
     modifier: Modifier = Modifier,
+    onMilkyWayClick: () -> Unit = {},
 ) {
     val units = rememberUnitFormatter()
     Column(
@@ -87,6 +90,7 @@ internal fun SkyEventDetails(
             is SeasonEvent -> Line(stringResource(event.marker.meaningRes))
             is MeteorShowerPeak -> MeteorDetails(event, units)
             is CometPerihelion -> CometDetails(event, units, onCometClick)
+            is MilkyWayNightEvent -> MilkyWayDetails(event, units, onMilkyWayClick)
         }
         if (!isPast) {
             HorizontalDivider()
@@ -113,6 +117,25 @@ private fun ColumnScope.CometDetails(
         modifier = Modifier.testTag(SKY_EVENT_COMET_DETAILS_TEST_TAG),
     ) {
         Text(stringResource(R.string.sky_events_comet_details))
+    }
+}
+
+@Composable
+private fun ColumnScope.MilkyWayDetails(event: MilkyWayNightEvent, units: UnitFormatter, onMilkyWayClick: () -> Unit) {
+    Line(stringResource(R.string.sky_events_milky_way_meaning))
+    SectionLabel(stringResource(R.string.sky_events_from_your_place))
+    Line(stringResource(R.string.sky_events_milky_way_window, units.time(event.time), units.time(event.end)))
+    Line(
+        stringResource(
+            R.string.sky_events_milky_way_core,
+            event.coreAltitudeDegrees.roundToInt(),
+            stringResource(compassPoint(event.coreAzimuthDegrees)),
+            units.time(event.best),
+        ),
+    )
+    Line(stringResource(R.string.sky_events_milky_way_moon, event.moonIlluminatedFraction.percent()))
+    TextButton(onClick = onMilkyWayClick, modifier = Modifier.testTag(SKY_EVENT_MILKY_WAY_PLANNER_TEST_TAG)) {
+        Text(stringResource(R.string.sky_events_milky_way_planner))
     }
 }
 

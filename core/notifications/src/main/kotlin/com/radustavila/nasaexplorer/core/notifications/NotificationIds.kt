@@ -23,6 +23,10 @@ internal object NotificationIds {
     const val STARGAZING_ALERT = 5
     const val STARGAZING_TAG = "stargazing"
 
+    /** Posted with [EARTHQUAKE_TAG]: a newer strong quake replaces an older unread one. */
+    const val EARTHQUAKE_ALERT = 6
+    const val EARTHQUAKE_TAG = "earthquake"
+
     /** One id per [SatelliteSet] from here up ([satellitePass]), clear of the ids above. */
     const val SATELLITE_PASS_BASE = 40
 
@@ -39,5 +43,6 @@ internal object NotificationIds {
         const val ISS_PASS = 2
         const val SATELLITE_PASS = 4
         const val STARGAZING_ALERT = 11
+        const val EARTHQUAKE_ALERT = 12
     }
 }

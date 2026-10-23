@@ -1,5 +1,6 @@
 package com.radustavila.nasaexplorer.feature.skymap
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.radustavila.nasaexplorer.core.common.dispatchers.AppDispatcher
@@ -13,6 +14,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSkyMapNightModeUs
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshOrbitalElementsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetSkyMapNightModeUseCase
 import com.radustavila.nasaexplorer.core.model.EquatorialCoordinate
+import com.radustavila.nasaexplorer.core.model.GalacticCentre
 import com.radustavila.nasaexplorer.core.model.ObserverLocation
 import com.radustavila.nasaexplorer.core.model.SkyMapBodies
 import com.radustavila.nasaexplorer.core.skymap.HorizontalSky
@@ -49,11 +51,13 @@ import kotlinx.coroutines.launch
  * when they are due.
  *
  * Where the phone points is not here: the screen reads the rotation sensor and gestures itself, as
- * that changes every frame.
+ * that changes every frame. Opened from the Milky Way planner, the galactic centre starts selected,
+ * which turns the map to it.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SkyMapViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     observeLocation: ObserveObserverLocationUseCase,
     observeNightMode: ObserveSkyMapNightModeUseCase,
     private val loadCatalog: LoadSkyCatalogUseCase,
@@ -66,7 +70,9 @@ class SkyMapViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val timeOffset = MutableStateFlow(Duration.ZERO)
-    private val selection = MutableStateFlow<SkyTarget?>(null)
+    private val selection = MutableStateFlow<SkyTarget?>(
+        SkyTarget.GalacticCentre.takeIf { savedStateHandle.get<Boolean>(SHOW_GALACTIC_CENTRE) == true },
+    )
 
     private val location = observeLocation().distinctUntilChanged()
 
@@ -149,6 +155,7 @@ class SkyMapViewModel @Inject constructor(
             is SkyTarget.StarTarget -> sky?.chart?.catalog?.stars?.getOrNull(target.index)?.position
             is SkyTarget.Body -> bodies?.solarSystem?.firstOrNull { it.body == target.body }?.equatorial
             is SkyTarget.Comet -> bodies?.comet(target.designation)?.equatorial
+            SkyTarget.GalacticCentre -> GalacticCentre.POSITION
             is SkyTarget.Constellation, is SkyTarget.Satellite -> null
         } ?: return null
         return findConstellation(position)
@@ -166,6 +173,9 @@ class SkyMapViewModel @Inject constructor(
 
     companion object {
         val TICK: Duration = Duration.ofSeconds(1)
+
+        /** [SkyMapRoute.showGalacticCentre]'s key in the saved state. */
+        private const val SHOW_GALACTIC_CENTRE = "showGalacticCentre"
         private const val STATE_TIMEOUT_MILLIS = 5_000L
     }
 }

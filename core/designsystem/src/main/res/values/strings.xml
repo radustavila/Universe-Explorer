@@ -76,6 +76,7 @@
     <string name="sky_event_opposition">%1$s at opposition</string>
     <!-- %1$s: a comet's everyday name, e.g. "Bok" or "Pons-Brooks". Perihelion: closest to the Sun. -->
     <string name="sky_event_comet_perihelion">Comet %1$s at perihelion</string>
+    <string name="sky_event_milky_way_night">Best Milky Way night</string>
     <!-- %1$s: Mercury or Venus. The planet is as far from the Sun in the sky as it gets. -->
     <string name="sky_event_elongation">%1$s at greatest elongation</string>
     <!-- %1$s: Mercury or Venus crossing the Sun's disc. -->
@@ -114,6 +115,36 @@
     <string name="stargazing_rating_fair">Fair</string>
     <string name="stargazing_rating_good">Good</string>
     <string name="stargazing_rating_excellent">Excellent</string>
+
+    <!-- Earthquakes (F19). USGS's data are public domain; its terms ask for this credit, never its logo. -->
+    <string name="earthquake_credit">Data: U.S. Geological Survey</string>
+    <!-- Richter-style magnitude, %1$s is the number, e.g. "M 5.7". -->
+    <string name="earthquake_magnitude">M %1$s</string>
+    <!-- USGS place split up: %1$s distance in the user's units, %2$s compass direction (WNW), %3$s place name. -->
+    <string name="earthquake_place_offset">%1$s %2$s of %3$s</string>
+    <string name="earthquake_place_unknown">Unknown location</string>
+    <!-- %1$s magnitude ("M 5.7"), %2$s place. -->
+    <string name="earthquake_title">%1$s, %2$s</string>
+    <!-- %1$s depth in the user's units, %2$s its class. -->
+    <string name="earthquake_depth">%1$s deep, %2$s</string>
+    <string name="earthquake_depth_shallow">shallow</string>
+    <string name="earthquake_depth_intermediate">intermediate depth</string>
+    <string name="earthquake_depth_deep">deep focus</string>
+    <string name="earthquake_depth_legend_shallow">Shallow</string>
+    <string name="earthquake_depth_legend_intermediate">Intermediate</string>
+    <string name="earthquake_depth_legend_deep">Deep</string>
+    <plurals name="earthquake_felt">
+        <item quantity="one">Felt by %1$d person</item>
+        <item quantity="other">Felt by %1$d people</item>
+    </plurals>
+    <string name="earthquake_alert_green">USGS impact alert: green (little or no damage)</string>
+    <string name="earthquake_alert_yellow">USGS impact alert: yellow (local damage possible)</string>
+    <string name="earthquake_alert_orange">USGS impact alert: orange (significant damage likely)</string>
+    <string name="earthquake_alert_red">USGS impact alert: red (extensive damage likely)</string>
+    <string name="earthquake_tsunami">Large quake at sea: check official tsunami warnings</string>
+    <string name="earthquake_open_page">USGS event page</string>
+    <string name="earthquake_close">Close</string>
+    <string name="earthquake_label">Earthquake</string>
 
     <!-- NASA's podcast titles (F21), as NASA writes them. -->
     <string name="podcast_show_houston" translatable="false">Houston We Have a Podcast</string>

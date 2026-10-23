@@ -1,5 +1,6 @@
 package com.radustavila.nasaexplorer.feature.skymap
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
 import com.radustavila.nasaexplorer.core.domain.usecase.FindConstellationUseCase
@@ -179,6 +180,18 @@ class SkyMapViewModelTest {
         }
     }
 
+    @Test
+    fun `opened from the Milky Way planner, the galactic centre is selected in Sagittarius`() = runTest {
+        location.setLocation(TestSky.location())
+
+        createViewModel(showGalacticCentre = true).uiState.test {
+            val state = awaitUntil { it.sky != null && it.selectedConstellation != null }
+            assertEquals(SkyTarget.GalacticCentre, state.selected)
+            assertEquals(ephemeris.constellation, state.selectedConstellation)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
     private fun angleBetween(a: SkyVector, b: SkyVector): Double =
         Math.toDegrees(acos((a dot b).coerceIn(-1.0, 1.0)))
 
@@ -188,10 +201,11 @@ class SkyMapViewModelTest {
         return state
     }
 
-    private fun createViewModel(): SkyMapViewModel {
+    private fun createViewModel(showGalacticCentre: Boolean = false): SkyMapViewModel {
         val dispatcher = mainDispatcherRule.testDispatcher
         val metadata = FakeSyncMetadataRepository()
         return SkyMapViewModel(
+            savedStateHandle = SavedStateHandle(mapOf("showGalacticCentre" to showGalacticCentre)),
             observeLocation = ObserveObserverLocationUseCase(location),
             observeNightMode = ObserveSkyMapNightModeUseCase(preferences),
             loadCatalog = LoadSkyCatalogUseCase(catalog, dispatcher),

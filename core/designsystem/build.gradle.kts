@@ -19,6 +19,8 @@ dependencies {
     implementation(libs.coil.network.okhttp)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
+    // Custom Tabs: source pages (USGS event pages, F19) open in the browser over the app.
+    implementation(libs.androidx.browser)
 
     testImplementation(projects.core.testing)
 }

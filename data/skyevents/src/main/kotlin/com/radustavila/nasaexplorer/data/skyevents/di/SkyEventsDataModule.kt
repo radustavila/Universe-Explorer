@@ -7,10 +7,12 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.radustavila.nasaexplorer.core.astro.AstronomyEngineMilkyWayCalculator
 import com.radustavila.nasaexplorer.core.astro.EventCalendar
 import com.radustavila.nasaexplorer.core.common.dispatchers.AppDispatcher
 import com.radustavila.nasaexplorer.core.common.dispatchers.ApplicationScope
 import com.radustavila.nasaexplorer.core.common.dispatchers.Dispatcher
+import com.radustavila.nasaexplorer.core.domain.sky.MilkyWayCalculator
 import com.radustavila.nasaexplorer.core.domain.sky.SkyEventCalendar
 import com.radustavila.nasaexplorer.core.domain.sky.SkyEventReminderRepository
 import com.radustavila.nasaexplorer.core.domain.sky.SkyEventReminderScheduler
@@ -45,13 +47,16 @@ interface SkyEventsDataModule {
     fun bindSkyEventReminderScheduler(impl: WorkManagerSkyEventReminderScheduler): SkyEventReminderScheduler
 }
 
-/** The calendar: pure computation, the same in tests and production. */
+/** The calendar and the Milky Way planner (F20): pure computation, the same in tests and production. */
 @Module
 @InstallIn(SingletonComponent::class)
 interface SkyEventCalendarModule {
 
     @Binds
     fun bindSkyEventCalendar(impl: EventCalendar): SkyEventCalendar
+
+    @Binds
+    fun bindMilkyWayCalculator(impl: AstronomyEngineMilkyWayCalculator): MilkyWayCalculator
 }
 
 @Module

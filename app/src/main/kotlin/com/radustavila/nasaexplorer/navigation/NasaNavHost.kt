@@ -34,6 +34,9 @@ import com.radustavila.nasaexplorer.feature.feed.feedScreen
 import com.radustavila.nasaexplorer.feature.mars.marsPhotoScreen
 import com.radustavila.nasaexplorer.feature.mars.marsPhotosScreen
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
+import com.radustavila.nasaexplorer.feature.milkyway.milkyWayScreen
+import com.radustavila.nasaexplorer.feature.milkyway.navigateToMilkyWay
+import com.radustavila.nasaexplorer.feature.milkyway.sky.MilkyWayTonightCard
 import com.radustavila.nasaexplorer.feature.news.navigateToNewsItem
 import com.radustavila.nasaexplorer.feature.news.navigateToPodcastEpisode
 import com.radustavila.nasaexplorer.feature.news.newsItemScreen
@@ -49,6 +52,7 @@ import com.radustavila.nasaexplorer.feature.settings.settingsScreen
 import com.radustavila.nasaexplorer.feature.sky.location.ObserverLocationSection
 import com.radustavila.nasaexplorer.feature.sky.navigateToSkyTonight
 import com.radustavila.nasaexplorer.feature.sky.skyTonightScreen
+import com.radustavila.nasaexplorer.feature.skymap.navigateToSkyMap
 import com.radustavila.nasaexplorer.feature.skymap.skyMapScreen
 import com.radustavila.nasaexplorer.feature.spaceweather.navigateToSmallBody
 import com.radustavila.nasaexplorer.feature.spaceweather.neighbourhoodScreen
@@ -130,11 +134,13 @@ fun NasaNavHost(
                         onCometClick = navController::navigateToCometDetails,
                     )
                 },
+                milkyWay = { MilkyWayTonightCard(onOpen = { navController.navigateToMilkyWay() }) },
             )
             skyEventsScreen(
                 onBackClick = navController::popBackStack,
                 onSetLocation = { navController.navigateToSkyTonight() },
                 onCometClick = navController::navigateToCometDetails,
+                onMilkyWayClick = { navController.navigateToMilkyWay() },
             )
             dsnScreen(onBackClick = navController::popBackStack)
             newsScreen(
@@ -154,6 +160,11 @@ fun NasaNavHost(
                 onSetLocation = { navController.navigateToSkyTonight() },
             )
             cometDetailsScreen(onBackClick = navController::popBackStack)
+            milkyWayScreen(
+                onBackClick = navController::popBackStack,
+                onSetLocation = { navController.navigateToSkyTonight() },
+                onShowOnSkyMap = { navController.navigateToSkyMap(showGalacticCentre = true) },
+            )
             gallerySearchScreen(
                 onMediaClick = navController::navigateToNasaMedia,
                 listDetail = listDetail(

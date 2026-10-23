@@ -47,6 +47,10 @@
     <string name="settings_stargazing_minimum_good">Good (%1$d+)</string>
     <string name="settings_stargazing_minimum_very_good">Very good (%1$d+)</string>
     <string name="settings_stargazing_minimum_excellent">Excellent (%1$d+)</string>
+    <string name="settings_earthquake_title">Strong earthquake alerts</string>
+    <string name="settings_earthquake_description">A magnitude 5+ quake within %1$s of your saved place, or a tsunami flag within %2$s. Checked on the phone; data from the U.S. Geological Survey</string>
+    <string name="settings_earthquake_needs_place">Alerts start once a location is saved</string>
+    <string name="settings_earthquake_needs_place_message">Save a location first: the alert is for quakes near your place</string>
 
     <!-- Location -->
     <string name="settings_location_title">Location</string>
@@ -131,6 +135,8 @@
     <string name="credit_d3_celestial_description">The sky map\'s constellation figures (BSD licence)</string>
     <string name="credit_maplibre">MapLibre Native</string>
     <string name="credit_maplibre_description">Map rendering</string>
+    <string name="credit_usgs">U.S. Geological Survey</string>
+    <string name="credit_usgs_description">Recent earthquakes, from the USGS Earthquake Hazards Program feeds (public domain)</string>
 
     <!-- Today -->
     <string name="settings_today_title">Today</string>

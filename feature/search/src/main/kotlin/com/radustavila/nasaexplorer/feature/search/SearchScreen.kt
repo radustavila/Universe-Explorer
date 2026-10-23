@@ -36,6 +36,7 @@ import androidx.compose.material.icons.outlined.Podcasts
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.RocketLaunch
 import androidx.compose.material.icons.outlined.TravelExplore
+import androidx.compose.material.icons.outlined.Waves
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -491,6 +492,7 @@ internal val SearchSource.labelRes: Int
         SearchSource.SKY_EVENTS -> R.string.search_source_sky_events
         SearchSource.NEWS -> R.string.search_source_news
         SearchSource.COMETS -> R.string.search_source_comets
+        SearchSource.EARTHQUAKES -> R.string.search_source_earthquakes
         SearchSource.PODCASTS -> R.string.search_source_podcasts
     }
 
@@ -517,5 +519,6 @@ private val SearchSource.icon: ImageVector
         SearchSource.SKY_EVENTS -> Icons.Outlined.Event
         SearchSource.NEWS -> Icons.Outlined.Newspaper
         SearchSource.COMETS -> Icons.Outlined.AutoAwesome
+        SearchSource.EARTHQUAKES -> Icons.Outlined.Waves
         SearchSource.PODCASTS -> Icons.Outlined.Podcasts
     }

@@ -5,8 +5,11 @@ import androidx.test.core.app.ApplicationProvider
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.model.EarthEventCategory
 import com.radustavila.nasaexplorer.core.testing.data.TestEarthEvents
+import com.radustavila.nasaexplorer.core.testing.data.TestEarthquakes
 import com.radustavila.nasaexplorer.data.earthevents.local.EarthEventsDatabase
 import com.radustavila.nasaexplorer.data.earthevents.local.RoomEarthEventsLocalDataSource
+import com.radustavila.nasaexplorer.data.earthevents.local.RoomEarthquakesLocalDataSource
+import com.radustavila.nasaexplorer.data.earthevents.remote.EarthquakeFeed
 import java.time.Duration
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -34,7 +37,7 @@ class EarthEventsCacheEvictorTest {
         ).allowMainThreadQueries().build()
         val io = UnconfinedTestDispatcher()
         local = RoomEarthEventsLocalDataSource(database.earthEventDao(), io)
-        evictor = EarthEventsCacheEvictor(database.earthEventDao(), io)
+        evictor = EarthEventsCacheEvictor(database.earthEventDao(), database.earthquakeDao(), io)
     }
 
     @After
@@ -64,5 +67,17 @@ class EarthEventsCacheEvictorTest {
         assertEquals(1, evictor.evict(now))
         assertEquals(DataResult.Success(emptyList<Any>()), local.layersFor(EarthEventCategory.WILDFIRES))
         assertEquals(DataResult.Success(listOf(TestEarthEvents.TRUE_COLOR_LAYER)), local.layersFor(EarthEventCategory.FLOODS))
+    }
+
+    @Test
+    fun `quakes older than the longest feed window go`() = runTest {
+        val quakes = RoomEarthquakesLocalDataSource(database.earthquakeDao(), UnconfinedTestDispatcher())
+        val recent = TestEarthquakes.earthquake(id = "recent", time = now.minus(Duration.ofDays(3)))
+        val tooOld = now.minus(EarthEventsCacheEvictor.EARTHQUAKE_RETENTION).minusSeconds(1)
+        val old = TestEarthquakes.significant(id = "old", time = tooOld)
+        quakes.replaceFeed(EarthquakeFeed.SIGNIFICANT_MONTH, listOf(recent, old), lastModified = null, at = now)
+
+        assertEquals(1, evictor.evict(now))
+        assertEquals(listOf("recent"), quakes.observeEarthquakes().first().map { it.id })
     }
 }

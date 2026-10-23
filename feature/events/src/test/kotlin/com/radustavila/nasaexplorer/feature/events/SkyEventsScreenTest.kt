@@ -13,9 +13,11 @@ import com.radustavila.nasaexplorer.core.designsystem.theme.NasaTheme
 import com.radustavila.nasaexplorer.core.domain.sky.SkyEventReminderLead
 import com.radustavila.nasaexplorer.core.model.SkyEvent
 import com.radustavila.nasaexplorer.core.model.SkyEventCategory
+import com.radustavila.nasaexplorer.core.testing.data.TestMilkyWay
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.data.TestSkyEvents
 import com.radustavila.nasaexplorer.feature.events.component.SKY_EVENT_COMET_DETAILS_TEST_TAG
+import com.radustavila.nasaexplorer.feature.events.component.SKY_EVENT_MILKY_WAY_PLANNER_TEST_TAG
 import com.radustavila.nasaexplorer.feature.events.component.SKY_EVENT_REMINDER_SWITCH_TEST_TAG
 import java.time.Instant
 import java.time.LocalDate
@@ -53,6 +55,7 @@ class SkyEventsScreenTest {
     private var reminder: Pair<String, SkyEventReminderLead?>? = null
     private var placeClicks = 0
     private val cometClicks = mutableListOf<String>()
+    private var milkyWayClicks = 0
 
     private fun show(state: SkyEventsUiState) {
         composeTestRule.setContent {
@@ -69,6 +72,7 @@ class SkyEventsScreenTest {
                     onSheetDismiss = {},
                     onReminderChange = { id, lead -> reminder = id to lead },
                     onCometClick = { cometClicks += it },
+                    onMilkyWayClick = { milkyWayClicks++ },
                 )
             }
         }
@@ -164,5 +168,16 @@ class SkyEventsScreenTest {
 
         composeTestRule.onNodeWithTag(SKY_EVENTS_LIST_TEST_TAG)
             .performScrollToNode(hasText("Nothing in this category this month."))
+    }
+
+    @Test
+    fun `the best Milky Way night tells where the core is and opens the planner`() {
+        show(august.copy(selected = TestMilkyWay.milkyWayNight()))
+
+        composeTestRule.onNodeWithText("Best Milky Way night").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Moon 1% lit").assertIsDisplayed()
+        composeTestRule.onNodeWithText("The core gets 16° high in the south", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(SKY_EVENT_MILKY_WAY_PLANNER_TEST_TAG).performScrollTo().performClick()
+        assertEquals(1, milkyWayClicks)
     }
 }

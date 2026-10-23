@@ -33,6 +33,7 @@ class SettingsViewModelTest {
     private val location = fixture.location
     private val stargazing = fixture.stargazing
     private val stargazingScheduler = fixture.stargazingScheduler
+    private val earthquakes = fixture.earthquakes
     private val syncScheduler = fixture.syncScheduler
     private val images = fixture.images
     private val http = fixture.http
@@ -161,6 +162,26 @@ class SettingsViewModelTest {
         assertTrue(stargazing.settings.first().enabled)
         assertEquals(75, stargazing.settings.first().minimumScore)
         assertTrue(stargazingScheduler.isPeriodicCheckScheduled)
+    }
+
+    @Test
+    fun `strong earthquake alerts are off by default and need a saved place`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            assertFalse(awaitItem().earthquakeAlertsEnabled)
+            viewModel.onEarthquakeAlertsChange(true)
+            assertEquals(SettingsMessage.EARTHQUAKE_NEEDS_PLACE, awaitUntil { it.message != null }.message)
+            assertFalse(earthquakes.isEnabled)
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        location.setLocation(TestSky.location())
+        viewModel.onEarthquakeAlertsChange(true)
+        assertTrue(earthquakes.isEnabled)
+
+        viewModel.onEarthquakeAlertsChange(false)
+        assertFalse(earthquakes.isEnabled)
     }
 
     @Test

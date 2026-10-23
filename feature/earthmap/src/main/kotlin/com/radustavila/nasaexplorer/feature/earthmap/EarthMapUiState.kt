@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.feature.earthmap
 import androidx.compose.runtime.Immutable
 import com.radustavila.nasaexplorer.core.map.gibs.GibsImagery
 import com.radustavila.nasaexplorer.core.map.gibs.GibsLayer
+import com.radustavila.nasaexplorer.core.model.Earthquake
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -30,7 +31,15 @@ data class EarthMapUiState(
     /** The day the map draws: [date] once the picker has rested for a moment. */
     val imageryDate: LocalDate = date,
     val isOffline: Boolean = false,
+    /** Magnitude 4.5+ quakes of the past week (USGS), newest first. */
+    val earthquakes: List<Earthquake> = emptyList(),
+    /** The quake layer is the user's choice, off until asked for. */
+    val showEarthquakes: Boolean = false,
+    val selectedEarthquakeId: String? = null,
 ) {
+    val selectedEarthquake: Earthquake?
+        get() = earthquakes.firstOrNull { it.id == selectedEarthquakeId }?.takeIf { showEarthquakes }
+
     /** Only true colour changes with the day; the other two are single composites. */
     val isDateSelectable: Boolean get() = mode == EarthMapMode.TrueColor
 

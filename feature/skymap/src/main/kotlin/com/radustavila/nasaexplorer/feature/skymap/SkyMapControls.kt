@@ -176,7 +176,10 @@ internal fun SkyTarget.kindRes(): Int = when (this) {
     is SkyTarget.Constellation -> R.string.sky_map_kind_constellation
     is SkyTarget.Satellite -> satelliteKindRes(noradId)
     is SkyTarget.Comet -> R.string.sky_map_kind_comet
+    SkyTarget.GalacticCentre -> R.string.sky_map_kind_galactic_centre
 }
+
+private const val GALACTIC_CENTRE_KEY = "galactic-centre"
 
 /** Keeps the target the map last turned to across configuration changes. */
 internal val SkyTargetSaver = Saver<SkyTarget?, String>(
@@ -187,6 +190,7 @@ internal val SkyTargetSaver = Saver<SkyTarget?, String>(
             is SkyTarget.Constellation -> "constellation:${target.index}"
             is SkyTarget.Satellite -> "satellite:${target.noradId}"
             is SkyTarget.Comet -> "comet:${target.designation}"
+            SkyTarget.GalacticCentre -> GALACTIC_CENTRE_KEY
             null -> ""
         }
     },
@@ -198,6 +202,7 @@ internal val SkyTargetSaver = Saver<SkyTarget?, String>(
             "constellation" -> value?.toIntOrNull()?.let(SkyTarget::Constellation)
             "satellite" -> value?.toIntOrNull()?.let(SkyTarget::Satellite)
             "comet" -> value?.let(SkyTarget::Comet)
+            GALACTIC_CENTRE_KEY -> SkyTarget.GalacticCentre
             else -> null
         }
     },

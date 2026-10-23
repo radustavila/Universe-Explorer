@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="milky_way_title">Milky Way planner</string>
+    <string name="milky_way_back">Back</string>
+
+    <string name="milky_way_place_prompt">Save your place to see when the core of the Milky Way is up in a dark, moonless sky.</string>
+    <string name="milky_way_place_action">Set your place</string>
+
+    <!-- The best window of tonight or of the next good night. -->
+    <string name="milky_way_tonight">Tonight</string>
+    <string name="milky_way_next_night">Next good night: %1$s</string>
+    <string name="milky_way_core_position">Core %1$d° high in the %2$s at %3$s</string>
+    <string name="milky_way_window_length">%1$s of dark, moonless sky with the core up</string>
+    <string name="milky_way_show_on_sky_map">Show the core on the sky map</string>
+
+    <!-- When there is no window in the coming month. -->
+    <string name="milky_way_too_low_title">The core stays too low here</string>
+    <string name="milky_way_too_low_description">From your latitude the centre of the Milky Way never gets more than %1$d° above the horizon, and it needs 10° to clear the haze.</string>
+    <string name="milky_way_never_rises_description">From your latitude the centre of the Milky Way never rises.</string>
+    <string name="milky_way_no_darkness_title">Too light for the Milky Way</string>
+    <string name="milky_way_no_darkness_description">The Sun never gets 18° below the horizon in the coming nights, so the sky never gets fully dark.</string>
+    <string name="milky_way_by_day_title">The core is up by day</string>
+    <string name="milky_way_by_day_description">At this time of year the core of the Milky Way is above the horizon only while the Sun is up.</string>
+    <string name="milky_way_moonlight_title">The Moon is in the way</string>
+    <string name="milky_way_twilight_below">The twilight, golden and blue hour times below still work.</string>
+    <string name="milky_way_moonlight_description">On every night in the coming month that the core is up in a dark sky, a bright Moon is up too.</string>
+
+    <!-- %1$s: one or more month ranges, e.g. "March to October". -->
+    <string name="milky_way_season">Core season here: %1$s, best around the new Moon.</string>
+    <string name="milky_way_season_all_year">all year</string>
+    <string name="milky_way_month_range">%1$s to %2$s</string>
+    <string name="milky_way_month_list_separator">, </string>
+
+    <string name="milky_way_nights_title">The next 30 nights</string>
+    <string name="milky_way_legend_dark">Dark sky</string>
+    <string name="milky_way_legend_twilight">Twilight</string>
+    <string name="milky_way_legend_moon">Moon up</string>
+    <string name="milky_way_legend_core">Core above 10°</string>
+    <string name="milky_way_legend_window">Best window</string>
+    <string name="milky_way_no_window">–</string>
+
+    <!-- Durations. -->
+    <string name="milky_way_hours_minutes">%1$d h %2$02d min</string>
+    <string name="milky_way_minutes">%1$d min</string>
+
+    <!-- A night's details. -->
+    <string name="milky_way_night_description">%1$s: %2$s</string>
+    <string name="milky_way_night_window">window %1$s to %2$s</string>
+    <string name="milky_way_night_none">no window</string>
+    <string name="milky_way_expand">Show details</string>
+    <string name="milky_way_collapse">Hide details</string>
+    <string name="milky_way_reason_not_dark">It does not get fully dark.</string>
+    <string name="milky_way_reason_core_down">The core is not up while it is dark.</string>
+    <string name="milky_way_reason_moon">The Moon is up while the core is (%1$d%% lit).</string>
+    <!-- %1$s: what the core does that night, e.g. "rises 21:30 · highest 23:50 · sets 04:10". -->
+    <string name="milky_way_core_line">Core: %1$s</string>
+    <string name="milky_way_core_rises">rises %1$s</string>
+    <string name="milky_way_core_highest">highest %1$s</string>
+    <string name="milky_way_core_sets">sets %1$s</string>
+    <string name="milky_way_core_separator"> · </string>
+    <string name="milky_way_moon_down">Moon %1$d%% lit, below the horizon all night</string>
+    <string name="milky_way_moon_up">Moon %1$d%% lit, up %2$s</string>
+    <string name="milky_way_moon_up_all_night">Moon %1$d%% lit, up all night</string>
+    <string name="milky_way_interval">%1$s–%2$s</string>
+    <string name="milky_way_evening">Evening</string>
+    <string name="milky_way_morning">Morning</string>
+    <string name="milky_way_golden_hour">Golden hour</string>
+    <string name="milky_way_blue_hour">Blue hour</string>
+    <string name="milky_way_sunset">Sunset</string>
+    <string name="milky_way_sunrise">Sunrise</string>
+    <string name="milky_way_civil_dusk">Civil dusk</string>
+    <string name="milky_way_nautical_dusk">Nautical dusk</string>
+    <string name="milky_way_astronomical_dusk">Astronomical dusk</string>
+    <string name="milky_way_astronomical_dawn">Astronomical dawn</string>
+    <string name="milky_way_nautical_dawn">Nautical dawn</string>
+    <string name="milky_way_civil_dawn">Civil dawn</string>
+
+    <!-- Sky tonight's card. -->
+    <string name="milky_way_card_title">Milky Way tonight</string>
+    <string name="milky_way_card_open">Open the Milky Way planner</string>
+    <string name="milky_way_card_tonight">%1$s, core %2$d° high in the %3$s</string>
+    <string name="milky_way_card_not_tonight">Not tonight. Next: %1$s, %2$s</string>
+
+    <string name="milky_way_compass_n">north</string>
+    <string name="milky_way_compass_ne">north-east</string>
+    <string name="milky_way_compass_e">east</string>
+    <string name="milky_way_compass_se">south-east</string>
+    <string name="milky_way_compass_s">south</string>
+    <string name="milky_way_compass_sw">south-west</string>
+    <string name="milky_way_compass_w">west</string>
+    <string name="milky_way_compass_nw">north-west</string>
+</resources>

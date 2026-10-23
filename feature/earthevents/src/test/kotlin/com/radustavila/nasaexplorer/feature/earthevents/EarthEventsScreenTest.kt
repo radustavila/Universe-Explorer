@@ -6,15 +6,21 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.radustavila.nasaexplorer.core.designsystem.component.OFFLINE_BANNER_TEST_TAG
+import com.radustavila.nasaexplorer.core.designsystem.earthquake.EARTHQUAKE_LEGEND_TEST_TAG
+import com.radustavila.nasaexplorer.core.designsystem.earthquake.EARTHQUAKE_PAGE_BUTTON_TEST_TAG
+import com.radustavila.nasaexplorer.core.designsystem.earthquake.EARTHQUAKE_SHEET_TEST_TAG
 import com.radustavila.nasaexplorer.core.map.TileLoadStatus
 import com.radustavila.nasaexplorer.core.map.gibs.GibsImagery
 import com.radustavila.nasaexplorer.core.map.overlay.MapOverlay
 import com.radustavila.nasaexplorer.core.model.EarthEventCategory
+import com.radustavila.nasaexplorer.core.model.EarthquakeFilter
 import com.radustavila.nasaexplorer.core.testing.data.TestEarthEvents
+import com.radustavila.nasaexplorer.core.testing.data.TestEarthquakes
 import java.time.Duration
 import java.time.LocalDate
 import org.junit.Assert.assertEquals
@@ -49,6 +55,11 @@ class EarthEventsScreenTest {
     private var shownImagery: GibsImagery? = null
     private var shownOverlays: List<MapOverlay> = emptyList()
     private var mapEventClick: (String) -> Unit = {}
+    private var mapQuakeClick: (String) -> Unit = {}
+    private val quakeFilters = mutableListOf<EarthquakeFilter>()
+    private val selectedQuakes = mutableListOf<String>()
+    private val listPicks = mutableListOf<String>()
+    private var listToggles = 0
 
     private val toggled = mutableListOf<EarthEventCategory>()
     private val selected = mutableListOf<String>()
@@ -77,10 +88,16 @@ class EarthEventsScreenTest {
                 onHideImagery = { hideImageryClicks++ },
                 onOpenSource = { openedUrls += it },
                 onMessageShown = {},
-                map = { imagery, overlays, onEventClick, _, modifier ->
+                onEarthquakeFilterSelected = { quakeFilters += it },
+                onEarthquakeSelected = { selectedQuakes += it },
+                onEarthquakeListToggled = { listToggles++ },
+                onEarthquakeListItemSelected = { listPicks += it },
+                onOpenEarthquakePage = { openedUrls += it },
+                map = { imagery, overlays, onShapeClick, _, modifier ->
                     shownImagery = imagery
                     shownOverlays = overlays
-                    mapEventClick = onEventClick
+                    mapEventClick = { id -> onShapeClick("event-markers-severeStorms", id) }
+                    mapQuakeClick = { id -> onShapeClick(EARTHQUAKE_OVERLAY_ID, id) }
                     Box(modifier.testTag(FAKE_MAP_TAG))
                 },
             )
@@ -234,5 +251,62 @@ class EarthEventsScreenTest {
 
     private companion object {
         const val FAKE_MAP_TAG = "fake-map"
+    }
+
+    private val sicily = TestEarthquakes.earthquake(time = TestEarthEvents.NOW.minusSeconds(3_600))
+    private val withQuakes = loaded.copy(earthquakes = listOf(sicily), now = TestEarthEvents.NOW)
+
+    @Test
+    fun `quakes are drawn with a legend, and a tap on one selects it`() {
+        setContent(withQuakes)
+
+        val quakeOverlay = shownOverlays.single { it.id == EARTHQUAKE_OVERLAY_ID }
+        assertEquals(listOf(sicily.id), quakeOverlay.shapes.map { it.id })
+        composeTestRule.onNodeWithTag(EARTHQUAKE_LEGEND_TEST_TAG).assertIsDisplayed()
+
+        composeTestRule.runOnIdle { mapQuakeClick(sicily.id) }
+        assertEquals(listOf(sicily.id), selectedQuakes)
+        assertTrue(selected.isEmpty())
+    }
+
+    @Test
+    fun `the quake filter chips carry their counts and report a pick`() {
+        setContent(withQuakes)
+
+        composeTestRule.onNodeWithText("Quakes M2.5+ · 1").assertIsSelected()
+        composeTestRule.onNodeWithText("Quakes M4.5+ · 1").assertIsNotSelected().performClick()
+
+        assertEquals(listOf(EarthquakeFilter.MAGNITUDE_4_5), quakeFilters)
+    }
+
+    @Test
+    fun `the selected quake's sheet shows its details and opens the USGS page`() {
+        setContent(withQuakes.copy(selectedEarthquakeId = sicily.id))
+
+        composeTestRule.onNodeWithTag(EARTHQUAKE_SHEET_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithText("WNW of Leni, Italy", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Felt by 4 people").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Data: U.S. Geological Survey").assertExists()
+        composeTestRule.onNodeWithTag(EARTHQUAKE_PAGE_BUTTON_TEST_TAG).performClick()
+
+        assertEquals(listOf(sicily.url), openedUrls)
+    }
+
+    @Test
+    fun `the list replaces the map and a row reports its quake`() {
+        setContent(withQuakes.copy(showEarthquakeList = true))
+
+        composeTestRule.onNodeWithTag(FAKE_MAP_TAG).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(EARTH_EVENTS_QUAKE_LIST_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithText("WNW of Leni, Italy", substring = true).performClick()
+
+        assertEquals(listOf(sicily.id), listPicks)
+    }
+
+    @Test
+    fun `the list button shows only while quakes are on`() {
+        setContent(withQuakes.copy(earthquakeFilter = null))
+
+        composeTestRule.onNodeWithContentDescription("Show the earthquakes as a list").assertDoesNotExist()
     }
 }

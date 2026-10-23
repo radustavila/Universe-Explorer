@@ -2,6 +2,7 @@ package com.radustavila.nasaexplorer.feature.settings
 
 import com.radustavila.nasaexplorer.core.domain.storage.StorageKind
 import com.radustavila.nasaexplorer.core.domain.usecase.CheckAuroraAlertUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.CheckEarthquakeAlertUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.CheckStargazingAlertUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ClearCacheUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.MeasureStorageUseCase
@@ -10,6 +11,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDailyWallpaperEna
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveIssPassRemindersEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveNewApodNotificationsEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveObserverLocationUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEarthquakeAlertEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveStargazingAlertSettingsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveUnitPreferencesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RescheduleIssPassReminderUseCase
@@ -19,6 +21,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.SetDailyWallpaperEnabled
 import com.radustavila.nasaexplorer.core.domain.usecase.SetIssPassRemindersEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetMeasurementSystemUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetNewApodNotificationsEnabledUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.SetEarthquakeAlertEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetStargazingAlertEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetStargazingAlertMinimumScoreUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetTimeFormatUseCase
@@ -27,6 +30,9 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeAuroraAlertRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeCacheStorage
 import com.radustavila.nasaexplorer.core.testing.fake.FakeCloudForecastRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeDarkSkyCalculator
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeAlertNotifier
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeAlertRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeIssPassReminderScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
@@ -53,6 +59,7 @@ internal class SettingsFixture {
     val location = FakeObserverLocationRepository()
     val stargazing = FakeStargazingAlertRepository()
     val stargazingScheduler = FakeStargazingAlertScheduler()
+    val earthquakes = FakeEarthquakeAlertRepository()
     val metadata = FakeSyncMetadataRepository()
     val syncScheduler = FakeSyncScheduler()
     val widgets = FakeHomeWidgetUpdater()
@@ -101,6 +108,17 @@ internal class SettingsFixture {
             setDailyWallpaper = SetDailyWallpaperEnabledUseCase(preferences, metadata, syncScheduler),
             measureStorage = MeasureStorageUseCase(setOf(images, http, feeds, offlineFavorites)),
             clearCache = ClearCacheUseCase(setOf(images, http, feeds), metadata),
+            observeEarthquakeAlerts = ObserveEarthquakeAlertEnabledUseCase(earthquakes),
+            setEarthquakeAlertEnabled = SetEarthquakeAlertEnabledUseCase(
+                earthquakes,
+                CheckEarthquakeAlertUseCase(
+                    earthquakes,
+                    location,
+                    FakeEarthquakeRepository(),
+                    FakeEarthquakeAlertNotifier(),
+                    clock,
+                ),
+            ),
         )
     }
 

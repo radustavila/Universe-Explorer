@@ -70,6 +70,7 @@ class SkyEventsSearchableSource @Inject constructor(
             SkyEventCategory.METEORS -> R.string.sky_events_search_words_meteors
             SkyEventCategory.COMETS -> R.string.sky_events_search_words_comets
             SkyEventCategory.SEASONS -> R.string.sky_events_search_words_seasons
+            SkyEventCategory.MILKY_WAY -> R.string.sky_events_search_words_milky_way
         },
     )
 

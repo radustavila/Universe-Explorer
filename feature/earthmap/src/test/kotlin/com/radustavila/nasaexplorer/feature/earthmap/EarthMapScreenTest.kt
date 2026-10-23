@@ -14,10 +14,14 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.radustavila.nasaexplorer.core.designsystem.component.OFFLINE_BANNER_TEST_TAG
+import com.radustavila.nasaexplorer.core.designsystem.earthquake.EARTHQUAKE_PAGE_BUTTON_TEST_TAG
+import com.radustavila.nasaexplorer.core.designsystem.earthquake.EARTHQUAKE_SHEET_TEST_TAG
 import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
 import com.radustavila.nasaexplorer.core.map.TileLoadStatus
 import com.radustavila.nasaexplorer.core.map.gibs.GibsImagery
 import com.radustavila.nasaexplorer.core.map.gibs.GibsLayer
+import com.radustavila.nasaexplorer.core.map.overlay.MapOverlay
+import com.radustavila.nasaexplorer.core.testing.data.TestEarthquakes
 import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -61,7 +65,7 @@ class EarthMapScreenTest {
                 onDateSelected = {},
                 onPreviousDay = onPreviousDay,
                 onNextDay = {},
-                map = { imagery, modifier ->
+                map = { imagery, _, _, _, modifier ->
                     shownImagery = imagery
                     Box(modifier.testTag(FAKE_MAP_TAG))
                 },
@@ -96,7 +100,7 @@ class EarthMapScreenTest {
                 onDateSelected = {},
                 onPreviousDay = {},
                 onNextDay = {},
-                map = { imagery, modifier ->
+                map = { imagery, _, _, _, modifier ->
                     shownImagery = imagery
                     Box(modifier.testTag(FAKE_MAP_TAG))
                 },
@@ -168,6 +172,50 @@ class EarthMapScreenTest {
         composeTestRule.onNodeWithTag(EARTH_MAP_LOADING_TEST_TAG).assertIsDisplayed()
     }
 
+    @Test
+    fun `the quake chip toggles the layer, a tapped quake opens its sheet with the USGS page`() {
+        val sicily = TestEarthquakes.earthquake()
+        var overlays: List<MapOverlay> = emptyList()
+        var quakeClick: (String) -> Unit = {}
+        var toggles = 0
+        val selected = mutableListOf<String>()
+        val opened = mutableListOf<String>()
+        var state by mutableStateOf(baseState.copy(earthquakes = listOf(sicily)))
+        composeTestRule.setContent {
+            EarthMapScreen(
+                uiState = state,
+                tileStatus = TileLoadStatus.Loaded,
+                onBackClick = {},
+                onModeSelected = {},
+                onDateSelected = {},
+                onPreviousDay = {},
+                onNextDay = {},
+                onEarthquakesToggled = { toggles++ },
+                onEarthquakeSelected = { selected += it },
+                onOpenEarthquakePage = { opened += it },
+                map = { _, shown, onEarthquakeClick, _, modifier ->
+                    overlays = shown
+                    quakeClick = onEarthquakeClick
+                    Box(modifier.testTag(FAKE_MAP_TAG))
+                },
+            )
+        }
+
+        assertTrue(overlays.none { it.visible && it.shapes.isNotEmpty() })
+        composeTestRule.onNodeWithText("Quakes M4.5+ · 1").performClick()
+        assertEquals(1, toggles)
+
+        state = state.copy(showEarthquakes = true)
+        composeTestRule.runOnIdle { quakeClick(sicily.id) }
+        assertEquals(listOf(sicily.id), selected)
+        assertEquals(listOf(sicily.id), overlays.first { it.id == EARTHQUAKE_OVERLAY_ID }.shapes.map { it.id })
+
+        state = state.copy(selectedEarthquakeId = sicily.id)
+        composeTestRule.onNodeWithTag(EARTHQUAKE_SHEET_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(EARTHQUAKE_PAGE_BUTTON_TEST_TAG).performClick()
+        assertEquals(listOf(sicily.url), opened)
+    }
+
     private companion object {
         const val FAKE_MAP_TAG = "fake-map"
     }
@@ -192,7 +240,7 @@ class EarthMapScreenLandscapeTest {
                 onDateSelected = {},
                 onPreviousDay = {},
                 onNextDay = {},
-                map = { _, modifier -> Box(modifier.testTag("fake-map")) },
+                map = { _, _, _, _, modifier -> Box(modifier.testTag("fake-map")) },
             )
         }
 

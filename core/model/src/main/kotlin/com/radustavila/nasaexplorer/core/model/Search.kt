@@ -36,6 +36,9 @@ enum class SearchSource {
     /** Comets near perihelion (F18), by name or designation. */
     COMETS,
 
+    /** Earthquakes of the past week and significant ones of the month (USGS), by place. */
+    EARTHQUAKES,
+
     /** Cached NASA podcast episodes (F21), by title and description. */
     PODCASTS,
 }
@@ -60,6 +63,9 @@ sealed interface SearchTarget {
 
     /** Opens the comet's details (F18). */
     data class CometEntry(val designation: String) : SearchTarget
+
+    /** Opens the Live Earth events map on the quake (F19). */
+    data class EarthquakeEntry(val id: String) : SearchTarget
 
     /** Opens the podcast episode's screen (F21). */
     data class PodcastEpisodeEntry(val id: String) : SearchTarget

@@ -43,4 +43,7 @@ sealed interface SkyTarget {
 
     /** A comet F18 tracks, by its JPL designation ("2026 A2"). */
     data class Comet(val designation: String) : SkyTarget
+
+    /** The centre of the Milky Way, Sgr A*, which the Milky Way planner (F20) opens the map on. */
+    data object GalacticCentre : SkyTarget
 }

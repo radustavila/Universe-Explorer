@@ -39,4 +39,13 @@
     <string name="stargazing_alert_channel_description">Tells you when tonight looks clear and dark enough to observe from your place.</string>
     <string name="stargazing_alert_title">Clear night ahead</string>
     <string name="stargazing_alert_text">%1$s. Observing score: %2$d/100. Based on data from MET Norway.</string>
+
+    <!-- Strong-quake alert (F19). -->
+    <string name="earthquake_alert_channel_name">Strong earthquake alerts</string>
+    <string name="earthquake_alert_channel_description">Tells you about a magnitude 5+ earthquake within 500 km of your place, or a nearby quake USGS flags for a possible tsunami.</string>
+    <string name="earthquake_alert_title_nearby">Strong earthquake near you</string>
+    <string name="earthquake_alert_title_tsunami">Earthquake at sea, tsunami possible</string>
+    <!-- %1$s magnitude and place ("M 5.7, 61 km WNW of Leni, Italy"), %2$s distance from the user's place, %3$s local time. -->
+    <string name="earthquake_alert_text">%1$s: %2$s from your place, at %3$s. Data: U.S. Geological Survey.</string>
+    <string name="earthquake_alert_text_tsunami">%1$s: %2$s from your place, at %3$s. Check official tsunami warnings. Data: U.S. Geological Survey.</string>
 </resources>
