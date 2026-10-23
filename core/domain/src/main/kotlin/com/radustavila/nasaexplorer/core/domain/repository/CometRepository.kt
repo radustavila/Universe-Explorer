@@ -25,3 +25,16 @@ interface CometRepository {
      */
     suspend fun refresh(): DataResult<Int>
 }
+
+/**
+ * A debug-build switch for testing comets on the sky map and in the calendar, which normally show
+ * only comets predicted at [com.radustavila.nasaexplorer.core.model.CometVisibility.TELESCOPE_LIMIT]
+ * or brighter: most of the time there is none.
+ */
+interface CometDebugSettingsRepository {
+
+    /** True shows every cached comet there, however faint. Off until switched on. */
+    fun observeShowFaintComets(): Flow<Boolean>
+
+    suspend fun setShowFaintComets(enabled: Boolean)
+}

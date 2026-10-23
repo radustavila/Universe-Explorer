@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.core.testing.data
 import com.radustavila.nasaexplorer.core.model.Comet
 import com.radustavila.nasaexplorer.core.model.CometEphemerisPoint
 import com.radustavila.nasaexplorer.core.model.CometLocalSky
+import com.radustavila.nasaexplorer.core.model.CometSkyPosition
 import com.radustavila.nasaexplorer.core.model.CometTonight
 import com.radustavila.nasaexplorer.core.model.CometVisibility
 import com.radustavila.nasaexplorer.core.model.EquatorialCoordinate
@@ -58,6 +59,20 @@ object TestComets {
         peakMagnitude = comet.ephemeris.mapNotNull { it.magnitude }.minOrNull(),
         peakTime = comet.ephemeris.filter { it.magnitude != null }.minByOrNull { it.magnitude!! }?.time,
         sky = sky,
+    )
+
+    /** Where [comet] is on the sky map: a bright one by default, well up in the north-west. */
+    fun skyPosition(
+        comet: Comet = comet(),
+        magnitude: Double? = 8.4,
+        altitudeDegrees: Double = 52.0,
+        azimuthDegrees: Double = 310.0,
+    ) = CometSkyPosition(
+        designation = comet.designation,
+        name = comet.name,
+        horizontal = HorizontalCoordinate(altitudeDegrees = altitudeDegrees, azimuthDegrees = azimuthDegrees),
+        equatorial = EquatorialCoordinate(rightAscensionDegrees = 292.5, declinationDegrees = 59.8),
+        magnitude = magnitude,
     )
 
     fun localSky(

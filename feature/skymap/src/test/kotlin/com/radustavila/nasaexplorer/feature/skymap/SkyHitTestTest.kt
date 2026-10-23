@@ -1,5 +1,7 @@
 package com.radustavila.nasaexplorer.feature.skymap
 
+import com.radustavila.nasaexplorer.core.model.CometSkyPosition
+import com.radustavila.nasaexplorer.core.model.EquatorialCoordinate
 import com.radustavila.nasaexplorer.core.model.HorizontalCoordinate
 import com.radustavila.nasaexplorer.core.model.SatelliteSkyPosition
 import com.radustavila.nasaexplorer.core.model.SkyMapBodies
@@ -24,6 +26,15 @@ class SkyHitTestTest {
     private val bodies = SkyMapBodies(
         solarSystem = listOf(jupiter),
         satellites = listOf(SatelliteSkyPosition(25544, "ISS", HorizontalCoordinate(60.0, 200.0))),
+        comets = listOf(
+            CometSkyPosition(
+                designation = "12P",
+                name = "12P/Pons-Brooks",
+                horizontal = HorizontalCoordinate(20.0, 280.0),
+                equatorial = EquatorialCoordinate(30.0, 20.0),
+                magnitude = 7.0,
+            ),
+        ),
     )
 
     @Test
@@ -51,6 +62,13 @@ class SkyHitTestTest {
         val projection = lookingAt(60.0, 200.0)
 
         assertEquals(SkyTarget.Satellite(25544), SkyHitTest.find(500f, 1000f, 40f, sky, bodies, projection))
+    }
+
+    @Test
+    fun `a comet can be tapped`() {
+        val projection = lookingAt(20.0, 280.0)
+
+        assertEquals(SkyTarget.Comet("12P"), SkyHitTest.find(505f, 995f, 40f, sky, bodies, projection))
     }
 
     private fun lookingAt(altitude: Double, azimuth: Double) =

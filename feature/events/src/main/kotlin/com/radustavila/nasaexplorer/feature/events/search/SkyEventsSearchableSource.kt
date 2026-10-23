@@ -8,6 +8,7 @@ import com.radustavila.nasaexplorer.core.domain.search.SearchText
 import com.radustavila.nasaexplorer.core.domain.search.SearchableSource
 import com.radustavila.nasaexplorer.core.domain.search.readLocally
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSkyEventsUseCase
+import com.radustavila.nasaexplorer.core.model.CometPerihelion
 import com.radustavila.nasaexplorer.core.model.MeteorShowerPeak
 import com.radustavila.nasaexplorer.core.model.PlanetOpposition
 import com.radustavila.nasaexplorer.core.model.SearchHit
@@ -67,14 +68,16 @@ class SkyEventsSearchableSource @Inject constructor(
             SkyEventCategory.MOON -> R.string.sky_events_search_words_moon
             SkyEventCategory.PLANETS -> R.string.sky_events_search_words_planets
             SkyEventCategory.METEORS -> R.string.sky_events_search_words_meteors
+            SkyEventCategory.COMETS -> R.string.sky_events_search_words_comets
             SkyEventCategory.SEASONS -> R.string.sky_events_search_words_seasons
         },
     )
 
-    /** A name from the data worth showing and matching: the constellation, or the shower's parent body. */
+    /** A name from the data worth showing and matching: the constellation, the shower's parent body or the comet. */
     private fun SkyEvent.detail(): String? = when (this) {
         is PlanetOpposition -> constellation
         is MeteorShowerPeak -> parentBody
+        is CometPerihelion -> name
         else -> null
     }
 

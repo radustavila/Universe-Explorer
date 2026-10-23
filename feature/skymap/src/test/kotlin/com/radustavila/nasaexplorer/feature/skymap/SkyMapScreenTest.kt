@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.feature.skymap
 import androidx.compose.material3.Text
 import androidx.compose.ui.test.assertContentDescriptionEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -28,6 +29,7 @@ class SkyMapScreenTest {
     private val selections = mutableListOf<SkyTarget?>()
     private val offsets = mutableListOf<Duration>()
     private val nightModes = mutableListOf<Boolean>()
+    private val cometClicks = mutableListOf<String>()
 
     private fun show(
         uiState: SkyMapUiState,
@@ -46,6 +48,7 @@ class SkyMapScreenTest {
                     onTimeOffsetChange = { offsets += it },
                     onBackToNow = { offsets += Duration.ZERO },
                     onNightModeChange = { nightModes += it },
+                    onCometClick = { cometClicks += it },
                     locationSection = { Text("Pick a place") },
                 )
             }
@@ -93,6 +96,36 @@ class SkyMapScreenTest {
 
         composeTestRule.onNodeWithContentDescription("Close details").performClick()
         assertEquals(listOf<SkyTarget?>(null), selections)
+    }
+
+    @Test
+    fun `a selected comet shows its predicted brightness and opens its details`() {
+        show(
+            SkyMapFixture.state(
+                selected = SkyTarget.Comet("2026 B1"),
+                selectedConstellation = "Cet",
+                bodies = SkyMapFixture.bodiesWithComet,
+            ),
+        )
+
+        composeTestRule.onNodeWithText("C/2026 B1 (Lemmon)").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Comet in Cetus").assertIsDisplayed()
+        composeTestRule.onNodeWithText("22° above the horizon, towards the south-east").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Predicted magnitude 8.4").assertIsDisplayed()
+
+        composeTestRule.onNodeWithTag(SKY_MAP_COMET_DETAILS_TEST_TAG).assertTextEquals("Comet details").performClick()
+        assertEquals(listOf("2026 B1"), cometClicks)
+    }
+
+    @Test
+    fun `comets are found by search`() {
+        show(SkyMapFixture.state(bodies = SkyMapFixture.bodiesWithComet))
+
+        composeTestRule.onNodeWithContentDescription("Search the sky").performClick()
+        composeTestRule.onNodeWithTag(SKY_MAP_SEARCH_FIELD_TEST_TAG).performTextInput("lemmon")
+        composeTestRule.onNodeWithText("C/2026 B1 (Lemmon)").performClick()
+
+        assertEquals(listOf<SkyTarget?>(SkyTarget.Comet("2026 B1")), selections)
     }
 
     @Test

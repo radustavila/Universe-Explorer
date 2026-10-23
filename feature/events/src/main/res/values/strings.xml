@@ -19,6 +19,7 @@
     <string name="sky_events_category_moon">Moon</string>
     <string name="sky_events_category_planets">Planets</string>
     <string name="sky_events_category_meteors">Meteors</string>
+    <string name="sky_events_category_comets">Comets</string>
     <string name="sky_events_category_seasons">Seasons</string>
 
     <!-- List rows: one short line under the event's name. -->
@@ -76,6 +77,13 @@
     <string name="sky_events_elongation_angle">%1$s° from the Sun, its best showing</string>
     <!-- %1$s: a distance in astronomical units such as "8.43". -->
     <string name="sky_events_distance_au">%1$s AU from the Earth</string>
+    <string name="sky_events_comet_perihelion_meaning">The comet is at its closest to the Sun, around when it is usually brightest.</string>
+    <!-- %1$s: a distance in astronomical units such as "1.94". -->
+    <string name="sky_events_comet_sun_distance">%1$s AU from the Sun</string>
+    <!-- %1$s: a magnitude such as "8.4". -->
+    <string name="sky_events_comet_magnitude">Predicted magnitude %1$s</string>
+    <string name="sky_events_comet_prediction">Comet brightness predictions are often off by a magnitude or more.</string>
+    <string name="sky_events_comet_details">Comet details</string>
     <!-- %1$s: first day; %2$s: last day. -->
     <string name="sky_events_meteor_active">Active from %1$s to %2$s</string>
     <!-- %1$d: meteors an hour. -->
@@ -120,5 +128,6 @@
     <string name="sky_events_search_words_moon">moon phase lunar</string>
     <string name="sky_events_search_words_planets">planet planets</string>
     <string name="sky_events_search_words_meteors">meteor meteors shower shooting stars</string>
+    <string name="sky_events_search_words_comets">comet comets perihelion</string>
     <string name="sky_events_search_words_seasons">season equinox solstice</string>
 </resources>

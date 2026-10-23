@@ -15,6 +15,7 @@ import com.radustavila.nasaexplorer.core.model.SkyEvent
 import com.radustavila.nasaexplorer.core.model.SkyEventCategory
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.data.TestSkyEvents
+import com.radustavila.nasaexplorer.feature.events.component.SKY_EVENT_COMET_DETAILS_TEST_TAG
 import com.radustavila.nasaexplorer.feature.events.component.SKY_EVENT_REMINDER_SWITCH_TEST_TAG
 import java.time.Instant
 import java.time.LocalDate
@@ -51,6 +52,7 @@ class SkyEventsScreenTest {
     private var filter: SkyEventCategory? = null
     private var reminder: Pair<String, SkyEventReminderLead?>? = null
     private var placeClicks = 0
+    private val cometClicks = mutableListOf<String>()
 
     private fun show(state: SkyEventsUiState) {
         composeTestRule.setContent {
@@ -66,6 +68,7 @@ class SkyEventsScreenTest {
                     onEventClick = { clicked = it },
                     onSheetDismiss = {},
                     onReminderChange = { id, lead -> reminder = id to lead },
+                    onCometClick = { cometClicks += it },
                 )
             }
         }
@@ -115,6 +118,36 @@ class SkyEventsScreenTest {
 
         composeTestRule.onNodeWithTag(SKY_EVENT_REMINDER_SWITCH_TEST_TAG).performScrollTo().performClick()
         assertEquals(TestSkyEvents.perseids().id to null, reminder)
+    }
+
+    @Test
+    fun `a comet's perihelion is listed with its predicted brightness`() {
+        val week = SkyEventWeek(
+            LocalDate.parse("2026-08-16"),
+            LocalDate.parse("2026-08-22"),
+            listOf(TestSkyEvents.cometPerihelion()),
+        )
+        show(august.copy(weeks = listOf(week)))
+
+        composeTestRule.onNodeWithText("Comet Lemmon at perihelion").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Predicted magnitude 8.4").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Comets").performClick()
+        assertEquals(SkyEventCategory.COMETS, filter)
+    }
+
+    @Test
+    fun `a comet's sheet opens the comet and can remind of its perihelion`() {
+        val perihelion = TestSkyEvents.cometPerihelion()
+        show(august.copy(selected = perihelion))
+
+        composeTestRule.onNodeWithText("C/2026 B1 (Lemmon)").assertIsDisplayed()
+        composeTestRule.onNodeWithText("0.62 AU from the Sun").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Predicted magnitude 8.4").assertIsDisplayed()
+        composeTestRule.onNodeWithTag(SKY_EVENT_REMINDER_SWITCH_TEST_TAG).performScrollTo().performClick()
+        assertEquals(perihelion.id to SkyEventReminderLead.DEFAULT, reminder)
+
+        composeTestRule.onNodeWithTag(SKY_EVENT_COMET_DETAILS_TEST_TAG).performScrollTo().performClick()
+        assertEquals(listOf("2026 B1"), cometClicks)
     }
 
     @Test

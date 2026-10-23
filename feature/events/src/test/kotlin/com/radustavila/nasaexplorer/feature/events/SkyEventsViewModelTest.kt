@@ -3,10 +3,13 @@ package com.radustavila.nasaexplorer.feature.events
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.radustavila.nasaexplorer.core.domain.sky.SkyEventReminderLead
+import com.radustavila.nasaexplorer.core.model.CometPerihelion
 import com.radustavila.nasaexplorer.core.model.SkyEventCategory
+import com.radustavila.nasaexplorer.core.testing.data.TestComets
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.data.TestSkyEvents
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
+import java.time.Instant
 import java.time.LocalDate
 import java.time.YearMonth
 import java.util.Locale
@@ -109,6 +112,21 @@ class SkyEventsViewModelTest {
             assertEquals(YearMonth.of(2026, 12), state.month)
             assertEquals(TestSkyEvents.geminids(), state.selected)
             assertEquals(TestSky.location(), state.location)
+        }
+    }
+
+    @Test
+    fun `a bright comet's perihelion is in its month and opens from its id`() = runTest {
+        val comet = TestComets.comet(designation = "2026 B1", name = "C/2026 B1 (Lemmon)", peakMagnitude = 8.0)
+            .copy(perihelionTime = Instant.parse("2026-08-20T09:00:00Z"))
+        val fixture = SkyEventsFixture(comets = listOf(comet, TestComets.comet()))
+        val perihelionId = "comet-perihelion-2026-b1:2026-08-20"
+
+        viewModel(fixture, eventId = perihelionId).uiState.test {
+            val state = expectMostRecentItem()
+            val listed = state.weeks.flatMap { it.events }.filterIsInstance<CometPerihelion>()
+            assertEquals(listOf("2026 B1"), listed.map { it.designation })
+            assertEquals(perihelionId, state.selected?.id)
         }
     }
 

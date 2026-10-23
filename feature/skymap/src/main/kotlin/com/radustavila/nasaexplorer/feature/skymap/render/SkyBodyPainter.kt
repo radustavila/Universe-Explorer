@@ -17,7 +17,7 @@ import kotlin.math.hypot
 import kotlin.math.min
 import kotlin.math.tan
 
-/** The Sun, the Moon with its phase, the planets, the ISS and the selection ring or arrow. */
+/** The Sun, the Moon with its phase, the planets, the ISS, the comets and the selection ring or arrow. */
 internal class SkyBodyPainter(
     private val scope: DrawScope,
     private val frame: SkyFrame,
@@ -46,6 +46,12 @@ internal class SkyBodyPainter(
             drawCircle(frame.palette.iss, ISS_RADIUS_DP.dp.toPx(), center)
             drawCircle(frame.palette.iss, ring, center, style = Stroke(width = 1.dp.toPx()), alpha = ISS_RING_ALPHA)
             discs += center to ring
+        }
+        frame.bodies?.comets?.forEach { comet ->
+            if (!projection.project(SkyChart.apparent(comet.horizontal))) return@forEach
+            val center = Offset(projection.x, projection.y)
+            drawComet(center)
+            discs += center to cometRadius(this)
         }
     }
 
@@ -87,6 +93,29 @@ internal class SkyBodyPainter(
         }
     }
 
+    /**
+     * A fuzzy head with a short tail pointing away from the Sun, as real tails do. A symbol rather
+     * than the real tail, which can be far longer and fainter.
+     */
+    private fun DrawScope.drawComet(center: Offset) {
+        val sun = frame.bodies?.solarSystem?.firstOrNull { it.body == SolarSystemBody.SUN }
+        val awayFromSun = sun?.let { projection.projectUnbounded(it.direction()) }
+            ?.let { (x, y) -> atan2(center.y - y, center.x - x) } ?: 0f
+        val head = COMET_HEAD_DP.dp.toPx()
+        drawCircle(frame.palette.comet, head * COMET_HALO, center, alpha = COMET_HALO_ALPHA)
+        drawCircle(frame.palette.comet, head, center)
+        rotateRad(awayFromSun, pivot = center) {
+            val tailLength = COMET_TAIL_DP.dp.toPx()
+            val tail = Path().apply {
+                moveTo(center.x, center.y - head)
+                lineTo(center.x + tailLength, center.y)
+                lineTo(center.x, center.y + head)
+                close()
+            }
+            drawPath(tail, frame.palette.comet, alpha = COMET_TAIL_ALPHA)
+        }
+    }
+
     /** The lit part towards the Sun: a half disc and an elliptical terminator. */
     private fun DrawScope.drawMoon(center: Offset, radius: Float, moon: SolarSystemPosition) {
         drawCircle(frame.palette.moonDark, radius, center)
@@ -112,6 +141,11 @@ internal class SkyBodyPainter(
         private const val ISS_RADIUS_DP = 2.5f
         private const val ISS_RING_DP = 5.5f
         private const val ISS_RING_ALPHA = 0.6f
+        private const val COMET_HEAD_DP = 2.5f
+        private const val COMET_HALO = 2f
+        private const val COMET_HALO_ALPHA = 0.3f
+        private const val COMET_TAIL_DP = 14f
+        private const val COMET_TAIL_ALPHA = 0.55f
         private const val SELECTION_RADIUS_DP = 14f
         private const val SELECTION_STROKE_DP = 2f
         private const val HALF_LIT = 0.5f
@@ -126,6 +160,9 @@ internal class SkyBodyPainter(
         private const val MIN_PLANET_DP = 2f
         private const val BRIGHTEST_PLANET = -4.5
         private const val PLANET_RADIUS_PER_MAGNITUDE = 0.4f
+
+        /** Radius of a comet's head with its halo; its tail is left free for labels. */
+        fun cometRadius(scope: DrawScope): Float = with(scope) { (COMET_HEAD_DP * COMET_HALO).dp.toPx() }
 
         /** Outer radius of a satellite's marker: a dot in a ring. */
         fun satelliteRadius(scope: DrawScope): Float = with(scope) { ISS_RING_DP.dp.toPx() }

@@ -37,6 +37,7 @@ class SkyMapScreenshotTest {
                 onTimeOffsetChange = {},
                 onBackToNow = {},
                 onNightModeChange = {},
+                onCometClick = {},
                 locationSection = { Text("Location") },
             )
         }
@@ -63,6 +64,19 @@ class SkyMapScreenshotTest {
                 selected = SkyTarget.Body(SolarSystemBody.MOON),
                 selectedConstellation = "Sgr",
                 isNightMode = true,
+            ),
+        )
+    }
+
+    @Test
+    @Config(qualifiers = ScreenshotDevices.COMPACT)
+    fun skyMapCometSelected() {
+        capture(
+            "SkyMapComet",
+            SkyMapFixture.state(
+                selected = SkyTarget.Comet(SkyMapFixture.comet.designation),
+                selectedConstellation = "Cet",
+                bodies = SkyMapFixture.bodiesWithComet,
             ),
         )
     }

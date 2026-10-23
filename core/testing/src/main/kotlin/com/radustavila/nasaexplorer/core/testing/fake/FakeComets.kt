@@ -1,9 +1,11 @@
 package com.radustavila.nasaexplorer.core.testing.fake
 
 import com.radustavila.nasaexplorer.core.common.result.DataResult
+import com.radustavila.nasaexplorer.core.domain.repository.CometDebugSettingsRepository
 import com.radustavila.nasaexplorer.core.domain.repository.CometRepository
 import com.radustavila.nasaexplorer.core.domain.sky.CometSkyCalculator
 import com.radustavila.nasaexplorer.core.model.Comet
+import com.radustavila.nasaexplorer.core.model.CometSkyPosition
 import com.radustavila.nasaexplorer.core.model.CometTonight
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import java.time.Instant
@@ -35,10 +37,14 @@ class FakeCometRepository(initial: List<Comet> = emptyList()) : CometRepository 
 }
 
 /**
- * [CometSkyCalculator] answering from [answers] by designation, with the observer's place dropped
- * when there is none (as the real one leaves `sky` null); a comet without an answer is "out of date".
+ * [CometSkyCalculator] answering from [answers] and [skyPositions] by designation, with the
+ * observer's place dropped when there is none (as the real one leaves `sky` null); a comet without
+ * an answer is "out of date".
  */
-class FakeCometSkyCalculator(var answers: Map<String, CometTonight> = emptyMap()) : CometSkyCalculator {
+class FakeCometSkyCalculator(
+    var answers: Map<String, CometTonight> = emptyMap(),
+    var skyPositions: Map<String, CometSkyPosition> = emptyMap(),
+) : CometSkyCalculator {
 
     var lastObserver: GeoCoordinate? = null
         private set
@@ -47,5 +53,21 @@ class FakeCometSkyCalculator(var answers: Map<String, CometTonight> = emptyMap()
         lastObserver = observer
         val answer = answers[comet.designation] ?: return null
         return answer.copy(comet = comet, sky = answer.sky.takeIf { observer != null })
+    }
+
+    override fun skyPosition(comet: Comet, observer: GeoCoordinate, at: Instant): CometSkyPosition? {
+        lastObserver = observer
+        return skyPositions[comet.designation]
+    }
+}
+
+class FakeCometDebugSettingsRepository(initial: Boolean = false) : CometDebugSettingsRepository {
+
+    val showFaintComets = MutableStateFlow(initial)
+
+    override fun observeShowFaintComets(): Flow<Boolean> = showFaintComets
+
+    override suspend fun setShowFaintComets(enabled: Boolean) {
+        showFaintComets.value = enabled
     }
 }

@@ -1,15 +1,20 @@
 package com.radustavila.nasaexplorer.feature.events
 
 import com.radustavila.nasaexplorer.core.domain.usecase.FindSkyEventUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveCometMagnitudeLimitUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveCometPerihelionEventsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveObserverLocationUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSkyEventRemindersUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSkyEventsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveUpcomingSkyEventsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RescheduleSkyEventRemindersUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetSkyEventReminderUseCase
+import com.radustavila.nasaexplorer.core.model.Comet
 import com.radustavila.nasaexplorer.core.model.ObserverLocation
 import com.radustavila.nasaexplorer.core.model.SkyEvent
 import com.radustavila.nasaexplorer.core.testing.data.TestSkyEvents
+import com.radustavila.nasaexplorer.core.testing.fake.FakeCometDebugSettingsRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeCometRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSkyEventCalendar
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSkyEventReminderRepository
@@ -25,26 +30,33 @@ class SkyEventsFixture(
     events: List<SkyEvent> = TestSkyEvents.august2026(),
     now: Instant = Instant.parse("2026-08-10T12:00:00Z"),
     dispatcher: CoroutineDispatcher = Dispatchers.Unconfined,
+    comets: List<Comet> = emptyList(),
 ) {
     val clock = FakeTimeProvider(currentInstant = now)
     val locationRepository = FakeObserverLocationRepository(location)
     val calendar = FakeSkyEventCalendar(events)
     val reminders = FakeSkyEventReminderRepository()
     val scheduler = FakeSkyEventReminderScheduler()
+    val cometRepository = FakeCometRepository(comets)
+    private val cometEvents = ObserveCometPerihelionEventsUseCase(
+        cometRepository,
+        ObserveCometMagnitudeLimitUseCase(FakeCometDebugSettingsRepository()),
+    )
 
     private val reschedule = RescheduleSkyEventRemindersUseCase(
         reminders,
         calendar,
         locationRepository,
+        cometEvents,
         scheduler,
         clock,
         dispatcher,
     )
 
-    val observeSkyEvents = ObserveSkyEventsUseCase(calendar, locationRepository, dispatcher)
-    val observeUpcoming = ObserveUpcomingSkyEventsUseCase(calendar, locationRepository, clock, dispatcher)
+    val observeSkyEvents = ObserveSkyEventsUseCase(calendar, locationRepository, cometEvents, dispatcher)
+    val observeUpcoming = ObserveUpcomingSkyEventsUseCase(calendar, locationRepository, cometEvents, clock, dispatcher)
     val observeLocation = ObserveObserverLocationUseCase(locationRepository)
     val observeReminders = ObserveSkyEventRemindersUseCase(reminders)
     val setReminder = SetSkyEventReminderUseCase(reminders, reschedule)
-    val findEvent = FindSkyEventUseCase(calendar, locationRepository, dispatcher)
+    val findEvent = FindSkyEventUseCase(calendar, locationRepository, cometEvents, dispatcher)
 }

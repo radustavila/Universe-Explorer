@@ -71,6 +71,7 @@ const val SKY_EVENTS_LIST_TEST_TAG = "sky-events-list"
 fun SkyEventsScreen(
     onBackClick: () -> Unit,
     onSetLocation: () -> Unit,
+    onCometClick: (designation: String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SkyEventsViewModel = hiltViewModel(),
 ) {
@@ -86,6 +87,7 @@ fun SkyEventsScreen(
         onEventClick = viewModel::onEventClick,
         onSheetDismiss = viewModel::onSheetDismiss,
         onReminderChange = viewModel::onReminderChange,
+        onCometClick = onCometClick,
         modifier = modifier,
     )
 }
@@ -103,6 +105,7 @@ fun SkyEventsContent(
     onEventClick: (SkyEvent) -> Unit,
     onSheetDismiss: () -> Unit,
     onReminderChange: (String, SkyEventReminderLead?) -> Unit,
+    onCometClick: (designation: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -148,7 +151,7 @@ fun SkyEventsContent(
     }
 
     uiState.selected?.let { event ->
-        EventSheet(event, uiState, snackbarHostState, onSheetDismiss, onReminderChange)
+        EventSheet(event, uiState, snackbarHostState, onSheetDismiss, onReminderChange, onCometClick)
     }
 }
 
@@ -161,6 +164,7 @@ private fun EventSheet(
     snackbarHostState: SnackbarHostState,
     onDismiss: () -> Unit,
     onReminderChange: (String, SkyEventReminderLead?) -> Unit,
+    onCometClick: (designation: String) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val lead = uiState.reminders[event.id]
@@ -181,6 +185,7 @@ private fun EventSheet(
             reminderLead = lead,
             onReminderClick = reminder.onClick,
             onLeadChange = { onReminderChange(event.id, it) },
+            onCometClick = onCometClick,
             modifier = Modifier.verticalScroll(rememberScrollState()),
         )
     }

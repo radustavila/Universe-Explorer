@@ -54,6 +54,16 @@ class SkySearchTest {
     }
 
     @Test
+    fun `comets on the map are found by their full name`() {
+        val withComet = bodies.copy(comets = listOf(SkyMapFixture.comet))
+
+        val found = searchSky("2026 b1", catalog, withComet, names)
+
+        assertEquals(listOf(SkySearchResult(SkyTarget.Comet("2026 B1"), "C/2026 B1 (Lemmon)")), found)
+        assertTrue(search("lemmon").isEmpty())
+    }
+
+    @Test
     fun `blank queries find nothing`() {
         assertTrue(search("  ").isEmpty())
     }

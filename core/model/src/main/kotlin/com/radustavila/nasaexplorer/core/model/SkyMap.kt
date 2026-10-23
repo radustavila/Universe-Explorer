@@ -83,9 +83,25 @@ data class SatelliteSkyPosition(
     val horizontal: HorizontalCoordinate,
 )
 
+/** Where one of the comets F18 tracks is in the observer's sky at one instant. */
+data class CometSkyPosition(
+    /** JPL's designation ("2026 A2"), which opens the comet's details. */
+    val designation: String,
+    /** "C/2026 A2 (Bok)". */
+    val name: String,
+    /** Geometric, without atmospheric refraction. */
+    val horizontal: HorizontalCoordinate,
+    /** J2000, for the constellation it is in. */
+    val equatorial: EquatorialCoordinate,
+    /** Predicted total visual magnitude; null where JPL has no brightness model. */
+    val magnitude: Double?,
+)
+
 /** Everything on the sky map that moves against the stars, for one place and instant. */
 data class SkyMapBodies(
     val solarSystem: List<SolarSystemPosition>,
     /** Empty without orbital elements, or when they are too old to trust. */
     val satellites: List<SatelliteSkyPosition>,
+    /** The comets bright enough to look for (usually none), brightest first. */
+    val comets: List<CometSkyPosition> = emptyList(),
 )

@@ -54,6 +54,11 @@ class SkyEventsScreenshotTest {
 
     @Test
     @Config(qualifiers = ScreenshotDevices.COMPACT)
+    fun cometPerihelionDetails() =
+        captureDetails("SkyEventCometPerihelion", TestSkyEvents.cometPerihelion(), lead = null)
+
+    @Test
+    @Config(qualifiers = ScreenshotDevices.COMPACT)
     fun nextInTheSkyCard() {
         composeTestRule.captureComponent("NextInTheSkyCard", width = 380.dp) {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -114,6 +119,7 @@ class SkyEventsScreenshotTest {
                 onEventClick = {},
                 onSheetDismiss = {},
                 onReminderChange = { _, _ -> },
+                onCometClick = {},
             )
         }
     }
@@ -128,6 +134,7 @@ class SkyEventsScreenshotTest {
                 reminderLead = lead,
                 onReminderClick = {},
                 onLeadChange = {},
+                onCometClick = {},
             )
         }
     }
