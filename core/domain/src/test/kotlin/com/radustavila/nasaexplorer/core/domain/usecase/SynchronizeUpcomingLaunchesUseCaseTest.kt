@@ -3,8 +3,10 @@ package com.radustavila.nasaexplorer.core.domain.usecase
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidget
+import com.radustavila.nasaexplorer.core.domain.launch.LaunchReminder
 import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
 import com.radustavila.nasaexplorer.core.model.SyncSource
+import com.radustavila.nasaexplorer.core.testing.data.TestLaunches
 import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchReminderRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchReminderScheduler
@@ -12,8 +14,6 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
-import com.radustavila.nasaexplorer.core.domain.launch.LaunchReminder
-import com.radustavila.nasaexplorer.core.testing.data.TestLaunches
 import java.time.Duration
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals

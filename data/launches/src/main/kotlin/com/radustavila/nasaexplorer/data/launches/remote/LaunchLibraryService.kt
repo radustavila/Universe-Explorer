@@ -1,8 +1,8 @@
 package com.radustavila.nasaexplorer.data.launches.remote
 
 import com.radustavila.nasaexplorer.data.launches.remote.dto.AstronautListDto
-import com.radustavila.nasaexplorer.data.launches.remote.dto.LaunchListDto
 import com.radustavila.nasaexplorer.data.launches.remote.dto.LaunchDto
+import com.radustavila.nasaexplorer.data.launches.remote.dto.LaunchListDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

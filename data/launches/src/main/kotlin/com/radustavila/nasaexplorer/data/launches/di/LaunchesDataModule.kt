@@ -24,8 +24,8 @@ import com.radustavila.nasaexplorer.data.launches.local.LaunchLocalDataSource
 import com.radustavila.nasaexplorer.data.launches.local.LaunchesDatabase
 import com.radustavila.nasaexplorer.data.launches.local.PeopleInSpaceLocalDataSource
 import com.radustavila.nasaexplorer.data.launches.local.PersonInSpaceDao
-import com.radustavila.nasaexplorer.data.launches.local.RoomPeopleInSpaceLocalDataSource
 import com.radustavila.nasaexplorer.data.launches.local.RoomLaunchLocalDataSource
+import com.radustavila.nasaexplorer.data.launches.local.RoomPeopleInSpaceLocalDataSource
 import com.radustavila.nasaexplorer.data.launches.reminder.DataStoreLaunchReminderRepository
 import com.radustavila.nasaexplorer.data.launches.reminder.WorkManagerLaunchReminderScheduler
 import com.radustavila.nasaexplorer.data.launches.remote.LaunchLibraryService

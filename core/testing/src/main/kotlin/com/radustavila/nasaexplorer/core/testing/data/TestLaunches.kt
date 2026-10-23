@@ -14,6 +14,8 @@ import java.time.Instant
 
 object TestLaunches {
 
+    private val WINDOW_OPENS_BEFORE_NET: Duration = Duration.ofMinutes(5)
+
     val NOW: Instant = Instant.parse("2026-10-19T10:00:00Z")
 
     fun launch(
@@ -54,7 +56,7 @@ object TestLaunches {
         timeline: LaunchTimeline = LaunchTimeline.UPCOMING,
         landingSuccess: Boolean? = null,
     ): Launch = launch(id = id, net = net, status = status, timeline = timeline).copy(
-        windowStart = net.minus(Duration.ofMinutes(5)),
+        windowStart = net.minus(WINDOW_OPENS_BEFORE_NET),
         windowEnd = net.plus(Duration.ofHours(1)),
         probability = 85,
         mission = LaunchMission(

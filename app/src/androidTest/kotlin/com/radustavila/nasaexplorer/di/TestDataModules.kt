@@ -5,6 +5,8 @@ import com.radustavila.nasaexplorer.core.datastore.di.DataStoreBindingModule
 import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
 import com.radustavila.nasaexplorer.core.domain.earthquake.EarthquakeAlertRepository
 import com.radustavila.nasaexplorer.core.domain.earthquake.EarthquakeRepository
+import com.radustavila.nasaexplorer.core.domain.launch.LaunchReminderRepository
+import com.radustavila.nasaexplorer.core.domain.launch.LaunchReminderScheduler
 import com.radustavila.nasaexplorer.core.domain.location.CityDirectory
 import com.radustavila.nasaexplorer.core.domain.location.DeviceLocationProvider
 import com.radustavila.nasaexplorer.core.domain.location.ObserverLocationRepository
@@ -43,21 +45,23 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeDeviceLocationProvider
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthEventRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeAlertRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeRepository
-import com.radustavila.nasaexplorer.core.testing.fake.FakeNewsRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEpicRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEpicSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeExoplanetRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeFavoritesRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeIssPassReminderScheduler
-import com.radustavila.nasaexplorer.core.testing.fake.FakeSatellitePassReminderScheduler
+import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchReminderRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchReminderScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsPhotoRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeMarsSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNasaMediaRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
+import com.radustavila.nasaexplorer.core.testing.fake.FakeNewsRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakePeopleInSpaceRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeSatellitePassReminderScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSatelliteRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSkyPreferencesRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSmallBodiesRepository
@@ -69,13 +73,13 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTodayCardsRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeUserPreferencesRepository
 import com.radustavila.nasaexplorer.data.earthevents.di.EarthEventsDataModule
-import com.radustavila.nasaexplorer.data.news.di.NewsDataModule
 import com.radustavila.nasaexplorer.data.epic.di.EpicDataModule
 import com.radustavila.nasaexplorer.data.exoplanets.di.ExoplanetsDataModule
 import com.radustavila.nasaexplorer.data.launches.di.LaunchesDataModule
 import com.radustavila.nasaexplorer.data.mars.di.MarsDataModule
 import com.radustavila.nasaexplorer.data.nasa.di.NasaDataModule
 import com.radustavila.nasaexplorer.data.nasaimages.di.NasaImagesDataModule
+import com.radustavila.nasaexplorer.data.news.di.NewsDataModule
 import com.radustavila.nasaexplorer.data.sky.di.SkyDataModule
 import com.radustavila.nasaexplorer.data.smallbodies.di.SmallBodiesDataModule
 import com.radustavila.nasaexplorer.data.spaceweather.di.SpaceWeatherDataModule
@@ -120,7 +124,8 @@ object TestNasaDataModule {
 
 /**
  * Launches start empty, so the next-launches card stays hidden unless a test seeds the fake; so
- * does the crew list, which shares the Launch Library 2 module.
+ * does the crew list, which shares the Launch Library 2 module. Launch reminders stay in memory,
+ * without WorkManager.
  */
 @Module
 @TestInstallIn(components = [SingletonComponent::class], replaces = [LaunchesDataModule::class])
@@ -139,6 +144,14 @@ object TestLaunchesDataModule {
 
     @Provides
     fun providePeopleInSpaceRepository(fake: FakePeopleInSpaceRepository): PeopleInSpaceRepository = fake
+
+    @Provides
+    @Singleton
+    fun provideLaunchReminderRepository(): LaunchReminderRepository = FakeLaunchReminderRepository()
+
+    @Provides
+    @Singleton
+    fun provideLaunchReminderScheduler(): LaunchReminderScheduler = FakeLaunchReminderScheduler()
 }
 
 /**

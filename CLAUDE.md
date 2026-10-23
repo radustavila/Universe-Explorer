@@ -54,8 +54,14 @@ Clean Architecture, dependencies pointing inward:
   `ApodSyncWorker`, `WorkManagerSyncScheduler`, `ApodCacheEvictor`) on top of the API-agnostic `:core:network`
   (incl. per-host `RateLimitInterceptor`), `:core:database` (incl. the cross-source `favorite` table and
   `RoomFavoritesRepository`), `:core:datastore`, `:core:cache` (`CacheEvictor` + daily `CacheEvictionWorker`).
-  `:data:launches` (Launch Library 2) keeps its own small `launches.db`, refreshed from `ApodSyncWorker` at most
-  once an hour. `:data:earthevents` (NASA EONET) keeps `earth_events.db`, refreshed by its own 3-hourly
+  `:data:launches` (Launch Library 2) keeps its own small `launches.db` (schema v5 migrates; older ones rebuild):
+  the next 30 upcoming launches in `detailed` mode, refreshed from `ApodSyncWorker` and when the Launches screen
+  opens at most once an hour (the card reads the first 3 of the same rows), and the last 20 past ones
+  (`SyncSource.LAUNCHES_PAST`, only on screen open, at most every 6 h), one table told apart by `timeline`.
+  Launch reminders (F27) live in the `launch_reminders` DataStore with one WorkManager job
+  (`RemindOfLaunchesUseCase`): one `launches/{id}/` re-check about 60 min before NET, the notification 15 min
+  before, re-armed after every refresh; `LaunchLibraryBudgetTest` keeps a heavy day under 15 calls an hour,
+  shared with the card and the crew list. `:data:earthevents` (NASA EONET) keeps `earth_events.db`, refreshed by its own 3-hourly
   `EarthEventsSyncWorker` and when the events screen opens; the same database and worker hold the USGS
   earthquakes (F19: `2.5_week` + `significant_month`, `If-Modified-Since`, at most every 15 min,
   `SyncSource.EARTHQUAKES`), drawn on both Earth maps, and the opt-in strong-quake alert

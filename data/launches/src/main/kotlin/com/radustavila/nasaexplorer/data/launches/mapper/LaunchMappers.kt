@@ -57,15 +57,20 @@ fun LaunchDto.toEntityOrNull(timeline: String = LaunchEntity.TIMELINE_UPCOMING):
         missionType = mission?.type.cleaned(),
         orbitName = mission?.orbit?.name.cleaned(),
         orbitAbbrev = mission?.orbit?.abbrev.cleaned(),
-        padLatitude = pad?.latitude?.takeIf { pad.longitude != null && it in -90.0..90.0 },
-        padLongitude = pad?.longitude?.takeIf { pad.latitude != null && it in -180.0..180.0 },
+        padLatitude = pad?.latitude?.takeIf { pad.longitude != null && it in -MAX_LATITUDE..MAX_LATITUDE },
+        padLongitude = pad?.longitude?.takeIf { pad.latitude != null && it in -MAX_LONGITUDE..MAX_LONGITUDE },
         rocketName = configuration?.name.cleaned(),
         rocketVariant = configuration?.variant.cleaned(),
         boosters = json.encodeToString(rocket?.launcherStages.orEmpty().map { it.toStored() }),
         webcasts = json.encodeToString(
             vidUrls.mapNotNull { video ->
                 video.url?.takeIf(String::isNotBlank)?.let {
-                    StoredWebcast(url = it, title = video.title.cleaned(), publisher = video.publisher.cleaned(), live = video.live == true)
+                    StoredWebcast(
+                        url = it,
+                        title = video.title.cleaned(),
+                        publisher = video.publisher.cleaned(),
+                        live = video.live == true,
+                    )
                 }
             },
         ),
@@ -186,6 +191,8 @@ private fun AgencyDto.displayName(): String? {
 
 private const val MAX_PROVIDER_NAME_LENGTH = 24
 private const val PERCENT = 100
+private const val MAX_LATITUDE = 90.0
+private const val MAX_LONGITUDE = 180.0
 
 /**
  * A page for people: Space Launch Now, The Space Devs' own site on top of Launch Library 2. The API

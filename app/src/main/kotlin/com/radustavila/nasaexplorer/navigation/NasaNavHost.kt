@@ -7,15 +7,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.radustavila.nasaexplorer.R
-import com.radustavila.nasaexplorer.feature.debug.debugScreen
-import com.radustavila.nasaexplorer.feature.details.detailsPane
-import com.radustavila.nasaexplorer.feature.details.detailsScreen
-import com.radustavila.nasaexplorer.feature.details.navigateToDetails
 import com.radustavila.nasaexplorer.feature.comets.cometDetailsScreen
 import com.radustavila.nasaexplorer.feature.comets.cometsScreen
 import com.radustavila.nasaexplorer.feature.comets.navigateToCometDetails
 import com.radustavila.nasaexplorer.feature.comets.navigateToComets
 import com.radustavila.nasaexplorer.feature.comets.sky.CometsTonightCard
+import com.radustavila.nasaexplorer.feature.debug.debugScreen
+import com.radustavila.nasaexplorer.feature.details.detailsPane
+import com.radustavila.nasaexplorer.feature.details.detailsScreen
+import com.radustavila.nasaexplorer.feature.details.navigateToDetails
 import com.radustavila.nasaexplorer.feature.dsn.dsnScreen
 import com.radustavila.nasaexplorer.feature.earth.EarthTodayRoute
 import com.radustavila.nasaexplorer.feature.earth.earthTodayScreen
@@ -31,6 +31,10 @@ import com.radustavila.nasaexplorer.feature.favorites.FavoritesRoute
 import com.radustavila.nasaexplorer.feature.favorites.favoritesScreen
 import com.radustavila.nasaexplorer.feature.feed.FeedRoute
 import com.radustavila.nasaexplorer.feature.feed.feedScreen
+import com.radustavila.nasaexplorer.feature.launches.launchDetailsPane
+import com.radustavila.nasaexplorer.feature.launches.launchDetailsScreen
+import com.radustavila.nasaexplorer.feature.launches.launchesScreen
+import com.radustavila.nasaexplorer.feature.launches.navigateToLaunchDetails
 import com.radustavila.nasaexplorer.feature.mars.marsPhotoScreen
 import com.radustavila.nasaexplorer.feature.mars.marsPhotosScreen
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
@@ -92,6 +96,15 @@ fun NasaNavHost(
                     openInPane = { date, navOptions -> navigateToDetails(date, navOptions) },
                 ) { pane, onBackClick ->
                     detailsPane(onBackClick = onBackClick, onApodClick = pane::navigateToDetails)
+                },
+            )
+            launchesScreen(
+                onBackClick = navController::popBackStack,
+                onLaunchClick = navController::navigateToLaunchDetails,
+                listDetail = listDetail(
+                    openInPane = { id, navOptions -> navigateToLaunchDetails(id, navOptions) },
+                ) { _, onBackClick ->
+                    launchDetailsPane(onBackClick = onBackClick)
                 },
             )
         }
@@ -236,6 +249,7 @@ fun NasaNavHost(
         exoplanetDetailsScreen(onBackClick = navController::popBackStack)
         newsItemScreen(onBackClick = navController::popBackStack)
         podcastEpisodeScreen(onBackClick = navController::popBackStack)
+        launchDetailsScreen(onBackClick = navController::popBackStack)
         // From Settings and from Today's header, without switching tabs.
         customizeTodayScreen(onBackClick = navController::popBackStack)
         searchScreen(

@@ -42,6 +42,7 @@ class BackupRulesTest {
         "file" to "datastore/today_cards.preferences_pb",
         "file" to "datastore/sky_event_reminders.preferences_pb",
         "file" to "datastore/earthquake_alerts.preferences_pb",
+        "file" to "datastore/launch_reminders.preferences_pb",
     )
 
     @Test

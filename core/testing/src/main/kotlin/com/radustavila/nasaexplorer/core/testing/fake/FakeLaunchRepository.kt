@@ -47,7 +47,9 @@ class FakeLaunchRepository : LaunchRepository {
     override fun observePastLaunches(): Flow<List<Launch>> = past
 
     override fun observeLaunch(id: String): Flow<Launch?> =
-        combine(upcoming, past) { ahead, flown -> ahead.firstOrNull { it.id == id } ?: flown.firstOrNull { it.id == id } }
+        combine(upcoming, past) { ahead, flown ->
+            ahead.firstOrNull { it.id == id } ?: flown.firstOrNull { it.id == id }
+        }
 
     /** How long a refresh takes, in virtual time. */
     var refreshDelayMillis: Long = 0
