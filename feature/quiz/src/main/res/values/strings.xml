@@ -150,6 +150,13 @@
     <string name="quiz_q_next_launch">Which rocket is scheduled to launch next?</string>
     <!-- %1$s mission, %2$s day and time, %3$s launch pad. -->
     <string name="quiz_e_next_launch">%1$s is scheduled for %2$s from %3$s. Launch dates often slip. Data: Launch Library 2.</string>
+    <string name="quiz_answer_yes">Yes</string>
+    <string name="quiz_answer_no">No</string>
+    <!-- %1$s booster serial ("B1090"), %2$s launch ("Falcon 9 Block 5 | Bandwagon 5"), %3$s its day. -->
+    <string name="quiz_q_booster_landed">Did booster %1$s land after the %2$s launch on %3$s?</string>
+    <!-- %1$s booster serial, %2$s landing place ("Of Course I Still Love You"). -->
+    <string name="quiz_e_booster_landed_yes">Yes: %1$s came back down on %2$s, ready to fly again. Data: Launch Library 2.</string>
+    <string name="quiz_e_booster_landed_no">No: %1$s was lost trying to land on %2$s. Data: Launch Library 2.</string>
     <!-- %1$s spacecraft, %2$s distance. -->
     <string name="quiz_f_spacecraft_distance">%1$s is %2$s from Earth right now, farther than any other spacecraft.</string>
     <!-- %1$s the number of people, already formatted. -->

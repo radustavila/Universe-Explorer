@@ -2,6 +2,7 @@ package com.radustavila.nasaexplorer.data.quiz.generator
 
 import com.radustavila.nasaexplorer.core.model.ExoplanetCatalogStats
 import com.radustavila.nasaexplorer.core.model.GalleryRail
+import com.radustavila.nasaexplorer.core.model.LaunchTimeline.PAST
 import com.radustavila.nasaexplorer.core.model.MoonPhase
 import com.radustavila.nasaexplorer.core.model.Planet
 import com.radustavila.nasaexplorer.core.model.QuizArg
@@ -236,6 +237,37 @@ class QuizGeneratorsTest {
         repository.setLaunches(TestLaunches.upcoming(4))
 
         assertTrue(LaunchQuizSource(repository).questions(Random(8), TestLaunches.NOW).isEmpty())
+    }
+
+    @Test
+    fun `a past launch's booster landing is asked as yes or no, answered as Launch Library 2 reports`() = runTest {
+        val repository = FakeLaunchRepository()
+        val source = BoosterLandingQuizSource(repository)
+        val yesterday = TestLaunches.NOW.minus(Duration.ofDays(1))
+        repository.setPastLaunches(
+            listOf(
+                TestLaunches.detailed(id = "lost", net = yesterday, timeline = PAST, landingSuccess = false),
+                // Not reported yet: never asked.
+                TestLaunches.detailed(id = "unknown", net = yesterday, timeline = PAST, landingSuccess = null),
+            ),
+        )
+
+        val question = source.questions(Random(10), TestLaunches.NOW).single()
+
+        val answers = question.answers.map { (it as QuizText.Phrase).phrase }
+        assertEquals(listOf(QuizPhrase.ANSWER_YES, QuizPhrase.ANSWER_NO), answers)
+        assertEquals(1, question.correctIndex)
+        val explanation = question.explanation as QuizText.Phrase
+        assertEquals(QuizPhrase.BOOSTER_LANDED_EXPLANATION_NO, explanation.phrase)
+        assertEquals(listOf(QuizArg.Text("B1090"), QuizArg.Text("Of Course I Still Love You")), explanation.args)
+    }
+
+    @Test
+    fun `no past launch with a reported landing gives no booster question`() = runTest {
+        val repository = FakeLaunchRepository()
+        repository.setPastLaunches(TestLaunches.past(3))
+
+        assertTrue(BoosterLandingQuizSource(repository).questions(Random(10), TestLaunches.NOW).isEmpty())
     }
 
     @Test

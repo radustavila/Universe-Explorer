@@ -173,5 +173,54 @@ class LaunchQuizSource @Inject constructor(
     }
 }
 
+/**
+ * "Did this booster land?" over the cached past launches (F27): a reusable first stage whose
+ * landing was tried and whose outcome Launch Library 2 reports.
+ */
+class BoosterLandingQuizSource @Inject constructor(
+    private val repository: LaunchRepository,
+) : QuizQuestionSource {
+
+    override val key: String = "booster-landings"
+
+    override val topics: Set<QuizTopic> = setOf(QuizTopic.MISSIONS)
+
+    override suspend fun questions(random: Random, now: Instant): List<QuizQuestion> {
+        val landings = repository.observePastLaunches().first()
+            .filter { it.net.isBefore(now) }
+            .flatMap { launch -> launch.boosters.map { launch to it } }
+            .filter { (_, booster) ->
+                val landing = booster.landing
+                booster.serial != null && landing?.attempt == true && landing.success != null &&
+                    landing.locationName != null
+            }
+        val (launch, booster) = landings.randomOrNull(random) ?: return emptyList()
+        val landing = checkNotNull(booster.landing)
+        val landed = landing.success == true
+        val serial = QuizArg.Text(checkNotNull(booster.serial))
+        return listOf(
+            QuizQuestion(
+                id = "booster-landed-${launch.id}-${booster.serial}",
+                topic = QuizTopic.MISSIONS,
+                difficulty = QuizDifficulty.MEDIUM,
+                prompt = QuizText.Phrase(
+                    QuizPhrase.BOOSTER_LANDED_QUESTION,
+                    serial,
+                    QuizArg.Text(launch.name),
+                    QuizArg.Day(launch.net),
+                ),
+                answers = listOf(QuizText.Phrase(QuizPhrase.ANSWER_YES), QuizText.Phrase(QuizPhrase.ANSWER_NO)),
+                correctIndex = if (landed) 0 else 1,
+                explanation = QuizText.Phrase(
+                    if (landed) QuizPhrase.BOOSTER_LANDED_EXPLANATION_YES else QuizPhrase.BOOSTER_LANDED_EXPLANATION_NO,
+                    serial,
+                    QuizArg.Text(checkNotNull(landing.locationName)),
+                ),
+                sourceUrl = launch.pageUrl.takeIf { it.startsWith("https://") },
+            ),
+        )
+    }
+}
+
 private const val HORIZONS_PAGE = "https://ssd.jpl.nasa.gov/horizons/"
 private const val SBDB_LOOKUP = "https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr="
