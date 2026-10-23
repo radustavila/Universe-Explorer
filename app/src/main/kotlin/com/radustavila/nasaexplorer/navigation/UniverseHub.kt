@@ -31,6 +31,9 @@ import com.radustavila.nasaexplorer.feature.news.navigateToNews
 import com.radustavila.nasaexplorer.feature.search.navigateToSearch
 import com.radustavila.nasaexplorer.feature.sky.navigateToSkyTonight
 import com.radustavila.nasaexplorer.feature.skymap.navigateToSkyMap
+import com.radustavila.nasaexplorer.feature.universe.navigateToGallerySearch
+import com.radustavila.nasaexplorer.feature.webb.WebbNowCard
+import com.radustavila.nasaexplorer.feature.webb.navigateToWebb
 import com.radustavila.nasaexplorer.ui.hub.HubEntry
 import com.radustavila.nasaexplorer.ui.hub.HubEntryCards
 
@@ -111,13 +114,20 @@ private fun observingHubEntries(navController: NavHostController): List<HubEntry
 )
 
 /**
- * The gallery's header slot: the other Universe entries, then the rails that are not the library's
- * (Mars). The header draws its own side margins, so rails can scroll edge to edge.
+ * The gallery's header slot: the "Webb right now" card (F24), the other Universe entries, then the
+ * rails that are not the library's (Mars). The header draws its own side margins, so rails can
+ * scroll edge to edge.
  */
 internal fun universeHeader(navController: NavHostController): @Composable () -> Unit {
     val entries = universeHubEntries(navController)
     return {
         Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+            // Live, so above the entries rather than below the ten of them.
+            WebbNowCard(
+                onOpen = { navController.navigateToWebb() },
+                onTargetClick = { query -> navController.navigateToGallerySearch(query) },
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
             if (entries.isNotEmpty()) HubEntryCards(entries, Modifier.padding(horizontal = 16.dp))
             MarsRail(
                 onPhotoClick = navController::navigateToMarsPhoto,
