@@ -19,6 +19,7 @@ import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.TouchApp
+import androidx.compose.material.icons.outlined.ViewInAr
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
@@ -50,12 +51,17 @@ const val SKY_MAP_SEARCH_FIELD_TEST_TAG = "sky-map-search-field"
 private val TOP_BAR_MAX_WIDTH = 720.dp
 private val RESULTS_MAX_HEIGHT = 360.dp
 
-/** Back, title or search field, and the switches for compass and night mode, over the sky. */
+/**
+ * Back, title or search field, and the switches for compass, AR and night mode, over the sky. Red
+ * night mode is off while AR shows the camera, whose bright picture spoils dark-adapted eyes anyway.
+ */
 @Composable
 internal fun SkyMapTopBar(
     uiState: SkyMapUiState,
     camera: SkyCameraState,
     hasCompass: Boolean,
+    isArOn: Boolean,
+    onArClick: () -> Unit,
     onBackClick: () -> Unit,
     onSelect: (SkyTarget?) -> Unit,
     onNightModeChange: (Boolean) -> Unit,
@@ -87,7 +93,8 @@ internal fun SkyMapTopBar(
                     Title(canSearch = uiState.sky != null, onSearchClick = { isSearching = true })
                 }
                 if (hasCompass) CompassToggle(camera)
-                NightModeToggle(uiState.isNightMode, onNightModeChange)
+                ArToggle(isArOn, onArClick)
+                NightModeToggle(uiState.isNightMode && !isArOn, onNightModeChange, enabled = !isArOn)
             }
         }
         val sky = uiState.sky
@@ -155,8 +162,18 @@ private fun CompassToggle(camera: SkyCameraState) {
 }
 
 @Composable
-private fun NightModeToggle(isNightMode: Boolean, onNightModeChange: (Boolean) -> Unit) {
-    IconToggleButton(checked = isNightMode, onCheckedChange = onNightModeChange) {
+private fun ArToggle(isArOn: Boolean, onArClick: () -> Unit) {
+    IconToggleButton(checked = isArOn, onCheckedChange = { onArClick() }) {
+        Icon(
+            imageVector = Icons.Outlined.ViewInAr,
+            contentDescription = stringResource(if (isArOn) R.string.sky_map_ar_off else R.string.sky_map_ar_on),
+        )
+    }
+}
+
+@Composable
+private fun NightModeToggle(isNightMode: Boolean, onNightModeChange: (Boolean) -> Unit, enabled: Boolean) {
+    IconToggleButton(checked = isNightMode, onCheckedChange = onNightModeChange, enabled = enabled) {
         Icon(
             imageVector = Icons.Outlined.DarkMode,
             contentDescription = stringResource(

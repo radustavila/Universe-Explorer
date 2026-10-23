@@ -1,10 +1,17 @@
 package com.radustavila.nasaexplorer.feature.skymap
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.radustavila.nasaexplorer.core.model.SolarSystemBody
 import com.radustavila.nasaexplorer.core.screenshottesting.ScreenshotDevices
 import com.radustavila.nasaexplorer.core.skymap.SkyView
+import com.radustavila.nasaexplorer.feature.skymap.ar.ArLens
+import com.radustavila.nasaexplorer.feature.skymap.ar.SkyArState
 import com.radustavila.nasaexplorer.core.screenshottesting.captureScreen
 import org.junit.Rule
 import org.junit.Test
@@ -25,6 +32,7 @@ class SkyMapScreenshotTest {
         name: String,
         uiState: SkyMapUiState,
         camera: SkyCameraState = SkyCameraState(CameraMode.TOUCH, azimuthDegrees = 150.0, altitudeDegrees = 30.0),
+        ar: SkyArState = SkyArState(),
     ) {
         composeTestRule.captureScreen(name) {
             SkyMapContent(
@@ -39,6 +47,17 @@ class SkyMapScreenshotTest {
                 onNightModeChange = {},
                 onCometClick = {},
                 locationSection = { Text("Location") },
+                ar = ar,
+                arCamera = { modifier ->
+                    // A dusk sky over a dark skyline stands in for the camera's picture.
+                    val picture = Brush.verticalGradient(
+                        0f to DUSK_TOP,
+                        SKYLINE_TOP to DUSK_LOW,
+                        SKYLINE_TOP to SKYLINE,
+                    )
+                    Box(modifier.background(picture))
+                    LaunchedEffect(Unit) { ar.onCameraReady(ArLens(fieldOfViewDegrees = 34.0)) }
+                },
             )
         }
     }
@@ -88,5 +107,29 @@ class SkyMapScreenshotTest {
         val compass = SkyCameraState(CameraMode.COMPASS).apply { sensorView = SkyView.looking(90.0, 30.0) }
         val vega = SkyTarget.StarTarget(SkyMapFixture.starIndex("Vega"))
         capture("SkyMapArrow", SkyMapFixture.state(selected = vega), compass)
+    }
+
+    @Test
+    @Config(qualifiers = ScreenshotDevices.COMPACT)
+    fun skyMapOverTheCamera() {
+        // AR: the map drawn as the lens sees it, over the camera, with the Moon selected.
+        val compass = SkyCameraState(CameraMode.COMPASS).apply { sensorView = SkyView.looking(195.0, 18.0) }
+        capture(
+            "SkyMapAr",
+            SkyMapFixture.state(
+                selected = SkyTarget.Body(SolarSystemBody.MOON),
+                selectedConstellation = "Sgr",
+                isNightMode = true,
+            ),
+            compass,
+            SkyArState().apply { turnOn(nowMillis = 0) },
+        )
+    }
+
+    private companion object {
+        val DUSK_TOP = Color(0xFF14233F)
+        val DUSK_LOW = Color(0xFF5B5470)
+        val SKYLINE = Color(0xFF121212)
+        const val SKYLINE_TOP = 0.62f
     }
 }

@@ -1,6 +1,7 @@
 package com.radustavila.nasaexplorer.feature.skymap
 
 import android.hardware.GeomagneticField
+import android.os.SystemClock
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,8 +21,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -32,6 +35,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.motion.rememberReducedMotion
 import com.radustavila.nasaexplorer.core.model.SolarSystemBody
+import com.radustavila.nasaexplorer.feature.skymap.ar.ArBar
+import com.radustavila.nasaexplorer.feature.skymap.ar.ArCameraPreview
+import com.radustavila.nasaexplorer.feature.skymap.ar.ArProblem
+import com.radustavila.nasaexplorer.feature.skymap.ar.ArProblemCard
+import com.radustavila.nasaexplorer.feature.skymap.ar.SkyArState
+import com.radustavila.nasaexplorer.feature.skymap.ar.rememberArToggle
+import com.radustavila.nasaexplorer.feature.skymap.ar.rememberSkyArState
 import com.radustavila.nasaexplorer.feature.skymap.render.SkyPalette
 import com.radustavila.nasaexplorer.feature.skymap.render.direction
 import com.radustavila.nasaexplorer.feature.skymap.sensor.hasRotationSensor
@@ -39,6 +49,7 @@ import com.radustavila.nasaexplorer.feature.skymap.sensor.rememberDeviceOrientat
 import java.time.Duration
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import kotlinx.coroutines.delay
 
 /**
  * The sky map. [locationSection] lets the user choose a place when none is saved (Sky tonight's
@@ -61,11 +72,28 @@ fun SkyMapScreen(
             GeomagneticField(it.latitude.toFloat(), it.longitude.toFloat(), 0f, System.currentTimeMillis()).declination
         } ?: 0f
     }
+    val ar = rememberSkyArState()
     val orientation = rememberDeviceOrientation(
         enabled = hasSensor && camera.mode == CameraMode.COMPASS,
         declinationDegrees = declination,
-        onView = { camera.sensorView = it },
+        onView = {
+            camera.sensorView = it
+            if (ar.isOn) ar.onView(it.forward, SystemClock.elapsedRealtime())
+        },
     )
+    val toggleAr = rememberArToggle(ar, hasRotationSensor = hasSensor) {
+        // The camera shows the sky now, so the map does too, aimed by the phone.
+        camera.mode = CameraMode.COMPASS
+        viewModel.onBackToNow()
+    }
+    if (ar.isOn) {
+        LaunchedEffect(ar) {
+            while (true) {
+                delay(STILL_CHECK_MILLIS)
+                if (ar.isStill(SystemClock.elapsedRealtime())) ar.turnOff(ArProblem.TURNED_OFF_WHILE_STILL)
+            }
+        }
+    }
     SkyMapContent(
         uiState = uiState,
         camera = camera,
@@ -79,9 +107,31 @@ fun SkyMapScreen(
         onCometClick = onCometClick,
         locationSection = locationSection,
         modifier = modifier,
+        ar = ar,
+        onArClick = toggleAr,
+        arCamera = { ArCameraPreview(ar, it) },
     )
 }
 
+/** Ties the map to the camera while AR is on: its lens, and AR's end when the map is moved by touch. */
+@Composable
+private fun LinkArToCamera(ar: SkyArState, camera: SkyCameraState) {
+    LaunchedEffect(ar, camera) {
+        // The map takes the lens's field of view once the camera runs, and lets it go with AR.
+        snapshotFlow { ar.fieldOfViewDegrees.takeIf { ar.isOn } }.collect { camera.arFieldOfViewDegrees = it }
+    }
+    LaunchedEffect(ar, camera) {
+        snapshotFlow { camera.mode }.collect { if (it != CameraMode.COMPASS && ar.isOn) ar.turnOff() }
+    }
+}
+
+private const val STILL_CHECK_MILLIS = 10_000L
+private val AR_SCRIM = Color.Black.copy(alpha = 0.3f)
+
+/**
+ * The map and its controls. With [ar] on, [arCamera] (CameraX on a device, a stand-in in tests)
+ * fills the background under a scrim, and the map is drawn over it as the lens sees the sky.
+ */
 @Composable
 internal fun SkyMapContent(
     uiState: SkyMapUiState,
@@ -96,11 +146,21 @@ internal fun SkyMapContent(
     onCometClick: (designation: String) -> Unit,
     locationSection: @Composable () -> Unit,
     modifier: Modifier = Modifier,
+    ar: SkyArState = remember { SkyArState() },
+    onArClick: () -> Unit = {},
+    arCamera: @Composable (Modifier) -> Unit = {},
 ) {
-    val palette = if (uiState.isNightMode) SkyPalette.NIGHT else SkyPalette.REGULAR
-    SkyMapTheme(isNightMode = uiState.isNightMode) {
+    val isNightMode = uiState.isNightMode && !ar.isOn
+    val palette = when {
+        ar.isOn -> SkyPalette.AR
+        isNightMode -> SkyPalette.NIGHT
+        else -> SkyPalette.REGULAR
+    }
+    LinkArToCamera(ar, camera)
+    SkyMapTheme(isNightMode = isNightMode) {
         val sun = uiState.bodies?.solarSystem?.firstOrNull { it.body == SolarSystemBody.SUN }
-        Box(modifier.fillMaxSize().background(palette.background(sun?.horizontal?.altitudeDegrees))) {
+        val background = if (ar.isOn) Color.Black else palette.background(sun?.horizontal?.altitudeDegrees)
+        Box(modifier.fillMaxSize().background(background)) {
             val sky = uiState.sky
             when {
                 !uiState.isLocationLoaded -> Unit
@@ -114,6 +174,8 @@ internal fun SkyMapContent(
                 else -> SkyMapLayers(
                     uiState = uiState,
                     camera = camera,
+                    ar = ar,
+                    arCamera = arCamera,
                     palette = palette,
                     onSelect = onSelect,
                     onTimeOffsetChange = onTimeOffsetChange,
@@ -123,15 +185,26 @@ internal fun SkyMapContent(
                     isCompassUnsure = isCompassUnsure,
                 )
             }
-            SkyMapTopBar(
-                uiState = uiState,
-                camera = camera,
-                hasCompass = hasCompass,
-                onBackClick = onBackClick,
-                onSelect = onSelect,
-                onNightModeChange = onNightModeChange,
-                modifier = Modifier.align(Alignment.TopCenter),
-            )
+            Column(Modifier.align(Alignment.TopCenter), horizontalAlignment = Alignment.CenterHorizontally) {
+                SkyMapTopBar(
+                    uiState = uiState,
+                    camera = camera,
+                    hasCompass = hasCompass,
+                    isArOn = ar.isOn,
+                    onArClick = onArClick,
+                    onBackClick = onBackClick,
+                    onSelect = onSelect,
+                    onNightModeChange = onNightModeChange,
+                )
+                ar.problem?.let { problem ->
+                    ArProblemCard(
+                        problem = problem,
+                        onTurnOn = onArClick,
+                        onDismiss = ar::dismissProblem,
+                        modifier = Modifier.widthIn(max = 560.dp).padding(horizontal = 12.dp, vertical = 8.dp),
+                    )
+                }
+            }
         }
     }
 }
@@ -140,6 +213,8 @@ internal fun SkyMapContent(
 private fun SkyMapLayers(
     uiState: SkyMapUiState,
     camera: SkyCameraState,
+    ar: SkyArState,
+    arCamera: @Composable (Modifier) -> Unit,
     palette: SkyPalette,
     onSelect: (SkyTarget?) -> Unit,
     onTimeOffsetChange: (Duration) -> Unit,
@@ -162,10 +237,16 @@ private fun SkyMapLayers(
         }
     }
     Box(Modifier.fillMaxSize()) {
+        if (ar.isOn) {
+            // The scrim keeps lines and labels readable over a bright picture.
+            arCamera(Modifier.fillMaxSize())
+            Box(Modifier.fillMaxSize().background(AR_SCRIM))
+        }
         SkyMapCanvas(
             sky = sky,
             bodies = uiState.bodies,
             camera = camera,
+            ar = ar,
             selected = uiState.selected,
             palette = palette,
             names = names,
@@ -200,11 +281,8 @@ private fun SkyMapLayers(
                     onCometDetails = onCometClick,
                 )
             }
-            TimeBar(
-                uiState = uiState,
-                onTimeOffsetChange = onTimeOffsetChange,
-                onBackToNow = onBackToNow,
-            )
+            // AR shows the sky as it is now: no time travel over the camera.
+            if (ar.isOn) ArBar(ar, camera) else TimeBar(uiState, onTimeOffsetChange, onBackToNow)
         }
     }
 }
