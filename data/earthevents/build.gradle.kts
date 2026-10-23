@@ -14,6 +14,7 @@ android {
 
     defaultConfig {
         buildConfigField("String", "EONET_BASE_URL", "\"https://eonet.gsfc.nasa.gov/api/v3/\"")
+        buildConfigField("String", "USGS_BASE_URL", "\"https://earthquake.usgs.gov/earthquakes/feed/v1.0/\"")
     }
 }
 
@@ -31,6 +32,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.okhttp)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.datastore.preferences)
 
     testImplementation(projects.core.testing)
     testImplementation(libs.okhttp.mockwebserver)

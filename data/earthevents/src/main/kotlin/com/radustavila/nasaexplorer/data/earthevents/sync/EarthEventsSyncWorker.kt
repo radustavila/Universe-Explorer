@@ -14,6 +14,7 @@ import androidx.work.workDataOf
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEarthEventsUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEarthquakesUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -22,31 +23,43 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Keeps the open-events cache fresh in the background, so the map and the Today card work offline.
+ * Keeps the open-events and earthquake caches fresh in the background, so the maps and the Today
+ * card work offline and the strong-quake alert sees new quakes.
  *
  * Separate from the APOD sync because it runs on its own clock (every few hours rather than twice a
- * day). The interval check lives in [RefreshEarthEventsUseCase], so a run right after the events
- * screen refreshed costs nothing. Retryable failures use WorkManager's backoff; others wait for the
- * next period.
+ * day). The interval checks live in [RefreshEarthEventsUseCase] and [RefreshEarthquakesUseCase], so
+ * a run right after the events screen refreshed costs nothing. Retryable failures use WorkManager's
+ * backoff; others wait for the next period.
  */
 @HiltWorker
 class EarthEventsSyncWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParameters: WorkerParameters,
     private val refreshEarthEvents: RefreshEarthEventsUseCase,
+    private val refreshEarthquakes: RefreshEarthquakesUseCase,
 ) : CoroutineWorker(appContext, workerParameters) {
 
-    override suspend fun doWork(): Result = when (val refresh = refreshEarthEvents()) {
-        is SourceRefreshResult.Skipped -> Result.success()
-        is SourceRefreshResult.Completed -> when (val result = refresh.result) {
-            is DataResult.Success -> Result.success(workDataOf(KEY_EVENT_COUNT to result.data))
-            is DataResult.Failure ->
-                if (result.error.isRetryable && runAttemptCount < MAX_ATTEMPTS) Result.retry() else Result.success()
+    override suspend fun doWork(): Result {
+        val events = refreshEarthEvents()
+        val quakes = refreshEarthquakes()
+        val retry = listOf(events, quakes).any { refresh ->
+            val result = (refresh as? SourceRefreshResult.Completed)?.result
+            result is DataResult.Failure && result.error.isRetryable
         }
+        if (retry && runAttemptCount < MAX_ATTEMPTS) return Result.retry()
+        val counts = listOfNotNull(
+            events.countOrNull()?.let { KEY_EVENT_COUNT to it },
+            quakes.countOrNull()?.let { KEY_EARTHQUAKE_COUNT to it },
+        )
+        return Result.success(workDataOf(*counts.toTypedArray()))
     }
+
+    private fun SourceRefreshResult<Int>.countOrNull(): Int? =
+        ((this as? SourceRefreshResult.Completed)?.result as? DataResult.Success)?.data
 
     companion object {
         const val KEY_EVENT_COUNT = "event_count"
+        const val KEY_EARTHQUAKE_COUNT = "earthquake_count"
 
         private const val MAX_ATTEMPTS = 3
 

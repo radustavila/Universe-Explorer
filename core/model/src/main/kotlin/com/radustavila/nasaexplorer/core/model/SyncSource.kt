@@ -91,6 +91,9 @@ enum class SyncSource(val key: String) {
 
     /** JPL SBDB comet candidates and their Horizons ephemerides (F18), refreshed together daily. */
     COMETS("jpl_comets"),
+
+    /** USGS earthquake summary feeds (F19): magnitude 2.5+ of the past week, significant of the month. */
+    EARTHQUAKES("usgs_earthquakes"),
     ;
 
     companion object {

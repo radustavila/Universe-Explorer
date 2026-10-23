@@ -6,10 +6,12 @@ import androidx.test.core.app.ApplicationProvider
 import com.radustavila.nasaexplorer.core.domain.sky.TrackedSatellite
 import com.radustavila.nasaexplorer.core.domain.sky.UpcomingPass
 import com.radustavila.nasaexplorer.core.model.AuroraAlert
+import com.radustavila.nasaexplorer.core.model.EarthquakeAlert
 import com.radustavila.nasaexplorer.core.model.MoonDuringWindow
 import com.radustavila.nasaexplorer.core.model.ObservingWindow
 import com.radustavila.nasaexplorer.core.model.SatelliteSet
 import com.radustavila.nasaexplorer.core.model.StargazingAlert
+import com.radustavila.nasaexplorer.core.testing.data.TestEarthquakes
 import com.radustavila.nasaexplorer.core.testing.data.TestSatellites
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.data.TestSkyEvents
@@ -70,12 +72,15 @@ class NotificationIdsTest {
                 moonIlluminatedFraction = 0.42,
             ),
         )
+        SystemTrayEarthquakeAlertNotifier(context, preferences).notifyEarthquake(
+            EarthquakeAlert(TestEarthquakes.earthquake(), distanceKm = 331.0, isNearby = true),
+        )
 
         assertEquals(
-            setOf("aurora_alerts", "iss_passes", "satellite_passes", "sky_events", "stargazing_alerts"),
+            setOf("aurora_alerts", "iss_passes", "satellite_passes", "sky_events", "stargazing_alerts", "earthquake_alerts"),
             shadowOf(notificationManager).allNotifications.map { it.channelId }.toSet(),
         )
-        assertEquals(5, shadowOf(notificationManager).allNotifications.size)
+        assertEquals(6, shadowOf(notificationManager).allNotifications.size)
     }
 
     private fun intConstants(holder: Class<*>): Map<String, Int> =
