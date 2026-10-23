@@ -44,6 +44,8 @@ minSdk = "26"
 targetSdk = "37"
 # Highest Android runtime Robolectric can emulate; used only for unit tests.
 robolectricSdk = "36"
+# AR sky (F22): the back camera's preview behind the sky map.
+camerax = "1.6.2"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -116,6 +118,9 @@ roborazzi-compose = { module = "io.github.takahirom.roborazzi:roborazzi-compose"
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
+androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
+androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax" }
+androidx-camera-compose = { module = "androidx.camera:camera-compose", version.ref = "camerax" }
 
 # build-logic classpath deps
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }

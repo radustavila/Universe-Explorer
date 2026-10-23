@@ -7,7 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
@@ -20,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.radustavila.nasaexplorer.core.model.SkyMapBodies
 import com.radustavila.nasaexplorer.core.skymap.HorizontalSky
-import com.radustavila.nasaexplorer.core.skymap.SkyProjection
+import com.radustavila.nasaexplorer.feature.skymap.ar.SkyArState
 import com.radustavila.nasaexplorer.feature.skymap.render.SkyFrame
 import com.radustavila.nasaexplorer.feature.skymap.render.SkyHitTest
 import com.radustavila.nasaexplorer.feature.skymap.render.SkyNames
@@ -32,13 +34,15 @@ const val SKY_MAP_CANVAS_TEST_TAG = "sky-map-canvas"
 
 /**
  * The map itself. Where it looks is read only while drawing, so the 50 Hz sensor and drag updates
- * redraw the canvas without recomposing anything.
+ * redraw the canvas without recomposing anything. Clipped: the ground and long figure lines reach
+ * past its edges, and would cover the navigation rail.
  */
 @Composable
 internal fun SkyMapCanvas(
     sky: HorizontalSky,
     bodies: SkyMapBodies?,
     camera: SkyCameraState,
+    ar: SkyArState,
     selected: SkyTarget?,
     palette: SkyPalette,
     names: SkyNames,
@@ -54,20 +58,27 @@ internal fun SkyMapCanvas(
     val currentOnTap = rememberUpdatedState(onTap)
     Spacer(
         modifier
+            .clipToBounds()
             .testTag(SKY_MAP_CANVAS_TEST_TAG)
             .semantics { contentDescription = description }
             .pointerInput(camera) {
                 detectTransformGestures { centroid, pan, zoom, _ ->
-                    val projection = camera.projection(size.width, size.height)
-                    if (pan.x != 0f || pan.y != 0f) {
-                        camera.drag(projection, centroid.x - pan.x, centroid.y - pan.y, centroid.x, centroid.y)
+                    val projection = camera.projection(size.width.toFloat(), size.height.toFloat())
+                    val isPan = pan != Offset.Zero
+                    val from = centroid - pan
+                    // Over the camera the phone aims the map: drags only align it, pinches zoom the camera.
+                    if (ar.isOn) {
+                        if (isPan && ar.isAligning) camera.align(projection, from.x, from.y, centroid.x, centroid.y)
+                        if (zoom != 1f) ar.zoom(zoom)
+                    } else {
+                        if (isPan) camera.drag(projection, from.x, from.y, centroid.x, centroid.y)
+                        if (zoom != 1f) camera.zoom(zoom)
                     }
-                    if (zoom != 1f) camera.zoom(zoom)
                 }
             }
             .pointerInput(camera) {
                 detectTapGestures { offset ->
-                    val projection = camera.projection(size.width, size.height)
+                    val projection = camera.projection(size.width.toFloat(), size.height.toFloat())
                     val target = SkyHitTest.find(
                         x = offset.x,
                         y = offset.y,
@@ -90,6 +101,7 @@ internal fun SkyMapCanvas(
                         selected = selected,
                         palette = palette,
                         names = names,
+                        lens = camera.lens,
                     ),
                 )
             },
@@ -97,9 +109,6 @@ internal fun SkyMapCanvas(
 }
 
 private val TAP_RADIUS = 28.dp
-
-private fun SkyCameraState.projection(width: Int, height: Int) =
-    SkyProjection(view, width.toFloat(), height.toFloat(), fieldOfViewDegrees)
 
 private fun labelStyles() = SkyTextStyles(
     star = TextStyle(fontSize = 11.sp),

@@ -97,4 +97,24 @@
     <string name="sky_map_galactic_centre">Galactic centre</string>
     <string name="sky_map_milky_way_core">Milky Way core</string>
     <string name="sky_map_kind_galactic_centre">Core of the Milky Way</string>
+
+    <!-- AR: the camera behind the map (F22) -->
+    <string name="sky_map_ar_on">Show the camera behind the map</string>
+    <string name="sky_map_ar_off">Hide the camera</string>
+    <string name="sky_map_ar_starting">Starting the camera…</string>
+    <string name="sky_map_ar_live">Stars drawn over the camera</string>
+    <string name="sky_map_ar_aligned">Lined up by hand</string>
+    <string name="sky_map_ar_align">Align</string>
+    <string name="sky_map_ar_align_hint">Hold the phone still and drag the drawn Moon or a planet onto the real one.</string>
+    <string name="sky_map_ar_align_reset">Reset</string>
+    <string name="sky_map_ar_align_done">Done</string>
+    <string name="sky_map_ar_no_sensor">AR needs a rotation sensor to follow the phone, and this device has none. The map still works by touch.</string>
+    <string name="sky_map_ar_no_camera">AR needs a camera on the back of the device, and this one has none.</string>
+    <string name="sky_map_ar_permission_denied">AR needs the camera. Its picture stays on the screen and is never saved. You can allow it in the app\'s settings.</string>
+    <string name="sky_map_ar_open_settings">Open settings</string>
+    <string name="sky_map_ar_camera_failed">The camera did not start. Another app may be using it.</string>
+    <string name="sky_map_ar_try_again">Try again</string>
+    <string name="sky_map_ar_turned_off_still">The camera turned off after two minutes without movement, to save the battery.</string>
+    <string name="sky_map_ar_turn_on">Turn it back on</string>
+    <string name="sky_map_ar_dismiss">Dismiss</string>
 </resources>
