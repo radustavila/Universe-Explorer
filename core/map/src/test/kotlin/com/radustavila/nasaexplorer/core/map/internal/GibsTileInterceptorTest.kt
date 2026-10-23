@@ -128,9 +128,13 @@ class GibsTileInterceptorTest {
     @Test
     fun `other layers and failed tiles are never keyed`() {
         server.enqueue(MockResponse().setBody(Buffer().write(JPEG)))
+        server.enqueue(MockResponse().setBody(Buffer().write(PNG)).setHeader("Content-Type", "image/png"))
         server.enqueueStatus(code = 404)
 
         get(path = "BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/1/0/0.jpeg").close()
+        get(path = "VIIRS_Black_Marble/default/2016-01-01/GoogleMapsCompatible_Level8/1/0/0.png").use { response ->
+            assertArrayEquals(PNG, response.body.bytes())
+        }
         get(path = MOSAIC_TILE).close()
 
         assertTrue(keyedTiles.isEmpty())

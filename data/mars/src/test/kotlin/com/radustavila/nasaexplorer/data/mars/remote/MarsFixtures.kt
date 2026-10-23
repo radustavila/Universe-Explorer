@@ -12,9 +12,9 @@ import retrofit2.create
 /**
  * Recorded mars.nasa.gov responses, trimmed to a few items each.
  *
- * Curiosity's was recorded on 2026-10-19 (sol 5048). Perseverance's feed answered only HTTP 403
- * that day (its origin timing out behind the CDN), so its items come from an earlier recording of
- * the same feed (sols 2 and 4, February 2021) wrapped in the feed's envelope.
+ * Both were recorded on 2026-10-19: Curiosity's at sol 5048, Perseverance's (after its feed came
+ * back from a stretch of HTTP 403s) at sols 2013 and 2012, from the first two pages of the feed.
+ * The Perseverance feed no longer lists thumbnails, and gives UTC times without an offset.
  */
 internal object MarsFixtures {
     /** 11 items of sol 5048: MAHLI, Navcam, Hazcams, ChemCam; 3 of them thumbnails. */
@@ -23,7 +23,7 @@ internal object MarsFixtures {
     /** What the catalogue answers to a query with no match. */
     const val CURIOSITY_EMPTY = "mars/curiosity_empty.json"
 
-    /** 6 items of sols 4 and 2: Navcam, EDL, Mastcam-Z, Hazcam; 1 of them a thumbnail. */
+    /** 6 items of sols 2013 and 2012: Navcam, Mastcam-Z, SuperCam, SkyCam. */
     const val PERSEVERANCE_LATEST = "mars/perseverance_latest.json"
 }
 

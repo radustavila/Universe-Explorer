@@ -44,7 +44,7 @@ class MarsRemoteDataSourceTest {
         val result = remoteDataSource.fetchPerseverance()
 
         val first = (result as DataResult.Success).data.images.first()
-        assertEquals("NLM_0004_0667310972_991ECM_N0010052AUT_04096_00_2LLJ01", first.imageid)
+        assertEquals("NLG_2013_0845644580_675ECM_N0920000NCAM00518_00_2I3J", first.imageid)
         assertEquals("NAVCAM_LEFT", first.camera?.instrument)
         val url = server.takeRequest().requestUrl!!
         assertEquals("/rss/api/", url.encodedPath)
