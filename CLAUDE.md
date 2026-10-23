@@ -80,6 +80,12 @@ Clean Architecture, dependencies pointing inward:
   the core (Sgr A*, `GalacticCentre`), the Moon and the twilights (`Twilight`, shared with Sky tonight). The
   calendar lists the best night around each new Moon (`MilkyWayNightEvent`); the sky map opens on the core with
   `SkyMapRoute(showGalacticCentre = true)`.
+  `:data:webb` (F24) keeps `webb.db`: STScI's JWST observing schedules page is read for its newest weekly
+  file (names aren't predictable; the week before is read too while the newest hasn't started), parsed by
+  the column-drift-tolerant `WebbScheduleParser` (`SyncSource.JWST_SCHEDULE`, daily `WebbScheduleSyncWorker`
+  + screen open). `statusAt` (`:core:domain`) turns the week into `WebbNow` (current visit or slew/pause,
+  up next, stale after 8 days); `:feature:webb`'s card sits in the Universe header, targets open
+  `GallerySearchRoute`. Word it "scheduled": the plan is not a log.
   The daily quiz (F28, `:data:quiz` + `:feature:quiz`) is offline: `DailyQuizUseCase` takes 2 questions from the
   bundled bank (`quiz_bank_en.json` asset, data in its own words) and 3 from `@IntoSet QuizQuestionSource`s made
   from cached data, all seeded by the local date (the bank is walked 5 places a day, so no repeat within 30

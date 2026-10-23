@@ -137,6 +137,8 @@
     <string name="credit_maplibre_description">Map rendering</string>
     <string name="credit_usgs">U.S. Geological Survey</string>
     <string name="credit_usgs_description">Recent earthquakes, from the USGS Earthquake Hazards Program feeds (public domain)</string>
+    <string name="credit_stsci">Space Telescope Science Institute</string>
+    <string name="credit_stsci_description">Webb\'s weekly observing schedules, which STScI publishes for NASA without claiming copyright. No endorsement by NASA or STScI is implied.</string>
 
     <!-- Today -->
     <string name="settings_today_title">Today</string>

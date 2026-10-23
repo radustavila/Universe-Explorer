@@ -80,6 +80,7 @@ dependencies {
     implementation(projects.data.forecast)
     implementation(projects.data.news)
     implementation(projects.data.comets)
+    implementation(projects.data.webb)
     implementation(projects.data.quiz)
 
     implementation(projects.feature.feed)
@@ -104,6 +105,7 @@ dependencies {
     implementation(projects.feature.skymap)
     implementation(projects.feature.comets)
     implementation(projects.feature.milkyway)
+    implementation(projects.feature.webb)
     implementation(projects.feature.quiz)
 
     implementation(libs.androidx.core.ktx)

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="webb_card_title">Webb right now</string>
+    <string name="webb_card_open">Open Webb\'s week</string>
+    <string name="webb_title">Webb\'s week</string>
+    <string name="webb_back">Back</string>
+    <string name="webb_refresh_failed">Couldn\'t refresh Webb\'s schedule. Showing the last download.</string>
+
+    <string name="webb_scheduled_now">Scheduled now</string>
+    <string name="webb_calibration">Calibration</string>
+    <string name="webb_started_ends">Started %1$s · ends %2$s</string>
+    <string name="webb_time_range">%1$s–%2$s</string>
+    <string name="webb_slewing">Slewing to the next target</string>
+    <string name="webb_idle">No visit scheduled right now</string>
+    <string name="webb_not_started">This schedule starts at %1$s</string>
+    <string name="webb_ended">Every visit in this schedule is over</string>
+    <string name="webb_next_at">Next at %1$s: %2$s</string>
+    <string name="webb_up_next">Up next</string>
+    <string name="webb_parallels">In parallel: %1$s</string>
+    <string name="webb_separator">" · "</string>
+    <string name="webb_list_separator">", "</string>
+    <string name="webb_search_target">Search the gallery for %1$s</string>
+    <string name="webb_program">Program %1$s</string>
+    <string name="webb_now_badge">Now</string>
+
+    <string name="webb_stale">This schedule is from the week of %1$s. A newer week hasn\'t downloaded yet, so Webb may be doing something else now.</string>
+    <string name="webb_none_title">No schedule yet</string>
+    <string name="webb_none_description">Webb\'s weekly schedule downloads once a day. Pull down to try again.</string>
+    <string name="webb_offline_title">Webb\'s schedule needs one download</string>
+    <string name="webb_offline_description">Connect once and the week\'s schedule will work offline.</string>
+    <string name="webb_card_none">Webb\'s weekly schedule hasn\'t downloaded yet.</string>
+    <string name="webb_disclaimer">This is what STScI scheduled, not a record of what Webb observed: visits can move or drop out, and parallels run alongside the main visit.</string>
+    <string name="webb_credit">Schedule: Space Telescope Science Institute (STScI), for NASA. Not endorsed by NASA or STScI.</string>
+
+    <string name="webb_duration_minutes">%1$d min</string>
+    <string name="webb_duration_hours">%1$d h %2$d min</string>
+    <string name="webb_duration_days">%1$d d %2$d h</string>
+
+    <string name="webb_category_calibration">Calibration</string>
+    <string name="webb_category_clusters_of_galaxies">Galaxy clusters</string>
+    <string name="webb_category_galaxy">Galaxy</string>
+    <string name="webb_category_ism">Gas and dust between the stars</string>
+    <string name="webb_category_solar_system">Solar System</string>
+    <string name="webb_category_star">Star</string>
+    <string name="webb_category_stellar_cluster">Star cluster</string>
+    <string name="webb_category_exoplanet">Exoplanet</string>
+    <string name="webb_category_unidentified">Unidentified</string>
+
+    <string name="webb_engineering_momentum">Momentum unload</string>
+    <string name="webb_engineering_station_keeping">Station keeping</string>
+    <string name="webb_engineering_wavefront">Mirror alignment</string>
+    <string name="webb_engineering_other">Telescope upkeep</string>
+</resources>
