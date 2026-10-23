@@ -58,6 +58,19 @@ class QuizTextFormatter(
         is QuizArg.PlanetName -> skyText.planet(arg.planet)
         is QuizArg.MoonPhaseName -> resources.getString(moonPhaseName(arg.phase))
         is QuizArg.DeepSkyTypeName -> resources.getString(deepSkyTypeName(arg.type))
+        is QuizArg.Ppm, is QuizArg.TemperatureChange, is QuizArg.Millimetres, is QuizArg.MillionSquareKm,
+        is QuizArg.Month,
+        -> climateArg(arg)
+    }
+
+    /** The climate vital signs' values (F26). */
+    private fun climateArg(arg: QuizArg): String = when (arg) {
+        is QuizArg.Ppm -> resources.getString(R.string.quiz_value_ppm, units.number(arg.value, 0))
+        is QuizArg.TemperatureChange -> units.temperatureChange(arg.celsius)
+        is QuizArg.Millimetres -> units.smallLength(arg.mm)
+        is QuizArg.MillionSquareKm -> units.millionArea(arg.value)
+        is QuizArg.Month -> units.month(arg.date)
+        else -> error("Not a climate value: $arg")
     }
 
     @StringRes
@@ -119,6 +132,14 @@ class QuizTextFormatter(
             QuizPhrase.BOOSTER_LANDED_QUESTION to Wording.Single(R.string.quiz_q_booster_landed),
             QuizPhrase.BOOSTER_LANDED_EXPLANATION_YES to Wording.Single(R.string.quiz_e_booster_landed_yes),
             QuizPhrase.BOOSTER_LANDED_EXPLANATION_NO to Wording.Single(R.string.quiz_e_booster_landed_no),
+            QuizPhrase.ANSWER_VALUE to Wording.Single(NO_WORDS),
+            QuizPhrase.CLIMATE_CO2_QUESTION to Wording.Single(R.string.quiz_q_climate_co2),
+            QuizPhrase.CLIMATE_CO2_EXPLANATION to Wording.Single(R.string.quiz_e_climate_co2),
+            QuizPhrase.CLIMATE_TEMPERATURE_QUESTION to Wording.Single(R.string.quiz_q_climate_temperature),
+            QuizPhrase.CLIMATE_TEMPERATURE_EXPLANATION to Wording.Single(R.string.quiz_e_climate_temperature),
+            QuizPhrase.FACT_CLIMATE_CO2 to Wording.Single(R.string.quiz_f_climate_co2),
+            QuizPhrase.FACT_CLIMATE_SEA_ICE to Wording.Single(R.string.quiz_f_climate_sea_ice),
+            QuizPhrase.FACT_CLIMATE_SEA_LEVEL to Wording.Single(R.string.quiz_f_climate_sea_level),
             QuizPhrase.ANSWER_DEEP_SKY_TYPE to Wording.Single(NO_WORDS),
             QuizPhrase.DEEP_SKY_TYPE_QUESTION to Wording.Single(R.string.quiz_q_deep_sky_type),
             QuizPhrase.DEEP_SKY_TYPE_EXPLANATION to Wording.Single(R.string.quiz_e_deep_sky),

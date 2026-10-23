@@ -179,6 +179,17 @@ class QuizScreensTest {
             ),
         )
         assertEquals(
+            "CO₂ at Mauna Loa reached 426 ppm in Sept 2026: 88 ppm more than in 1980.",
+            phrase(
+                QuizPhrase.FACT_CLIMATE_CO2,
+                QuizArg.Ppm(426.07),
+                QuizArg.Month(LocalDate.of(2026, 9, 1)),
+                QuizArg.Ppm(88.4),
+                QuizArg.Text("1980"),
+            ),
+        )
+        assertEquals("+1.38 °C", phrase(QuizPhrase.ANSWER_VALUE, QuizArg.TemperatureChange(1.38)))
+        assertEquals(
             "M13 is the Hercules Globular Cluster, in Hercules. Data: OpenNGC.",
             phrase(
                 QuizPhrase.DEEP_SKY_TYPE_EXPLANATION,
@@ -193,9 +204,8 @@ class QuizScreensTest {
         )
         assertEquals("Plain words.", format.format(QuizText.Plain("Plain words.")))
         // Every phrase has wording.
-        QuizPhrase.entries.forEach { phrase ->
-            format.format(QuizText.Phrase(phrase, QuizArg.Count(2), QuizArg.Text("A"), QuizArg.Day(Instant.EPOCH)))
-        }
+        val args = listOf(QuizArg.Count(2), QuizArg.Text("A"), QuizArg.Day(Instant.EPOCH), QuizArg.Text("B"))
+        QuizPhrase.entries.forEach { phrase -> format.format(QuizText.Phrase(phrase, args)) }
     }
 
     @Test

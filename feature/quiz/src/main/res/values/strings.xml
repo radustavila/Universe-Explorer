@@ -184,4 +184,20 @@
     </plurals>
     <!-- %1$s a day. -->
     <string name="quiz_f_next_full_moon">The next full Moon is on %1$s.</string>
+    <!-- Climate vital signs (F26). %1$s a number: "426 ppm". -->
+    <string name="quiz_value_ppm">%1$s ppm</string>
+    <!-- %1$s a month ("Sep 2026"). -->
+    <string name="quiz_q_climate_co2">How much CO₂ was in the air at Mauna Loa, Hawaii, in %1$s?</string>
+    <!-- %1$s the value ("426 ppm"), %2$s its month, %3$s the rise ("88 ppm"), %4$s the year compared with. -->
+    <string name="quiz_e_climate_co2">%1$s in %2$s, %3$s more than in %4$s. Data: NOAA Global Monitoring Laboratory.</string>
+    <!-- %1$s a month ("Sep 2026"). -->
+    <string name="quiz_q_climate_temperature">How much warmer than its 1951–1980 average was Earth\'s surface in %1$s?</string>
+    <!-- %1$s the anomaly ("+1.38 °C"), %2$s its month. -->
+    <string name="quiz_e_climate_temperature">%1$s in %2$s, by NASA\'s GISTEMP analysis of land and ocean measurements.</string>
+    <!-- %1$s the value ("426 ppm"), %2$s its month, %3$s the rise ("88 ppm"), %4$s the year compared with. -->
+    <string name="quiz_f_climate_co2">CO₂ at Mauna Loa reached %1$s in %2$s: %3$s more than in %4$s.</string>
+    <!-- %1$s the area ("4.81 million km²"), %2$s its year, %3$s how much less, %4$s the year compared with. -->
+    <string name="quiz_f_climate_sea_ice">Arctic sea ice covered %1$s in September %2$s, %3$s less than in September %4$s.</string>
+    <!-- %1$s the rise ("102 mm"), %2$s the month of the latest value, %3$s the year compared with. -->
+    <string name="quiz_f_climate_sea_level">Satellites measured the global sea level %1$s higher in %2$s than in %3$s.</string>
 </resources>

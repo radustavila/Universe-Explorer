@@ -1,5 +1,7 @@
 package com.radustavila.nasaexplorer.navigation
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AutoAwesome
@@ -11,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.radustavila.nasaexplorer.R
+import com.radustavila.nasaexplorer.feature.climate.VitalSignsSection
+import com.radustavila.nasaexplorer.feature.climate.navigateToClimate
 import com.radustavila.nasaexplorer.feature.earthevents.navigateToEarthEvents
 import com.radustavila.nasaexplorer.feature.earthmap.navigateToEarthMap
 import com.radustavila.nasaexplorer.feature.spaceweather.navigateToNeighbourhood
@@ -55,9 +59,16 @@ internal fun earthHubEntries(navController: NavHostController): List<HubEntry> =
     ),
 )
 
-/** Earth today's footer slot: the tab's other entries, or nothing while there are none. */
+/** Earth today's footer slot: the tab's other entries, then the climate vital signs (F26). */
 internal fun earthFooter(navController: NavHostController): (@Composable () -> Unit)? {
     val entries = earthHubEntries(navController)
-    if (entries.isEmpty()) return null
-    return { HubEntryCards(entries, Modifier.padding(horizontal = 16.dp)) }
+    return {
+        Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+            if (entries.isNotEmpty()) HubEntryCards(entries, Modifier.padding(horizontal = 16.dp))
+            VitalSignsSection(
+                onOpen = { indicator -> navController.navigateToClimate(indicator) },
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+        }
+    }
 }
