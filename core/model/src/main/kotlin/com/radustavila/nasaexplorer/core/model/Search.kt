@@ -35,6 +35,9 @@ enum class SearchSource {
 
     /** Comets near perihelion (F18), by name or designation. */
     COMETS,
+
+    /** Cached NASA podcast episodes (F21), by title and description. */
+    PODCASTS,
 }
 
 /** Where opening a [SearchHit] leads; `:app` maps each target to its feature's route. */
@@ -57,6 +60,9 @@ sealed interface SearchTarget {
 
     /** Opens the comet's details (F18). */
     data class CometEntry(val designation: String) : SearchTarget
+
+    /** Opens the podcast episode's screen (F21). */
+    data class PodcastEpisodeEntry(val id: String) : SearchTarget
 
     /** Opens the favourite in the screen of the feature it was saved from. */
     data class Favorite(val item: FavoriteItem) : SearchTarget

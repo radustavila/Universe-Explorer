@@ -32,6 +32,7 @@ import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Newspaper
 import androidx.compose.material.icons.outlined.ImageSearch
 import androidx.compose.material.icons.outlined.Photo
+import androidx.compose.material.icons.outlined.Podcasts
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.RocketLaunch
 import androidx.compose.material.icons.outlined.TravelExplore
@@ -490,6 +491,7 @@ internal val SearchSource.labelRes: Int
         SearchSource.SKY_EVENTS -> R.string.search_source_sky_events
         SearchSource.NEWS -> R.string.search_source_news
         SearchSource.COMETS -> R.string.search_source_comets
+        SearchSource.PODCASTS -> R.string.search_source_podcasts
     }
 
 private val FavoriteSource.labelRes: Int
@@ -500,6 +502,7 @@ private val FavoriteSource.labelRes: Int
         FavoriteSource.MARS -> R.string.search_favorite_mars
         FavoriteSource.EXOPLANET -> R.string.search_source_exoplanets
         FavoriteSource.NASA_IMAGE_OF_THE_DAY -> R.string.search_favorite_image_of_the_day
+        FavoriteSource.NASA_PODCAST_EPISODE -> R.string.search_favorite_podcast_episode
     }
 
 private val SearchSource.icon: ImageVector
@@ -514,4 +517,5 @@ private val SearchSource.icon: ImageVector
         SearchSource.SKY_EVENTS -> Icons.Outlined.Event
         SearchSource.NEWS -> Icons.Outlined.Newspaper
         SearchSource.COMETS -> Icons.Outlined.AutoAwesome
+        SearchSource.PODCASTS -> Icons.Outlined.Podcasts
     }

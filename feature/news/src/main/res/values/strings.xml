@@ -32,4 +32,53 @@
 
     <string name="news_card_title">Latest from NASA</string>
     <string name="news_card_see_all">All news</string>
+
+    <!-- Podcasts (F21) -->
+    <string name="news_tab_news">News</string>
+    <string name="news_tab_podcasts">Podcasts</string>
+    <string name="podcasts_empty_title">No episodes yet</string>
+    <string name="podcasts_empty_description">NASA\'s podcast episodes appear here once they have been downloaded.</string>
+    <string name="podcasts_offline_title">You\'re offline</string>
+    <string name="podcasts_offline_description">NASA\'s podcasts will download when you\'re back online.</string>
+    <string name="podcasts_failed_title">Couldn\'t load NASA\'s podcasts</string>
+    <string name="podcasts_failed_description">Check your connection and try again.</string>
+    <string name="podcasts_attribution">Podcasts by NASA, streamed from NASA\'s official feeds.</string>
+    <!-- %1$s: the show, e.g. "Houston We Have a Podcast"; %2$s: how long ago the episode came out, e.g. "3 days ago". -->
+    <string name="podcast_show_and_age">%1$s · %2$s</string>
+    <plurals name="podcast_minutes">
+        <item quantity="one">%d min</item>
+        <item quantity="other">%d min</item>
+    </plurals>
+    <plurals name="podcast_minutes_left">
+        <item quantity="one">%d min left</item>
+        <item quantity="other">%d min left</item>
+    </plurals>
+    <string name="podcast_played">Played</string>
+    <string name="podcast_downloaded">Downloaded</string>
+    <string name="podcast_downloading">Downloading…</string>
+    <string name="podcast_download_failed">Download failed</string>
+    <string name="podcast_play">Play</string>
+    <string name="podcast_resume">Resume</string>
+    <string name="podcast_pause">Pause</string>
+    <string name="podcast_download">Download</string>
+    <string name="podcast_remove_download">Remove download</string>
+    <string name="podcast_cancel_download">Cancel download</string>
+    <string name="podcast_retry_download">Retry download</string>
+    <string name="podcast_open_page">Episode page on NASA\'s site</string>
+    <string name="podcast_missing_title">This episode is no longer cached</string>
+    <string name="podcast_missing_description">Save or download an episode to keep it.</string>
+    <string name="podcast_credit">From NASA\'s podcast %1$s. Audio streams from NASA\'s podcast host.</string>
+    <string name="podcast_error_offline">You\'re offline. Download episodes to listen without a connection.</string>
+    <string name="podcast_error_cannot_play">This episode couldn\'t be played. Check your connection and try again.</string>
+    <string name="podcast_error_dismiss">Dismiss</string>
+    <string name="podcast_player_open">Open player</string>
+    <string name="podcast_player_close">Stop and close player</string>
+    <string name="podcast_player_skip_back">Back 15 seconds</string>
+    <string name="podcast_player_skip_forward">Forward 30 seconds</string>
+    <string name="podcast_player_speed">Playback speed</string>
+    <!-- %1$s: playback speed, e.g. "1.5". -->
+    <string name="podcast_player_speed_value">%1$s×</string>
+    <!-- %1$s: time left in the episode, e.g. "12:04". -->
+    <string name="podcast_player_remaining">-%1$s</string>
+    <string name="podcast_player_seek">Position in episode</string>
 </resources>

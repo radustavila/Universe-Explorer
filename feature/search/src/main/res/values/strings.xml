@@ -27,6 +27,8 @@
     <string name="search_source_sky_events">Sky events</string>
     <string name="search_source_news">NASA news</string>
     <string name="search_source_comets">Comets</string>
+    <string name="search_source_podcasts">NASA podcasts</string>
+    <string name="search_favorite_podcast_episode">Podcast episode</string>
     <string name="search_favorite_epic">Earth photo</string>
     <string name="search_favorite_mars">Mars photo</string>
     <string name="search_favorite_image_of_the_day">NASA Image of the Day</string>

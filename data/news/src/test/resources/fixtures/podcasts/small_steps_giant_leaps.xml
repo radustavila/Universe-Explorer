@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <atom:link href="https://feeds.megaphone.fm/NATIONALAERONAUTICSANDSPACEADMINISTRATION5360639309" rel="self" type="application/rss+xml"/>
+    <title>Small Steps, Giant Leaps</title>
+    <link>https://www.nasa.gov/podcasts/small-steps-giant-leaps/</link>
+    <language>en-US</language>
+    <copyright>NASA/APPEL Knowledge Services</copyright>
+    <description>NASA’s technical workforce put boots on the Moon, tire tracks on Mars, and the first reusable spacecraft in orbit around the Earth. Learn what’s next as they build missions that redefine the future with amazing discoveries and remarkable innovations.</description>
+    <image>
+      <url>https://megaphone.imgix.net/podcasts/7a3bb104-6a1b-11ef-899d-334707aa843d/image/dc587d80aa91a06b8f38ae62739fc4f5.png?ixlib=rails-4.3.1&amp;max-w=3000&amp;max-h=3000&amp;fit=crop&amp;auto=format,compress</url>
+      <title>Small Steps, Giant Leaps</title>
+      <link>https://www.nasa.gov/podcasts/small-steps-giant-leaps/</link>
+    </image>
+    <itunes:explicit>no</itunes:explicit>
+    <itunes:type>episodic</itunes:type>
+    <itunes:subtitle>Small Steps, Giant Leaps audio podcast episodes</itunes:subtitle>
+    <itunes:author>National Aeronautics and Space Administration (NASA)</itunes:author>
+    <itunes:summary>NASA’s technical workforce put boots on the Moon, tire tracks on Mars, and the first reusable spacecraft in orbit around the Earth. Learn what’s next as they build missions that redefine the future with amazing discoveries and remarkable innovations.</itunes:summary>
+    <content:encoded>
+      <![CDATA[NASA’s technical workforce put boots on the Moon, tire tracks on Mars, and the first reusable spacecraft in orbit around the Earth. Learn what’s next as they build missions that redefine the future with amazing discoveries and remarkable innovations.]]>
+    </content:encoded>
+    <itunes:owner>
+      <itunes:name>Katie Konans</itunes:name>
+      <itunes:email>katie.konans@nasa.gov</itunes:email>
+    </itunes:owner>
+    <itunes:image href="https://megaphone.imgix.net/podcasts/7a3bb104-6a1b-11ef-899d-334707aa843d/image/dc587d80aa91a06b8f38ae62739fc4f5.png?ixlib=rails-4.3.1&amp;max-w=3000&amp;max-h=3000&amp;fit=crop&amp;auto=format,compress"/>
+    <itunes:category text="Science">
+    </itunes:category>
+    <item>
+      <title>State Hubs: Opening Doors for Technical Students</title>
+      <description>NASA, through the Office of STEM Engagement, has launched the State Hubs Initiative, awarding $10.5 million to seven institutions with the goal of getting more students into highly skilled manufacturing jobs in the aerospace industry.</description>
+      <pubDate>Wed, 14 Oct 2026 18:31:00 -0000</pubDate>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:author>National Aeronautics and Space Administration (NASA)</itunes:author>
+      <itunes:image href="https://megaphone.imgix.net/podcasts/6cf7c0c2-c7fd-11f1-82ad-2765dd59474d/image/c46a75caa92d3eacc6dc088792eb098b.jpg?ixlib=rails-4.3.1&amp;max-w=3000&amp;max-h=3000&amp;fit=crop&amp;auto=format,compress"/>
+      <itunes:subtitle></itunes:subtitle>
+      <itunes:summary>NASA, through the Office of STEM Engagement, has launched the State Hubs Initiative, awarding $10.5 million to seven institutions with the goal of getting more students into highly skilled manufacturing jobs in the aerospace industry.</itunes:summary>
+      <content:encoded>
+        <![CDATA[<p>NASA, through the Office of STEM Engagement, has launched the State Hubs Initiative, awarding $10.5 million to seven institutions with the goal of getting more students into highly skilled manufacturing jobs in the aerospace industry.</p>]]>
+      </content:encoded>
+      <itunes:duration>1079</itunes:duration>
+      <itunes:explicit>no</itunes:explicit>
+      <guid isPermaLink="false"><![CDATA[6cf7c0c2-c7fd-11f1-82ad-2765dd59474d]]></guid>
+      <enclosure url="https://traffic.megaphone.fm/NATIONALAERONAUTICSANDSPACEADMINISTRATION5643462700.mp3" length="0" type="audio/mpeg"/>
+    </item>
+    <item>
+      <title>Human Factors: Designing Systems with People in Mind - Part 2 of 2</title>
+      <link>https://www.nasa.gov/podcasts/small-steps-giant-leaps/human-factors-designing-systems-with-people-in-mind-part-2-of-2/</link>
+      <description>Dr. Cynthia Null, NASA Technical Fellow for Human Factors, discusses the myths of human limitations and how she got involved in the scientific discipline of human factors.</description>
+      <pubDate>Wed, 30 Sep 2026 13:36:00 -0000</pubDate>
+      <itunes:title>Human Factors: Designing Systems with People in Mind - Part 2 of 2</itunes:title>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>183</itunes:episode>
+      <itunes:author>National Aeronautics and Space Administration (NASA)</itunes:author>
+      <itunes:image href="https://megaphone.imgix.net/podcasts/ec4ca5ac-bcd3-11f1-8707-0340476f3360/image/c46a75caa92d3eacc6dc088792eb098b.jpg?ixlib=rails-4.3.1&amp;max-w=3000&amp;max-h=3000&amp;fit=crop&amp;auto=format,compress"/>
+      <itunes:subtitle>Dr. Cynthia Null, NASA Technical Fellow for Human Factors, discusses the myths of human limitations and how she got involved in the scientific discipline of human factors.</itunes:subtitle>
+      <itunes:summary>Dr. Cynthia Null, NASA Technical Fellow for Human Factors, discusses the myths of human limitations and how she got involved in the scientific discipline of human factors.</itunes:summary>
+      <content:encoded>
+        <![CDATA[<p>Dr. Cynthia Null, NASA Technical Fellow for Human Factors, discusses the myths of human limitations and how she got involved in the scientific discipline of human factors.</p>]]>
+      </content:encoded>
+      <itunes:duration>1297</itunes:duration>
+      <itunes:explicit>no</itunes:explicit>
+      <guid isPermaLink="false"><![CDATA[ec4ca5ac-bcd3-11f1-8707-0340476f3360]]></guid>
+      <enclosure url="https://traffic.megaphone.fm/NATIONALAERONAUTICSANDSPACEADMINISTRATION5465271457.mp3" length="0" type="audio/mpeg"/>
+    </item>
+    <item>
+      <title>Human Factors: Designing Systems with People in Mind - Part 1 of 2</title>
+      <link>https://www.nasa.gov/podcasts/small-steps-giant-leaps/episode-182-human-factors-designing-systems-with-people-in-mind/</link>
+      <description>Dr. Cynthia Null, NASA Technical Fellow for Human Factors, discusses how understanding human capabilities and limitations can help engineers reduce risk and design safer, more successful missions from the start.&amp;nbsp;</description>
+      <pubDate>Wed, 16 Sep 2026 12:34:00 -0000</pubDate>
+      <itunes:title>Human Factors: Designing Systems with People in Mind</itunes:title>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>182</itunes:episode>
+      <itunes:author>National Aeronautics and Space Administration (NASA)</itunes:author>
+      <itunes:image href="https://megaphone.imgix.net/podcasts/41f59028-b1ca-11f1-a5fe-e70a9312e35c/image/c46a75caa92d3eacc6dc088792eb098b.jpg?ixlib=rails-4.3.1&amp;max-w=3000&amp;max-h=3000&amp;fit=crop&amp;auto=format,compress"/>
+      <itunes:subtitle>Dr. Cynthia Null, NASA Technical Fellow for Human Factors, discusses how understanding human capabilities and limitations can help engineers reduce risk and design safer, more successful missions from the start. </itunes:subtitle>
+      <itunes:summary>Dr. Cynthia Null, NASA Technical Fellow for Human Factors, discusses how understanding human capabilities and limitations can help engineers reduce risk and design safer, more successful missions from the start.&amp;nbsp;</itunes:summary>
+      <content:encoded>
+        <![CDATA[<p>Dr. Cynthia Null, NASA Technical Fellow for Human Factors, discusses how understanding human capabilities and limitations can help engineers reduce risk and design safer, more successful missions from the start.&nbsp;</p>]]>
+      </content:encoded>
+      <itunes:duration>1139</itunes:duration>
+      <itunes:explicit>no</itunes:explicit>
+      <guid isPermaLink="false"><![CDATA[41f59028-b1ca-11f1-a5fe-e70a9312e35c]]></guid>
+      <enclosure url="https://traffic.megaphone.fm/NATIONALAERONAUTICSANDSPACEADMINISTRATION6370129648.mp3" length="0" type="audio/mpeg"/>
+    </item>
+    <item>
+      <title>Passing Down Knowledge</title>
+      <description>Heather Koehler, NASA Technical Fellow for Flight Mechanics, explains how knowledge at NASA is passed from person to person, program to program.</description>
+      <pubDate>Wed, 02 Sep 2026 14:11:00 -0000</pubDate>
+      <itunes:title>Passing Down Knowledge</itunes:title>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:author>National Aeronautics and Space Administration (NASA)</itunes:author>
+      <itunes:image href="https://megaphone.imgix.net/podcasts/3d9f615a-a6d7-11f1-849f-4fbc6ea0de34/image/5244edef94730498f4240105f274bcdc.jpeg?ixlib=rails-4.3.1&amp;max-w=3000&amp;max-h=3000&amp;fit=crop&amp;auto=format,compress"/>
+      <itunes:subtitle>Heather Koehler, NASA Technical Fellow for Flight Mechanics, explains how knowledge at NASA is passed from person to person, program to program.</itunes:subtitle>
+      <itunes:summary>Heather Koehler, NASA Technical Fellow for Flight Mechanics, explains how knowledge at NASA is passed from person to person, program to program.</itunes:summary>
+      <content:encoded>
+        <![CDATA[<p>Heather Koehler, NASA Technical Fellow for Flight Mechanics, explains how knowledge at NASA is passed from person to person, program to program.</p>]]>
+      </content:encoded>
+      <itunes:duration>996</itunes:duration>
+      <itunes:explicit>no</itunes:explicit>
+      <guid isPermaLink="false"><![CDATA[3d9f615a-a6d7-11f1-849f-4fbc6ea0de34]]></guid>
+      <enclosure url="https://traffic.megaphone.fm/NATIONALAERONAUTICSANDSPACEADMINISTRATION1980847908.mp3" length="0" type="audio/mpeg"/>
+    </item>
+    <item>
+      <title>The X-59 Goes Supersonic: What's Next?</title>
+      <description>NASA’s experimental X-59 airplane went supersonic for the first time on June 5, 2026. What's next for the mission that aims to reopen the skies to quiet commercial supersonic flight?</description>
+      <pubDate>Tue, 25 Aug 2026 19:55:00 -0000</pubDate>
+      <itunes:title>The X-59 Goes Supersonic: What's Next?</itunes:title>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>180</itunes:episode>
+      <itunes:author>National Aeronautics and Space Administration (NASA)</itunes:author>
+      <itunes:image href="https://megaphone.imgix.net/podcasts/ce8d417c-9bd9-11f1-8f95-5b33cf509a22/image/c46a75caa92d3eacc6dc088792eb098b.jpg?ixlib=rails-4.3.1&amp;max-w=3000&amp;max-h=3000&amp;fit=crop&amp;auto=format,compress"/>
+      <itunes:subtitle>NASA’s experimental X-59 airplane went supersonic for the first time on June 5, 2026. What's next for the mission that aims to reopen the skies to quiet commercial supersonic flight?</itunes:subtitle>
+      <itunes:summary>NASA’s experimental X-59 airplane went supersonic for the first time on June 5, 2026. What's next for the mission that aims to reopen the skies to quiet commercial supersonic flight?</itunes:summary>
+      <content:encoded>
+        <![CDATA[<p>NASA’s experimental X-59 airplane went supersonic for the first time on June 5, 2026. What's next for the mission that aims to reopen the skies to quiet commercial supersonic flight?</p>]]>
+      </content:encoded>
+      <itunes:duration>945</itunes:duration>
+      <itunes:explicit>no</itunes:explicit>
+      <guid isPermaLink="false"><![CDATA[ce8d417c-9bd9-11f1-8f95-5b33cf509a22]]></guid>
+      <enclosure url="https://traffic.megaphone.fm/NATIONALAERONAUTICSANDSPACEADMINISTRATION3936955612.mp3" length="0" type="audio/mpeg"/>
+    </item>
+  </channel>
+</rss>

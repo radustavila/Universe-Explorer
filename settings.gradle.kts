@@ -43,6 +43,7 @@ include(":core:skymap")
 include(":core:location")
 include(":core:offline")
 include(":core:screenshot-testing")
+include(":core:media")
 
 include(":data:nasa")
 include(":data:launches")

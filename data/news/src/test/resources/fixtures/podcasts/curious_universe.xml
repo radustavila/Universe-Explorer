@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <atom:link href="https://feeds.megaphone.fm/nasacuriousuniverse" rel="self" type="application/rss+xml"/>
+    <title>NASA's Curious Universe</title>
+    <link>https://www.nasa.gov/podcasts/curious-universe/</link>
+    <language>en-US</language>
+    <copyright>NASA</copyright>
+    <description>An official NASA podcast bringing you mind-blowing stories you won’t find anywhere else. 
+
+What does it take to launch a rocket? What happens when we go looking for life beyond Earth? And what can the universe teach us next? 
+
+With extraordinary access to the people and places behind NASA’s exploration of space, Curious Universe brings you closer to the discoveries shaping what we know about our universe.
+
+Don’t forget your curiosity.</description>
+    <image>
+      <url>https://megaphone.imgix.net/podcasts/3c25fbae-6a1b-11ef-b25e-33943a7bea28/image/40d679c7583b1f4010567b2d6bf1412e.png?ixlib=rails-4.3.1&amp;max-w=3000&amp;max-h=3000&amp;fit=crop&amp;auto=format,compress</url>
+      <title>NASA's Curious Universe</title>
+      <link>https://www.nasa.gov/podcasts/curious-universe/</link>
+    </image>
+    <itunes:explicit>no</itunes:explicit>
+    <itunes:type>serial</itunes:type>
+    <itunes:subtitle>Get curious with NASA. No phD required.</itunes:subtitle>
+    <itunes:author>National Aeronautics and Space Administration (NASA)</itunes:author>
+    <itunes:summary>An official NASA podcast bringing you mind-blowing stories you won’t find anywhere else. 
+
+What does it take to launch a rocket? What happens when we go looking for life beyond Earth? And what can the universe teach us next? 
+
+With extraordinary access to the people and places behind NASA’s exploration of space, Curious Universe brings you closer to the discoveries shaping what we know about our universe.
+
+Don’t forget your curiosity.</itunes:summary>
+    <content:encoded>
+      <![CDATA[<p>An official NASA podcast bringing you mind-blowing stories you won’t find anywhere else. </p>
+<p>What does it take to launch a rocket? What happens when we go looking for life beyond Earth? And what can the universe teach us next? </p>
+<p>With extraordinary access to the people and places behind NASA’s exploration of space, Curious Universe brings you closer to the discoveries shaping what we know about our universe.</p>
+<p>Don’t forget your curiosity.</p>]]>
+    </content:encoded>
+    <itunes:owner>
+      <itunes:name>NASA</itunes:name>
+      <itunes:email>katie.konans@nasa.gov</itunes:email>
+    </itunes:owner>
+    <itunes:image href="https://megaphone.imgix.net/podcasts/3c25fbae-6a1b-11ef-b25e-33943a7bea28/image/40d679c7583b1f4010567b2d6bf1412e.png?ixlib=rails-4.3.1&amp;max-w=3000&amp;max-h=3000&amp;fit=crop&amp;auto=format,compress"/>
+    <itunes:category text="Science">
+    </itunes:category>
+    <itunes:category text="Kids &amp; Family">
+    </itunes:category>
+    <itunes:category text="Society &amp; Culture">
+      <itunes:category text="Documentary"/>
+    </itunes:category>
+    <item>
+      <title>Encore: A Year In Mars Dune Alpha</title>
+      <link>https://www.nasa.gov/podcasts/curious-universe/encore-a-year-in-mars-dune-alpha/</link>
+      <description>To prepare for the day when humans travel to Mars, NASA is conducting a one-year experiment in a Mars simulation environment. So what’s it like to spend a year in CHAPEA, the Crew Health and Performance Exploration Analog? Travel through the airlock with voice recordings made by the four-person crew, including what it feels like—and smells like—inside their realistic 3D printed habitat and how virtual reality gives them the sensation of walking on the Red Planet.&amp;nbsp;&amp;nbsp;
+
+This episode was originally published in 2023. For more information about CHAPEA, visit nasa.gov/chapea.&amp;nbsp;</description>
+      <pubDate>Tue, 20 Oct 2026 13:40:00 -0000</pubDate>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:season>14</itunes:season>
+      <itunes:episode>1</itunes:episode>
+      <itunes:author>National Aeronautics and Space Administration (NASA)</itunes:author>
+      <itunes:subtitle>What it feels like—and smells like—inside NASA's simulated Mars habitat</itunes:subtitle>
+      <itunes:summary>To prepare for the day when humans travel to Mars, NASA is conducting a one-year experiment in a Mars simulation environment. So what’s it like to spend a year in CHAPEA, the Crew Health and Performance Exploration Analog? Travel through the airlock with voice recordings made by the four-person crew, including what it feels like—and smells like—inside their realistic 3D printed habitat and how virtual reality gives them the sensation of walking on the Red Planet.&amp;nbsp;&amp;nbsp;
+
+This episode was originally published in 2023. For more information about CHAPEA, visit nasa.gov/chapea.&amp;nbsp;</itunes:summary>
+      <content:encoded>
+        <![CDATA[<p>To prepare for the day when humans travel to Mars, NASA is conducting a one-year experiment in a Mars simulation environment. So what’s it like to spend a year in CHAPEA, the Crew Health and Performance Exploration Analog? Travel through the airlock with voice recordings made by the four-person crew, including what it feels like—and smells like—inside their realistic 3D printed habitat and how virtual reality gives them the sensation of walking on the Red Planet.&nbsp;&nbsp;</p>
+<p>This episode was originally published in 2023. For more information about CHAPEA, visit <a href="https://www.nasa.gov/humans-in-space/chapea/">nasa.gov/chapea</a>.&nbsp;</p>]]>
+      </content:encoded>
+      <itunes:duration>1607</itunes:duration>
+      <itunes:explicit>no</itunes:explicit>
+      <guid isPermaLink="false"><![CDATA[cf450786-c99b-11f1-afe5-c3118dc95724]]></guid>
+      <enclosure url="https://chrt.fm/track/477F33/traffic.megaphone.fm/NATIONALAERONAUTICSANDSPACEADMINISTRATION6420899881.mp3" length="0" type="audio/mpeg"/>
+    </item>
+    <item>
+      <title>Encore: Welcome to the Dark Side</title>
+      <link>https://www.nasa.gov/podcasts/curious-universe/roman-dark-side-encore/</link>
+      <description>Normal matter—the kind that makes up our home planet and everything we can see—adds up to just five percent of the known universe. The other 95 percent is dark matter and dark energy. NASA’s Nancy Grace Roman Space Telescope will settle essential questions about this dark side, especially dark energy, one of the biggest mysteries in all of science. In this encore presentation, hear how NASA astrophysicists study dark matter and dark energy and why they are making scientists reconsider our basic understanding of the universe.&amp;nbsp;
+
+This episode was originally published in 2023. For the latest news about NASA’s Nancy Grace Roman Space Telescope, visit nasa.gov/roman.&amp;nbsp;</description>
+      <pubDate>Tue, 22 Sep 2026 13:03:00 -0000</pubDate>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:season>13</itunes:season>
+      <itunes:episode>6</itunes:episode>
+      <itunes:author>National Aeronautics and Space Administration (NASA)</itunes:author>
+      <itunes:image href="https://megaphone.imgix.net/podcasts/49a07684-b2d4-11f1-ae57-076a471d419d/image/76e3eecacb8d45c4e4910e3163aabef4.png?ixlib=rails-4.3.1&amp;max-w=3000&amp;max-h=3000&amp;fit=crop&amp;auto=format,compress"/>
+      <itunes:subtitle>Only five percent of the universe is normal matter. Here's how NASA studies the rest.</itunes:subtitle>
+      <itunes:summary>Normal matter—the kind that makes up our home planet and everything we can see—adds up to just five percent of the known universe. The other 95 percent is dark matter and dark energy. NASA’s Nancy Grace Roman Space Telescope will settle essential questions about this dark side, especially dark energy, one of the biggest mysteries in all of science. In this encore presentation, hear how NASA astrophysicists study dark matter and dark energy and why they are making scientists reconsider our basic understanding of the universe.&amp;nbsp;
+
+This episode was originally published in 2023. For the latest news about NASA’s Nancy Grace Roman Space Telescope, visit nasa.gov/roman.&amp;nbsp;</itunes:summary>
+      <content:encoded>
+        <![CDATA[<p>Normal matter—the kind that makes up our home planet and everything we can see—adds up to just five percent of the known universe. The other 95 percent is dark matter and dark energy. NASA’s Nancy Grace Roman Space Telescope will settle essential questions about this dark side, especially dark energy, one of the biggest mysteries in all of science. In this encore presentation, hear how NASA astrophysicists study dark matter and dark energy and why they are making scientists reconsider our basic understanding of the universe.&nbsp;</p>
+<p>This episode was originally published in 2023. For the latest news about NASA’s Nancy Grace Roman Space Telescope, visit <a href="https://science.nasa.gov/mission/roman-space-telescope/">nasa.gov/roman</a>.&nbsp;</p>]]>
+      </content:encoded>
+      <itunes:duration>1554</itunes:duration>
+      <itunes:explicit>no</itunes:explicit>
+      <guid isPermaLink="false"><![CDATA[49a07684-b2d4-11f1-ae57-076a471d419d]]></guid>
+      <enclosure url="https://chrt.fm/track/477F33/traffic.megaphone.fm/NATIONALAERONAUTICSANDSPACEADMINISTRATION8321387416.mp3" length="0" type="audio/mpeg"/>
+    </item>
+    <item>
+      <title>Roman Series: Liftoff!</title>
+      <link>https://www.nasa.gov/podcasts/curious-universe/roman-launch-podcast/</link>
+      <description>NASA’s Nancy Grace Roman Space Telescope is in space, taking its first steps to explore the cosmos. Relive Roman’s launch—and the emotion that goes along with the roar of a rocket—with NASA experts who worked on the telescope for years. Plus, learn what happens next and when to expect Roman’s first images.&amp;nbsp;&amp;nbsp;&amp;nbsp;
+
+Learn more about the Nancy Grace Roman Space Telescope at nasa.gov/roman.</description>
+      <pubDate>Sat, 05 Sep 2026 12:36:00 -0000</pubDate>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:season>13</itunes:season>
+      <itunes:episode>5</itunes:episode>
+      <itunes:author>National Aeronautics and Space Administration (NASA)</itunes:author>
+      <itunes:image href="https://megaphone.imgix.net/podcasts/d17e5ecc-a861-11f1-9dca-dba20020be9e/image/76e3eecacb8d45c4e4910e3163aabef4.png?ixlib=rails-4.3.1&amp;max-w=3000&amp;max-h=3000&amp;fit=crop&amp;auto=format,compress"/>
+      <itunes:subtitle>Behind the scenes of the final preparations and big emotions</itunes:subtitle>
+      <itunes:summary>NASA’s Nancy Grace Roman Space Telescope is in space, taking its first steps to explore the cosmos. Relive Roman’s launch—and the emotion that goes along with the roar of a rocket—with NASA experts who worked on the telescope for years. Plus, learn what happens next and when to expect Roman’s first images.&amp;nbsp;&amp;nbsp;&amp;nbsp;
+
+Learn more about the Nancy Grace Roman Space Telescope at nasa.gov/roman.</itunes:summary>
+      <content:encoded>
+        <![CDATA[<p>NASA’s Nancy Grace Roman Space Telescope is in space, taking its first steps to explore the cosmos. Relive Roman’s launch—and the emotion that goes along with the roar of a rocket—with NASA experts who worked on the telescope for years. Plus, learn what happens next and when to expect Roman’s first images.&nbsp;&nbsp;&nbsp;</p>
+<p>Learn more about the Nancy Grace Roman Space Telescope at <a href="https://science.nasa.gov/mission/roman-space-telescope/">nasa.gov/roman</a>.</p>]]>
+      </content:encoded>
+      <itunes:duration>1327</itunes:duration>
+      <itunes:explicit>no</itunes:explicit>
+      <guid isPermaLink="false"><![CDATA[d17e5ecc-a861-11f1-9dca-dba20020be9e]]></guid>
+      <enclosure url="https://chrt.fm/track/477F33/traffic.megaphone.fm/NATIONALAERONAUTICSANDSPACEADMINISTRATION8243891295.mp3" length="0" type="audio/mpeg"/>
+    </item>
+    <item>
+      <title>Roman Series: Why NASA’s Roman Space Telescope Will Make Unexpected Discoveries</title>
+      <link>https://www.nasa.gov/podcasts/curious-universe/roman-deepdive-podcast/</link>
+      <description>Take a deep dive into the science of NASA’s Nancy Grace Roman Space Telescope with Julie McEnery, Roman's senior project scientist. Learn why Roman’s survey data will be so detailed that they could cover a 4K screen the size of dozens of city blocks and why Julie says she doesn’t hope Roman changes our understanding of the universe—she knows it will.&amp;nbsp;
+
+ A video version of this episode is available on YouTube.</description>
+      <pubDate>Thu, 27 Aug 2026 12:59:00 -0000</pubDate>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:season>13</itunes:season>
+      <itunes:episode>4</itunes:episode>
+      <itunes:author>National Aeronautics and Space Administration (NASA)</itunes:author>
+      <itunes:image href="https://megaphone.imgix.net/podcasts/a421401a-a187-11f1-8bc9-1fde8f745948/image/76e3eecacb8d45c4e4910e3163aabef4.png?ixlib=rails-4.3.1&amp;max-w=3000&amp;max-h=3000&amp;fit=crop&amp;auto=format,compress"/>
+      <itunes:subtitle>A deep dive into a groundbreaking new telescope</itunes:subtitle>
+      <itunes:summary>Take a deep dive into the science of NASA’s Nancy Grace Roman Space Telescope with Julie McEnery, Roman's senior project scientist. Learn why Roman’s survey data will be so detailed that they could cover a 4K screen the size of dozens of city blocks and why Julie says she doesn’t hope Roman changes our understanding of the universe—she knows it will.&amp;nbsp;
+
+ A video version of this episode is available on YouTube.</itunes:summary>
+      <content:encoded>
+        <![CDATA[<p>Take a deep dive into the science of NASA’s Nancy Grace Roman Space Telescope with Julie McEnery, Roman's senior project scientist. Learn why Roman’s survey data will be so detailed that they could cover a 4K screen the size of dozens of city blocks and why Julie says she doesn’t hope Roman changes our understanding of the universe—she knows it will.&nbsp;</p>
+<p><a href="https://www.youtube.com/watch?v=FqZTQA6p7Tc"> A video version of this episode is available on YouTube</a>.</p>]]>
+      </content:encoded>
+      <itunes:duration>1591</itunes:duration>
+      <itunes:explicit>no</itunes:explicit>
+      <guid isPermaLink="false"><![CDATA[a421401a-a187-11f1-8bc9-1fde8f745948]]></guid>
+      <enclosure url="https://chrt.fm/track/477F33/traffic.megaphone.fm/NATIONALAERONAUTICSANDSPACEADMINISTRATION8660783502.mp3" length="0" type="audio/mpeg"/>
+    </item>
+    <item>
+      <title>Roman Series: The Technology Inside NASA’s Newest Space Telescope</title>
+      <link>https://www.nasa.gov/podcasts/curious-universe/roman-engineering/</link>
+      <description>What makes NASA’s Nancy Grace Roman Space Telescope a powerful tool with an unprecedented wide view of the cosmos? NASA engineers who designed, built, and tested Roman pop the hood to explain the unique technology inside. Go inside the huge NASA clean room where Roman was built, and get an up-close look at the testing campaign that ensures Roman will succeed in the cold, inhospitable conditions of space.&amp;nbsp;&amp;nbsp;
+
+Learn more about the Nancy Grace Roman Space Telescope at nasa.gov/roman</description>
+      <pubDate>Tue, 25 Aug 2026 12:59:00 -0000</pubDate>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:season>13</itunes:season>
+      <itunes:episode>3</itunes:episode>
+      <itunes:author>National Aeronautics and Space Administration (NASA)</itunes:author>
+      <itunes:image href="https://megaphone.imgix.net/podcasts/00ea2402-9fed-11f1-b1fe-eff25232fdf1/image/76e3eecacb8d45c4e4910e3163aabef4.png?ixlib=rails-4.3.1&amp;max-w=3000&amp;max-h=3000&amp;fit=crop&amp;auto=format,compress"/>
+      <itunes:subtitle>Pop the hood of a space telescope with NASA engineers</itunes:subtitle>
+      <itunes:summary>What makes NASA’s Nancy Grace Roman Space Telescope a powerful tool with an unprecedented wide view of the cosmos? NASA engineers who designed, built, and tested Roman pop the hood to explain the unique technology inside. Go inside the huge NASA clean room where Roman was built, and get an up-close look at the testing campaign that ensures Roman will succeed in the cold, inhospitable conditions of space.&amp;nbsp;&amp;nbsp;
+
+Learn more about the Nancy Grace Roman Space Telescope at nasa.gov/roman</itunes:summary>
+      <content:encoded>
+        <![CDATA[<p>What makes NASA’s Nancy Grace Roman Space Telescope a powerful tool with an unprecedented wide view of the cosmos? NASA engineers who designed, built, and tested Roman pop the hood to explain the unique technology inside. Go inside the huge NASA clean room where Roman was built, and get an up-close look at the testing campaign that ensures Roman will succeed in the cold, inhospitable conditions of space.&nbsp;&nbsp;</p>
+<p>Learn more about the Nancy Grace Roman Space Telescope at <a href="https://science.nasa.gov/mission/roman-space-telescope/">nasa.gov/roman</a></p>]]>
+      </content:encoded>
+      <itunes:duration>1976</itunes:duration>
+      <itunes:explicit>no</itunes:explicit>
+      <guid isPermaLink="false"><![CDATA[00ea2402-9fed-11f1-b1fe-eff25232fdf1]]></guid>
+      <enclosure url="https://chrt.fm/track/477F33/traffic.megaphone.fm/NATIONALAERONAUTICSANDSPACEADMINISTRATION5630499129.mp3" length="0" type="audio/mpeg"/>
+    </item>
+    <item>
+      <title>Introducing Season Six</title>
+      <link>https://www.nasa.gov/podcasts/curious-universe/introducing-season-six/</link>
+      <description>In season six, meet researchers who are using sounds from the Sun to unlock new details about our star, explore the “dark side” of the universe with scientists who study dark matter and dark energy, and get a behind-the-scenes look at the first NASA mission to deliver an asteroid sample to Earth. A new episode drops every Tuesday. NASA's Curious Universe is an official NASA podcast. Discover more adventures with NASA astronauts, engineers, scientists, and other experts at nasa.gov/curiousuniverse</description>
+      <pubDate>Tue, 31 Oct 2023 13:04:41 -0000</pubDate>
+      <itunes:title>Introducing Season Six</itunes:title>
+      <itunes:episodeType>trailer</itunes:episodeType>
+      <itunes:season>6</itunes:season>
+      <itunes:author>National Aeronautics and Space Administration (NASA)</itunes:author>
+      <itunes:image href="https://megaphone.imgix.net/podcasts/41a9206a-6a1b-11ef-9c3f-2ba645fb6e8a/image/4a5d275d8c5bfc4860b07e3fe0d36db1.png?ixlib=rails-4.3.1&amp;max-w=3000&amp;max-h=3000&amp;fit=crop&amp;auto=format,compress"/>
+      <itunes:subtitle>In season six, meet researchers who are using sounds from the Sun to unlock new details about our star, explore the “dark side” of the universe with scientists who study dark matter and dark energy, and get a behind-the-scenes look at the first NASA mission to deliver an asteroid sample to Earth. A new episode drops every Tuesday. NASA's Curious Universe is an official NASA podcast. Discover more adventures with NASA astronauts, engineers, scientists, and other experts at nasa.gov/curiousuniverse</itunes:subtitle>
+      <itunes:summary>In season six, meet researchers who are using sounds from the Sun to unlock new details about our star, explore the “dark side” of the universe with scientists who study dark matter and dark energy, and get a behind-the-scenes look at the first NASA mission to deliver an asteroid sample to Earth. A new episode drops every Tuesday. NASA's Curious Universe is an official NASA podcast. Discover more adventures with NASA astronauts, engineers, scientists, and other experts at nasa.gov/curiousuniverse</itunes:summary>
+      <content:encoded>
+        <![CDATA[In season six, meet researchers who are using sounds from the Sun to unlock new details about our star, explore the “dark side” of the universe with scientists who study dark matter and dark energy, and get a behind-the-scenes look at the first NASA mission to deliver an asteroid sample to Earth. A new episode drops every Tuesday. NASA's Curious Universe is an official NASA podcast. Discover more adventures with NASA astronauts, engineers, scientists, and other experts at nasa.gov/curiousuniverse]]>
+      </content:encoded>
+      <itunes:duration>114</itunes:duration>
+      <itunes:explicit>no</itunes:explicit>
+      <guid isPermaLink="false"><![CDATA[8c20957969fc960995cd9528c711ba9c]]></guid>
+      <enclosure url="https://chrt.fm/track/477F33/traffic.megaphone.fm/NATIONALAERONAUTICSANDSPACEADMINISTRATION7844444081.mp3?updated=1725385377" length="0" type="audio/mpeg"/>
+    </item>
+  </channel>
+</rss>

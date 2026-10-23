@@ -22,6 +22,22 @@ android {
             "NASA_YOUTUBE_FEED_URL",
             "\"https://www.youtube.com/feeds/videos.xml?channel_id=UCLA_DiR1FfKNvjuUpBHmylQ\"",
         )
+        // NASA's podcast feeds (F21): nasa.gov redirects each to Megaphone, which hosts the audio.
+        buildConfigField(
+            "String",
+            "PODCAST_HOUSTON_FEED_URL",
+            "\"https://www.nasa.gov/feeds/podcasts/houston-we-have-a-podcast\"",
+        )
+        buildConfigField(
+            "String",
+            "PODCAST_CURIOUS_UNIVERSE_FEED_URL",
+            "\"https://www.nasa.gov/feeds/podcasts/curious-universe\"",
+        )
+        buildConfigField(
+            "String",
+            "PODCAST_SMALL_STEPS_FEED_URL",
+            "\"https://www.nasa.gov/feeds/podcasts/small-steps-giant-leaps\"",
+        )
     }
 }
 
@@ -35,8 +51,12 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.retrofit)
     implementation(libs.okhttp)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
 
     testImplementation(projects.core.testing)
     testImplementation(libs.okhttp.mockwebserver)
     testImplementation(libs.kotlinx.serialization.json)
+    testImplementation(libs.androidx.work.testing)
 }

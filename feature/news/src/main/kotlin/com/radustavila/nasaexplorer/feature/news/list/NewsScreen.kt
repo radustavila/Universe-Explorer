@@ -27,16 +27,21 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -58,20 +63,29 @@ import com.radustavila.nasaexplorer.feature.news.NewsRow
 import com.radustavila.nasaexplorer.feature.news.R
 import com.radustavila.nasaexplorer.feature.news.chipRes
 import com.radustavila.nasaexplorer.feature.news.icon
+import com.radustavila.nasaexplorer.feature.news.podcast.PodcastsTab
 import com.radustavila.nasaexplorer.feature.news.rememberNewsItemOpener
 
 const val NEWS_LIST_TEST_TAG = "news-list"
 
 fun newsFilterTestTag(kind: NewsKind) = "news-filter-${kind.name}"
 
+fun newsTabTestTag(tab: NewsTab) = "news-tab-${tab.name}"
+
+/** The News screen's two tabs: NASA's news (F14) and its podcasts (F21). */
+enum class NewsTab { NEWS, PODCASTS }
+
 @Composable
 fun NewsScreen(
     onBackClick: () -> Unit,
     onImageClick: (id: String) -> Unit,
+    onEpisodeClick: (id: String) -> Unit,
     modifier: Modifier = Modifier,
+    initialTab: NewsTab = NewsTab.NEWS,
     viewModel: NewsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var tab by rememberSaveable { mutableStateOf(initialTab) }
     NewsContent(
         uiState = uiState,
         onBackClick = onBackClick,
@@ -80,6 +94,9 @@ fun NewsScreen(
         onRefresh = viewModel::onRefresh,
         onErrorShown = viewModel::onErrorShown,
         modifier = modifier,
+        selectedTab = tab,
+        onTabSelected = { tab = it },
+        podcasts = { PodcastsTab(onEpisodeClick = onEpisodeClick) },
     )
 }
 
@@ -93,10 +110,13 @@ internal fun NewsContent(
     onRefresh: () -> Unit,
     onErrorShown: () -> Unit,
     modifier: Modifier = Modifier,
+    selectedTab: NewsTab = NewsTab.NEWS,
+    onTabSelected: (NewsTab) -> Unit = {},
+    podcasts: @Composable () -> Unit = {},
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     // With news on screen a failed refresh is a passing note; without, the empty state says it.
-    val errorMessage = uiState.error?.takeIf { uiState.hasNews }?.asText()
+    val errorMessage = uiState.error?.takeIf { uiState.hasNews && selectedTab == NewsTab.NEWS }?.asText()
     LaunchedEffect(errorMessage) {
         if (errorMessage != null) {
             snackbarHostState.showSnackbar(errorMessage)
@@ -109,20 +129,27 @@ internal fun NewsContent(
         // Inside the Universe tab: the app scaffold's navigation bar owns the bottom inset.
         contentWindowInsets = WindowInsets(0),
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.news_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.news_back),
-                        )
-                    }
-                },
-            )
+            Column {
+                TopAppBar(
+                    title = { Text(stringResource(R.string.news_title)) },
+                    navigationIcon = {
+                        IconButton(onClick = onBackClick) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.news_back),
+                            )
+                        }
+                    },
+                )
+                NewsTabs(selected = selectedTab, onTabSelected = onTabSelected)
+            }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { padding ->
+        if (selectedTab == NewsTab.PODCASTS) {
+            Box(modifier = Modifier.fillMaxSize().padding(padding)) { podcasts() }
+            return@Scaffold
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -136,6 +163,22 @@ internal fun NewsContent(
             ) {
                 NewsBody(uiState, onItemClick, onKindSelected, onRefresh)
             }
+        }
+    }
+}
+
+@Composable
+private fun NewsTabs(selected: NewsTab, onTabSelected: (NewsTab) -> Unit) {
+    PrimaryTabRow(selectedTabIndex = selected.ordinal) {
+        NewsTab.entries.forEach { tab ->
+            Tab(
+                selected = tab == selected,
+                onClick = { onTabSelected(tab) },
+                text = {
+                    Text(stringResource(if (tab == NewsTab.NEWS) R.string.news_tab_news else R.string.news_tab_podcasts))
+                },
+                modifier = Modifier.testTag(newsTabTestTag(tab)),
+            )
         }
     }
 }

@@ -91,6 +91,15 @@ enum class SyncSource(val key: String) {
 
     /** JPL SBDB comet candidates and their Horizons ephemerides (F18), refreshed together daily. */
     COMETS("jpl_comets"),
+
+    /** NASA podcasts (F21), one source per show: Houston We Have a Podcast. */
+    NASA_PODCAST_HOUSTON("nasa_podcast_houston"),
+
+    /** NASA's Curious Universe. */
+    NASA_PODCAST_CURIOUS_UNIVERSE("nasa_podcast_curious_universe"),
+
+    /** Small Steps, Giant Leaps. */
+    NASA_PODCAST_SMALL_STEPS("nasa_podcast_small_steps"),
     ;
 
     companion object {

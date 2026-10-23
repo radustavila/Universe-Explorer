@@ -1,5 +1,6 @@
 package com.radustavila.nasaexplorer.data.news.remote
 
+import com.radustavila.nasaexplorer.data.news.remote.dto.FeedDocumentDto
 import com.radustavila.nasaexplorer.data.news.remote.dto.FeedEntryDto
 import java.io.InputStream
 import org.xmlpull.v1.XmlPullParser
@@ -8,8 +9,9 @@ import org.xmlpull.v1.XmlPullParserFactory
 
 /**
  * Reads the entries of an RSS 2.0 or Atom feed: NASA's WordPress feeds are RSS with the `content`
- * and Media RSS extensions, YouTube's is Atom with its own `yt` namespace. One parser serves both,
- * because an entry is just a bag of the few elements the app reads.
+ * and Media RSS extensions, YouTube's is Atom with its own `yt` namespace, and NASA's podcasts
+ * (hosted on Megaphone) are RSS with the iTunes extension. One parser serves them all, because an
+ * entry is just a bag of the few elements the app reads.
  *
  * Elements are matched by namespace, not prefix. Unknown elements are walked into rather than
  * skipped, so fields inside a container (YouTube's `<media:group>`) are found; anything else is
@@ -22,15 +24,25 @@ internal object FeedParser {
      * returned then, not even the entries before the fault: a broken answer must not replace a
      * cached feed with part of it.
      */
-    fun parse(input: InputStream, charset: String? = null): List<FeedEntryDto> {
+    fun parse(input: InputStream, charset: String? = null): List<FeedEntryDto> = parseDocument(input, charset).entries
+
+    /** The entries and what the feed says about itself (a podcast's artwork), with [parse]'s rules. */
+    fun parseDocument(input: InputStream, charset: String? = null): FeedDocumentDto {
         val parser = newParser().apply { setInput(input, charset) }
         val entries = mutableListOf<FeedEntryDto>()
+        var imageUrl: String? = null
         var event = parser.next()
         while (event != XmlPullParser.END_DOCUMENT) {
-            if (event == XmlPullParser.START_TAG && parser.isEntryStart()) entries += parser.readEntry()
+            if (event == XmlPullParser.START_TAG) {
+                when {
+                    parser.isEntryStart() -> entries += parser.readEntry()
+                    parser.namespace == ITUNES && parser.name == "image" ->
+                        imageUrl = imageUrl ?: parser.getAttributeValue(null, "href")
+                }
+            }
             event = parser.next()
         }
-        return entries
+        return FeedDocumentDto(imageUrl = imageUrl, entries = entries)
     }
 
     private fun newParser(): XmlPullParser {
@@ -69,6 +81,7 @@ internal object FeedParser {
         CONTENT -> if (name == "encoded") entry.copy(contentHtml = readText()) else entry
         YOUTUBE -> if (name == "videoId") entry.copy(videoId = readText()) else entry
         MEDIA -> readMediaField(entry)
+        ITUNES -> readItunesField(entry)
         else -> entry
     }
 
@@ -77,6 +90,7 @@ internal object FeedParser {
         "link" -> entry.copy(link = readText())
         "pubDate" -> entry.copy(published = readText())
         "description" -> entry.copy(description = readText())
+        "guid" -> entry.copy(guid = readText())
         "enclosure" -> entry.copy(
             enclosureUrl = getAttributeValue(null, "url"),
             enclosureType = getAttributeValue(null, "type"),
@@ -97,6 +111,13 @@ internal object FeedParser {
     private fun XmlPullParser.readMediaField(entry: FeedEntryDto): FeedEntryDto = when (name) {
         "thumbnail" -> entry.copy(thumbnailUrl = entry.thumbnailUrl ?: getAttributeValue(null, "url"))
         "description" -> entry.copy(mediaDescription = readText())
+        else -> entry
+    }
+
+    private fun XmlPullParser.readItunesField(entry: FeedEntryDto): FeedEntryDto = when (name) {
+        "duration" -> entry.copy(duration = readText())
+        "image" -> entry.copy(itunesImageUrl = getAttributeValue(null, "href"))
+        "episodeType" -> entry.copy(episodeType = readText())
         else -> entry
     }
 
@@ -123,4 +144,5 @@ internal object FeedParser {
     private const val CONTENT = "http://purl.org/rss/1.0/modules/content/"
     private const val MEDIA = "http://search.yahoo.com/mrss/"
     private const val YOUTUBE = "http://www.youtube.com/xml/schemas/2015"
+    private const val ITUNES = "http://www.itunes.com/dtds/podcast-1.0.dtd"
 }

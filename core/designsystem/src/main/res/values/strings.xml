@@ -114,4 +114,9 @@
     <string name="stargazing_rating_fair">Fair</string>
     <string name="stargazing_rating_good">Good</string>
     <string name="stargazing_rating_excellent">Excellent</string>
+
+    <!-- NASA's podcast titles (F21), as NASA writes them. -->
+    <string name="podcast_show_houston" translatable="false">Houston We Have a Podcast</string>
+    <string name="podcast_show_curious_universe" translatable="false">NASA\'s Curious Universe</string>
+    <string name="podcast_show_small_steps" translatable="false">Small Steps, Giant Leaps</string>
 </resources>

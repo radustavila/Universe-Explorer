@@ -63,6 +63,7 @@
     <string name="settings_storage_cached_data">Cached data (launches, events, Mars, asteroids…)</string>
     <string name="settings_storage_library">Pictures of the day, Earth photos and favourites</string>
     <string name="settings_storage_offline_favorites">Offline favourites</string>
+    <string name="settings_storage_podcast_downloads">Downloaded podcast episodes</string>
     <string name="settings_storage_total">Total</string>
     <string name="settings_storage_measuring">Measuring…</string>
     <string name="settings_clear_cache">Clear cache</string>
@@ -120,6 +121,8 @@
     <string name="credit_nasa_news_description">Stories, science articles and the Image of the Day from nasa.gov and science.nasa.gov. Pictures credited to others belong to them.</string>
     <string name="credit_nasa_youtube">NASA on YouTube</string>
     <string name="credit_nasa_youtube_description">Videos and live streams, played in YouTube</string>
+    <string name="credit_nasa_podcasts">NASA podcasts</string>
+    <string name="credit_nasa_podcasts_description">Houston We Have a Podcast, NASA\'s Curious Universe and Small Steps, Giant Leaps, streamed from NASA\'s official feeds</string>
     <string name="credit_astronomy_engine">Astronomy Engine by Don Cross</string>
     <string name="credit_astronomy_engine_description">Rise and set times, Moon phases and planet positions, computed on the device</string>
     <string name="credit_hyg">HYG star database by David Nash</string>

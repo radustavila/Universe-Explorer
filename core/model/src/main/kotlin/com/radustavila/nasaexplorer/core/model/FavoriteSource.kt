@@ -25,6 +25,9 @@ enum class FavoriteSource(val key: String) {
 
     /** NASA Image of the Day; item id is the image's page URL ([NewsItem.id]). */
     NASA_IMAGE_OF_THE_DAY("nasa_image_of_the_day"),
+
+    /** NASA podcast episode; item id is [PodcastEpisode.id]. */
+    NASA_PODCAST_EPISODE("nasa_podcast_episode"),
     ;
 
     companion object {

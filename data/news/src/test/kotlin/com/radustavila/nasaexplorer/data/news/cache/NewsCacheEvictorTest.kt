@@ -36,7 +36,7 @@ class NewsCacheEvictorTest {
         ).allowMainThreadQueries().build()
         val io = UnconfinedTestDispatcher()
         local = RoomNewsLocalDataSource(database.newsDao(), io)
-        evictor = NewsCacheEvictor(database.newsDao(), favorites, io)
+        evictor = NewsCacheEvictor(database.newsDao(), database.podcastDao(), favorites, io)
     }
 
     @After

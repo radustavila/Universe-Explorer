@@ -1,0 +1,4 @@
+<resources>
+    <string name="podcast_player_skip_back">Back 15 seconds</string>
+    <string name="podcast_player_skip_forward">Forward 30 seconds</string>
+</resources>
