@@ -23,6 +23,8 @@ internal class SkyFrame(
     val palette: SkyPalette,
     val names: SkyNames,
     val lens: SkyLens = SkyLens.STEREOGRAPHIC,
+    /** The deep-sky layer (F23), switched in the layers menu. */
+    val showDeepSky: Boolean = false,
 )
 
 /** The words the map draws that are not in the catalogue, resolved from string resources. */
@@ -47,7 +49,12 @@ internal fun SkyTarget.direction(sky: HorizontalSky, bodies: SkyMapBodies?): Sky
         ?.let { SkyChart.apparent(it.horizontal) }
     is SkyTarget.Comet -> bodies?.comet(designation)?.let { SkyChart.apparent(it.horizontal) }
     SkyTarget.GalacticCentre -> sky.direction(GalacticCentre.POSITION)
+    is SkyTarget.DeepSky -> sky.chart.deepSkyIndex(id).takeIf { it >= 0 }?.let(sky::deepSky)
 }
+
+/** The deep-sky object [target] names, when the catalogue has it. */
+internal fun HorizontalSky.deepSkyObject(target: SkyTarget.DeepSky) =
+    chart.deepSkyIndex(target.id).takeIf { it >= 0 }?.let { chart.catalog.deepSky[it] }
 
 /** The comet [designation] names, when it is on the map. */
 internal fun SkyMapBodies.comet(designation: String): CometSkyPosition? =

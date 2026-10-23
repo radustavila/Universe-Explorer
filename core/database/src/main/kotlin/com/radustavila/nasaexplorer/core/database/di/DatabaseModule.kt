@@ -6,6 +6,7 @@ import com.radustavila.nasaexplorer.core.database.NasaDatabase
 import com.radustavila.nasaexplorer.core.database.dao.ApodDao
 import com.radustavila.nasaexplorer.core.database.dao.EpicDao
 import com.radustavila.nasaexplorer.core.database.dao.FavoriteDao
+import com.radustavila.nasaexplorer.core.database.dao.ObservingLogDao
 import com.radustavila.nasaexplorer.core.database.migration.NasaDatabaseMigrations
 import dagger.Module
 import dagger.Provides
@@ -35,4 +36,7 @@ object DatabaseModule {
 
     @Provides
     fun provideEpicDao(database: NasaDatabase): EpicDao = database.epicDao()
+
+    @Provides
+    fun provideObservingLogDao(database: NasaDatabase): ObservingLogDao = database.observingLogDao()
 }

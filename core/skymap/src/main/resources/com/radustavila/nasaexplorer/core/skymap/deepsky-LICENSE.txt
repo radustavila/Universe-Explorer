@@ -1,0 +1,18 @@
+deepsky.bin
+
+Derived from OpenNGC by Mattia Verga, release v20260501 (database_files/NGC.csv and addendum.csv):
+https://github.com/mattiaverga/OpenNGC
+
+OpenNGC's data is licensed under the Creative Commons Attribution-ShareAlike 4.0 International
+License (CC BY-SA 4.0): https://creativecommons.org/licenses/by-sa/4.0/
+
+Changes: only objects of visual magnitude below 12 are kept (single and double stars and duplicate
+entries left out), plus every Messier and Caldwell object. Each keeps its name, first common name,
+type (grouped into eight kinds), right ascension and declination (J2000), constellation, visual
+magnitude (blue where no visual one is given), major and minor axes, position angle and Messier
+number. Caldwell numbers were added by hand from NASA's Hubble Caldwell Catalog, M102 is taken as
+NGC 5866, five bright Caldwell clusters without a magnitude and the Coalsack without a size get
+the Caldwell catalogue's values, and the result is written in the binary format of core/skymap/tools/build_sky_catalog.py.
+
+This file (deepsky.bin) is therefore also licensed under CC BY-SA 4.0. Anyone may reuse it under
+those terms. The licence covers this data file only, not the app that reads it.

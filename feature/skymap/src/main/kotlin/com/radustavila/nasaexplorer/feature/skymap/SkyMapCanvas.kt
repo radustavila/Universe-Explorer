@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.sp
 import com.radustavila.nasaexplorer.core.model.SkyMapBodies
 import com.radustavila.nasaexplorer.core.skymap.HorizontalSky
 import com.radustavila.nasaexplorer.feature.skymap.ar.SkyArState
+import com.radustavila.nasaexplorer.feature.skymap.render.DeepSkyHitArea
+import com.radustavila.nasaexplorer.feature.skymap.render.DeepSkyLayer
 import com.radustavila.nasaexplorer.feature.skymap.render.SkyFrame
 import com.radustavila.nasaexplorer.feature.skymap.render.SkyHitTest
 import com.radustavila.nasaexplorer.feature.skymap.render.SkyNames
@@ -47,12 +49,15 @@ internal fun SkyMapCanvas(
     palette: SkyPalette,
     names: SkyNames,
     description: String,
+    showDeepSky: Boolean,
     onTap: (SkyTarget?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val textMeasurer = rememberTextMeasurer(cacheSize = 0)
     val renderer = remember(textMeasurer) { SkyRenderer(textMeasurer, labelStyles()) }
     val tapRadius = with(LocalDensity.current) { TAP_RADIUS.toPx() }
+    val deepSkyMinRadius = with(LocalDensity.current) { DeepSkyLayer.MIN_RADIUS_DP.dp.toPx() }
+    val currentShowDeepSky = rememberUpdatedState(showDeepSky)
     val currentSky = rememberUpdatedState(sky)
     val currentBodies = rememberUpdatedState(bodies)
     val currentOnTap = rememberUpdatedState(onTap)
@@ -61,21 +66,7 @@ internal fun SkyMapCanvas(
             .clipToBounds()
             .testTag(SKY_MAP_CANVAS_TEST_TAG)
             .semantics { contentDescription = description }
-            .pointerInput(camera) {
-                detectTransformGestures { centroid, pan, zoom, _ ->
-                    val projection = camera.projection(size.width.toFloat(), size.height.toFloat())
-                    val isPan = pan != Offset.Zero
-                    val from = centroid - pan
-                    // Over the camera the phone aims the map: drags only align it, pinches zoom the camera.
-                    if (ar.isOn) {
-                        if (isPan && ar.isAligning) camera.align(projection, from.x, from.y, centroid.x, centroid.y)
-                        if (zoom != 1f) ar.zoom(zoom)
-                    } else {
-                        if (isPan) camera.drag(projection, from.x, from.y, centroid.x, centroid.y)
-                        if (zoom != 1f) camera.zoom(zoom)
-                    }
-                }
-            }
+            .dragAndPinch(camera, ar)
             .pointerInput(camera) {
                 detectTapGestures { offset ->
                     val projection = camera.projection(size.width.toFloat(), size.height.toFloat())
@@ -86,6 +77,7 @@ internal fun SkyMapCanvas(
                         sky = currentSky.value,
                         bodies = currentBodies.value,
                         projection = projection,
+                        deepSky = DeepSkyHitArea(deepSkyMinRadius).takeIf { currentShowDeepSky.value },
                     )
                     currentOnTap.value(target)
                 }
@@ -102,10 +94,27 @@ internal fun SkyMapCanvas(
                         palette = palette,
                         names = names,
                         lens = camera.lens,
+                        showDeepSky = showDeepSky,
                     ),
                 )
             },
     )
+}
+
+/** Drags turn the map and pinches zoom it; over the camera, drags only align it and pinches zoom the camera. */
+private fun Modifier.dragAndPinch(camera: SkyCameraState, ar: SkyArState): Modifier = pointerInput(camera) {
+    detectTransformGestures { centroid, pan, zoom, _ ->
+        val projection = camera.projection(size.width.toFloat(), size.height.toFloat())
+        val isPan = pan != Offset.Zero
+        val from = centroid - pan
+        if (ar.isOn) {
+            if (isPan && ar.isAligning) camera.align(projection, from.x, from.y, centroid.x, centroid.y)
+            if (zoom != 1f) ar.zoom(zoom)
+        } else {
+            if (isPan) camera.drag(projection, from.x, from.y, centroid.x, centroid.y)
+            if (zoom != 1f) camera.zoom(zoom)
+        }
+    }
 }
 
 private val TAP_RADIUS = 28.dp

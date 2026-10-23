@@ -2,7 +2,10 @@ package com.radustavila.nasaexplorer.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.radustavila.nasaexplorer.core.common.dispatchers.AppDispatcher
+import com.radustavila.nasaexplorer.core.common.dispatchers.Dispatcher
 import com.radustavila.nasaexplorer.core.domain.usecase.ClearCacheUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ExportObservingLogUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.MeasureStorageUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveAuroraAlertSettingsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDailyWallpaperEnabledUseCase
@@ -25,7 +28,9 @@ import com.radustavila.nasaexplorer.core.domain.usecase.SetTimeFormatUseCase
 import com.radustavila.nasaexplorer.core.model.MeasurementSystem
 import com.radustavila.nasaexplorer.core.model.TimeFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.IOException
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -34,6 +39,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Every user choice in one place. Each one is stored where it already lives (user preferences,
@@ -64,6 +70,8 @@ class SettingsViewModel @Inject constructor(
     private val clearCache: ClearCacheUseCase,
     observeEarthquakeAlerts: ObserveEarthquakeAlertEnabledUseCase,
     private val setEarthquakeAlertEnabled: SetEarthquakeAlertEnabledUseCase,
+    private val exportObservingLog: ExportObservingLogUseCase,
+    @Dispatcher(AppDispatcher.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     private val storage = MutableStateFlow(StorageUiState())
@@ -187,6 +195,24 @@ class SettingsViewModel @Inject constructor(
             measure()
             storage.update { it.copy(isClearing = false) }
             message.value = if (cleared) SettingsMessage.CACHE_CLEARED else SettingsMessage.CACHE_CLEAR_FAILED
+        }
+    }
+
+    /**
+     * Writes the observing log (F23) as CSV through [write], which opens the file the user picked;
+     * off the main thread. A file that cannot be written ends in a message, not a crash.
+     */
+    fun onExportObservingLog(write: (csv: String) -> Unit) {
+        viewModelScope.launch {
+            message.value = try {
+                val csv = exportObservingLog()
+                withContext(ioDispatcher) { write(csv) }
+                SettingsMessage.OBSERVING_LOG_EXPORTED
+            } catch (_: IOException) {
+                SettingsMessage.OBSERVING_LOG_EXPORT_FAILED
+            } catch (_: SecurityException) {
+                SettingsMessage.OBSERVING_LOG_EXPORT_FAILED
+            }
         }
     }
 

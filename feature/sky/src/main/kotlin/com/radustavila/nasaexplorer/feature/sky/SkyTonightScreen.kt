@@ -82,6 +82,7 @@ fun SkyTonightScreen(
     nextInTheSky: (@Composable () -> Unit)? = null,
     comets: (@Composable () -> Unit)? = null,
     milkyWay: (@Composable () -> Unit)? = null,
+    deepSky: (@Composable () -> Unit)? = null,
     viewModel: SkyTonightViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -141,6 +142,7 @@ fun SkyTonightScreen(
         nextInTheSky = nextInTheSky,
         comets = comets,
         milkyWay = milkyWay,
+        deepSky = deepSky,
         moreSatellites = { MoreSatellitesSection(snackbarHostState) },
         stargazing = { StargazingForecastCard() },
     )
@@ -183,6 +185,7 @@ fun SkyTonightContent(
     moreSatellites: (@Composable () -> Unit)? = null,
     stargazing: @Composable () -> Unit = {},
     milkyWay: (@Composable () -> Unit)? = null,
+    deepSky: (@Composable () -> Unit)? = null,
 ) {
     Scaffold(
         modifier = modifier,
@@ -220,6 +223,7 @@ fun SkyTonightContent(
                         moreSatellites = moreSatellites,
                         stargazing = stargazing,
                         milkyWay = milkyWay,
+                        deepSky = deepSky,
                     )
                 }
             }
@@ -240,6 +244,7 @@ private fun SkyList(
     moreSatellites: (@Composable () -> Unit)?,
     stargazing: @Composable () -> Unit,
     milkyWay: (@Composable () -> Unit)?,
+    deepSky: (@Composable () -> Unit)?,
 ) {
     val location = uiState.location
     // One column on a phone held upright; side by side on wider windows (a phone in landscape
@@ -285,6 +290,8 @@ private fun SkyList(
             }
             // Worked out for the place, like the night: hides itself when the core is out of season.
             milkyWay?.let { card -> item(key = "milky-way") { card() } }
+            // Tonight's dark hours at the place, like the Milky Way: hides itself on nights that stay light.
+            deepSky?.let { card -> item(key = "deep-sky") { card() } }
             uiState.passes?.let { forecast ->
                 item(key = "iss") {
                     IssPassesCard(forecast = forecast, remindersOn = remindersOn, onRemindersClick = onRemindersClick)

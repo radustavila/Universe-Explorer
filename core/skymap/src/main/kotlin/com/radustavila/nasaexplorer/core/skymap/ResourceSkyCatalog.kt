@@ -14,12 +14,14 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 /**
- * The catalogue bundled as this module's Java resources (`stars.bin`, `constellations.bin`, both
- * written by `tools/build_sky_catalog.py`), read once per process: about 130 KB, a few tens of
- * milliseconds. Callers keep it off the main thread.
+ * The catalogue bundled as this module's Java resources (`stars.bin`, `constellations.bin` and,
+ * through [deepSkyCatalog], `deepsky.bin`, all written by `tools/build_sky_catalog.py`), read once
+ * per process: about 210 KB, a few tens of milliseconds. Callers keep it off the main thread.
  */
 @Singleton
-class ResourceSkyCatalog @Inject constructor() : SkyCatalogRepository {
+class ResourceSkyCatalog @Inject constructor(
+    private val deepSkyCatalog: ResourceDeepSkyCatalog,
+) : SkyCatalogRepository {
 
     private val mutex = Mutex()
 
@@ -29,9 +31,10 @@ class ResourceSkyCatalog @Inject constructor() : SkyCatalogRepository {
     override suspend fun catalog(): SkyCatalog =
         cached ?: mutex.withLock { cached ?: read().also { cached = it } }
 
-    internal fun read(): SkyCatalog = SkyCatalog(
+    internal suspend fun read(): SkyCatalog = SkyCatalog(
         stars = open(STARS_FILE).use(::readStars),
         constellations = open(CONSTELLATIONS_FILE).use(::readConstellations),
+        deepSky = deepSkyCatalog.objects(),
     )
 
     private fun open(name: String): DataInputStream {

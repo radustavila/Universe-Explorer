@@ -126,6 +126,30 @@ class SkyMapScreenshotTest {
         )
     }
 
+    @Test
+    @Config(qualifiers = ScreenshotDevices.COMPACT)
+    fun skyMapDeepSky() {
+        // Zoomed in on the Andromeda Galaxy (F23): its ellipse along the position angle, M32 and
+        // M110 beside it, and the card with what it is and the way to log it.
+        val m31 = SkyMapFixture.deepSkyId(messier = 31)
+        capture(
+            "SkyMapDeepSky",
+            SkyMapFixture.state(selected = SkyTarget.DeepSky(m31), selectedConstellation = "And"),
+            SkyCameraState(CameraMode.TOUCH, azimuthDegrees = 60.0, altitudeDegrees = 70.0, fieldOfViewDegrees = 12.0),
+        )
+    }
+
+    @Test
+    @Config(qualifiers = ScreenshotDevices.COMPACT)
+    fun skyMapDeepSkyWide() {
+        // Cassiopeia to Orion with the deep-sky layer on: Messier and Caldwell symbols and names.
+        capture(
+            "SkyMapDeepSkyWide",
+            SkyMapFixture.state(),
+            SkyCameraState(CameraMode.TOUCH, azimuthDegrees = 80.0, altitudeDegrees = 45.0, fieldOfViewDegrees = 60.0),
+        )
+    }
+
     private companion object {
         val DUSK_TOP = Color(0xFF14233F)
         val DUSK_LOW = Color(0xFF5B5470)

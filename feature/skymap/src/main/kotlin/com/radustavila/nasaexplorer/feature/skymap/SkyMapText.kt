@@ -10,6 +10,8 @@ import com.radustavila.nasaexplorer.core.model.SatelliteSet
 import com.radustavila.nasaexplorer.core.model.SkyCatalog
 import com.radustavila.nasaexplorer.core.model.SkyMapBodies
 import com.radustavila.nasaexplorer.core.model.SolarSystemBody
+import com.radustavila.nasaexplorer.feature.skymap.deepsky.designationLine
+import com.radustavila.nasaexplorer.feature.skymap.deepsky.title
 import com.radustavila.nasaexplorer.feature.skymap.render.SkyNames
 import com.radustavila.nasaexplorer.feature.skymap.render.satellite
 import java.text.Normalizer
@@ -104,7 +106,8 @@ internal data class SkySearchResult(val target: SkyTarget, val name: String)
 /**
  * Everything named on the map that matches [query], ignoring case and accents: the Sun, Moon and
  * planets, the ISS, comets (by full name), the galactic centre (also as the Milky Way's core), constellations (by
- * name or abbreviation) and named stars, brightest first within each group; names starting with the query come first.
+ * name or abbreviation), named stars, and deep-sky objects (F23: "M31", "C14", "NGC 224", common names; spaces
+ * optional), brightest first within each group; names starting with the query come first.
  */
 internal fun searchSky(
     query: String,
@@ -115,7 +118,24 @@ internal fun searchSky(
 ): List<SkySearchResult> {
     val needle = query.foldForSearch()
     if (needle.isEmpty()) return emptyList()
-    val candidates = buildList {
+    val abbreviations = catalog.constellations.withIndex()
+        .associate { (index, figure) -> index to figure.id.foldForSearch() }
+    val squashedNeedle = needle.squashed()
+    return searchCandidates(catalog, bodies, names)
+        .filter { result ->
+            val name = result.name.foldForSearch()
+            name.contains(needle) ||
+                (result.target is SkyTarget.DeepSky && name.squashed().contains(squashedNeedle)) ||
+                (result.target as? SkyTarget.Constellation)?.let { abbreviations[it.index] == needle } == true
+        }
+        .sortedBy { searchRank(it.name.foldForSearch().squashed(), squashedNeedle) }
+        .distinctBy { it.target }
+        .take(limit)
+}
+
+/** Every name search looks through, each group brightest first. */
+private fun searchCandidates(catalog: SkyCatalog, bodies: SkyMapBodies?, names: SkyNames): List<SkySearchResult> =
+    buildList {
         SolarSystemBody.entries.forEach { body ->
             names.bodies[body]?.let { add(SkySearchResult(SkyTarget.Body(body), it)) }
         }
@@ -132,20 +152,24 @@ internal fun searchSky(
         catalog.stars.forEachIndexed { index, star ->
             star.name?.let { add(SkySearchResult(SkyTarget.StarTarget(index), it)) }
         }
+        catalog.deepSky.forEach { item ->
+            val target = SkyTarget.DeepSky(item.id)
+            add(SkySearchResult(target, item.title()))
+            item.designationLine()?.let { add(SkySearchResult(target, it)) }
+        }
     }
-    val abbreviations = catalog.constellations.withIndex()
-        .associate { (index, figure) -> index to figure.id.foldForSearch() }
-    val matches = candidates.filter { result ->
-        result.name.foldForSearch().contains(needle) ||
-            (result.target as? SkyTarget.Constellation)?.let { abbreviations[it.index] == needle } == true
-    }
-    return matches.sortedBy { if (it.name.foldForSearch().startsWith(needle)) 0 else 1 }
-        .distinctBy { it.target }
-        .take(limit)
+
+/** 0 for a catalogue number typed in full ("M3" before "M31"), 1 for a name that starts with it, else 2. */
+private fun searchRank(name: String, needle: String): Int = when {
+    name == needle || name.startsWith("$needle·") -> 0
+    name.startsWith(needle) -> 1
+    else -> 2
 }
 
 private const val MAX_RESULTS = 8
 private val COMBINING_MARKS = Regex("\\p{Mn}+")
+
+private fun String.squashed(): String = filterNot(Char::isWhitespace)
 
 private fun String.foldForSearch(): String =
     COMBINING_MARKS.replace(Normalizer.normalize(trim(), Normalizer.Form.NFD), "").lowercase()

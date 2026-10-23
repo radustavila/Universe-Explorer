@@ -36,4 +36,9 @@ interface SkyMapPreferencesRepository {
     fun observeNightMode(): Flow<Boolean>
 
     suspend fun setNightMode(enabled: Boolean)
+
+    /** Galaxies, clusters and nebulae on the map (F23). On until switched off. */
+    fun observeDeepSkyLayer(): Flow<Boolean>
+
+    suspend fun setDeepSkyLayer(enabled: Boolean)
 }

@@ -18,6 +18,7 @@ import androidx.compose.ui.test.performScrollToNode
 import androidx.test.core.app.ApplicationProvider
 import com.radustavila.nasaexplorer.core.designsystem.notification.NotificationPermissionToggle
 import com.radustavila.nasaexplorer.core.designsystem.units.UnitFormatter
+import com.radustavila.nasaexplorer.core.model.DeepSkyType
 import com.radustavila.nasaexplorer.core.model.MeasurementSystem
 import com.radustavila.nasaexplorer.core.model.MoonPhase
 import com.radustavila.nasaexplorer.core.model.Planet
@@ -176,6 +177,19 @@ class QuizScreensTest {
                 QuizArg.Text("Voyager 1"),
                 QuizArg.LargeDistanceKm(25_830_000_000.0),
             ),
+        )
+        assertEquals(
+            "M13 is the Hercules Globular Cluster, in Hercules. Data: OpenNGC.",
+            phrase(
+                QuizPhrase.DEEP_SKY_TYPE_EXPLANATION,
+                QuizArg.Text("M13"),
+                QuizArg.Text("Hercules Globular Cluster"),
+                QuizArg.Text("Hercules"),
+            ),
+        )
+        assertEquals(
+            "Globular star cluster",
+            phrase(QuizPhrase.ANSWER_DEEP_SKY_TYPE, QuizArg.DeepSkyTypeName(DeepSkyType.GLOBULAR_CLUSTER)),
         )
         assertEquals("Plain words.", format.format(QuizText.Plain("Plain words.")))
         // Every phrase has wording.

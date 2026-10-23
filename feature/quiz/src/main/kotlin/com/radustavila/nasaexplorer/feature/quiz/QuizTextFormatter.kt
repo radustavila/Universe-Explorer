@@ -9,6 +9,7 @@ import androidx.compose.ui.platform.LocalResources
 import com.radustavila.nasaexplorer.core.designsystem.skyevent.SkyEventText
 import com.radustavila.nasaexplorer.core.designsystem.units.UnitFormatter
 import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
+import com.radustavila.nasaexplorer.core.model.DeepSkyType
 import com.radustavila.nasaexplorer.core.model.QuizArg
 import com.radustavila.nasaexplorer.core.model.QuizPhrase
 import com.radustavila.nasaexplorer.core.model.QuizText
@@ -56,6 +57,19 @@ class QuizTextFormatter(
         is QuizArg.Day -> units.day(arg.at)
         is QuizArg.PlanetName -> skyText.planet(arg.planet)
         is QuizArg.MoonPhaseName -> resources.getString(moonPhaseName(arg.phase))
+        is QuizArg.DeepSkyTypeName -> resources.getString(deepSkyTypeName(arg.type))
+    }
+
+    @StringRes
+    private fun deepSkyTypeName(type: DeepSkyType): Int = when (type) {
+        DeepSkyType.GALAXY -> R.string.quiz_deep_sky_galaxy
+        DeepSkyType.OPEN_CLUSTER -> R.string.quiz_deep_sky_open_cluster
+        DeepSkyType.GLOBULAR_CLUSTER -> R.string.quiz_deep_sky_globular_cluster
+        DeepSkyType.PLANETARY_NEBULA -> R.string.quiz_deep_sky_planetary_nebula
+        DeepSkyType.NEBULA -> R.string.quiz_deep_sky_nebula
+        DeepSkyType.SUPERNOVA_REMNANT -> R.string.quiz_deep_sky_supernova_remnant
+        DeepSkyType.DARK_NEBULA -> R.string.quiz_deep_sky_dark_nebula
+        DeepSkyType.STAR_GROUP -> R.string.quiz_deep_sky_star_group
     }
 
     private sealed interface Wording {
@@ -105,6 +119,11 @@ class QuizTextFormatter(
             QuizPhrase.BOOSTER_LANDED_QUESTION to Wording.Single(R.string.quiz_q_booster_landed),
             QuizPhrase.BOOSTER_LANDED_EXPLANATION_YES to Wording.Single(R.string.quiz_e_booster_landed_yes),
             QuizPhrase.BOOSTER_LANDED_EXPLANATION_NO to Wording.Single(R.string.quiz_e_booster_landed_no),
+            QuizPhrase.ANSWER_DEEP_SKY_TYPE to Wording.Single(NO_WORDS),
+            QuizPhrase.DEEP_SKY_TYPE_QUESTION to Wording.Single(R.string.quiz_q_deep_sky_type),
+            QuizPhrase.DEEP_SKY_TYPE_EXPLANATION to Wording.Single(R.string.quiz_e_deep_sky),
+            QuizPhrase.DEEP_SKY_CONSTELLATION_QUESTION to Wording.Single(R.string.quiz_q_deep_sky_constellation),
+            QuizPhrase.DEEP_SKY_CONSTELLATION_EXPLANATION to Wording.Single(R.string.quiz_e_deep_sky),
             QuizPhrase.FACT_SPACECRAFT_DISTANCE to Wording.Single(R.string.quiz_f_spacecraft_distance),
             QuizPhrase.FACT_PEOPLE_IN_SPACE to Wording.Plural(R.plurals.quiz_f_people_in_space),
             QuizPhrase.FACT_CONFIRMED_EXOPLANETS to Wording.Plural(R.plurals.quiz_f_confirmed_exoplanets),

@@ -1,0 +1,386 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 8,
+    "identityHash": "236cf0ebd1cb8c83ff94806d709c4afe",
+    "entities": [
+      {
+        "tableName": "apods",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`date` TEXT NOT NULL, `title` TEXT NOT NULL, `explanation` TEXT NOT NULL, `media_type` TEXT NOT NULL, `url` TEXT NOT NULL, `hd_url` TEXT, `thumbnail_url` TEXT, `copyright` TEXT, `is_favorite` INTEGER NOT NULL DEFAULT 0, `cached_at_epoch_millis` INTEGER NOT NULL, `last_synced_at_epoch_millis` INTEGER NOT NULL DEFAULT 0, `is_in_feed` INTEGER NOT NULL DEFAULT 1, `permalink` TEXT, `alt` TEXT, `explanation_links` TEXT, PRIMARY KEY(`date`))",
+        "fields": [
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "explanation",
+            "columnName": "explanation",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mediaType",
+            "columnName": "media_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hdUrl",
+            "columnName": "hd_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "thumbnailUrl",
+            "columnName": "thumbnail_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "copyright",
+            "columnName": "copyright",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isFavorite",
+            "columnName": "is_favorite",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "cachedAtEpochMillis",
+            "columnName": "cached_at_epoch_millis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastSyncedAtEpochMillis",
+            "columnName": "last_synced_at_epoch_millis",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "isInFeed",
+            "columnName": "is_in_feed",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "permalink",
+            "columnName": "permalink",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "alt",
+            "columnName": "alt",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "explanationLinks",
+            "columnName": "explanation_links",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "date"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_apods_is_in_feed",
+            "unique": false,
+            "columnNames": [
+              "is_in_feed"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_apods_is_in_feed` ON `${TABLE_NAME}` (`is_in_feed`)"
+          },
+          {
+            "name": "index_apods_media_type",
+            "unique": false,
+            "columnNames": [
+              "media_type"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_apods_media_type` ON `${TABLE_NAME}` (`media_type`)"
+          }
+        ]
+      },
+      {
+        "tableName": "apods_fts",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`title` TEXT NOT NULL, `explanation` TEXT NOT NULL, tokenize=porter, content=`apods`)",
+        "fields": [
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "explanation",
+            "columnName": "explanation",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": []
+        },
+        "ftsVersion": "FTS4",
+        "ftsOptions": {
+          "tokenizer": "porter",
+          "tokenizerArgs": [],
+          "contentTable": "apods",
+          "languageIdColumnName": "",
+          "matchInfo": "FTS4",
+          "notIndexedColumns": [],
+          "prefixSizes": [],
+          "preferredOrder": "ASC"
+        },
+        "contentSyncTriggers": [
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_apods_fts_BEFORE_UPDATE BEFORE UPDATE ON `apods` BEGIN DELETE FROM `apods_fts` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_apods_fts_BEFORE_DELETE BEFORE DELETE ON `apods` BEGIN DELETE FROM `apods_fts` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_apods_fts_AFTER_UPDATE AFTER UPDATE ON `apods` BEGIN INSERT INTO `apods_fts`(`docid`, `title`, `explanation`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`explanation`); END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_apods_fts_AFTER_INSERT AFTER INSERT ON `apods` BEGIN INSERT INTO `apods_fts`(`docid`, `title`, `explanation`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`explanation`); END"
+        ]
+      },
+      {
+        "tableName": "favorite",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`source` TEXT NOT NULL, `item_id` TEXT NOT NULL, `title` TEXT NOT NULL, `image_url` TEXT, `saved_at_epoch_millis` INTEGER NOT NULL, `local_image_path` TEXT, `local_image_bytes` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`source`, `item_id`))",
+        "fields": [
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "itemId",
+            "columnName": "item_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imageUrl",
+            "columnName": "image_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "savedAtEpochMillis",
+            "columnName": "saved_at_epoch_millis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "localImagePath",
+            "columnName": "local_image_path",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "localImageBytes",
+            "columnName": "local_image_bytes",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "source",
+            "item_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_favorite_saved_at_epoch_millis",
+            "unique": false,
+            "columnNames": [
+              "saved_at_epoch_millis"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_favorite_saved_at_epoch_millis` ON `${TABLE_NAME}` (`saved_at_epoch_millis`)"
+          }
+        ]
+      },
+      {
+        "tableName": "epic_images",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`collection` TEXT NOT NULL, `identifier` TEXT NOT NULL, `date` TEXT NOT NULL, `captured_at_epoch_millis` INTEGER NOT NULL, `caption` TEXT NOT NULL, `centroid_latitude` REAL NOT NULL, `centroid_longitude` REAL NOT NULL, `thumbnail_url` TEXT NOT NULL, `image_url` TEXT NOT NULL, `cached_at_epoch_millis` INTEGER NOT NULL, PRIMARY KEY(`collection`, `identifier`))",
+        "fields": [
+          {
+            "fieldPath": "collection",
+            "columnName": "collection",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "identifier",
+            "columnName": "identifier",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "capturedAtEpochMillis",
+            "columnName": "captured_at_epoch_millis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "caption",
+            "columnName": "caption",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "centroidLatitude",
+            "columnName": "centroid_latitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "centroidLongitude",
+            "columnName": "centroid_longitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnailUrl",
+            "columnName": "thumbnail_url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imageUrl",
+            "columnName": "image_url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cachedAtEpochMillis",
+            "columnName": "cached_at_epoch_millis",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "collection",
+            "identifier"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_epic_images_collection_date",
+            "unique": false,
+            "columnNames": [
+              "collection",
+              "date"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_epic_images_collection_date` ON `${TABLE_NAME}` (`collection`, `date`)"
+          }
+        ]
+      },
+      {
+        "tableName": "epic_available_dates",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`collection` TEXT NOT NULL, `date` TEXT NOT NULL, PRIMARY KEY(`collection`, `date`))",
+        "fields": [
+          {
+            "fieldPath": "collection",
+            "columnName": "collection",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "collection",
+            "date"
+          ]
+        }
+      },
+      {
+        "tableName": "observing_log",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`object_id` TEXT NOT NULL, `observed_on` TEXT NOT NULL, `conditions` TEXT, `note` TEXT, `logged_at_epoch_millis` INTEGER NOT NULL, PRIMARY KEY(`object_id`))",
+        "fields": [
+          {
+            "fieldPath": "objectId",
+            "columnName": "object_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "observedOn",
+            "columnName": "observed_on",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "conditions",
+            "columnName": "conditions",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "note",
+            "columnName": "note",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "loggedAtEpochMillis",
+            "columnName": "logged_at_epoch_millis",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "object_id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '236cf0ebd1cb8c83ff94806d709c4afe')"
+    ]
+  }
+}

@@ -8,6 +8,7 @@ import com.radustavila.nasaexplorer.core.model.ObserverLocation
 import com.radustavila.nasaexplorer.core.model.SatelliteSkyPosition
 import com.radustavila.nasaexplorer.core.model.SkyMapBodies
 import com.radustavila.nasaexplorer.core.model.SolarSystemBody
+import com.radustavila.nasaexplorer.core.skymap.ResourceDeepSkyCatalog
 import com.radustavila.nasaexplorer.core.skymap.ResourceSkyCatalog
 import com.radustavila.nasaexplorer.core.skymap.SkyChart
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
@@ -20,7 +21,7 @@ internal object SkyMapFixture {
 
     val INSTANT: Instant = Instant.parse("2026-10-22T21:30:00Z")
 
-    private val chart by lazy { SkyChart(runBlocking { ResourceSkyCatalog().catalog() }) }
+    private val chart by lazy { SkyChart(runBlocking { ResourceSkyCatalog(ResourceDeepSkyCatalog()).catalog() }) }
 
     val bodies = SkyMapBodies(
         solarSystem = listOf(
@@ -73,4 +74,7 @@ internal object SkyMapFixture {
     )
 
     fun starIndex(name: String): Int = chart.catalog.stars.indexOfFirst { it.name == name }
+
+    /** OpenNGC's name of Messier object [messier] in the bundled catalogue ("NGC0224" for 31). */
+    fun deepSkyId(messier: Int): String = chart.catalog.deepSky.single { it.messier == messier }.id
 }

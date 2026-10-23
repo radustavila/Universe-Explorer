@@ -11,6 +11,8 @@ import com.radustavila.nasaexplorer.core.skymap.SkyProjection
 import com.radustavila.nasaexplorer.core.skymap.SkyView
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.data.TestSkyMap
+import com.radustavila.nasaexplorer.core.testing.data.TestDeepSky
+import com.radustavila.nasaexplorer.feature.skymap.render.DeepSkyHitArea
 import com.radustavila.nasaexplorer.feature.skymap.render.SkyHitTest
 import com.radustavila.nasaexplorer.feature.skymap.render.direction
 import java.time.Instant
@@ -69,6 +71,19 @@ class SkyHitTestTest {
         val projection = lookingAt(20.0, 280.0)
 
         assertEquals(SkyTarget.Comet("12P"), SkyHitTest.find(505f, 995f, 40f, sky, bodies, projection))
+    }
+
+    @Test
+    fun `with the deep-sky layer on, a tap inside a galaxy's symbol picks the galaxy, off it does not`() {
+        val deepSky = SkyChart(TestSkyMap.catalog().copy(deepSky = TestDeepSky.objects()))
+            .at(TestSky.BUCHAREST, Instant.parse("2026-10-22T23:00:00Z"))
+        val m31 = SkyTarget.DeepSky(TestDeepSky.M31.id)
+        val direction = m31.direction(deepSky, null)!!.toHorizontal()
+        val projection = lookingAt(direction.altitudeDegrees, direction.azimuthDegrees)
+        val area = DeepSkyHitArea(minRadius = 10f)
+
+        assertEquals(m31, SkyHitTest.find(510f, 1005f, 40f, deepSky, null, projection, area))
+        assertEquals(null, SkyHitTest.find(510f, 1005f, 40f, deepSky, null, projection, deepSky = null))
     }
 
     private fun lookingAt(altitude: Double, azimuth: Double) =

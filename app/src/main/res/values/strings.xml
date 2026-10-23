@@ -45,6 +45,8 @@
     <string name="universe_milky_way_description">When the core of our galaxy is up in a dark, moonless sky, with golden and blue hours</string>
     <string name="universe_search_title">Search everything</string>
     <string name="universe_search_description">Pictures, planets, asteroids, events and favourites saved on this device</string>
+    <string name="universe_observing_log_title">Observing log</string>
+    <string name="universe_observing_log_description">Messier and Caldwell checklists: galaxies, clusters and nebulae you have seen</string>
 
     <!-- Launcher shortcuts (res/xml/shortcuts.xml). Short labels stay under about 10 characters. -->
     <string name="shortcut_search_short">Search</string>

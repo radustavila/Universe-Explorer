@@ -117,4 +117,64 @@
     <string name="sky_map_ar_turned_off_still">The camera turned off after two minutes without movement, to save the battery.</string>
     <string name="sky_map_ar_turn_on">Turn it back on</string>
     <string name="sky_map_ar_dismiss">Dismiss</string>
+
+    <!-- Deep sky and observing log (F23). Object names come from the OpenNGC catalogue. -->
+    <string name="sky_map_kind_deep_sky">Deep-sky object</string>
+    <string name="sky_map_layers">Layers</string>
+    <string name="sky_map_layer_deep_sky">Galaxies, clusters and nebulae</string>
+    <string name="sky_map_observing_log">Observing log</string>
+    <string name="deep_sky_type_galaxy">Galaxy</string>
+    <string name="deep_sky_type_open_cluster">Open cluster</string>
+    <string name="deep_sky_type_globular_cluster">Globular cluster</string>
+    <string name="deep_sky_type_planetary_nebula">Planetary nebula</string>
+    <string name="deep_sky_type_nebula">Nebula</string>
+    <string name="deep_sky_type_supernova_remnant">Supernova remnant</string>
+    <string name="deep_sky_type_dark_nebula">Dark nebula</string>
+    <string name="deep_sky_type_star_group">Star group</string>
+    <string name="deep_sky_instrument_naked_eye">Naked eye</string>
+    <string name="deep_sky_instrument_binoculars">Binoculars</string>
+    <string name="deep_sky_instrument_small_telescope">Small telescope</string>
+    <string name="deep_sky_instrument_telescope">Telescope</string>
+    <string name="deep_sky_conditions">Sky</string>
+    <string name="deep_sky_conditions_excellent">Excellent</string>
+    <string name="deep_sky_conditions_good">Good</string>
+    <string name="deep_sky_conditions_fair">Fair</string>
+    <string name="deep_sky_conditions_poor">Poor</string>
+    <!-- Arcminutes: %1$s major axis, %2$s minor axis. -->
+    <string name="deep_sky_size">%1$s′ × %2$s′</string>
+    <string name="deep_sky_size_round">%1$s′ across</string>
+    <!-- %1$s month name, %2$s the instrument it needs ("Binoculars"). -->
+    <string name="deep_sky_best_month_and_instrument">Best in %1$s · %2$s</string>
+    <string name="deep_sky_seen_on">Seen on %1$s</string>
+    <string name="deep_sky_mark_seen">Mark as seen</string>
+    <string name="deep_sky_edit_mark">Edit</string>
+    <string name="deep_sky_note">Note (optional)</string>
+    <string name="deep_sky_save_mark">Save</string>
+    <string name="deep_sky_remove_mark">Remove from my log</string>
+    <string name="deep_sky_cancel">Cancel</string>
+    <string name="deep_sky_pick_day">OK</string>
+    <string name="deep_sky_read_more">Read more at NASA</string>
+    <string name="observing_log_title">Observing log</string>
+    <string name="observing_log_back">Back</string>
+    <string name="observing_log_messier">Messier</string>
+    <string name="observing_log_caldwell">Caldwell</string>
+    <!-- %1$d objects seen out of %2$d in the list. -->
+    <string name="observing_log_progress">Seen: %1$d / %2$d</string>
+    <string name="observing_log_filter_not_seen">Not yet seen</string>
+    <string name="observing_log_filter_tonight">Up tonight</string>
+    <string name="observing_log_tonight_needs_place">Choose your place in Sky tonight to see what is up tonight.</string>
+    <string name="observing_log_tonight_not_dark">It does not get dark enough here tonight.</string>
+    <string name="observing_log_empty">Nothing in this list matches the filters.</string>
+    <string name="observing_log_show_on_map">Show on the sky map</string>
+    <string name="observing_log_seen">Seen</string>
+    <!-- %1$s clock time, %2$s degrees above the horizon, %3$s compass direction ("south-east"). -->
+    <string name="observing_log_up_tonight">Highest in the dark at %1$s, %2$s° up in the %3$s</string>
+    <string name="observing_log_loading">Loading the catalogue</string>
+    <string name="deep_sky_tonight_title">Tonight\'s best deep sky</string>
+    <string name="deep_sky_tonight_open">Open the observing log</string>
+    <!-- %1$d Messier objects in the log out of %2$d. -->
+    <string name="deep_sky_tonight_progress">Messier objects seen: %1$d / %2$d</string>
+    <string name="deep_sky_tonight_all_seen">Every Messier object up tonight is already in your log.</string>
+    <!-- %1$s clock time, %2$s degrees, %3$s instrument. -->
+    <string name="deep_sky_tonight_item">%1$s · %2$s° up · %3$s</string>
 </resources>

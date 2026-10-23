@@ -7,6 +7,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.radustavila.nasaexplorer.core.database.entity.ApodEntity
 import com.radustavila.nasaexplorer.core.database.entity.EpicAvailableDateEntity
 import com.radustavila.nasaexplorer.core.database.entity.FavoriteEntity
+import com.radustavila.nasaexplorer.core.database.entity.ObservingLogEntity
 import com.radustavila.nasaexplorer.core.database.migration.NasaDatabaseMigrations
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -265,6 +266,29 @@ class NasaDatabaseMigrationTest {
         )
         assertEquals("apod/2026-09-10.jpg", dao.find("apod", "2026-09-10")?.localImagePath)
         assertEquals(2048L, dao.observeLocalImageBytes().first())
+    }
+
+    @Test
+    fun `migrating from 7 to 8 keeps every favourite and adds an empty observing log`() = runTest {
+        createDatabaseFromExportedSchema(version = 7)
+        SQLiteDatabase.openDatabase(context.getDatabasePath(TEST_DB_NAME).path, null, 0).use { db ->
+            db.execSQL(
+                "INSERT INTO `favorite` (`source`, `item_id`, `title`, `image_url`, `saved_at_epoch_millis`, " +
+                    "`local_image_path`, `local_image_bytes`) " +
+                    "VALUES ('apod', '2026-09-10', 'Spiral Galaxy NGC 1300', ?, ?, 'apod/2026-09-10.jpg', 2048)",
+                arrayOf<Any>("https://apod.nasa.gov/apod/image/ngc1300.jpg", CACHED_AT_MILLIS),
+            )
+        }
+
+        val migrated = openWithMigrations()
+
+        val favorite = requireNotNull(migrated.favoriteDao().find("apod", "2026-09-10"))
+        assertEquals("apod/2026-09-10.jpg", favorite.localImagePath)
+        assertEquals(2048L, favorite.localImageBytes)
+        val log = migrated.observingLogDao()
+        assertTrue(log.observeAll().first().isEmpty())
+        log.upsert(ObservingLogEntity("NGC0224", "2026-10-20", "GOOD", "First light", CACHED_AT_MILLIS))
+        assertEquals(listOf("NGC0224"), log.observeAll().first().map { it.objectId })
     }
 
     private fun openWithMigrations(): NasaDatabase =

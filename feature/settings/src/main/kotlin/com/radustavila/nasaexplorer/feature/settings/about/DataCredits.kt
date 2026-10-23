@@ -49,4 +49,5 @@ internal val DATA_CREDITS: List<DataCredit> = listOf(
         R.string.credit_stsci_description,
         "https://www.stsci.edu/jwst/science-execution/observing-schedules",
     ),
+    DataCredit(R.string.credit_openngc, R.string.credit_openngc_description, "https://github.com/mattiaverga/OpenNGC"),
 )

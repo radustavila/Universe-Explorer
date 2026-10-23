@@ -106,6 +106,13 @@ Clean Architecture, dependencies pointing inward:
   `SkyMapContent`, a stand-in in tests), the map switches to `SkyLens.RECTILINEAR` with the preview's field of view
   (`CameraFieldOfView`, from Camera2 focal length, sensor size and the crop) and the user's `SkyAlignment`. CAMERA is
   asked only when AR turns on; the picture is never recorded or saved.
+  Deep sky and observing log (F23, `:feature:skymap` `deepsky/` + `log/`): the build script also writes
+  `deepsky.bin` from OpenNGC (CC BY-SA 4.0; V < 12 plus all 110 Messier and 109 Caldwell objects, Caldwell numbers
+  from its hand-made table), read by `ResourceDeepSkyCatalog` and carried in `SkyCatalog.deepSky`. `DeepSkyLayer`
+  draws it (switch in the map's layers menu, `SkyMapPreferencesRepository`); `DeepSkyStyle` decides what shows at
+  each zoom. "Seen" marks live in the favourites database's `observing_log` table (schema v8, so backups keep it);
+  the checklists are `ObservingLogRoute`, Sky tonight's "Tonight's best" is `DeepSkyTonightCard` (unseen Messier
+  objects ≥ 30° in F11's dark hours, `ObserveDeepSkyTonightUseCase`), and Settings exports the log as CSV.
 - **Presentation**: `:feature:*` (one screen each: Compose UI, ViewModel, immutable `UiState`, own type-safe
   `@Serializable` route + `NavGraphBuilder` extension), `:feature:widget` (Glance), `:core:notifications`,
   `:core:designsystem` (theme, shared components like `ApodCard`/`NasaAsyncImage`, `AppError`→`UiError` mapping),
@@ -142,8 +149,9 @@ Boundary rules the code relies on:
   (contracts in `:core:domain` `storage/`); neither may touch favourites or their offline copies.
 - Today's cards are the user's choice (Customize Today in `:feature:settings`, `today_cards` DataStore). A new card
   needs a `TodayCardId` (stored by name: never rename), its label in Customize Today and a line in `TodayCards.kt`.
-- Backups include only the favourites database and the user-choice DataStores (`app/src/main/res/xml/`); a new
-  DataStore holding user choices goes into both rule files and `BackupRulesTest`.
+- Backups include only the favourites database (favourites and the F23 observing log) and the user-choice
+  DataStores (`app/src/main/res/xml/`); a new DataStore holding user choices goes into both rule files and
+  `BackupRulesTest`.
 
 ### Data flow (offline-first)
 

@@ -81,6 +81,9 @@ sealed interface QuizArg {
     data class PlanetName(val planet: Planet) : QuizArg
 
     data class MoonPhaseName(val phase: MoonPhase) : QuizArg
+
+    /** "Globular cluster": what kind of deep-sky object (F23). */
+    data class DeepSkyTypeName(val type: DeepSkyType) : QuizArg
 }
 
 /**
@@ -132,6 +135,13 @@ enum class QuizPhrase {
     BOOSTER_LANDED_QUESTION,
     BOOSTER_LANDED_EXPLANATION_YES,
     BOOSTER_LANDED_EXPLANATION_NO,
+
+    // Deep sky (F23).
+    ANSWER_DEEP_SKY_TYPE,
+    DEEP_SKY_TYPE_QUESTION,
+    DEEP_SKY_TYPE_EXPLANATION,
+    DEEP_SKY_CONSTELLATION_QUESTION,
+    DEEP_SKY_CONSTELLATION_EXPLANATION,
 
     // Live facts.
     FACT_SPACECRAFT_DISTANCE,
