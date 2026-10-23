@@ -178,7 +178,7 @@ private fun EpisodeDetails(
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
             PodcastArtwork(url = episode.imageUrl, size = ARTWORK_SIZE)
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                ShowAndAge(episode, state.now)
+                ShowAndAge(episode, state.now, maxLines = 2)
                 EpisodeStatus(episode, position = state.playback.position.takeIf { state.isLoaded })
             }
         }
@@ -199,7 +199,10 @@ private fun EpisodeDetails(
             Text(text = summary, style = MaterialTheme.typography.bodyLarge)
         }
         episode.pageUrl?.let { url ->
-            TextButton(onClick = { onOpenPage(url) }, contentPadding = ButtonDefaults.TextButtonWithIconContentPadding) {
+            TextButton(
+                onClick = { onOpenPage(url) },
+                contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
+            ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.OpenInNew,
                     contentDescription = null,

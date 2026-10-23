@@ -13,7 +13,9 @@ import org.junit.Test
 class PodcastSearchableSourceTest {
 
     private val source = PodcastSearchableSource(
-        FakePodcastRepository(listOf(TestPodcasts.houston(), TestPodcasts.curiousUniverse(), TestPodcasts.smallSteps())),
+        FakePodcastRepository(
+            listOf(TestPodcasts.houston(), TestPodcasts.curiousUniverse(), TestPodcasts.smallSteps()),
+        ),
     )
 
     @Test

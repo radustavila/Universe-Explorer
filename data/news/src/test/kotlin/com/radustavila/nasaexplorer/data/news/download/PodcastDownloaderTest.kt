@@ -95,7 +95,8 @@ class PodcastDownloaderTest {
                 "/traffic/episode.mp3" ->
                     MockResponse().setResponseCode(HTTP_FOUND).setHeader("Location", "/cdn/episode.mp3?key=abc")
 
-                "/cdn/episode.mp3" -> MockResponse().setHeader("Content-Type", "audio/mpeg").setBody(Buffer().write(audio))
+                "/cdn/episode.mp3" ->
+                    MockResponse().setHeader("Content-Type", "audio/mpeg").setBody(Buffer().write(audio))
 
                 else -> MockResponse().setResponseCode(HTTP_NOT_FOUND)
             }

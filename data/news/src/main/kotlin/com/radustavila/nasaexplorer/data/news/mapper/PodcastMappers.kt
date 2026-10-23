@@ -34,8 +34,8 @@ internal fun FeedEntryDto.toPodcastEpisodeOrNull(show: PodcastShow, showImageUrl
 /** `itunes:duration` is whole seconds (`3617`) on NASA's feeds; the spec also allows `[h:]mm:ss`. */
 internal fun parseItunesDuration(raw: String): Duration? {
     val parts = raw.trim().split(':')
-    if (parts.isEmpty() || parts.size > MAX_DURATION_PARTS) return null
-    val numbers = parts.map { it.toLongOrNull()?.takeIf { value -> value >= 0 } ?: return null }
+    val numbers = parts.mapNotNull { part -> part.toLongOrNull()?.takeIf { it >= 0 } }
+    if (numbers.size != parts.size || numbers.size > MAX_DURATION_PARTS) return null
     val seconds = numbers.fold(0L) { total, part -> total * SECONDS_PER_MINUTE + part }
     return Duration.ofSeconds(seconds).takeIf { seconds > 0 }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.annotation.MainThread
+import androidx.annotation.OptIn
 import androidx.core.net.toUri
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
@@ -11,6 +12,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
@@ -51,6 +53,8 @@ import kotlinx.coroutines.launch
  * when headphones are unplugged. Positions are saved per episode while playing, on pause and at
  * the end, so an episode resumes where the user left it, also after the app was closed.
  */
+// The contract's controls plus the player's own wiring (listener, position ticker, saving).
+@Suppress("TooManyFunctions")
 @Singleton
 class Media3PodcastPlayer @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -76,8 +80,7 @@ class Media3PodcastPlayer @Inject constructor(
         val loaded = exoPlayer?.takeIf { state.value.episode?.id == episode.id && it.mediaItemCount > 0 }
         if (loaded != null) {
             if (loaded.playbackState == Player.STATE_ENDED) loaded.seekTo(0)
-            if (loaded.playbackState == Player.STATE_IDLE) loaded.prepare()
-            loaded.play()
+            resume()
             return
         }
         loadJob?.cancel()
@@ -114,6 +117,8 @@ class Media3PodcastPlayer @Inject constructor(
 
     override fun resume() {
         val player = exoPlayer ?: return
+        // The system stops the service some time after playback paused; this brings the session back.
+        startService()
         if (player.playbackState == Player.STATE_IDLE) player.prepare()
         player.play()
     }
@@ -154,6 +159,7 @@ class Media3PodcastPlayer @Inject constructor(
 
     private fun player(): ExoPlayer = exoPlayer ?: buildPlayer().also { exoPlayer = it }
 
+    @OptIn(UnstableApi::class)
     private fun buildPlayer(): ExoPlayer {
         // Curious Universe's enclosures go through a tracking redirect before Megaphone's CDN.
         val http = DefaultHttpDataSource.Factory().setAllowCrossProtocolRedirects(true)
@@ -235,10 +241,11 @@ class Media3PodcastPlayer @Inject constructor(
     }
 
     private fun saveCurrentProgress() {
-        val player = exoPlayer ?: return
-        val episode = state.value.episode ?: return
-        if (player.mediaItemCount == 0 || player.playbackState == Player.STATE_ENDED) return
-        save(episode.id, PodcastProgress(Duration.ofMillis(player.currentPosition.coerceAtLeast(0))))
+        val player = exoPlayer?.takeIf { it.mediaItemCount > 0 && it.playbackState != Player.STATE_ENDED }
+        val episode = state.value.episode
+        if (player != null && episode != null) {
+            save(episode.id, PodcastProgress(Duration.ofMillis(player.currentPosition.coerceAtLeast(0))))
+        }
     }
 
     private fun save(episodeId: String, progress: PodcastProgress) {

@@ -20,7 +20,7 @@ object TestPodcasts {
         title = title,
         publishedAt = publishedAt,
         audioUrl = "https://traffic.megaphone.fm/NATIONALAERONAUTICSANDSPACEADMINISTRATION6740428946.mp3",
-        duration = Duration.ofSeconds(3_617),
+        duration = Duration.parse("PT1H17S"),
         summary = "Artemis II astronauts Victor Glover and Jeremy Hansen reflect on memorable mission moments, new " +
             "perspectives, and what comes next after their historic journey around the Moon. Episode 441.",
         imageUrl = "https://megaphone.imgix.net/podcasts/04ba5ab8-c8db-11f1-896a-63bcf4cc8ae7/image/" +
@@ -37,8 +37,9 @@ object TestPodcasts {
         show = PodcastShow.CURIOUS_UNIVERSE,
         title = title,
         publishedAt = publishedAt,
-        audioUrl = "https://chrt.fm/track/477F33/traffic.megaphone.fm/NATIONALAERONAUTICSANDSPACEADMINISTRATION6420899881.mp3",
-        duration = Duration.ofSeconds(1_607),
+        audioUrl = "https://chrt.fm/track/477F33/traffic.megaphone.fm/" +
+            "NATIONALAERONAUTICSANDSPACEADMINISTRATION6420899881.mp3",
+        duration = Duration.parse("PT26M47S"),
         summary = "To prepare for the day when humans travel to Mars, NASA is conducting a one-year experiment in a " +
             "Mars simulation environment.",
         imageUrl = "https://megaphone.imgix.net/podcasts/3c25fbae-6a1b-11ef-b25e-33943a7bea28/image/" +
@@ -56,7 +57,7 @@ object TestPodcasts {
         title = title,
         publishedAt = publishedAt,
         audioUrl = "https://traffic.megaphone.fm/NATIONALAERONAUTICSANDSPACEADMINISTRATION5643462700.mp3",
-        duration = Duration.ofSeconds(1_079),
+        duration = Duration.parse("PT17M59S"),
         summary = "NASA, through the Office of STEM Engagement, has launched the State Hubs Initiative, awarding " +
             "\$10.5 million to seven institutions.",
         imageUrl = "https://megaphone.imgix.net/podcasts/6cf7c0c2-c7fd-11f1-82ad-2765dd59474d/image/" +

@@ -51,11 +51,13 @@ class PodcastMappersTest {
 
     @Test
     fun `an episode without a page keeps none`() {
-        val (newest, older) = episodes(PodcastShow.SMALL_STEPS_GIANT_LEAPS, PodcastFixtures.SMALL_STEPS).let { it[0] to it[1] }
+        val (newest, older) = episodes(PodcastShow.SMALL_STEPS_GIANT_LEAPS, PodcastFixtures.SMALL_STEPS)
+            .let { it[0] to it[1] }
 
         assertNull(newest.pageUrl)
         assertEquals(
-            "https://www.nasa.gov/podcasts/small-steps-giant-leaps/human-factors-designing-systems-with-people-in-mind-part-2-of-2/",
+            "https://www.nasa.gov/podcasts/small-steps-giant-leaps/" +
+                "human-factors-designing-systems-with-people-in-mind-part-2-of-2/",
             older.pageUrl,
         )
     }

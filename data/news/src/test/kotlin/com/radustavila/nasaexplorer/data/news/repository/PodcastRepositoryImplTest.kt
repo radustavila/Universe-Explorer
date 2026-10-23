@@ -149,7 +149,8 @@ class PodcastRepositoryImplTest {
         assertEquals(DataResult.Failure(AppError.EmptyResponse), repository.refresh(PodcastShow.CURIOUS_UNIVERSE))
 
         server.servePodcasts { MockResponse().setBody("<rss><channel><item><title>cut") }
-        assertTrue((repository.refresh(PodcastShow.CURIOUS_UNIVERSE) as DataResult.Failure).error is AppError.Serialization)
+        val broken = repository.refresh(PodcastShow.CURIOUS_UNIVERSE) as DataResult.Failure
+        assertTrue(broken.error is AppError.Serialization)
 
         assertEquals(6, repository.observeEpisodes().first().size)
     }

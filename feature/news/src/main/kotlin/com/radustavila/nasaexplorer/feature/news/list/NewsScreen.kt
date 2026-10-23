@@ -175,7 +175,8 @@ private fun NewsTabs(selected: NewsTab, onTabSelected: (NewsTab) -> Unit) {
                 selected = tab == selected,
                 onClick = { onTabSelected(tab) },
                 text = {
-                    Text(stringResource(if (tab == NewsTab.NEWS) R.string.news_tab_news else R.string.news_tab_podcasts))
+                    val label = if (tab == NewsTab.NEWS) R.string.news_tab_news else R.string.news_tab_podcasts
+                    Text(stringResource(label))
                 },
                 modifier = Modifier.testTag(newsTabTestTag(tab)),
             )

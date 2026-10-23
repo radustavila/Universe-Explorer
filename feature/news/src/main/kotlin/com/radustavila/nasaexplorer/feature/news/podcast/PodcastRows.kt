@@ -91,7 +91,7 @@ internal fun PodcastEpisodeRow(
 }
 
 @Composable
-internal fun ShowAndAge(episode: PodcastEpisode, now: Instant, modifier: Modifier = Modifier) {
+internal fun ShowAndAge(episode: PodcastEpisode, now: Instant, modifier: Modifier = Modifier, maxLines: Int = 1) {
     Text(
         text = stringResource(
             R.string.podcast_show_and_age,
@@ -100,7 +100,7 @@ internal fun ShowAndAge(episode: PodcastEpisode, now: Instant, modifier: Modifie
         ),
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.primary,
-        maxLines = 1,
+        maxLines = maxLines,
         overflow = TextOverflow.Ellipsis,
         modifier = modifier,
     )
@@ -121,20 +121,7 @@ internal fun EpisodeStatus(episode: PodcastEpisode, position: Duration?, modifie
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val length = when {
-            episode.progress?.isFinished == true && position == null -> stringResource(R.string.podcast_played)
-            duration != null && fraction != null && fraction > 0f -> {
-                val left = duration.minus(listened ?: Duration.ZERO).toMinutesRoundedUp()
-                pluralStringResource(R.plurals.podcast_minutes_left, left, left)
-            }
-
-            duration != null -> {
-                val minutes = duration.toMinutesRoundedUp()
-                pluralStringResource(R.plurals.podcast_minutes, minutes, minutes)
-            }
-
-            else -> null
-        }
+        val length = lengthText(episode, position, listened, fraction)
         if (fraction != null && fraction > 0f) {
             LinearProgressIndicator(progress = { fraction }, modifier = Modifier.size(width = 48.dp, height = 4.dp))
         }
@@ -146,6 +133,26 @@ internal fun EpisodeStatus(episode: PodcastEpisode, position: Duration?, modifie
             )
         }
         DownloadMark(episode.download?.state)
+    }
+}
+
+/** "Played", "12 min left" once started, else the episode's length. */
+@Composable
+private fun lengthText(episode: PodcastEpisode, position: Duration?, listened: Duration?, fraction: Float?): String? {
+    val duration = episode.duration
+    return when {
+        episode.progress?.isFinished == true && position == null -> stringResource(R.string.podcast_played)
+        duration != null && fraction != null && fraction > 0f -> {
+            val left = duration.minus(listened ?: Duration.ZERO).toMinutesRoundedUp()
+            pluralStringResource(R.plurals.podcast_minutes_left, left, left)
+        }
+
+        duration != null -> {
+            val minutes = duration.toMinutesRoundedUp()
+            pluralStringResource(R.plurals.podcast_minutes, minutes, minutes)
+        }
+
+        else -> null
     }
 }
 

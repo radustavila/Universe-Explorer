@@ -139,7 +139,9 @@ private fun SeekBar(playback: PodcastPlayback, onSeek: (Duration) -> Unit) {
             onValueChange = { dragged = it },
             onValueChangeFinished = {
                 val fraction = dragged
-                if (fraction != null && length != null) onSeek(Duration.ofMillis((length.toMillis() * fraction).toLong()))
+                if (fraction != null && length != null) {
+                    onSeek(Duration.ofMillis((length.toMillis() * fraction).toLong()))
+                }
                 dragged = null
             },
             enabled = length != null,
@@ -200,7 +202,7 @@ private fun Controls(
         FilledIconButton(onClick = onPlayPause, modifier = Modifier.size(72.dp)) {
             Icon(
                 imageVector = if (playback.isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                contentDescription = stringResource(if (playback.isPlaying) R.string.podcast_pause else R.string.podcast_play),
+                contentDescription = stringResource(playback.playPauseLabel),
                 modifier = Modifier.size(40.dp),
             )
         }

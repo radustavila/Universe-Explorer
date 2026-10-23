@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Podcast playback (F21) keeps running in the background with lock-screen controls. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -8,10 +9,13 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application>
+        <!-- Exported without a permission on purpose: the system UI, Bluetooth and wearables bind
+             to it as media controllers, and Media3 checks each controller as it connects. -->
         <service
             android:name=".PodcastPlaybackService"
             android:exported="true"
-            android:foregroundServiceType="mediaPlayback">
+            android:foregroundServiceType="mediaPlayback"
+            tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="androidx.media3.session.MediaSessionService" />
             </intent-filter>

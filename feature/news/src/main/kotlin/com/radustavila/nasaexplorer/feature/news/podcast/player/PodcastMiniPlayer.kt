@@ -1,5 +1,6 @@
 package com.radustavila.nasaexplorer.feature.news.podcast.player
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -39,7 +40,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.podcast.nameRes
+import com.radustavila.nasaexplorer.core.model.PodcastEpisode
 import com.radustavila.nasaexplorer.core.model.PodcastPlayback
+import com.radustavila.nasaexplorer.core.model.PodcastPlaybackError
 import com.radustavila.nasaexplorer.feature.news.R
 import com.radustavila.nasaexplorer.feature.news.podcast.PodcastArtwork
 
@@ -98,77 +101,90 @@ internal fun MiniPlayerContent(
     ) {
         Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, tonalElevation = 3.dp) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                playback.error?.let { error ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, end = 8.dp)
-                            .testTag(PODCAST_PLAYBACK_ERROR_TEST_TAG),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.ErrorOutline,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(20.dp),
-                        )
-                        Text(
-                            text = stringResource(error.playbackErrorRes),
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(vertical = 8.dp),
-                        )
-                        TextButton(onClick = onErrorDismissed) {
-                            Text(stringResource(R.string.podcast_error_dismiss))
-                        }
-                    }
-                }
+                playback.error?.let { error -> PlaybackErrorLine(error, onErrorDismissed) }
                 if (episode != null) {
-                    val fraction = playback.fraction()
-                    if (fraction != null) {
+                    playback.fraction()?.let { fraction ->
                         LinearProgressIndicator(progress = { fraction }, modifier = Modifier.fillMaxWidth())
                     }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable(
-                                role = Role.Button,
-                                onClickLabel = stringResource(R.string.podcast_player_open),
-                                onClick = onOpen,
-                            )
-                            .padding(start = 12.dp, end = 4.dp, top = 8.dp, bottom = 8.dp)
-                            .testTag(PODCAST_MINI_PLAYER_TEST_TAG),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        PodcastArtwork(url = episode.imageUrl, size = 44.dp)
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = episode.title,
-                                style = MaterialTheme.typography.titleSmall,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                            Text(
-                                text = stringResource(episode.show.nameRes),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                        PlayPauseButton(playback, onPlayPause, Modifier.testTag(PODCAST_MINI_PLAYER_PLAY_TEST_TAG))
-                        IconButton(onClick = onClose) {
-                            Icon(
-                                imageVector = Icons.Outlined.Close,
-                                contentDescription = stringResource(R.string.podcast_player_close),
-                            )
-                        }
-                    }
+                    NowPlayingRow(episode, playback, onOpen, onPlayPause, onClose)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun PlaybackErrorLine(error: PodcastPlaybackError, onDismiss: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 8.dp)
+            .testTag(PODCAST_PLAYBACK_ERROR_TEST_TAG),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.ErrorOutline,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.error,
+            modifier = Modifier.size(20.dp),
+        )
+        Text(
+            text = stringResource(error.playbackErrorRes),
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier
+                .weight(1f)
+                .padding(vertical = 8.dp),
+        )
+        TextButton(onClick = onDismiss) {
+            Text(stringResource(R.string.podcast_error_dismiss))
+        }
+    }
+}
+
+@Composable
+private fun NowPlayingRow(
+    episode: PodcastEpisode,
+    playback: PodcastPlayback,
+    onOpen: () -> Unit,
+    onPlayPause: () -> Unit,
+    onClose: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                role = Role.Button,
+                onClickLabel = stringResource(R.string.podcast_player_open),
+                onClick = onOpen,
+            )
+            .padding(start = 12.dp, end = 4.dp, top = 8.dp, bottom = 8.dp)
+            .testTag(PODCAST_MINI_PLAYER_TEST_TAG),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        PodcastArtwork(url = episode.imageUrl, size = 44.dp)
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = episode.title,
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = stringResource(episode.show.nameRes),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        PlayPauseButton(playback, onPlayPause, Modifier.testTag(PODCAST_MINI_PLAYER_PLAY_TEST_TAG))
+        IconButton(onClick = onClose) {
+            Icon(
+                imageVector = Icons.Outlined.Close,
+                contentDescription = stringResource(R.string.podcast_player_close),
+            )
         }
     }
 }
@@ -183,11 +199,15 @@ internal fun PlayPauseButton(playback: PodcastPlayback, onPlayPause: () -> Unit,
         IconButton(onClick = onPlayPause, modifier = modifier) {
             Icon(
                 imageVector = if (playback.isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                contentDescription = stringResource(if (playback.isPlaying) R.string.podcast_pause else R.string.podcast_play),
+                contentDescription = stringResource(playback.playPauseLabel),
             )
         }
     }
 }
+
+@get:StringRes
+internal val PodcastPlayback.playPauseLabel: Int
+    get() = if (isPlaying) R.string.podcast_pause else R.string.podcast_play
 
 /** How far into the episode the player is, once its length is known. */
 internal fun PodcastPlayback.fraction(): Float? {

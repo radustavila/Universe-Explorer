@@ -5,9 +5,14 @@ import androidx.test.core.app.ApplicationProvider
 import com.radustavila.nasaexplorer.core.model.FavoriteItem
 import com.radustavila.nasaexplorer.core.model.FavoriteSource
 import com.radustavila.nasaexplorer.core.model.NewsFeed
+import com.radustavila.nasaexplorer.core.model.PodcastDownloadState
 import com.radustavila.nasaexplorer.core.testing.data.TestNews
+import com.radustavila.nasaexplorer.core.testing.data.TestPodcasts
 import com.radustavila.nasaexplorer.core.testing.fake.FakeFavoritesRepository
 import com.radustavila.nasaexplorer.data.news.local.NewsDatabase
+import com.radustavila.nasaexplorer.data.news.local.PodcastDownloadEntity
+import com.radustavila.nasaexplorer.data.news.local.PodcastProgressEntity
+import com.radustavila.nasaexplorer.data.news.local.RoomPodcastLocalDataSource
 import com.radustavila.nasaexplorer.data.news.local.RoomNewsLocalDataSource
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -64,5 +69,24 @@ class NewsCacheEvictorTest {
         evictor.evict(now.plus(NewsCacheEvictor.RETENTION).plusSeconds(1))
 
         assertEquals(listOf(image.id), local.observeNews().first().map { it.id })
+    }
+
+    @Test
+    fun `old episodes go except favourite and downloaded ones, and progress stays`() = runTest {
+        val podcasts = RoomPodcastLocalDataSource(database.podcastDao(), UnconfinedTestDispatcher())
+        val saved = TestPodcasts.houston()
+        val downloaded = TestPodcasts.houston(id = "downloaded")
+        val other = TestPodcasts.houston(id = "other")
+        podcasts.replaceShow(saved.show, listOf(saved, downloaded, other), keepIds = emptySet(), at = now)
+        favorites.seed(FavoriteItem(FavoriteSource.NASA_PODCAST_EPISODE, saved.id, saved.title, saved.imageUrl))
+        database.podcastDao().upsertDownload(
+            PodcastDownloadEntity(downloaded.id, PodcastDownloadState.DOWNLOADED.name, "a.audio", 1, 0),
+        )
+        database.podcastDao().upsertProgress(PodcastProgressEntity(other.id, 60_000, isFinished = false, 0))
+
+        evictor.evict(now.plus(NewsCacheEvictor.RETENTION).plusSeconds(1))
+
+        assertEquals(setOf(saved.id, downloaded.id), podcasts.observeEpisodes().first().map { it.id }.toSet())
+        assertEquals(1, database.query("SELECT * FROM podcast_progress", null).use { it.count })
     }
 }

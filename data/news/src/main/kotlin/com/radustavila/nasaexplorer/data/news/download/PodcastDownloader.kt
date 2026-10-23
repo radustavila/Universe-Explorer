@@ -83,21 +83,11 @@ class PodcastDownloader @Inject constructor(
 
     private suspend fun keep(episodeId: String, body: ResponseBody): PodcastDownloadOutcome {
         val type = body.contentType()
-        if (type != null && type.type != "audio" && type.subtype != "octet-stream") return PodcastDownloadOutcome.FAILED
-
-        val partial = files.partialFileFor(episodeId)
-        val bytes = try {
-            body.copyTo(partial)
-        } catch (failure: IOException) {
-            partial.delete()
-            throw failure
-        }
+        val isAudio = type == null || type.type == "audio" || type.subtype == "octet-stream"
         val relativePath = files.relativePathFor(episodeId)
         val target = files.resolve(relativePath)
-        if (bytes == 0L || !partial.renameTo(target)) {
-            partial.delete()
-            return PodcastDownloadOutcome.FAILED
-        }
+        val bytes = if (isAudio) moveIntoPlace(body, files.partialFileFor(episodeId), target) else 0L
+        if (bytes == 0L) return PodcastDownloadOutcome.FAILED
         val recorded = dao.updateDownload(
             episodeId = episodeId,
             state = PodcastDownloadState.DOWNLOADED.name,
@@ -112,6 +102,19 @@ class PodcastDownloader @Inject constructor(
             target.delete()
             PodcastDownloadOutcome.NOT_NEEDED
         }
+    }
+
+    /** Streams [body] into [partial], then renames it to [target]; its size, or 0 when nothing was kept. */
+    private suspend fun moveIntoPlace(body: ResponseBody, partial: File, target: File): Long {
+        val bytes = try {
+            body.copyTo(partial)
+        } catch (failure: IOException) {
+            partial.delete()
+            throw failure
+        }
+        val moved = bytes > 0 && partial.renameTo(target)
+        if (!moved) partial.delete()
+        return if (moved) bytes else 0L
     }
 
     private suspend fun ResponseBody.copyTo(target: File): Long {
