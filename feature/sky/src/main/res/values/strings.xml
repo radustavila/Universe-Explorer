@@ -47,6 +47,7 @@
     <string name="sky_sets_at">Sets %1$s</string>
     <string name="sky_moon_next_full">Full moon %1$s</string>
     <string name="sky_moon_next_new">New moon %1$s</string>
+    <string name="sky_moon_open_map">Open the Moon map</string>
     <string name="moon_phase_new">New moon</string>
     <string name="moon_phase_waxing_crescent">Waxing crescent</string>
     <string name="moon_phase_first_quarter">First quarter</string>

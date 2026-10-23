@@ -138,6 +138,10 @@ enum class QuizPhrase {
     FACT_PEOPLE_IN_SPACE,
     FACT_CONFIRMED_EXOPLANETS,
     FACT_NEXT_FULL_MOON,
+
+    // Moon map (F25).
+    LANDING_SITE_QUESTION,
+    LANDING_SITE_EXPLANATION,
 }
 
 /** Where a question comes from: the daily quiz takes two from the bank and three made from data. */

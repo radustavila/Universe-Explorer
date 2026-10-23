@@ -171,4 +171,6 @@
     </plurals>
     <!-- %1$s a day. -->
     <string name="quiz_f_next_full_moon">The next full Moon is on %1$s.</string>
+    <string name="quiz_q_landing_site">Which mission landed at %1$s on the Moon in %2$s?</string>
+    <string name="quiz_e_landing_site">%1$s touched down at %2$s on %3$s. Find it on the Moon map. Data: NASA NSSDCA.</string>
 </resources>

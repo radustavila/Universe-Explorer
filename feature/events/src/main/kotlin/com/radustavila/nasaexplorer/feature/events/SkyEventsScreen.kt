@@ -74,6 +74,7 @@ fun SkyEventsScreen(
     onCometClick: (designation: String) -> Unit,
     modifier: Modifier = Modifier,
     onMilkyWayClick: () -> Unit = {},
+    onMoonMapClick: (() -> Unit)? = null,
     viewModel: SkyEventsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -90,6 +91,7 @@ fun SkyEventsScreen(
         onReminderChange = viewModel::onReminderChange,
         onCometClick = onCometClick,
         onMilkyWayClick = onMilkyWayClick,
+        onMoonMapClick = onMoonMapClick,
         modifier = modifier,
     )
 }
@@ -110,6 +112,7 @@ fun SkyEventsContent(
     onCometClick: (designation: String) -> Unit,
     modifier: Modifier = Modifier,
     onMilkyWayClick: () -> Unit = {},
+    onMoonMapClick: (() -> Unit)? = null,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
@@ -154,7 +157,16 @@ fun SkyEventsContent(
     }
 
     uiState.selected?.let { event ->
-        EventSheet(event, uiState, snackbarHostState, onSheetDismiss, onReminderChange, onCometClick, onMilkyWayClick)
+        EventSheet(
+            event,
+            uiState,
+            snackbarHostState,
+            onSheetDismiss,
+            onReminderChange,
+            onCometClick,
+            onMilkyWayClick,
+            onMoonMapClick,
+        )
     }
 }
 
@@ -169,6 +181,7 @@ private fun EventSheet(
     onReminderChange: (String, SkyEventReminderLead?) -> Unit,
     onCometClick: (designation: String) -> Unit,
     onMilkyWayClick: () -> Unit,
+    onMoonMapClick: (() -> Unit)?,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val lead = uiState.reminders[event.id]
@@ -191,6 +204,7 @@ private fun EventSheet(
             onLeadChange = { onReminderChange(event.id, it) },
             onCometClick = onCometClick,
             onMilkyWayClick = onMilkyWayClick,
+            onMoonMapClick = onMoonMapClick,
             modifier = Modifier.verticalScroll(rememberScrollState()),
         )
     }

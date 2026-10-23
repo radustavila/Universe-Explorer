@@ -29,6 +29,12 @@ enum class StorageKind {
      * those of favourite episodes.
      */
     PODCAST_DOWNLOADS,
+
+    /**
+     * The Moon map's deeper tiles (zoom 5–6, F25), an on-demand Play asset pack the user asked for.
+     * Not cleared by "Clear cache"; the Moon map removes them.
+     */
+    MOON_TILES,
 }
 
 /** One measured entry, in bytes. */

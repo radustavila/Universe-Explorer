@@ -46,6 +46,8 @@ targetSdk = "37"
 robolectricSdk = "36"
 # AR sky (F22): the back camera's preview behind the sky map.
 camerax = "1.6.2"
+# Moon map (F25): on-demand Play Asset Delivery pack with the deeper tiles.
+playAssetDelivery = "2.3.0"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -121,6 +123,7 @@ aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3",
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax" }
 androidx-camera-compose = { module = "androidx.camera:camera-compose", version.ref = "camerax" }
+play-asset-delivery-ktx = { module = "com.google.android.play:asset-delivery-ktx", version.ref = "playAssetDelivery" }
 
 # build-logic classpath deps
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
@@ -146,3 +149,4 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 detekt = { id = "dev.detekt", version.ref = "detekt" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 aboutlibraries-android = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "aboutLibraries" }
+android-asset-pack = { id = "com.android.asset-pack", version.ref = "agp" }

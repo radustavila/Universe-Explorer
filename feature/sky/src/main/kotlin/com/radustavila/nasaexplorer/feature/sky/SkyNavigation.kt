@@ -25,6 +25,7 @@ fun NavGraphBuilder.skyTonightScreen(
     nextInTheSky: (@Composable () -> Unit)? = null,
     comets: (@Composable () -> Unit)? = null,
     milkyWay: (@Composable () -> Unit)? = null,
+    onMoonMapClick: (() -> Unit)? = null,
 ) {
     composable<SkyTonightRoute>(
         deepLinks = listOf(navDeepLink { uriPattern = SkyTonightDeepLink.URI }),
@@ -34,6 +35,7 @@ fun NavGraphBuilder.skyTonightScreen(
             nextInTheSky = nextInTheSky,
             comets = comets,
             milkyWay = milkyWay,
+            onMoonMapClick = onMoonMapClick,
         )
     }
 }

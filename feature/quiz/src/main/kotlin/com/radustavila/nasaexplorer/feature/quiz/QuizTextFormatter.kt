@@ -109,6 +109,8 @@ class QuizTextFormatter(
             QuizPhrase.FACT_PEOPLE_IN_SPACE to Wording.Plural(R.plurals.quiz_f_people_in_space),
             QuizPhrase.FACT_CONFIRMED_EXOPLANETS to Wording.Plural(R.plurals.quiz_f_confirmed_exoplanets),
             QuizPhrase.FACT_NEXT_FULL_MOON to Wording.Single(R.string.quiz_f_next_full_moon),
+            QuizPhrase.LANDING_SITE_QUESTION to Wording.Single(R.string.quiz_q_landing_site),
+            QuizPhrase.LANDING_SITE_EXPLANATION to Wording.Single(R.string.quiz_e_landing_site),
         )
     }
 }

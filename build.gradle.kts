@@ -21,4 +21,5 @@ plugins {
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.roborazzi) apply false
     alias(libs.plugins.aboutlibraries.android) apply false
+    alias(libs.plugins.android.asset.pack) apply false
 }

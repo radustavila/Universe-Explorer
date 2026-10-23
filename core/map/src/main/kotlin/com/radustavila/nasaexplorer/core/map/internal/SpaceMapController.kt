@@ -4,6 +4,7 @@ import android.graphics.RectF
 import com.radustavila.nasaexplorer.core.map.CameraMove
 import com.radustavila.nasaexplorer.core.map.MapCamera
 import com.radustavila.nasaexplorer.core.map.SpaceMapState
+import com.radustavila.nasaexplorer.core.map.SpaceMapStyle
 import com.radustavila.nasaexplorer.core.map.gibs.GibsImagery
 import com.radustavila.nasaexplorer.core.map.gibs.GibsLayer
 import com.radustavila.nasaexplorer.core.map.overlay.GeoPoint
@@ -39,8 +40,10 @@ import org.maplibre.android.style.sources.TileSet
  * the latest imagery and overlays here on every composition; the controller remembers them until
  * the map and its style are ready, then applies only what changed.
  *
- * Layer stack, bottom to top: black background (space), Blue Marble base, the selected imagery
- * (its gap fill, then its layer), then each overlay's fill, outline, line and circle layers.
+ * Layer stack, bottom to top: black background (space), the body's base (Blue Marble for Earth,
+ * the bundled zoom 0–4 tiles for the Moon), the selected imagery (Earth: its gap fill, then its
+ * layer; Moon: the downloaded zoom 5–6 tiles), then each overlay's fill, outline, line and circle
+ * layers. Switching body rebuilds the whole style; the overlays are then added again.
  *
  * New imagery (another day or layer) is added under the imagery on screen and only replaces it once
  * the map has gone idle with its tiles loaded, so switching never flashes the base. If none of its
@@ -58,6 +61,12 @@ internal class SpaceMapController(
     private var map: MapLibreMap? = null
     private var style: Style? = null
 
+    private var mapStyle: SpaceMapStyle = SpaceMapStyle.Earth(imagery = null)
+
+    /** The body whose style is loaded or loading; another body needs a new style. */
+    private var styleIsMoon: Boolean? = null
+    private var styleGeneration = 0
+
     private var imagery: GibsImagery? = null
     private var appliedImagery: GibsImagery? = null
     private var imageryApplied = false
@@ -70,6 +79,10 @@ internal class SpaceMapController(
 
     private val baseTally = TileLoadMonitor.watch(listOf(GibsImagery(GibsLayer.BlueMarble).urlPrefixes.single()))
     private val statusTally = MutableStateFlow(baseTally)
+
+    /** Local Moon tiles never fail over the network, so their tally always reads loaded. */
+    private val localTally = TileTally(urlPrefixes = emptyList())
+    private var appliedDeepTiles: String? = null
 
     /** Tile health of the imagery last asked for (the base alone when there is none). */
     val tileStatus: Flow<TileLoadStatus> = statusTally.flatMapLatest { it.status }
@@ -84,9 +97,11 @@ internal class SpaceMapController(
         mapView.addOnDidBecomeIdleListener(::settlePending)
     }
 
-    fun setImagery(imagery: GibsImagery?) {
-        this.imagery = imagery
-        applyImagery()
+    fun setStyle(style: SpaceMapStyle) {
+        mapStyle = style
+        if (style is SpaceMapStyle.Earth) imagery = style.imagery
+        val map = map ?: return
+        if (styleIsMoon != style.isMoon) loadStyle(map) else applyBody()
     }
 
     fun setOverlays(overlays: List<MapOverlay>) {
@@ -118,22 +133,55 @@ internal class SpaceMapController(
             isTiltGesturesEnabled = false
         }
         map.setMinZoomPreference(MIN_ZOOM)
-        map.setMaxZoomPreference(MAX_ZOOM)
         map.moveCamera(CameraUpdateFactory.newCameraPosition(state.camera.toCameraPosition()))
         pendingMove?.let { pendingMove = null; move(it) }
 
         map.addOnCameraIdleListener { state.camera = map.cameraPosition.toMapCamera() ?: state.camera }
         map.addOnMapClickListener { latLng -> handleClick(map, latLng) }
 
-        map.setStyle(baseStyle()) { loaded ->
+        loadStyle(map)
+    }
+
+    /** Builds the style of the requested body from scratch; imagery and overlays follow once it loads. */
+    private fun loadStyle(map: MapLibreMap) {
+        val isMoon = mapStyle.isMoon
+        val generation = ++styleGeneration
+        styleIsMoon = isMoon
+        style = null
+        mapView.removeCallbacks(settleTimeout)
+        listOfNotNull(shown, pending).forEach { TileLoadMonitor.unwatch(it.tally) }
+        shown = null
+        pending = null
+        state.isLoadingImagery = false
+        imageryApplied = false
+        appliedDeepTiles = null
+        appliedOverlays = emptyList()
+        statusTally.value = if (isMoon) localTally else baseTally
+
+        map.setMaxZoomPreference(if (isMoon) MOON_MAX_ZOOM else MAX_ZOOM)
+        map.setStyle(if (isMoon) moonStyle() else baseStyle()) { loaded ->
+            if (generation != styleGeneration) return@setStyle
             style = loaded
-            applyImagery()
+            applyBody()
             applyOverlays()
         }
     }
 
+    /** Earth: the selected imagery. Moon: adds, swaps or drops the downloaded zoom 5–6 tiles. */
+    private fun applyBody() {
+        when (val requested = mapStyle) {
+            is SpaceMapStyle.Earth -> applyImagery()
+            is SpaceMapStyle.Moon -> {
+                val directory = requested.deepTilesDirectory
+                val style = style?.takeIf { styleIsMoon == true && directory != appliedDeepTiles } ?: return
+                style.replaceDeepTiles(old = appliedDeepTiles, new = directory)
+                appliedDeepTiles = directory
+            }
+        }
+    }
+
     private fun applyImagery() {
-        val style = style ?: return
+        val style = style?.takeIf { styleIsMoon == false } ?: return
         if (imageryApplied && appliedImagery == imagery) return
         appliedImagery = imagery
         imageryApplied = true
@@ -273,6 +321,9 @@ internal class SpaceMapController(
     private companion object {
         const val MIN_ZOOM = 0.5
         const val MAX_ZOOM = 11.0
+
+        /** Two levels past the deepest Moon tiles, stretched. */
+        const val MOON_MAX_ZOOM = SpaceMapStyle.Moon.MAX_TILE_ZOOM + 2.0
         const val CAMERA_ANIMATION_MILLIS = 800
         const val TAP_SLOP_DP = 12f
         const val TILE_SIZE = 256
@@ -285,6 +336,14 @@ internal class SpaceMapController(
         const val BASE_SOURCE_ID = "gibs-base"
         const val BASE_LAYER_ID = "gibs-base"
         const val IMAGERY_ID_PREFIX = "gibs-imagery"
+        const val MOON_BASE_ID = "moon-base"
+        const val MOON_DEEP_ID = "moon-deep"
+        const val MOON_DEEP_MIN_ZOOM = SpaceMapStyle.Moon.MAX_BUNDLED_ZOOM + 1f
+
+        /** Where the build script writes the bundled tiles inside the APK's assets. */
+        const val MOON_ASSET_TILES = "asset://moon_tiles"
+        const val TILE_PATH = "{z}/{x}/{y}.jpg"
+        const val MOON_ATTRIBUTION = "NASA/GSFC/Arizona State University"
 
         val GEOMETRY_PRIORITY = listOf("Point", "LineString", "Polygon")
         const val SPACE_COLOR = "#000000"
@@ -295,6 +354,34 @@ internal class SpaceMapController(
             )
             .withSource(rasterSource(BASE_SOURCE_ID, GibsLayer.BlueMarble, date = null))
             .withLayer(RasterLayer(BASE_LAYER_ID, BASE_SOURCE_ID))
+
+        fun moonStyle(): Style.Builder {
+            val tileSet = TileSet(TILEJSON_VERSION, "$MOON_ASSET_TILES/$TILE_PATH").apply {
+                maxZoom = SpaceMapStyle.Moon.MAX_BUNDLED_ZOOM.toFloat()
+                attribution = MOON_ATTRIBUTION
+            }
+            return Style.Builder()
+                .withLayer(
+                    BackgroundLayer(BACKGROUND_LAYER_ID).withProperties(PropertyFactory.backgroundColor(SPACE_COLOR)),
+                )
+                .withSource(RasterSource(MOON_BASE_ID, tileSet, TILE_SIZE))
+                .withLayer(RasterLayer(MOON_BASE_ID, MOON_BASE_ID))
+        }
+
+        fun Style.replaceDeepTiles(old: String?, new: String?) {
+            if (old != null) {
+                removeLayer(MOON_DEEP_ID)
+                removeSource(MOON_DEEP_ID)
+            }
+            if (new == null) return
+            val tileSet = TileSet(TILEJSON_VERSION, "file://${new.trimEnd('/')}/$TILE_PATH").apply {
+                minZoom = MOON_DEEP_MIN_ZOOM
+                maxZoom = SpaceMapStyle.Moon.MAX_TILE_ZOOM.toFloat()
+                attribution = MOON_ATTRIBUTION
+            }
+            addSource(RasterSource(MOON_DEEP_ID, tileSet, TILE_SIZE))
+            addLayerAbove(RasterLayer(MOON_DEEP_ID, MOON_DEEP_ID).apply { minZoom = MOON_DEEP_MIN_ZOOM }, MOON_BASE_ID)
+        }
 
         fun rasterSource(id: String, layer: GibsLayer, date: LocalDate?): RasterSource {
             val tileSet = TileSet(TILEJSON_VERSION, layer.tileUrlTemplate(date)).apply {
@@ -307,6 +394,8 @@ internal class SpaceMapController(
         const val GIBS_ATTRIBUTION = "NASA GIBS"
     }
 }
+
+private val SpaceMapStyle.isMoon: Boolean get() = this is SpaceMapStyle.Moon
 
 /** What every tile URL of each layer starts with: the template up to its `{z}` placeholder. */
 private val GibsImagery.urlPrefixes: List<String>

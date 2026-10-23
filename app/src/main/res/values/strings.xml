@@ -43,6 +43,8 @@
     <string name="universe_comets_description">Comets you can see now, how bright they are and where to look</string>
     <string name="universe_milky_way_title">Milky Way planner</string>
     <string name="universe_milky_way_description">When the core of our galaxy is up in a dark, moonless sky, with golden and blue hours</string>
+    <string name="universe_moon_map_title">Moon map</string>
+    <string name="universe_moon_map_description">Every landing site from Luna and Apollo to today, and the side the Sun lights right now</string>
     <string name="universe_search_title">Search everything</string>
     <string name="universe_search_description">Pictures, planets, asteroids, events and favourites saved on this device</string>
 

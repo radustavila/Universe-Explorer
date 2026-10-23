@@ -46,15 +46,34 @@ fun SpaceMap(
     onMapClick: ((GeoPoint) -> Unit)? = null,
     showAttribution: Boolean = true,
 ) {
+    SpaceMap(SpaceMapStyle.Earth(imagery), modifier, state, overlays, onShapeClick, onMapClick, showAttribution)
+}
+
+/**
+ * A pannable, zoomable map of the body [style] names (Earth from GIBS, or the Moon from local
+ * tiles), drawn by MapLibre, with [overlays] above it. Taps on overlay shapes arrive in
+ * [onShapeClick], other taps in [onMapClick]. A [state] keeps one body: switching [style] to
+ * another body rebuilds the map's style.
+ */
+@Composable
+fun SpaceMap(
+    style: SpaceMapStyle,
+    modifier: Modifier = Modifier,
+    state: SpaceMapState = rememberSpaceMapState(),
+    overlays: List<MapOverlay> = emptyList(),
+    onShapeClick: ((MapShapeClick) -> Unit)? = null,
+    onMapClick: ((GeoPoint) -> Unit)? = null,
+    showAttribution: Boolean = true,
+) {
     Box(modifier.testTag(SPACE_MAP_TEST_TAG)) {
         if (LocalInspectionMode.current) {
             Box(Modifier.fillMaxSize().background(Color.Black))
         } else {
-            MapLibreView(imagery, state, overlays, onShapeClick, onMapClick)
+            MapLibreView(style, state, overlays, onShapeClick, onMapClick)
         }
         if (showAttribution) {
             Text(
-                text = stringResource(R.string.core_map_attribution_gibs),
+                text = stringResource(style.attribution),
                 style = MaterialTheme.typography.labelSmall,
                 color = Color.White,
                 modifier = Modifier
@@ -67,9 +86,15 @@ fun SpaceMap(
     }
 }
 
+private val SpaceMapStyle.attribution: Int
+    get() = when (this) {
+        is SpaceMapStyle.Earth -> R.string.core_map_attribution_gibs
+        is SpaceMapStyle.Moon -> R.string.core_map_attribution_moon
+    }
+
 @Composable
 private fun MapLibreView(
-    imagery: GibsImagery?,
+    style: SpaceMapStyle,
     state: SpaceMapState,
     overlays: List<MapOverlay>,
     onShapeClick: ((MapShapeClick) -> Unit)?,
@@ -84,7 +109,7 @@ private fun MapLibreView(
     SideEffect {
         host.controller.onShapeClick = onShapeClick
         host.controller.onMapClick = onMapClick
-        host.controller.setImagery(imagery)
+        host.controller.setStyle(style)
         host.controller.setOverlays(overlays)
     }
 
