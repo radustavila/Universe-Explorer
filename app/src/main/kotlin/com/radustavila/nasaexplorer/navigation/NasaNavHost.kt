@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.radustavila.nasaexplorer.R
+import com.radustavila.nasaexplorer.feature.climate.climateScreen
 import com.radustavila.nasaexplorer.feature.comets.cometDetailsScreen
 import com.radustavila.nasaexplorer.feature.comets.cometsScreen
 import com.radustavila.nasaexplorer.feature.comets.navigateToCometDetails
@@ -213,6 +214,7 @@ fun NasaNavHost(
                 onApproachClick = navController::navigateToSmallBody,
             )
             smallBodyScreen(onBackClick = navController::popBackStack)
+            climateScreen(onBackClick = navController::popBackStack)
         }
 
         navigation<FavoritesGraph>(startDestination = FavoritesRoute) {

@@ -118,4 +118,24 @@ class UnitFormatterTest {
 
     /** ICU puts narrow no-break spaces before "PM" and in some dates. */
     private fun String.normalizeSpaces(): String = replace(' ', ' ').replace(' ', ' ')
+
+    @Test
+    fun `climate values convert as changes, small heights and millions of square units`() {
+        assertEquals("+1.38 °C", metric.temperatureChange(1.38))
+        assertEquals("+2.48 °F", imperial.temperatureChange(1.38))
+        assertEquals("\u22120.19 °C", metric.temperatureChange(-0.19))
+        assertEquals("0.0 °C", metric.temperatureChange(-0.01, fractionDigits = 1))
+        assertEquals("84 mm", metric.smallLength(83.6))
+        assertEquals("+84 mm", metric.smallLength(83.6, signed = true))
+        assertEquals("3.3 in", imperial.smallLength(83.6))
+        assertEquals("4.81 million km²", metric.millionArea(4.81))
+        assertEquals("1.86 million mi²", imperial.millionArea(4.81))
+        assertEquals("\u22122.86 million km²", metric.millionArea(-2.86, signed = true))
+    }
+
+    @Test
+    fun `a month reads the same in every time zone`() {
+        assertEquals("Sept 2026", metric.month(java.time.LocalDate.of(2026, 9, 1)))
+        assertEquals("Sep 2026", formatter(locale = Locale.US).month(java.time.LocalDate.of(2026, 9, 1)))
+    }
 }

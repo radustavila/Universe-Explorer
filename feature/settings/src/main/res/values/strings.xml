@@ -140,6 +140,14 @@
     <string name="credit_usgs_description">Recent earthquakes, from the USGS Earthquake Hazards Program feeds (public domain)</string>
     <string name="credit_stsci">Space Telescope Science Institute</string>
     <string name="credit_stsci_description">Webb\'s weekly observing schedules, which STScI publishes for NASA without claiming copyright. No endorsement by NASA or STScI is implied.</string>
+    <string name="credit_noaa_gml">NOAA Global Monitoring Laboratory</string>
+    <string name="credit_noaa_gml_description">Monthly mean CO₂ at Mauna Loa, from Dr. Xin Lan, NOAA/GML (gml.noaa.gov/ccgg/trends/), from May 1974 (public domain)</string>
+    <string name="credit_gistemp">NASA GISS Surface Temperature Analysis</string>
+    <string name="credit_gistemp_description">Global temperature anomalies. GISTEMP Team: GISS Surface Temperature Analysis (GISTEMP), version 4. NASA Goddard Institute for Space Studies. Lenssen, N., et al. (2024), J. Geophys. Res. Atmos., 129, e2023JD040179</string>
+    <string name="credit_noaa_star">NOAA Laboratory for Satellite Altimetry</string>
+    <string name="credit_noaa_star_description">Global mean sea level. Altimetry data are provided by NOAA Laboratory for Satellite Altimetry.</string>
+    <string name="credit_nsidc">National Snow and Ice Data Center</string>
+    <string name="credit_nsidc_description" translatable="false">Arctic sea ice extent. Fetterer, F., Knowles, K., Meier, W. N., Savoie, M., Windnagel, A. K. &amp; Stafford, T. (2025). Sea Ice Index. (G02135, Version 4). [Data Set]. Boulder, Colorado USA. National Snow and Ice Data Center. https://doi.org/10.7265/a98x-0f50</string>
     <string name="credit_lroc">NASA/GSFC/Arizona State University</string>
     <string name="credit_lroc_description">The Moon map\'s imagery, cut from the LRO Wide Angle Camera global mosaic released through the PDS and USGS Astrogeology (public domain)</string>
     <string name="credit_nssdca">NASA Space Science Data Coordinated Archive</string>

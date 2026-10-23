@@ -17,6 +17,7 @@ import com.radustavila.nasaexplorer.core.model.MeasurementSystem
 import com.radustavila.nasaexplorer.core.model.UnitPreferences
 import java.text.NumberFormat
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.Date
@@ -53,6 +54,9 @@ class UnitFormatter(
     private val dayAndTimeFormat by lazy { dateFormat(if (is24Hour) "EEEdMMMHm" else "EEEdMMMhm") }
     private val dayFormat by lazy { dateFormat("EEEdMMM") }
     private val weekdayFormat by lazy { dateFormat("EEE") }
+    private val monthFormat by lazy {
+        DateFormat.getInstanceForSkeleton("yMMM", locale).apply { timeZone = TimeZone.getTimeZone("UTC") }
+    }
 
     /** "21:30" or "9:30 PM", in the device's time zone. */
     fun time(instant: Instant): String = timeFormat.format(Date.from(instant))
@@ -152,6 +156,56 @@ class UnitFormatter(
         string(if (longitude >= 0) R.string.coordinate_east else R.string.coordinate_west, number(abs(longitude), fractionDigits)),
     )
 
+    /** "Sep 2026": the month of a monthly value, the same in every time zone. */
+    fun month(date: LocalDate): String =
+        monthFormat.format(Date.from(date.atStartOfDay(ZoneOffset.UTC).toInstant()))
+
+    /** A temperature change in the user's degrees: no 32 °F offset, only the 1.8 scale. */
+    fun temperatureChangeValue(celsius: Double): Double = if (isImperial) celsius * FAHRENHEIT_PER_CELSIUS else celsius
+
+    /** "+1.38 °C" or "+2.48 °F": a change or anomaly of temperature, always signed. */
+    fun temperatureChange(celsius: Double, fractionDigits: Int = 2): String = string(
+        if (isImperial) R.string.unit_fahrenheit else R.string.unit_celsius,
+        signedNumber(temperatureChangeValue(celsius), fractionDigits),
+    )
+
+    /** Millimetres or inches, for small heights such as the sea level. */
+    fun smallLengthValue(mm: Double): Double = if (isImperial) mm / MM_PER_INCH else mm
+
+    /** "84 mm" or "3.3 in"; [signed] marks rises with "+". */
+    fun smallLength(mm: Double, signed: Boolean = false): String {
+        val digits = if (isImperial) 1 else 0
+        val value = smallLengthValue(mm)
+        return string(
+            if (isImperial) R.string.unit_inches else R.string.unit_millimetres,
+            if (signed) signedNumber(value, digits) else number(value, digits),
+        )
+    }
+
+    /** Million km² or million mi², for areas the size of the Arctic ice. */
+    fun millionAreaValue(millionSquareKm: Double): Double =
+        if (isImperial) millionSquareKm / SQUARE_KM_PER_SQUARE_MILE else millionSquareKm
+
+    /** "4.81 million km²" or "1.86 million mi²"; [signed] marks growth with "+". */
+    fun millionArea(millionSquareKm: Double, signed: Boolean = false, fractionDigits: Int = 2): String {
+        val value = millionAreaValue(millionSquareKm)
+        return string(
+            if (isImperial) R.string.unit_million_square_mi else R.string.unit_million_square_km,
+            if (signed) signedNumber(value, fractionDigits) else number(value, fractionDigits),
+        )
+    }
+
+    /** "+1.4", "−0.3" or "0.0": a change, signed unless it rounds to nothing. */
+    fun signedNumber(value: Double, fractionDigits: Int): String {
+        val text = number(abs(value), fractionDigits)
+        val rounded = number(0.0, fractionDigits)
+        return when {
+            text == rounded -> text
+            value > 0 -> "+$text"
+            else -> "\u2212$text"
+        }
+    }
+
     /** A plain number in the locale's digits and grouping. */
     fun number(value: Double, fractionDigits: Int): String =
         NumberFormat.getNumberInstance(locale).apply {
@@ -187,6 +241,7 @@ class UnitFormatter(
         private const val HECTARES_PER_ACRE = 0.40468564224
         private const val FAHRENHEIT_PER_CELSIUS = 1.8
         private const val FAHRENHEIT_OFFSET = 32.0
+        private const val MM_PER_INCH = 25.4
         private const val BILLION = 1_000_000_000.0
         private const val MILLION = 1_000_000.0
         private const val THOUSAND = 1_000.0

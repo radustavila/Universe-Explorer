@@ -49,6 +49,14 @@ internal val DATA_CREDITS: List<DataCredit> = listOf(
         R.string.credit_stsci_description,
         "https://www.stsci.edu/jwst/science-execution/observing-schedules",
     ),
+    DataCredit(R.string.credit_noaa_gml, R.string.credit_noaa_gml_description, "https://gml.noaa.gov/ccgg/trends/"),
+    DataCredit(R.string.credit_gistemp, R.string.credit_gistemp_description, "https://data.giss.nasa.gov/gistemp/"),
+    DataCredit(
+        R.string.credit_noaa_star,
+        R.string.credit_noaa_star_description,
+        "https://www.star.nesdis.noaa.gov/socd/lsa/SeaLevelRise/",
+    ),
+    DataCredit(R.string.credit_nsidc, R.string.credit_nsidc_description, "https://doi.org/10.7265/a98x-0f50"),
     DataCredit(
         R.string.credit_lroc,
         R.string.credit_lroc_description,

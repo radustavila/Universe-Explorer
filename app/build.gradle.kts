@@ -85,6 +85,7 @@ dependencies {
     implementation(projects.data.comets)
     implementation(projects.data.webb)
     implementation(projects.data.quiz)
+    implementation(projects.data.climate)
     implementation(projects.data.moonmap)
 
     implementation(projects.feature.feed)
@@ -111,6 +112,7 @@ dependencies {
     implementation(projects.feature.milkyway)
     implementation(projects.feature.webb)
     implementation(projects.feature.quiz)
+    implementation(projects.feature.climate)
     implementation(projects.feature.moonmap)
 
     implementation(libs.androidx.core.ktx)

@@ -81,6 +81,21 @@ sealed interface QuizArg {
     data class PlanetName(val planet: Planet) : QuizArg
 
     data class MoonPhaseName(val phase: MoonPhase) : QuizArg
+
+    /** A CO₂ concentration in parts per million (F26). */
+    data class Ppm(val value: Double) : QuizArg
+
+    /** A temperature change or anomaly in °C, shown signed in the user's degrees. */
+    data class TemperatureChange(val celsius: Double) : QuizArg
+
+    /** A small height in millimetres, e.g. how much the sea has risen. */
+    data class Millimetres(val mm: Double) : QuizArg
+
+    /** An area in million km², e.g. the Arctic sea ice. */
+    data class MillionSquareKm(val value: Double) : QuizArg
+
+    /** The month of a monthly value: "Sep 2026". */
+    data class Month(val date: LocalDate) : QuizArg
 }
 
 /**
@@ -132,6 +147,16 @@ enum class QuizPhrase {
     BOOSTER_LANDED_QUESTION,
     BOOSTER_LANDED_EXPLANATION_YES,
     BOOSTER_LANDED_EXPLANATION_NO,
+
+    // Climate vital signs (F26).
+    ANSWER_VALUE,
+    CLIMATE_CO2_QUESTION,
+    CLIMATE_CO2_EXPLANATION,
+    CLIMATE_TEMPERATURE_QUESTION,
+    CLIMATE_TEMPERATURE_EXPLANATION,
+    FACT_CLIMATE_CO2,
+    FACT_CLIMATE_SEA_ICE,
+    FACT_CLIMATE_SEA_LEVEL,
 
     // Live facts.
     FACT_SPACECRAFT_DISTANCE,

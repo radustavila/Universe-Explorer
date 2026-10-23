@@ -99,6 +99,11 @@ Clean Architecture, dependencies pointing inward:
   `QuizText.Phrase` (a `QuizPhrase` worded in `:feature:quiz`), never English in Kotlin. A feature adds its
   questions with its own source binding. Progress and the opt-in 18:00 reminder live in the backed-up
   `quiz_progress` DataStore.
+  Climate vital signs (F26, `:data:climate` + `:feature:climate`): four public CSV files (NOAA GML CO₂ from May
+  1974, GISTEMP v4 monthly anomalies, NOAA STAR sea level, NSIDC G02135 September extent) parsed by
+  `ClimateFileParser` (columns by name, fill values dropped) into `climate.db`, one `SyncSource` each, refreshed at
+  most weekly by `RefreshClimateUseCase` when the Earth tab's `VitalSignsSection` (Earth footer) or a detail chart
+  opens; no background job. Charts are `:core:designsystem` `chart/` (`Sparkline`, `LineChart`, Canvas only).
   The Moon map (F25, `:feature:moonmap` + `:data:moonmap`) is offline: our own Web Mercator tiles of the
   public-domain LRO WAC mosaic, cut by `core/map/tools/build_moon_tiles.sh` (gdal2tiles, run by hand, output
   checked in; the poles past ±85° are clipped). Zoom 0–4 ship in `:core:map`'s assets; zoom 5–6 are the
