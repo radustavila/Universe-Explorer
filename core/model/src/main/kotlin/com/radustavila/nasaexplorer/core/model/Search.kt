@@ -32,6 +32,9 @@ enum class SearchSource {
     SKY_EVENTS,
     /** Cached NASA news: stories, science articles, Images of the Day and videos. */
     NEWS,
+
+    /** Comets near perihelion (F18), by name or designation. */
+    COMETS,
 }
 
 /** Where opening a [SearchHit] leads; `:app` maps each target to its feature's route. */
@@ -51,6 +54,9 @@ sealed interface SearchTarget {
     data class SkyEventEntry(val id: String) : SearchTarget
     /** A cached news item; opens on its own screen, which links to the page or video. */
     data class NewsEntry(val id: String) : SearchTarget
+
+    /** Opens the comet's details (F18). */
+    data class CometEntry(val designation: String) : SearchTarget
 
     /** Opens the favourite in the screen of the feature it was saved from. */
     data class Favorite(val item: FavoriteItem) : SearchTarget

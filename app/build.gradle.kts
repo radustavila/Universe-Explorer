@@ -78,6 +78,7 @@ dependencies {
     implementation(projects.data.skyevents)
     implementation(projects.data.forecast)
     implementation(projects.data.news)
+    implementation(projects.data.comets)
 
     implementation(projects.feature.feed)
     implementation(projects.feature.details)
@@ -99,6 +100,7 @@ dependencies {
     implementation(projects.feature.events)
     implementation(projects.feature.news)
     implementation(projects.feature.skymap)
+    implementation(projects.feature.comets)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

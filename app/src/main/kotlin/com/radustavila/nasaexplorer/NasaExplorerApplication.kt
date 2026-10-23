@@ -21,6 +21,7 @@ import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
 import com.radustavila.nasaexplorer.core.domain.usecase.RescheduleSkyEventRemindersOnLocationChangeUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ScheduleAuroraAlertRefreshUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ScheduleStargazingAlertUseCase
+import com.radustavila.nasaexplorer.data.comets.sync.CometsSyncScheduler
 import com.radustavila.nasaexplorer.data.earthevents.sync.EarthEventsSyncScheduler
 import dagger.Lazy
 import dagger.hilt.android.HiltAndroidApp
@@ -49,6 +50,9 @@ class NasaExplorerApplication :
 
     @Inject
     lateinit var earthEventsSyncScheduler: Lazy<EarthEventsSyncScheduler>
+
+    @Inject
+    lateinit var cometsSyncScheduler: Lazy<CometsSyncScheduler>
 
     @Inject
     lateinit var exoplanetSyncScheduler: Lazy<ExoplanetSyncScheduler>
@@ -114,6 +118,7 @@ class NasaExplorerApplication :
             launch { earthEventsSyncScheduler.get().ensurePeriodicSync() }
             launch { exoplanetSyncScheduler.get().ensurePeriodicSync() }
             launch { epicSyncScheduler.get().ensurePeriodicSync() }
+            launch { cometsSyncScheduler.get().ensurePeriodicSync() }
             // Keeps the 30-minute space-weather job only while aurora alerts are on, which also drops
             // it from installs that registered it when the screen opened.
             launch { scheduleAuroraAlertRefresh.get().invoke() }

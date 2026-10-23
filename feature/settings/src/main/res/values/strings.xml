@@ -101,11 +101,11 @@
     <string name="credit_donki">NASA DONKI</string>
     <string name="credit_donki_description">Solar flares and coronal mass ejections, from the Community Coordinated Modeling Center</string>
     <string name="credit_jpl">NASA JPL Solar System Dynamics and CNEOS</string>
-    <string name="credit_jpl_description">Close approaches, the Sentry impact risk list and fireballs</string>
+    <string name="credit_jpl_description">Close approaches, the Sentry impact risk list, fireballs and the comets near the Sun</string>
     <string name="credit_dsn">NASA Deep Space Network: DSN Now</string>
     <string name="credit_dsn_description">Live antenna activity at Goldstone, Madrid and Canberra</string>
     <string name="credit_horizons">NASA JPL Horizons</string>
-    <string name="credit_horizons_description">Distances of Voyager, New Horizons and other far spacecraft</string>
+    <string name="credit_horizons_description">Distances of Voyager, New Horizons and other far spacecraft, and the paths and brightness of comets</string>
     <string name="credit_mars">NASA Mars raw images</string>
     <string name="credit_mars_description">Raw photos from Curiosity and Perseverance</string>
     <string name="credit_celestrak">CelesTrak</string>

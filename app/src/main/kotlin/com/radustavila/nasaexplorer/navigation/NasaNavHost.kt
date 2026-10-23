@@ -11,6 +11,11 @@ import com.radustavila.nasaexplorer.feature.debug.debugScreen
 import com.radustavila.nasaexplorer.feature.details.detailsPane
 import com.radustavila.nasaexplorer.feature.details.detailsScreen
 import com.radustavila.nasaexplorer.feature.details.navigateToDetails
+import com.radustavila.nasaexplorer.feature.comets.cometDetailsScreen
+import com.radustavila.nasaexplorer.feature.comets.cometsScreen
+import com.radustavila.nasaexplorer.feature.comets.navigateToCometDetails
+import com.radustavila.nasaexplorer.feature.comets.navigateToComets
+import com.radustavila.nasaexplorer.feature.comets.sky.CometsTonightCard
 import com.radustavila.nasaexplorer.feature.dsn.dsnScreen
 import com.radustavila.nasaexplorer.feature.earth.EarthTodayRoute
 import com.radustavila.nasaexplorer.feature.earth.earthTodayScreen
@@ -117,6 +122,12 @@ fun NasaNavHost(
                         onEventClick = { id -> navController.navigateToSkyEvents(id) },
                     )
                 },
+                comets = {
+                    CometsTonightCard(
+                        onOpenComets = { navController.navigateToComets() },
+                        onCometClick = navController::navigateToCometDetails,
+                    )
+                },
             )
             skyEventsScreen(
                 onBackClick = navController::popBackStack,
@@ -125,6 +136,12 @@ fun NasaNavHost(
             dsnScreen(onBackClick = navController::popBackStack)
             newsScreen(onBackClick = navController::popBackStack, onImageClick = navController::navigateToNewsItem)
             skyMapScreen(onBackClick = navController::popBackStack, locationSection = { ObserverLocationSection() })
+            cometsScreen(
+                onBackClick = navController::popBackStack,
+                onCometClick = navController::navigateToCometDetails,
+                onSetLocation = { navController.navigateToSkyTonight() },
+            )
+            cometDetailsScreen(onBackClick = navController::popBackStack)
             gallerySearchScreen(
                 onMediaClick = navController::navigateToNasaMedia,
                 listDetail = listDetail(
