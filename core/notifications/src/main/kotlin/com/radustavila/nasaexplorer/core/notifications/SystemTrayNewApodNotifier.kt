@@ -59,7 +59,7 @@ class SystemTrayNewApodNotifier @Inject constructor(
 
         try {
             // A single id: a newer entry replaces an unread older one instead of stacking up.
-            notificationManager.notify(NOTIFICATION_ID, notification)
+            notificationManager.notify(NotificationIds.NEW_APOD, notification)
         } catch (_: SecurityException) {
             // The permission was revoked between the check above and this call.
         }
@@ -77,7 +77,7 @@ class SystemTrayNewApodNotifier @Inject constructor(
         context.apodDetailsIntent(apod.date)?.let { intent ->
             PendingIntent.getActivity(
                 context,
-                REQUEST_CODE,
+                NotificationIds.RequestCodes.NEW_APOD,
                 intent,
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
             )
@@ -91,8 +91,6 @@ class SystemTrayNewApodNotifier @Inject constructor(
 
     private companion object {
         const val CHANNEL_ID = "new_apod"
-        const val NOTIFICATION_ID = 1
-        const val REQUEST_CODE = 0
 
         /** Large enough for the expanded notification, small enough to cross the binder. */
         const val PICTURE_SIZE_PX = 1024
