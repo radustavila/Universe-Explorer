@@ -12,6 +12,7 @@ import com.radustavila.nasaexplorer.core.model.LunarEclipse
 import com.radustavila.nasaexplorer.core.model.LunarEclipseType
 import com.radustavila.nasaexplorer.core.model.MeteorShower
 import com.radustavila.nasaexplorer.core.model.MeteorShowerPeak
+import com.radustavila.nasaexplorer.core.model.MilkyWayNightEvent
 import com.radustavila.nasaexplorer.core.model.MoonPhaseEvent
 import com.radustavila.nasaexplorer.core.model.MoonQuarter
 import com.radustavila.nasaexplorer.core.model.MoonSize
@@ -43,6 +44,7 @@ class SkyEventText(private val resources: Resources) {
         is SeasonEvent -> string(event.marker.title())
         is MeteorShowerPeak -> string(R.string.sky_event_meteor_peak, shower(event.shower))
         is CometPerihelion -> string(R.string.sky_event_comet_perihelion, cometShortName(event.name))
+        is MilkyWayNightEvent -> string(R.string.sky_event_milky_way_night)
     }
 
     fun planet(planet: Planet): String = string(

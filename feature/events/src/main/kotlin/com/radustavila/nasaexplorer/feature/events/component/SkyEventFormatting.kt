@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.feature.events.component
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.BlurOn
 import androidx.compose.material.icons.outlined.Contrast
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Flare
@@ -18,6 +19,7 @@ import com.radustavila.nasaexplorer.core.model.CometPerihelion
 import com.radustavila.nasaexplorer.core.model.GreatestElongation
 import com.radustavila.nasaexplorer.core.model.LunarEclipse
 import com.radustavila.nasaexplorer.core.model.MeteorShowerPeak
+import com.radustavila.nasaexplorer.core.model.MilkyWayNightEvent
 import com.radustavila.nasaexplorer.core.model.MoonPhaseEvent
 import com.radustavila.nasaexplorer.core.model.MoonQuarter
 import com.radustavila.nasaexplorer.core.model.PlanetOpposition
@@ -40,6 +42,7 @@ internal val SkyEventCategory.icon: ImageVector
         SkyEventCategory.METEORS -> Icons.Outlined.AutoAwesome
         SkyEventCategory.COMETS -> Icons.Outlined.Flare
         SkyEventCategory.SEASONS -> Icons.Outlined.WbSunny
+        SkyEventCategory.MILKY_WAY -> Icons.Outlined.BlurOn
     }
 
 @get:StringRes
@@ -51,6 +54,7 @@ internal val SkyEventCategory.labelRes: Int
         SkyEventCategory.METEORS -> R.string.sky_events_category_meteors
         SkyEventCategory.COMETS -> R.string.sky_events_category_comets
         SkyEventCategory.SEASONS -> R.string.sky_events_category_seasons
+        SkyEventCategory.MILKY_WAY -> R.string.sky_events_category_milky_way
     }
 
 /** The moment a list shows for an event: the local maximum of an eclipse seen from here, else its time. */
@@ -90,6 +94,13 @@ internal fun skyEventSummary(event: SkyEvent, hasPlace: Boolean, units: UnitForm
     is CometPerihelion -> event.magnitude
         ?.let { stringResource(R.string.sky_events_comet_magnitude, units.number(it, 1)) }
         ?: stringResource(R.string.sky_events_comet_sun_distance, units.number(event.perihelionDistanceAu, 2))
+
+    is MilkyWayNightEvent -> stringResource(
+        R.string.sky_events_milky_way_summary,
+        units.time(event.time),
+        units.time(event.end),
+        event.coreAltitudeDegrees.roundToInt(),
+    )
 }
 
 @Composable

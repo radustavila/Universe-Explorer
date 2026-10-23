@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.feature.skymap.render
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotateRad
@@ -11,13 +12,17 @@ import com.radustavila.nasaexplorer.core.model.SolarSystemBody
 import com.radustavila.nasaexplorer.core.model.SolarSystemPosition
 import com.radustavila.nasaexplorer.core.skymap.SkyChart
 import com.radustavila.nasaexplorer.core.skymap.SkyProjection
+import com.radustavila.nasaexplorer.feature.skymap.SkyTarget
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.hypot
 import kotlin.math.min
 import kotlin.math.tan
 
-/** The Sun, the Moon with its phase, the planets, the ISS, the comets and the selection ring or arrow. */
+/**
+ * The Sun, the Moon with its phase, the planets, the ISS, the comets, the galactic centre and the
+ * selection ring or arrow.
+ */
 internal class SkyBodyPainter(
     private val scope: DrawScope,
     private val frame: SkyFrame,
@@ -53,6 +58,26 @@ internal class SkyBodyPainter(
             drawComet(center)
             discs += center to cometRadius(this)
         }
+        drawGalacticCentre()
+    }
+
+    /** A faint dashed ring where the core of the Milky Way is (F20); no disc, it is a region of sky. */
+    private fun DrawScope.drawGalacticCentre() {
+        val direction = SkyTarget.GalacticCentre.direction(frame.sky, frame.bodies) ?: return
+        if (!projection.project(direction)) return
+        val center = Offset(projection.x, projection.y)
+        val radius = galacticCentreRadius(this)
+        val dash = GALACTIC_CENTRE_DASH_DP.dp.toPx()
+        drawCircle(
+            color = frame.palette.galacticCentre,
+            radius = radius,
+            center = center,
+            alpha = GALACTIC_CENTRE_ALPHA,
+            style = Stroke(width = 1.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(dash, dash))),
+        )
+        val dot = GALACTIC_CENTRE_DOT_DP.dp.toPx()
+        drawCircle(frame.palette.galacticCentre, dot, center, alpha = GALACTIC_CENTRE_ALPHA)
+        discs += center to radius
     }
 
     fun reserveDiscs(labels: LabelLayer) {
@@ -146,6 +171,10 @@ internal class SkyBodyPainter(
         private const val COMET_HALO_ALPHA = 0.3f
         private const val COMET_TAIL_DP = 14f
         private const val COMET_TAIL_ALPHA = 0.55f
+        private const val GALACTIC_CENTRE_RADIUS_DP = 9f
+        private const val GALACTIC_CENTRE_DOT_DP = 1.5f
+        private const val GALACTIC_CENTRE_DASH_DP = 3f
+        private const val GALACTIC_CENTRE_ALPHA = 0.8f
         private const val SELECTION_RADIUS_DP = 14f
         private const val SELECTION_STROKE_DP = 2f
         private const val HALF_LIT = 0.5f
@@ -163,6 +192,9 @@ internal class SkyBodyPainter(
 
         /** Radius of a comet's head with its halo; its tail is left free for labels. */
         fun cometRadius(scope: DrawScope): Float = with(scope) { (COMET_HEAD_DP * COMET_HALO).dp.toPx() }
+
+        /** Radius of the galactic centre's ring. */
+        fun galacticCentreRadius(scope: DrawScope): Float = with(scope) { GALACTIC_CENTRE_RADIUS_DP.dp.toPx() }
 
         /** Outer radius of a satellite's marker: a dot in a ring. */
         fun satelliteRadius(scope: DrawScope): Float = with(scope) { ISS_RING_DP.dp.toPx() }

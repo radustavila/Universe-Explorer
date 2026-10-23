@@ -81,6 +81,7 @@ fun SkyTonightScreen(
     modifier: Modifier = Modifier,
     nextInTheSky: (@Composable () -> Unit)? = null,
     comets: (@Composable () -> Unit)? = null,
+    milkyWay: (@Composable () -> Unit)? = null,
     viewModel: SkyTonightViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -139,6 +140,7 @@ fun SkyTonightScreen(
         modifier = modifier,
         nextInTheSky = nextInTheSky,
         comets = comets,
+        milkyWay = milkyWay,
         moreSatellites = { MoreSatellitesSection(snackbarHostState) },
         stargazing = { StargazingForecastCard() },
     )
@@ -180,6 +182,7 @@ fun SkyTonightContent(
     comets: (@Composable () -> Unit)? = null,
     moreSatellites: (@Composable () -> Unit)? = null,
     stargazing: @Composable () -> Unit = {},
+    milkyWay: (@Composable () -> Unit)? = null,
 ) {
     Scaffold(
         modifier = modifier,
@@ -216,6 +219,7 @@ fun SkyTonightContent(
                         comets = comets,
                         moreSatellites = moreSatellites,
                         stargazing = stargazing,
+                        milkyWay = milkyWay,
                     )
                 }
             }
@@ -235,6 +239,7 @@ private fun SkyList(
     comets: (@Composable () -> Unit)?,
     moreSatellites: (@Composable () -> Unit)?,
     stargazing: @Composable () -> Unit,
+    milkyWay: (@Composable () -> Unit)?,
 ) {
     val location = uiState.location
     // One column on a phone held upright; side by side on wider windows (a phone in landscape
@@ -278,6 +283,8 @@ private fun SkyList(
                 item(key = "moon") { MoonCard(sky.moon, southernHemisphere = location.coordinate.latitude < 0) }
                 item(key = "planets") { PlanetsCard(sky.planets) }
             }
+            // Worked out for the place, like the night: hides itself when the core is out of season.
+            milkyWay?.let { card -> item(key = "milky-way") { card() } }
             uiState.passes?.let { forecast ->
                 item(key = "iss") {
                     IssPassesCard(forecast = forecast, remindersOn = remindersOn, onRemindersClick = onRemindersClick)

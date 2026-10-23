@@ -92,6 +92,8 @@ internal fun rememberSkyNames(): SkyNames {
             bodies = SolarSystemBody.entries.associateWith { resources.getString(it.nameRes()) },
             satellites = STATION_NAMES.mapValues { (_, name) -> resources.getString(name) },
             cardinals = CARDINALS.map(resources::getString),
+            galacticCentre = resources.getString(R.string.sky_map_galactic_centre),
+            milkyWayCore = resources.getString(R.string.sky_map_milky_way_core),
         )
     }
 }
@@ -101,8 +103,8 @@ internal data class SkySearchResult(val target: SkyTarget, val name: String)
 
 /**
  * Everything named on the map that matches [query], ignoring case and accents: the Sun, Moon and
- * planets, the ISS, comets (by full name), constellations (by name or abbreviation) and named stars, brightest first
- * within each group; names starting with the query come first.
+ * planets, the ISS, comets (by full name), the galactic centre (also as the Milky Way's core), constellations (by
+ * name or abbreviation) and named stars, brightest first within each group; names starting with the query come first.
  */
 internal fun searchSky(
     query: String,
@@ -121,6 +123,8 @@ internal fun searchSky(
             add(SkySearchResult(SkyTarget.Satellite(it.noradId), names.satellite(it.noradId, bodies)))
         }
         bodies?.comets?.forEach { add(SkySearchResult(SkyTarget.Comet(it.designation), it.name)) }
+        if (names.galacticCentre.isNotEmpty()) add(SkySearchResult(SkyTarget.GalacticCentre, names.galacticCentre))
+        if (names.milkyWayCore.isNotEmpty()) add(SkySearchResult(SkyTarget.GalacticCentre, names.milkyWayCore))
         val seen = mutableSetOf<String>()
         catalog.constellations.forEachIndexed { index, figure ->
             if (seen.add(figure.id)) add(SkySearchResult(SkyTarget.Constellation(index), figure.name))
@@ -135,7 +139,9 @@ internal fun searchSky(
         result.name.foldForSearch().contains(needle) ||
             (result.target as? SkyTarget.Constellation)?.let { abbreviations[it.index] == needle } == true
     }
-    return matches.sortedBy { if (it.name.foldForSearch().startsWith(needle)) 0 else 1 }.take(limit)
+    return matches.sortedBy { if (it.name.foldForSearch().startsWith(needle)) 0 else 1 }
+        .distinctBy { it.target }
+        .take(limit)
 }
 
 private const val MAX_RESULTS = 8

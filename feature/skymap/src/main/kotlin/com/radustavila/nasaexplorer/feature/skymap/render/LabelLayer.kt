@@ -73,6 +73,7 @@ internal class LabelLayer(
         frame.bodies?.comets?.forEach { comet ->
             SkyTarget.Comet(comet.designation).takeIf { it != selected }?.let { scope.label(frame, projection, it) }
         }
+        SkyTarget.GalacticCentre.takeIf { it != selected }?.let { scope.label(frame, projection, it) }
         val starLimit = starLabelLimit(frame.fieldOfViewDegrees)
         namedStars.asSequence()
             .takeWhile { frame.sky.chart.starMagnitudes[it] <= starLimit }
@@ -119,11 +120,12 @@ internal class LabelLayer(
         is SkyTarget.Body -> names.bodies[target.body]
         is SkyTarget.Satellite -> names.satellite(target.noradId, bodies)
         is SkyTarget.Comet -> bodies?.comet(target.designation)?.shortName()
+        SkyTarget.GalacticCentre -> names.galacticCentre.ifEmpty { null }
     }
 
     private fun styleOf(target: SkyTarget): TextStyle = when (target) {
         is SkyTarget.StarTarget -> styles.star
-        is SkyTarget.Constellation -> styles.constellation
+        is SkyTarget.Constellation, SkyTarget.GalacticCentre -> styles.constellation
         is SkyTarget.Body, is SkyTarget.Satellite, is SkyTarget.Comet -> styles.body
     }
 
@@ -133,6 +135,7 @@ internal class LabelLayer(
         is SkyTarget.Body -> palette.bodyLabel
         is SkyTarget.Satellite -> palette.iss
         is SkyTarget.Comet -> palette.comet
+        SkyTarget.GalacticCentre -> palette.galacticCentre
     }
 
     /** Radius of the dot or disc a label sits next to, so the label clears it. */
@@ -146,6 +149,7 @@ internal class LabelLayer(
                 ?.let { SkyBodyPainter.discRadius(this, it, projection) } ?: 0f
             is SkyTarget.Satellite -> SkyBodyPainter.satelliteRadius(this)
             is SkyTarget.Comet -> SkyBodyPainter.cometRadius(this)
+            SkyTarget.GalacticCentre -> SkyBodyPainter.galacticCentreRadius(this)
             is SkyTarget.Constellation -> 0f
         }
 

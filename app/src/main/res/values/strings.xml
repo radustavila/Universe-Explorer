@@ -39,6 +39,8 @@
     <string name="universe_skymap_description">Stars, constellations, planets and the ISS above you: hold up your phone to find them</string>
     <string name="universe_comets_title">Bright comets</string>
     <string name="universe_comets_description">Comets you can see now, how bright they are and where to look</string>
+    <string name="universe_milky_way_title">Milky Way planner</string>
+    <string name="universe_milky_way_description">When the core of our galaxy is up in a dark, moonless sky, with golden and blue hours</string>
     <string name="universe_search_title">Search everything</string>
     <string name="universe_search_description">Pictures, planets, asteroids, events and favourites saved on this device</string>
 

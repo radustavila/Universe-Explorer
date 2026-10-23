@@ -21,7 +21,6 @@ import io.github.cosinekitty.astronomy.equator
 import io.github.cosinekitty.astronomy.horizon
 import io.github.cosinekitty.astronomy.illumination
 import io.github.cosinekitty.astronomy.moonPhase
-import io.github.cosinekitty.astronomy.searchAltitude
 import io.github.cosinekitty.astronomy.searchMoonPhase
 import io.github.cosinekitty.astronomy.searchRiseSet
 import java.time.Duration
@@ -63,23 +62,7 @@ class AstronomyEngineSkyCalculator @Inject constructor() : SkyCalculator {
         val start = sunset ?: now
         val sunrise = searchRiseSet(Body.Sun, site, Direction.Rise, start, SEARCH_DAYS)
         val end = sunrise ?: start.addDays(SEARCH_DAYS)
-
-        fun dusk(altitude: Double) = searchAltitude(Body.Sun, site, Direction.Set, start, SEARCH_DAYS, altitude)
-            ?.takeIf { it.ut < end.ut }
-
-        fun dawn(altitude: Double) = searchAltitude(Body.Sun, site, Direction.Rise, start, SEARCH_DAYS, altitude)
-            ?.takeIf { it.ut <= end.ut }
-
-        return NightWindow(
-            sunset = sunset?.toInstant(),
-            civilDusk = dusk(CIVIL)?.toInstant(),
-            nauticalDusk = dusk(NAUTICAL)?.toInstant(),
-            astronomicalDusk = dusk(ASTRONOMICAL)?.toInstant(),
-            astronomicalDawn = dawn(ASTRONOMICAL)?.toInstant(),
-            nauticalDawn = dawn(NAUTICAL)?.toInstant(),
-            civilDawn = dawn(CIVIL)?.toInstant(),
-            sunrise = sunrise?.toInstant(),
-        )
+        return Twilight.nightWindow(site, sunset?.toInstant(), sunrise?.toInstant(), start, end, SEARCH_DAYS)
     }
 
     private fun moonTonight(site: Observer, now: Time, windowStart: Time): MoonTonight {
@@ -170,9 +153,6 @@ class AstronomyEngineSkyCalculator @Inject constructor() : SkyCalculator {
     private companion object {
         const val SEARCH_DAYS = 1.0
         const val LUNAR_MONTH_DAYS = 32.0
-        const val CIVIL = -6.0
-        const val NAUTICAL = -12.0
-        const val ASTRONOMICAL = -18.0
         const val NEW_MOON = 0.0
         const val FULL_MOON = 180.0
         val SCAN_STEP: Duration = Duration.ofMinutes(10)

@@ -101,6 +101,7 @@ dependencies {
     implementation(projects.feature.news)
     implementation(projects.feature.skymap)
     implementation(projects.feature.comets)
+    implementation(projects.feature.milkyway)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
