@@ -3,10 +3,13 @@ package com.radustavila.nasaexplorer.feature.debug
 import app.cash.turbine.test
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDebugInfoUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveShowFaintCometsUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.SetShowFaintCometsUseCase
 import com.radustavila.nasaexplorer.core.model.SyncSource
 import com.radustavila.nasaexplorer.core.model.SyncState
 import com.radustavila.nasaexplorer.core.testing.data.TestApods
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeCometDebugSettingsRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
@@ -14,6 +17,8 @@ import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
 import java.time.Instant
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
@@ -26,6 +31,7 @@ class DebugViewModelTest {
     private val networkMonitor = FakeNetworkMonitor()
     private val syncScheduler = FakeSyncScheduler()
     private val metadata = FakeSyncMetadataRepository(initialLastSync = LAST_SYNC)
+    private val cometDebugSettings = FakeCometDebugSettingsRepository()
 
     @Test
     fun `aggregates connectivity, cache size, favorites and sync state`() = runTest {
@@ -72,6 +78,21 @@ class DebugViewModelTest {
         assertEquals(1, syncScheduler.periodicSyncCallCount)
     }
 
+    @Test
+    fun `the faint comets switch is kept`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            var state = awaitItem()
+            while (state.info == null) state = awaitItem()
+            assertFalse(state.showFaintComets)
+            viewModel.onShowFaintCometsChange(true)
+            assertTrue(awaitItem().showFaintComets)
+            cancelAndIgnoreRemainingEvents()
+        }
+        assertTrue(cometDebugSettings.showFaintComets.value)
+    }
+
     private fun createViewModel() = DebugViewModel(
         observeDebugInfo = ObserveDebugInfoUseCase(
             apodRepository = repository,
@@ -80,6 +101,8 @@ class DebugViewModelTest {
             syncScheduler = syncScheduler,
             networkMonitor = networkMonitor,
         ),
+        observeShowFaintComets = ObserveShowFaintCometsUseCase(cometDebugSettings),
+        setShowFaintComets = SetShowFaintCometsUseCase(cometDebugSettings),
         syncScheduler = syncScheduler,
     )
 

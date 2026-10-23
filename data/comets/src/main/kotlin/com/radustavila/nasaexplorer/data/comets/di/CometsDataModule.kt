@@ -1,9 +1,19 @@
 package com.radustavila.nasaexplorer.data.comets.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.radustavila.nasaexplorer.core.astro.AstronomyEngineCometSkyCalculator
 import com.radustavila.nasaexplorer.core.cache.CacheEvictor
+import com.radustavila.nasaexplorer.core.common.dispatchers.AppDispatcher
+import com.radustavila.nasaexplorer.core.common.dispatchers.ApplicationScope
+import com.radustavila.nasaexplorer.core.common.dispatchers.Dispatcher
+import com.radustavila.nasaexplorer.core.domain.repository.CometDebugSettingsRepository
 import com.radustavila.nasaexplorer.core.domain.repository.CometRepository
 import com.radustavila.nasaexplorer.core.domain.search.SearchableSource
 import com.radustavila.nasaexplorer.core.domain.sky.CometSkyCalculator
@@ -17,6 +27,7 @@ import com.radustavila.nasaexplorer.data.comets.local.CometsDao
 import com.radustavila.nasaexplorer.data.comets.local.CometsDatabase
 import com.radustavila.nasaexplorer.data.comets.local.CometsLocalDataSource
 import com.radustavila.nasaexplorer.data.comets.local.RoomCometsLocalDataSource
+import com.radustavila.nasaexplorer.data.comets.preferences.CometDebugSettingsDataSource
 import com.radustavila.nasaexplorer.data.comets.remote.CometsRemoteDataSource
 import com.radustavila.nasaexplorer.data.comets.remote.HorizonsCometService
 import com.radustavila.nasaexplorer.data.comets.remote.RetrofitCometsRemoteDataSource
@@ -32,8 +43,17 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import java.net.URI
 import java.time.Duration
+import javax.inject.Qualifier
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.plus
 import retrofit2.create
+
+/** The DataStore holding the debug screen's comets switch. */
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class CometDebugStore
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -44,6 +64,9 @@ internal interface CometsDataModule {
 
     @Binds
     fun bindCometSkyCalculator(impl: AstronomyEngineCometSkyCalculator): CometSkyCalculator
+
+    @Binds
+    fun bindCometDebugSettingsRepository(impl: CometDebugSettingsDataSource): CometDebugSettingsRepository
 
     @Binds
     fun bindCometsLocalDataSource(impl: RoomCometsLocalDataSource): CometsLocalDataSource
@@ -75,6 +98,19 @@ internal object CometsInfrastructureModule {
             // A disposable mirror of JPL: rebuilding it costs one daily refresh.
             .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
+
+    @Provides
+    @Singleton
+    @CometDebugStore
+    fun provideCometDebugDataStore(
+        @ApplicationContext context: Context,
+        @ApplicationScope applicationScope: CoroutineScope,
+        @Dispatcher(AppDispatcher.IO) ioDispatcher: CoroutineDispatcher,
+    ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
+        corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
+        scope = applicationScope + ioDispatcher,
+        produceFile = { context.preferencesDataStoreFile(COMET_DEBUG_STORE) },
+    )
 
     @Provides
     fun provideCometsDao(database: CometsDatabase): CometsDao = database.cometsDao()
@@ -110,6 +146,7 @@ internal object CometsInfrastructureModule {
         window = Duration.ofHours(1),
     )
 
+    private const val COMET_DEBUG_STORE = "comet_debug"
     private const val JPL_SSD_REQUESTS_PER_HOUR = 60
     private const val HORIZONS_REQUESTS_PER_HOUR = 30
 }

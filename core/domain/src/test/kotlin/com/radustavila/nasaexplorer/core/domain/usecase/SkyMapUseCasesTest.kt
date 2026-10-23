@@ -5,9 +5,13 @@ import com.radustavila.nasaexplorer.core.model.EquatorialCoordinate
 import com.radustavila.nasaexplorer.core.model.HorizontalCoordinate
 import com.radustavila.nasaexplorer.core.model.OrbitalElements.Companion.ISS_NORAD_ID
 import com.radustavila.nasaexplorer.core.model.SatelliteSet
+import com.radustavila.nasaexplorer.core.testing.data.TestComets
 import com.radustavila.nasaexplorer.core.testing.data.TestSatellites
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.data.TestSkyMap
+import com.radustavila.nasaexplorer.core.testing.fake.FakeCometDebugSettingsRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeCometRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeCometSkyCalculator
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSatelliteRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSkyCatalogRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSkyMapEphemeris
@@ -17,6 +21,7 @@ import java.time.Instant
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -28,12 +33,24 @@ class SkyMapUseCasesTest {
     private val now = Instant.parse("2026-10-22T20:00:00Z")
     private val ephemeris = FakeSkyMapEphemeris(satellite = HorizontalCoordinate(40.0, 200.0))
     private val satellites = FakeSatelliteRepository()
+    private val comets = FakeCometRepository()
+    private val cometCalculator = FakeCometSkyCalculator()
+    private val cometDebugSettings = FakeCometDebugSettingsRepository()
+
+    private fun TestScope.bodiesUseCase() = ObserveSkyMapBodiesUseCase(
+        ephemeris,
+        satellites,
+        comets,
+        cometCalculator,
+        ObserveCometMagnitudeLimitUseCase(cometDebugSettings),
+        StandardTestDispatcher(testScheduler),
+    )
 
     @Test
     fun `bodies follow the instants, with the ISS from fresh elements`() = runTest {
         satellites.setElements(TestSky.issElements(epoch = now.minus(Duration.ofHours(6))))
         val instants = MutableStateFlow(now)
-        val useCase = ObserveSkyMapBodiesUseCase(ephemeris, satellites, StandardTestDispatcher(testScheduler))
+        val useCase = bodiesUseCase()
 
         useCase(TestSky.BUCHAREST, instants).test {
             val first = awaitItem()
@@ -51,7 +68,7 @@ class SkyMapUseCasesTest {
     @Test
     fun `Hubble joins once its elements are cached`() = runTest {
         satellites.setElements(TestSatellites.hubbleElements(epoch = now.minus(Duration.ofHours(12))))
-        val useCase = ObserveSkyMapBodiesUseCase(ephemeris, satellites, StandardTestDispatcher(testScheduler))
+        val useCase = bodiesUseCase()
 
         val bodies = useCase(TestSky.BUCHAREST, MutableStateFlow(now)).first()
 
@@ -60,12 +77,47 @@ class SkyMapUseCasesTest {
 
     @Test
     fun `stale or missing elements leave the ISS off the map`() = runTest {
-        val useCase = ObserveSkyMapBodiesUseCase(ephemeris, satellites, StandardTestDispatcher(testScheduler))
+        val useCase = bodiesUseCase()
 
         assertTrue(useCase(TestSky.BUCHAREST, MutableStateFlow(now)).first().satellites.isEmpty())
 
         satellites.setElements(TestSky.issElements(epoch = now.minus(Duration.ofDays(30))))
         assertTrue(useCase(TestSky.BUCHAREST, MutableStateFlow(now)).first().satellites.isEmpty())
+    }
+
+    @Test
+    fun `comets at the cut-off or brighter join the map, brightest first`() = runTest {
+        val bright = TestComets.comet(designation = "2026 B1")
+        val brighter = TestComets.comet(designation = "12P")
+        val faint = TestComets.comet()
+        comets.comets.value = listOf(bright, faint, brighter, TestComets.comet(designation = "4P"))
+        cometCalculator.skyPositions = mapOf(
+            "2026 B1" to TestComets.skyPosition(bright, magnitude = 12.0),
+            "12P" to TestComets.skyPosition(brighter, magnitude = 6.5),
+            "2026 A2" to TestComets.skyPosition(faint, magnitude = 14.2),
+            // "4P" is outside its ephemeris.
+        )
+
+        val bodies = bodiesUseCase()(TestSky.BUCHAREST, MutableStateFlow(now)).first()
+
+        assertEquals(listOf("12P", "2026 B1"), bodies.comets.map { it.designation })
+        assertEquals(TestSky.BUCHAREST, cometCalculator.lastObserver)
+    }
+
+    @Test
+    fun `no comet bright enough leaves the map without comets, unless the debug switch shows them all`() = runTest {
+        val faint = TestComets.comet()
+        comets.comets.value = listOf(faint)
+        cometCalculator.skyPositions = mapOf("2026 A2" to TestComets.skyPosition(faint, magnitude = 14.2))
+        val useCase = bodiesUseCase()
+
+        useCase(TestSky.BUCHAREST, MutableStateFlow(now)).test {
+            assertTrue(awaitItem().comets.isEmpty())
+
+            cometDebugSettings.showFaintComets.value = true
+            assertEquals(listOf("2026 A2"), awaitItem().comets.map { it.designation })
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test

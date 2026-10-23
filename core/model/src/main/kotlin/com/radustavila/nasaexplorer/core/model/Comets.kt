@@ -33,6 +33,20 @@ data class CometEphemerisPoint(
     val earthDistanceAu: Double,
 )
 
+/**
+ * The everyday name in a comet's full JPL name: "Bok" for "C/2026 A2 (Bok)", "Pons-Brooks" for
+ * "12P/Pons-Brooks", or the whole name when it has none ("P/2019 LD2").
+ */
+fun cometShortName(fullName: String): String {
+    val inParentheses = fullName.substringAfterLast('(', "").substringBefore(')').trim()
+    val afterSlash = fullName.substringAfter('/', "").trim()
+    return when {
+        inParentheses.isNotEmpty() -> inParentheses
+        afterSlash.isNotEmpty() && afterSlash.first().isLetter() -> afterSlash
+        else -> fullName
+    }
+}
+
 /** What it takes to see a comet of a given predicted magnitude under a dark sky. */
 enum class CometVisibility {
     NAKED_EYE,

@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,18 +24,26 @@ import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatte
 import com.radustavila.nasaexplorer.core.model.SolarSystemBody
 import com.radustavila.nasaexplorer.core.skymap.HorizontalSky
 import com.radustavila.nasaexplorer.feature.skymap.render.SkyNames
+import com.radustavila.nasaexplorer.feature.skymap.render.comet
 import com.radustavila.nasaexplorer.feature.skymap.render.direction
 import com.radustavila.nasaexplorer.feature.skymap.render.satellite
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 const val SKY_MAP_SELECTION_TEST_TAG = "sky-map-selection"
+const val SKY_MAP_COMET_DETAILS_TEST_TAG = "sky-map-comet-details"
 
 private const val PERCENT = 100.0
 
-/** Name, kind, place in the sky and brightness of the selection. */
+/** Name, kind, place in the sky and brightness of the selection; a comet's opens its details. */
 @Composable
-internal fun SelectionCard(uiState: SkyMapUiState, selected: SkyTarget, names: SkyNames, onClose: () -> Unit) {
+internal fun SelectionCard(
+    uiState: SkyMapUiState,
+    selected: SkyTarget,
+    names: SkyNames,
+    onClose: () -> Unit,
+    onCometDetails: (designation: String) -> Unit,
+) {
     val sky = uiState.sky ?: return
     val details = listOfNotNull(position(uiState, sky, selected), brightness(uiState, sky, selected))
     Card(
@@ -56,6 +65,14 @@ internal fun SelectionCard(uiState: SkyMapUiState, selected: SkyTarget, names: S
                 )
                 details.firstOrNull()?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
                 details.getOrNull(1)?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
+                if (selected is SkyTarget.Comet) {
+                    TextButton(
+                        onClick = { onCometDetails(selected.designation) },
+                        modifier = Modifier.testTag(SKY_MAP_COMET_DETAILS_TEST_TAG),
+                    ) {
+                        Text(stringResource(R.string.sky_map_comet_details))
+                    }
+                }
             }
             IconButton(onClick = onClose) {
                 Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.sky_map_close_details))
@@ -72,6 +89,7 @@ private fun title(uiState: SkyMapUiState, sky: HorizontalSky, selected: SkyTarge
         is SkyTarget.Body -> names.bodies[selected.body].orEmpty()
         is SkyTarget.Constellation -> sky.chart.catalog.constellations.getOrNull(selected.index)?.name.orEmpty()
         is SkyTarget.Satellite -> names.satellite(selected.noradId, uiState.bodies)
+        is SkyTarget.Comet -> uiState.bodies?.comet(selected.designation)?.name ?: selected.designation
     }
 
 /** "Star in Orion", or just the kind when the constellation is not known. */
@@ -95,9 +113,19 @@ private fun position(uiState: SkyMapUiState, sky: HorizontalSky, selected: SkyTa
     }
 }
 
-/** "Magnitude -1.4", with how much of the Moon is lit. */
+/** "Magnitude -1.4", with how much of the Moon is lit; a comet's is a prediction. */
 @Composable
-private fun brightness(uiState: SkyMapUiState, sky: HorizontalSky, selected: SkyTarget): String? {
+private fun brightness(uiState: SkyMapUiState, sky: HorizontalSky, selected: SkyTarget): String? =
+    if (selected is SkyTarget.Comet) cometBrightness(uiState, selected) else bodyBrightness(uiState, sky, selected)
+
+@Composable
+private fun cometBrightness(uiState: SkyMapUiState, selected: SkyTarget.Comet): String? =
+    uiState.bodies?.comet(selected.designation)?.magnitude?.let { magnitude ->
+        stringResource(R.string.sky_map_predicted_magnitude, rememberUnitFormatter().number(magnitude, 1))
+    }
+
+@Composable
+private fun bodyBrightness(uiState: SkyMapUiState, sky: HorizontalSky, selected: SkyTarget): String? {
     val body = (selected as? SkyTarget.Body)
         ?.let { target -> uiState.bodies?.solarSystem?.firstOrNull { it.body == target.body } }
     val magnitude = when (selected) {

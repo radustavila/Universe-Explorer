@@ -132,10 +132,15 @@ fun NasaNavHost(
             skyEventsScreen(
                 onBackClick = navController::popBackStack,
                 onSetLocation = { navController.navigateToSkyTonight() },
+                onCometClick = navController::navigateToCometDetails,
             )
             dsnScreen(onBackClick = navController::popBackStack)
             newsScreen(onBackClick = navController::popBackStack, onImageClick = navController::navigateToNewsItem)
-            skyMapScreen(onBackClick = navController::popBackStack, locationSection = { ObserverLocationSection() })
+            skyMapScreen(
+                onBackClick = navController::popBackStack,
+                onCometClick = navController::navigateToCometDetails,
+                locationSection = { ObserverLocationSection() },
+            )
             cometsScreen(
                 onBackClick = navController::popBackStack,
                 onCometClick = navController::navigateToCometDetails,

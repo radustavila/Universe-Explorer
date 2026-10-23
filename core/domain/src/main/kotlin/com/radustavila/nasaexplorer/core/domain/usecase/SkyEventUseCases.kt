@@ -11,6 +11,7 @@ import com.radustavila.nasaexplorer.core.domain.sky.SkyEventReminderLead
 import com.radustavila.nasaexplorer.core.domain.sky.SkyEventReminderRepository
 import com.radustavila.nasaexplorer.core.domain.sky.SkyEventReminderScheduler
 import com.radustavila.nasaexplorer.core.domain.sky.find
+import com.radustavila.nasaexplorer.core.model.CometPerihelion
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.model.MoonPhaseEvent
 import com.radustavila.nasaexplorer.core.model.MoonQuarter
@@ -23,6 +24,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
@@ -31,18 +33,20 @@ import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.withContext
 
 /**
- * The sky events from [from] to [until] for the saved place (global facts only without one),
- * recomputed when the place changes. Entirely offline.
+ * The sky events from [from] to [until] for the saved place (global facts only without one), with
+ * the perihelia of the bright comets F18 tracks, in time order. Recomputed when the place or the
+ * comets change. Entirely offline.
  */
 class ObserveSkyEventsUseCase @Inject constructor(
     private val calendar: SkyEventCalendar,
     private val locationRepository: ObserverLocationRepository,
+    private val observeCometEvents: ObserveCometPerihelionEventsUseCase,
     @Dispatcher(AppDispatcher.Default) private val computeDispatcher: CoroutineDispatcher,
 ) {
     operator fun invoke(from: Instant, until: Instant): Flow<List<SkyEvent>> =
-        locationRepository.observerCoordinate()
-            .map { observer -> calendar.events(from, until, observer) }
-            .flowOn(computeDispatcher)
+        combine(locationRepository.observerCoordinate(), observeCometEvents()) { observer, comets ->
+            calendar.events(from, until, observer).withComets(comets, from, until)
+        }.flowOn(computeDispatcher)
 }
 
 /**
@@ -52,22 +56,26 @@ class ObserveSkyEventsUseCase @Inject constructor(
 class ObserveUpcomingSkyEventsUseCase @Inject constructor(
     private val calendar: SkyEventCalendar,
     private val locationRepository: ObserverLocationRepository,
+    private val observeCometEvents: ObserveCometPerihelionEventsUseCase,
     private val timeProvider: TimeProvider,
     @Dispatcher(AppDispatcher.Default) private val computeDispatcher: CoroutineDispatcher,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(limit: Int = DEFAULT_LIMIT): Flow<List<SkyEvent>> =
-        locationRepository.observerCoordinate().transformLatest { observer ->
-            while (true) {
-                val now = timeProvider.now()
-                emit(
-                    calendar.events(from = now, until = now.plus(WINDOW), observer = observer)
-                        .filter(SkyEvent::isHeadline)
-                        .take(limit),
-                )
-                delay(RECOMPUTE_INTERVAL.toMillis())
-            }
-        }.flowOn(computeDispatcher)
+        combine(locationRepository.observerCoordinate(), observeCometEvents(), ::Pair)
+            .transformLatest { (observer, comets) ->
+                while (true) {
+                    val now = timeProvider.now()
+                    val until = now.plus(WINDOW)
+                    emit(
+                        calendar.events(from = now, until = until, observer = observer)
+                            .withComets(comets, now, until)
+                            .filter(SkyEvent::isHeadline)
+                            .take(limit),
+                    )
+                    delay(RECOMPUTE_INTERVAL.toMillis())
+                }
+            }.flowOn(computeDispatcher)
 
     companion object {
         const val DEFAULT_LIMIT = 3
@@ -82,11 +90,13 @@ class ObserveUpcomingSkyEventsUseCase @Inject constructor(
 class FindSkyEventUseCase @Inject constructor(
     private val calendar: SkyEventCalendar,
     private val locationRepository: ObserverLocationRepository,
+    private val observeCometEvents: ObserveCometPerihelionEventsUseCase,
     @Dispatcher(AppDispatcher.Default) private val computeDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(id: String): SkyEvent? {
         val observer = locationRepository.location.first()?.coordinate
-        return withContext(computeDispatcher) { calendar.find(id, observer) }
+        val comets = observeCometEvents().first()
+        return withContext(computeDispatcher) { calendar.find(id, observer, comets) }
     }
 }
 
@@ -121,6 +131,7 @@ class RescheduleSkyEventRemindersUseCase @Inject constructor(
     private val repository: SkyEventReminderRepository,
     private val calendar: SkyEventCalendar,
     private val locationRepository: ObserverLocationRepository,
+    private val observeCometEvents: ObserveCometPerihelionEventsUseCase,
     private val scheduler: SkyEventReminderScheduler,
     private val timeProvider: TimeProvider,
     @Dispatcher(AppDispatcher.Default) private val computeDispatcher: CoroutineDispatcher,
@@ -132,9 +143,10 @@ class RescheduleSkyEventRemindersUseCase @Inject constructor(
             return
         }
         val observer = locationRepository.location.first()?.coordinate
+        val comets = observeCometEvents().first()
         val now = timeProvider.now()
         val resolved = withContext(computeDispatcher) {
-            reminders.associateWith { reminder -> calendar.find(reminder.eventId, observer) }
+            reminders.associateWith { reminder -> calendar.find(reminder.eventId, observer, comets) }
         }
         val over = resolved.filter { (_, event) -> event == null || event.isOverAt(now) }.keys
         if (over.isNotEmpty()) repository.removeReminders(over.mapTo(mutableSetOf()) { it.eventId })
@@ -155,6 +167,7 @@ class RemindOfSkyEventsUseCase @Inject constructor(
     private val repository: SkyEventReminderRepository,
     private val calendar: SkyEventCalendar,
     private val locationRepository: ObserverLocationRepository,
+    private val observeCometEvents: ObserveCometPerihelionEventsUseCase,
     private val notifier: SkyEventNotifier,
     private val rescheduleReminders: RescheduleSkyEventRemindersUseCase,
     private val timeProvider: TimeProvider,
@@ -164,10 +177,11 @@ class RemindOfSkyEventsUseCase @Inject constructor(
     suspend operator fun invoke(): List<SkyEvent> {
         val reminders = repository.reminders.first().values
         val observer = locationRepository.location.first()?.coordinate
+        val comets = observeCometEvents().first()
         val now = timeProvider.now()
         val due = withContext(computeDispatcher) {
             reminders.mapNotNull { reminder ->
-                calendar.find(reminder.eventId, observer)?.takeIf { event ->
+                calendar.find(reminder.eventId, observer, comets)?.takeIf { event ->
                     val remindAt = event.start.minus(reminder.lead.duration)
                     !remindAt.isAfter(now.plus(EARLY_WAKE_UP_SLACK)) && !event.isOverAt(now)
                 }
@@ -207,6 +221,16 @@ class RescheduleSkyEventRemindersOnLocationChangeUseCase @Inject constructor(
 val LATE_GRACE: Duration = Duration.ofHours(1)
 
 private fun SkyEvent.isOverAt(now: Instant): Boolean = start.plus(LATE_GRACE).isBefore(now)
+
+/** The computed events with the comet perihelia from [from] (inclusive) to [until] (exclusive), in time order. */
+private fun List<SkyEvent>.withComets(comets: List<CometPerihelion>, from: Instant, until: Instant): List<SkyEvent> {
+    val inRange = comets.filter { it.time >= from && it.time < until }
+    return if (inRange.isEmpty()) this else (this + inRange).sortedBy { it.time }
+}
+
+/** A comet perihelion by its id, else the computed event [id] names. */
+private fun SkyEventCalendar.find(id: String, observer: GeoCoordinate?, comets: List<CometPerihelion>): SkyEvent? =
+    comets.firstOrNull { it.id == id } ?: find(id, observer)
 
 /** Weekly quarter Moons are left out of the headline lists. */
 private fun SkyEvent.isHeadline(): Boolean =

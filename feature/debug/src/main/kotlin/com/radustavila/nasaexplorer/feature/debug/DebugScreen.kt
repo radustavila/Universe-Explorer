@@ -15,10 +15,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -34,6 +36,7 @@ import com.radustavila.nasaexplorer.core.domain.model.SourceSyncStatus
 import com.radustavila.nasaexplorer.core.model.SyncState
 
 const val DEBUG_CONTENT_TEST_TAG = "debug-content"
+const val DEBUG_FAINT_COMETS_TEST_TAG = "debug-faint-comets"
 
 @Composable
 fun DebugScreen(
@@ -46,6 +49,7 @@ fun DebugScreen(
         uiState = uiState,
         onSyncNow = viewModel::onSyncNow,
         onEnsurePeriodicSync = viewModel::onEnsurePeriodicSync,
+        onShowFaintCometsChange = viewModel::onShowFaintCometsChange,
         modifier = modifier,
     )
 }
@@ -56,6 +60,7 @@ internal fun DebugContent(
     uiState: DebugUiState,
     onSyncNow: () -> Unit,
     onEnsurePeriodicSync: () -> Unit,
+    onShowFaintCometsChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -136,6 +141,28 @@ internal fun DebugContent(
                             textAlign = TextAlign.Center,
                         )
                     }
+                }
+            }
+
+            DebugSection(title = stringResource(R.string.debug_section_testing)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Column(Modifier.weight(1f)) {
+                        Text(stringResource(R.string.debug_faint_comets), style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            text = stringResource(R.string.debug_faint_comets_description),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Switch(
+                        checked = uiState.showFaintComets,
+                        onCheckedChange = onShowFaintCometsChange,
+                        modifier = Modifier.testTag(DEBUG_FAINT_COMETS_TEST_TAG),
+                    )
                 }
             }
 

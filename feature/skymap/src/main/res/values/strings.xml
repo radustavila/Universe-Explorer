@@ -57,6 +57,7 @@
     <string name="sky_map_kind_telescope">Space telescope</string>
     <string name="sky_map_kind_chinese_station">China\'s space station</string>
     <string name="sky_map_kind_satellite">Satellite</string>
+    <string name="sky_map_kind_comet">Comet</string>
     <string name="sky_map_unnamed_star">Unnamed star</string>
 
     <!-- Details of the selection -->
@@ -70,6 +71,9 @@
     <string name="sky_map_below_horizon">Below the horizon, towards the %1$s</string>
     <!-- %1$s is a percentage ("64"). -->
     <string name="sky_map_moon_lit">%1$s%% lit</string>
+    <!-- %1$s is a magnitude ("8.4"). Comet brightness predictions are often off by a magnitude. -->
+    <string name="sky_map_predicted_magnitude">Predicted magnitude %1$s</string>
+    <string name="sky_map_comet_details">Comet details</string>
     <string name="sky_map_close_details">Close details</string>
 
     <!-- Compass -->

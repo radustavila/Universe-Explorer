@@ -17,10 +17,14 @@ fun NavController.navigateToSkyMap(navOptions: NavOptions? = null) = navigate(Sk
 
 /**
  * The sky map; registered inside the Universe tab's graph. [locationSection] is shown when no place
- * is saved yet (Sky tonight's location picker).
+ * is saved yet (Sky tonight's location picker); [onCometClick] opens a comet's details (F18).
  */
-fun NavGraphBuilder.skyMapScreen(onBackClick: () -> Unit, locationSection: @Composable () -> Unit) {
+fun NavGraphBuilder.skyMapScreen(
+    onBackClick: () -> Unit,
+    onCometClick: (designation: String) -> Unit,
+    locationSection: @Composable () -> Unit,
+) {
     composable<SkyMapRoute> {
-        SkyMapScreen(onBackClick = onBackClick, locationSection = locationSection)
+        SkyMapScreen(onBackClick = onBackClick, onCometClick = onCometClick, locationSection = locationSection)
     }
 }

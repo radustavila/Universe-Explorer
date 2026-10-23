@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Contrast
 import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.Flare
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.WbSunny
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.radustavila.nasaexplorer.core.designsystem.units.UnitFormatter
 import com.radustavila.nasaexplorer.core.model.Apparition
+import com.radustavila.nasaexplorer.core.model.CometPerihelion
 import com.radustavila.nasaexplorer.core.model.GreatestElongation
 import com.radustavila.nasaexplorer.core.model.LunarEclipse
 import com.radustavila.nasaexplorer.core.model.MeteorShowerPeak
@@ -36,6 +38,7 @@ internal val SkyEventCategory.icon: ImageVector
         SkyEventCategory.MOON -> Icons.Outlined.DarkMode
         SkyEventCategory.PLANETS -> Icons.Outlined.Public
         SkyEventCategory.METEORS -> Icons.Outlined.AutoAwesome
+        SkyEventCategory.COMETS -> Icons.Outlined.Flare
         SkyEventCategory.SEASONS -> Icons.Outlined.WbSunny
     }
 
@@ -46,6 +49,7 @@ internal val SkyEventCategory.labelRes: Int
         SkyEventCategory.MOON -> R.string.sky_events_category_moon
         SkyEventCategory.PLANETS -> R.string.sky_events_category_planets
         SkyEventCategory.METEORS -> R.string.sky_events_category_meteors
+        SkyEventCategory.COMETS -> R.string.sky_events_category_comets
         SkyEventCategory.SEASONS -> R.string.sky_events_category_seasons
     }
 
@@ -82,6 +86,10 @@ internal fun skyEventSummary(event: SkyEvent, hasPlace: Boolean, units: UnitForm
         event.zenithalHourlyRate,
         event.moonIlluminatedFraction.percent(),
     )
+
+    is CometPerihelion -> event.magnitude
+        ?.let { stringResource(R.string.sky_events_comet_magnitude, units.number(it, 1)) }
+        ?: stringResource(R.string.sky_events_comet_sun_distance, units.number(event.perihelionDistanceAu, 2))
 }
 
 @Composable

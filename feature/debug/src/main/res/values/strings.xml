@@ -22,6 +22,9 @@
     <string name="debug_state_syncing">Running</string>
     <string name="debug_state_succeeded">Succeeded</string>
     <string name="debug_state_failed">Failed: %1$s</string>
+    <string name="debug_section_testing">Testing</string>
+    <string name="debug_faint_comets">Show faint comets</string>
+    <string name="debug_faint_comets_description">Puts every cached comet on the sky map and its perihelion in the sky events calendar, not only those predicted at magnitude 12 or brighter.</string>
     <string name="debug_section_sources">Data sources</string>
     <string name="debug_sources_none">No source has synced yet</string>
     <string name="debug_source_last_success">Last success</string>

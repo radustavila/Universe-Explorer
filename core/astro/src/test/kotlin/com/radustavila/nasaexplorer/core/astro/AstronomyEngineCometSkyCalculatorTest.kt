@@ -68,6 +68,33 @@ class AstronomyEngineCometSkyCalculatorTest {
     }
 
     @Test
+    fun `sky map position matches horizons airless altitude and azimuth`() {
+        // Horizons, airless, topocentric for Bucharest (az, el): the sky map adds refraction itself.
+        listOf(
+            "2026-10-23T00:00:00Z" to (333.327848321 to 23.637085528),
+            "2026-10-23T06:00:00Z" to (17.618633575 to 18.059033811),
+            "2026-10-23T12:00:00Z" to (45.034099800 to 54.129624804),
+            "2026-10-23T18:00:00Z" to (318.179213388 to 64.224035148),
+            "2026-10-24T00:00:00Z" to (332.945616275 to 23.236579483),
+        ).forEach { (at, expected) ->
+            val position = calculator.skyPosition(bok, ReferenceElements.BUCHAREST, Instant.parse(at))!!
+            assertEquals(at, expected.second, position.horizontal.altitudeDegrees, 0.02)
+            assertEquals(at, expected.first, position.horizontal.azimuthDegrees, 0.05)
+        }
+    }
+
+    @Test
+    fun `sky map position carries the comet, its J2000 direction and interpolated magnitude`() {
+        val position = calculator.skyPosition(bok, ReferenceElements.BUCHAREST, Instant.parse("2026-10-23T12:00:00Z"))!!
+
+        assertEquals("2026 A2", position.designation)
+        assertEquals(293.049, position.equatorial.rightAscensionDegrees, 0.01)
+        assertEquals(59.587, position.equatorial.declinationDegrees, 0.01)
+        assertEquals(14.141, position.magnitude!!, 1e-3)
+        assertNull(calculator.skyPosition(bok, ReferenceElements.BUCHAREST, Instant.parse("2026-10-25T00:00:01Z")))
+    }
+
+    @Test
     fun `a circumpolar comet never rises or sets and is best when the night begins`() {
         val sky = calculator.tonight(bok, ReferenceElements.BUCHAREST, Instant.parse("2026-10-23T12:00:00Z"))!!.sky!!
 

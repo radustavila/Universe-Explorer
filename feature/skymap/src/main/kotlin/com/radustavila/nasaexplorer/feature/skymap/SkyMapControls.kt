@@ -175,6 +175,7 @@ internal fun SkyTarget.kindRes(): Int = when (this) {
     is SkyTarget.Body -> body.kindRes()
     is SkyTarget.Constellation -> R.string.sky_map_kind_constellation
     is SkyTarget.Satellite -> satelliteKindRes(noradId)
+    is SkyTarget.Comet -> R.string.sky_map_kind_comet
 }
 
 /** Keeps the target the map last turned to across configuration changes. */
@@ -185,6 +186,7 @@ internal val SkyTargetSaver = Saver<SkyTarget?, String>(
             is SkyTarget.Body -> "body:${target.body.name}"
             is SkyTarget.Constellation -> "constellation:${target.index}"
             is SkyTarget.Satellite -> "satellite:${target.noradId}"
+            is SkyTarget.Comet -> "comet:${target.designation}"
             null -> ""
         }
     },
@@ -195,6 +197,7 @@ internal val SkyTargetSaver = Saver<SkyTarget?, String>(
             "body" -> SolarSystemBody.entries.firstOrNull { it.name == value }?.let(SkyTarget::Body)
             "constellation" -> value?.toIntOrNull()?.let(SkyTarget::Constellation)
             "satellite" -> value?.toIntOrNull()?.let(SkyTarget::Satellite)
+            "comet" -> value?.let(SkyTarget::Comet)
             else -> null
         }
     },

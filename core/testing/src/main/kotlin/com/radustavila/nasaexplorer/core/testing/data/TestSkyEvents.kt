@@ -1,6 +1,7 @@
 package com.radustavila.nasaexplorer.core.testing.data
 
 import com.radustavila.nasaexplorer.core.model.Apparition
+import com.radustavila.nasaexplorer.core.model.CometPerihelion
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.model.GreatestElongation
 import com.radustavila.nasaexplorer.core.model.LocalLunarEclipse
@@ -100,6 +101,15 @@ object TestSkyEvents {
         radiantConstellation = "Gemini",
         moonIlluminatedFraction = 0.25,
         viewing = null,
+    )
+
+    /** A comet bright enough for the calendar, at perihelion in August 2026. */
+    fun cometPerihelion(magnitude: Double? = 8.4) = CometPerihelion(
+        time = Instant.parse("2026-08-20T09:00:00Z"),
+        designation = "2026 B1",
+        name = "C/2026 B1 (Lemmon)",
+        perihelionDistanceAu = 0.62,
+        magnitude = magnitude,
     )
 
     fun saturnOpposition() = PlanetOpposition(

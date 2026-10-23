@@ -42,11 +42,12 @@ import kotlin.math.roundToInt
 
 /**
  * The sky map. [locationSection] lets the user choose a place when none is saved (Sky tonight's
- * location picker, passed in by the app).
+ * location picker, passed in by the app); [onCometClick] opens a comet's details (F18).
  */
 @Composable
 fun SkyMapScreen(
     onBackClick: () -> Unit,
+    onCometClick: (designation: String) -> Unit,
     locationSection: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SkyMapViewModel = hiltViewModel(),
@@ -75,6 +76,7 @@ fun SkyMapScreen(
         onTimeOffsetChange = viewModel::onTimeOffsetChange,
         onBackToNow = viewModel::onBackToNow,
         onNightModeChange = viewModel::onNightModeChange,
+        onCometClick = onCometClick,
         locationSection = locationSection,
         modifier = modifier,
     )
@@ -91,6 +93,7 @@ internal fun SkyMapContent(
     onTimeOffsetChange: (Duration) -> Unit,
     onBackToNow: () -> Unit,
     onNightModeChange: (Boolean) -> Unit,
+    onCometClick: (designation: String) -> Unit,
     locationSection: @Composable () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -115,6 +118,7 @@ internal fun SkyMapContent(
                     onSelect = onSelect,
                     onTimeOffsetChange = onTimeOffsetChange,
                     onBackToNow = onBackToNow,
+                    onCometClick = onCometClick,
                     hasCompass = hasCompass,
                     isCompassUnsure = isCompassUnsure,
                 )
@@ -140,6 +144,7 @@ private fun SkyMapLayers(
     onSelect: (SkyTarget?) -> Unit,
     onTimeOffsetChange: (Duration) -> Unit,
     onBackToNow: () -> Unit,
+    onCometClick: (designation: String) -> Unit,
     hasCompass: Boolean,
     isCompassUnsure: Boolean,
 ) {
@@ -192,6 +197,7 @@ private fun SkyMapLayers(
                     selected = selected,
                     names = names,
                     onClose = { onSelect(null) },
+                    onCometDetails = onCometClick,
                 )
             }
             TimeBar(

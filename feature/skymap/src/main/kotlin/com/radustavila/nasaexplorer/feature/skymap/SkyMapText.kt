@@ -101,7 +101,7 @@ internal data class SkySearchResult(val target: SkyTarget, val name: String)
 
 /**
  * Everything named on the map that matches [query], ignoring case and accents: the Sun, Moon and
- * planets, the ISS, constellations (by name or abbreviation) and named stars, brightest first
+ * planets, the ISS, comets (by full name), constellations (by name or abbreviation) and named stars, brightest first
  * within each group; names starting with the query come first.
  */
 internal fun searchSky(
@@ -120,6 +120,7 @@ internal fun searchSky(
         bodies?.satellites?.forEach {
             add(SkySearchResult(SkyTarget.Satellite(it.noradId), names.satellite(it.noradId, bodies)))
         }
+        bodies?.comets?.forEach { add(SkySearchResult(SkyTarget.Comet(it.designation), it.name)) }
         val seen = mutableSetOf<String>()
         catalog.constellations.forEachIndexed { index, figure ->
             if (seen.add(figure.id)) add(SkySearchResult(SkyTarget.Constellation(index), figure.name))

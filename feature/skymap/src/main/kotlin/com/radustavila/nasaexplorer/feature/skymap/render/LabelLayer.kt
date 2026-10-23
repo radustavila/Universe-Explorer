@@ -24,7 +24,7 @@ internal data class SkyTextStyles(
 
 /**
  * Names on the map, most important first so they win the space: the selection, the Sun, Moon and
- * planets, the ISS, bright named stars, then constellations. How many stars and constellations get a
+ * planets, the ISS, comets, bright named stars, then constellations. How many stars and constellations get a
  * name follows the zoom. Text is measured once per name and style and cached.
  */
 internal class LabelLayer(
@@ -70,6 +70,9 @@ internal class LabelLayer(
         frame.bodies?.satellites?.forEach { satellite ->
             SkyTarget.Satellite(satellite.noradId).takeIf { it != selected }?.let { scope.label(frame, projection, it) }
         }
+        frame.bodies?.comets?.forEach { comet ->
+            SkyTarget.Comet(comet.designation).takeIf { it != selected }?.let { scope.label(frame, projection, it) }
+        }
         val starLimit = starLabelLimit(frame.fieldOfViewDegrees)
         namedStars.asSequence()
             .takeWhile { frame.sky.chart.starMagnitudes[it] <= starLimit }
@@ -105,21 +108,23 @@ internal class LabelLayer(
         }
     }
 
-    /** Only the Sun, Moon, planets and the ISS are worth naming below the ground. */
+    /** Only the Sun, Moon, planets, the ISS and comets are worth naming below the ground. */
     private fun isNamedThere(target: SkyTarget, direction: SkyVector): Boolean =
-        direction.z >= BELOW_HORIZON || target is SkyTarget.Body || target is SkyTarget.Satellite
+        direction.z >= BELOW_HORIZON || target is SkyTarget.Body || target is SkyTarget.Satellite ||
+            target is SkyTarget.Comet
 
     private fun SkyFrame.nameOf(target: SkyTarget): String? = when (target) {
         is SkyTarget.StarTarget -> sky.chart.catalog.stars.getOrNull(target.index)?.name
         is SkyTarget.Constellation -> sky.chart.catalog.constellations.getOrNull(target.index)?.name
         is SkyTarget.Body -> names.bodies[target.body]
         is SkyTarget.Satellite -> names.satellite(target.noradId, bodies)
+        is SkyTarget.Comet -> bodies?.comet(target.designation)?.shortName()
     }
 
     private fun styleOf(target: SkyTarget): TextStyle = when (target) {
         is SkyTarget.StarTarget -> styles.star
         is SkyTarget.Constellation -> styles.constellation
-        is SkyTarget.Body, is SkyTarget.Satellite -> styles.body
+        is SkyTarget.Body, is SkyTarget.Satellite, is SkyTarget.Comet -> styles.body
     }
 
     private fun colourOf(palette: SkyPalette, target: SkyTarget): Color = when (target) {
@@ -127,6 +132,7 @@ internal class LabelLayer(
         is SkyTarget.Constellation -> palette.constellationLabel
         is SkyTarget.Body -> palette.bodyLabel
         is SkyTarget.Satellite -> palette.iss
+        is SkyTarget.Comet -> palette.comet
     }
 
     /** Radius of the dot or disc a label sits next to, so the label clears it. */
@@ -139,6 +145,7 @@ internal class LabelLayer(
             is SkyTarget.Body -> frame.bodies?.solarSystem?.firstOrNull { it.body == target.body }
                 ?.let { SkyBodyPainter.discRadius(this, it, projection) } ?: 0f
             is SkyTarget.Satellite -> SkyBodyPainter.satelliteRadius(this)
+            is SkyTarget.Comet -> SkyBodyPainter.cometRadius(this)
             is SkyTarget.Constellation -> 0f
         }
 

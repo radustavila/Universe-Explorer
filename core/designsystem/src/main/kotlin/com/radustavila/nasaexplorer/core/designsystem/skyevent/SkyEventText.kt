@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalResources
 import com.radustavila.nasaexplorer.core.designsystem.R
+import com.radustavila.nasaexplorer.core.model.CometPerihelion
 import com.radustavila.nasaexplorer.core.model.GreatestElongation
 import com.radustavila.nasaexplorer.core.model.LunarEclipse
 import com.radustavila.nasaexplorer.core.model.LunarEclipseType
@@ -22,9 +23,11 @@ import com.radustavila.nasaexplorer.core.model.SeasonMarker
 import com.radustavila.nasaexplorer.core.model.SkyEvent
 import com.radustavila.nasaexplorer.core.model.SolarEclipse
 import com.radustavila.nasaexplorer.core.model.SolarEclipseType
+import com.radustavila.nasaexplorer.core.model.cometShortName
 
 /**
- * The name of a sky event ("Total solar eclipse", "Perseids peak", "Mars at opposition"), shared by
+ * The name of a sky event ("Total solar eclipse", "Perseids peak", "Mars at opposition", "Comet
+ * Bok at perihelion"), shared by
  * the calendar screen, the reminder notification and universal search so they all say the same.
  * Works from [Resources], so code outside composition (a notification, a search source) can use it.
  */
@@ -39,6 +42,7 @@ class SkyEventText(private val resources: Resources) {
         is PlanetTransit -> string(R.string.sky_event_transit, planet(event.planet))
         is SeasonEvent -> string(event.marker.title())
         is MeteorShowerPeak -> string(R.string.sky_event_meteor_peak, shower(event.shower))
+        is CometPerihelion -> string(R.string.sky_event_comet_perihelion, cometShortName(event.name))
     }
 
     fun planet(planet: Planet): String = string(

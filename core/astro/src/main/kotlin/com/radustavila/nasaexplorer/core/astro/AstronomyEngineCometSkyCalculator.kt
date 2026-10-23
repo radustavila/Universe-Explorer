@@ -4,6 +4,7 @@ import com.radustavila.nasaexplorer.core.domain.sky.CometSkyCalculator
 import com.radustavila.nasaexplorer.core.model.Comet
 import com.radustavila.nasaexplorer.core.model.CometEphemerisPoint
 import com.radustavila.nasaexplorer.core.model.CometLocalSky
+import com.radustavila.nasaexplorer.core.model.CometSkyPosition
 import com.radustavila.nasaexplorer.core.model.CometTonight
 import com.radustavila.nasaexplorer.core.model.CometVisibility
 import com.radustavila.nasaexplorer.core.model.EquatorialCoordinate
@@ -31,8 +32,9 @@ import kotlin.math.sqrt
  * Between two daily points the direction is interpolated on the unit sphere and the magnitude
  * linearly; parallax is ignored (under 0.03 degrees beyond 0.1 au). The J2000 direction is turned
  * into the equator of date before Astronomy Engine places it in the observer's sky, with standard
- * refraction. Rise, set and the best time come from a 10-minute scan over the next day, refined to
- * a few seconds for rise and set.
+ * refraction for Sky tonight and the comets screens and without it for the sky map. Rise, set and
+ * the best time come from a 10-minute scan over the next day, refined to a few seconds for rise
+ * and set.
  */
 class AstronomyEngineCometSkyCalculator @Inject constructor() : CometSkyCalculator {
 
@@ -55,6 +57,18 @@ class AstronomyEngineCometSkyCalculator @Inject constructor() : CometSkyCalculat
             peakMagnitude = peak?.magnitude,
             peakTime = peak?.time,
             sky = observer?.let { localSky(track, Observer(it.latitude, it.longitude, 0.0), now) },
+        )
+    }
+
+    override fun skyPosition(comet: Comet, observer: GeoCoordinate, at: Instant): CometSkyPosition? {
+        val point = comet.ephemeris.pointAt(at) ?: return null
+        val site = Observer(observer.latitude, observer.longitude, 0.0)
+        return CometSkyPosition(
+            designation = comet.designation,
+            name = comet.name,
+            horizontal = horizontal(point.position, site, at, Refraction.None),
+            equatorial = point.position,
+            magnitude = point.magnitude,
         )
     }
 
@@ -98,12 +112,17 @@ class AstronomyEngineCometSkyCalculator @Inject constructor() : CometSkyCalculat
         return high
     }
 
-    /** Altitude and azimuth of a J2000 direction, with standard refraction. */
-    private fun horizontal(position: EquatorialCoordinate, site: Observer, at: Instant): HorizontalCoordinate {
+    /** Altitude and azimuth of a J2000 direction, with standard refraction unless told otherwise. */
+    private fun horizontal(
+        position: EquatorialCoordinate,
+        site: Observer,
+        at: Instant,
+        refraction: Refraction = Refraction.Normal,
+    ): HorizontalCoordinate {
         val time = at.toAstronomyTime()
         val j2000 = Spherical(position.declinationDegrees, position.rightAscensionDegrees, 1.0).toVector(time)
         val ofDate = rotationEqjEqd(time).rotate(j2000).toEquatorial()
-        val topocentric = horizon(time, site, ofDate.ra, ofDate.dec, Refraction.Normal)
+        val topocentric = horizon(time, site, ofDate.ra, ofDate.dec, refraction)
         return HorizontalCoordinate(altitudeDegrees = topocentric.altitude, azimuthDegrees = topocentric.azimuth)
     }
 

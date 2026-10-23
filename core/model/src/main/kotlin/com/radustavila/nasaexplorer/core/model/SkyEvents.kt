@@ -10,6 +10,9 @@ enum class SkyEventCategory {
     MOON,
     PLANETS,
     METEORS,
+
+    /** The perihelia of the comets F18 tracks that are predicted to be bright enough to look for. */
+    COMETS,
     SEASONS,
 }
 
@@ -277,6 +280,30 @@ data class MeteorViewing(
     /** Radiant compass direction at [bestTime], degrees from north through east. */
     val radiantAzimuthDegrees: Double,
 )
+
+/**
+ * A comet F18 tracks at its closest to the Sun, around when it is usually brightest. Not computed
+ * like the other events: it comes from JPL's orbit in the comets cache, and only for comets
+ * predicted to become bright enough to look for.
+ */
+data class CometPerihelion(
+    override val time: Instant,
+    /** JPL's designation ("2026 A2"), which opens the comet's details. */
+    val designation: String,
+    /** "C/2026 A2 (Bok)". */
+    val name: String,
+    val perihelionDistanceAu: Double,
+    /** Predicted total magnitude at [time]; null when the cached ephemeris does not reach it. */
+    val magnitude: Double?,
+) : SkyEvent {
+    override val id: String
+        get() = SkyEventId.of("comet-perihelion-${designation.lowercase().replace(NOT_ID_CHARACTERS, "-")}", time)
+    override val category: SkyEventCategory get() = SkyEventCategory.COMETS
+
+    private companion object {
+        val NOT_ID_CHARACTERS = Regex("[^a-z0-9]+")
+    }
+}
 
 /**
  * Builds and reads [SkyEvent.id]s: `<kind>:<UTC date of the event's time>`. The date lets a

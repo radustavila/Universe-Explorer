@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -21,6 +23,7 @@ import com.radustavila.nasaexplorer.core.designsystem.units.formatLocalDateTime
 import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
 import com.radustavila.nasaexplorer.core.domain.sky.SkyEventReminderLead
+import com.radustavila.nasaexplorer.core.model.CometPerihelion
 import com.radustavila.nasaexplorer.core.model.GreatestElongation
 import com.radustavila.nasaexplorer.core.model.LunarEclipse
 import com.radustavila.nasaexplorer.core.model.MeteorShowerPeak
@@ -36,6 +39,7 @@ import com.radustavila.nasaexplorer.feature.events.R
 import kotlin.math.roundToInt
 
 const val SKY_EVENT_REMINDER_SWITCH_TEST_TAG = "sky-event-reminder"
+const val SKY_EVENT_COMET_DETAILS_TEST_TAG = "sky-event-comet-details"
 
 /**
  * Everything the calendar knows about one event: when (in the user's time zone and clock format),
@@ -50,6 +54,7 @@ internal fun SkyEventDetails(
     reminderLead: SkyEventReminderLead?,
     onReminderClick: () -> Unit,
     onLeadChange: (SkyEventReminderLead) -> Unit,
+    onCometClick: (designation: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val units = rememberUnitFormatter()
@@ -81,11 +86,33 @@ internal fun SkyEventDetails(
             is PlanetTransit -> TransitDetails(event, hasPlace, units)
             is SeasonEvent -> Line(stringResource(event.marker.meaningRes))
             is MeteorShowerPeak -> MeteorDetails(event, units)
+            is CometPerihelion -> CometDetails(event, units, onCometClick)
         }
         if (!isPast) {
             HorizontalDivider()
             ReminderControls(reminderOn, reminderLead, onReminderClick, onLeadChange)
         }
+    }
+}
+
+@Composable
+private fun ColumnScope.CometDetails(
+    event: CometPerihelion,
+    units: UnitFormatter,
+    onCometClick: (designation: String) -> Unit,
+) {
+    Line(stringResource(R.string.sky_events_comet_perihelion_meaning))
+    Line(event.name)
+    Line(stringResource(R.string.sky_events_comet_sun_distance, units.number(event.perihelionDistanceAu, 2)))
+    event.magnitude?.let { magnitude ->
+        Line(stringResource(R.string.sky_events_comet_magnitude, units.number(magnitude, 1)))
+        Warning(stringResource(R.string.sky_events_comet_prediction))
+    }
+    TextButton(
+        onClick = { onCometClick(event.designation) },
+        modifier = Modifier.testTag(SKY_EVENT_COMET_DETAILS_TEST_TAG),
+    ) {
+        Text(stringResource(R.string.sky_events_comet_details))
     }
 }
 

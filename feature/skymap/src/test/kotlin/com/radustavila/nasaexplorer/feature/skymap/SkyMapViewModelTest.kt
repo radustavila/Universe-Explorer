@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.feature.skymap
 import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
 import com.radustavila.nasaexplorer.core.domain.usecase.FindConstellationUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveCometMagnitudeLimitUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.LoadSkyCatalogUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveObserverLocationUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSkyMapBodiesUseCase
@@ -12,8 +13,12 @@ import com.radustavila.nasaexplorer.core.domain.usecase.RefreshSourceUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetSkyMapNightModeUseCase
 import com.radustavila.nasaexplorer.core.model.SolarSystemBody
 import com.radustavila.nasaexplorer.core.skymap.SkyVector
+import com.radustavila.nasaexplorer.core.testing.data.TestComets
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.data.TestSkyMap
+import com.radustavila.nasaexplorer.core.testing.fake.FakeCometDebugSettingsRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeCometRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeCometSkyCalculator
 import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSatelliteRepository
@@ -45,6 +50,8 @@ class SkyMapViewModelTest {
     private val ephemeris = FakeSkyMapEphemeris()
     private val satellites = FakeSatelliteRepository()
     private val preferences = FakeSkyMapPreferencesRepository()
+    private val comets = FakeCometRepository()
+    private val cometCalculator = FakeCometSkyCalculator()
 
     @Test
     fun `without a saved location there is no sky, only the question where`() = runTest {
@@ -124,6 +131,43 @@ class SkyMapViewModelTest {
     }
 
     @Test
+    fun `a bright comet is on the map and placed in its constellation, a faint one is not`() = runTest {
+        location.setLocation(TestSky.location())
+        ephemeris.constellation = "Cyg"
+        val bright = TestComets.comet(designation = "2026 B1")
+        val faint = TestComets.comet()
+        comets.comets.value = listOf(bright, faint)
+        cometCalculator.skyPositions = mapOf(
+            "2026 B1" to TestComets.skyPosition(bright, magnitude = 8.4),
+            "2026 A2" to TestComets.skyPosition(faint, magnitude = 14.2),
+        )
+        val viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            val state = awaitUntil { it.sky != null && it.bodies != null }
+            assertEquals(listOf("2026 B1"), state.bodies?.comets?.map { it.designation })
+
+            viewModel.onSelect(SkyTarget.Comet("2026 B1"))
+            assertEquals("Cyg", awaitUntil { it.selectedConstellation != null }.selectedConstellation)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `with no comet bright enough the map simply has none`() = runTest {
+        location.setLocation(TestSky.location())
+        comets.comets.value = listOf(TestComets.comet())
+        cometCalculator.skyPositions = mapOf("2026 A2" to TestComets.skyPosition(magnitude = 14.2))
+
+        createViewModel().uiState.test {
+            val state = awaitUntil { it.sky != null && it.bodies != null }
+            assertTrue(state.bodies!!.comets.isEmpty())
+            assertEquals(TestSkyMap.solarSystem(), state.bodies.solarSystem)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `night mode is kept`() = runTest {
         val viewModel = createViewModel()
 
@@ -151,7 +195,14 @@ class SkyMapViewModelTest {
             observeLocation = ObserveObserverLocationUseCase(location),
             observeNightMode = ObserveSkyMapNightModeUseCase(preferences),
             loadCatalog = LoadSkyCatalogUseCase(catalog, dispatcher),
-            observeBodies = ObserveSkyMapBodiesUseCase(ephemeris, satellites, dispatcher),
+            observeBodies = ObserveSkyMapBodiesUseCase(
+                ephemeris,
+                satellites,
+                comets,
+                cometCalculator,
+                ObserveCometMagnitudeLimitUseCase(FakeCometDebugSettingsRepository()),
+                dispatcher,
+            ),
             findConstellation = FindConstellationUseCase(ephemeris),
             setNightMode = SetSkyMapNightModeUseCase(preferences),
             refreshElements = RefreshOrbitalElementsUseCase(

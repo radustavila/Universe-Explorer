@@ -8,7 +8,10 @@ import com.radustavila.nasaexplorer.core.skymap.StarStyle
 import com.radustavila.nasaexplorer.feature.skymap.SkyTarget
 import kotlin.math.hypot
 
-/** What a tap at a screen point means: the Sun, Moon, a planet or the ISS first, then the nearest drawn star. */
+/**
+ * What a tap at a screen point means: the Sun, Moon, a planet, the ISS or a comet first, then the
+ * nearest drawn star.
+ */
 internal object SkyHitTest {
 
     /** A star this many magnitudes brighter wins over one this many pixels per magnitude nearer. */
@@ -46,6 +49,14 @@ internal object SkyHitTest {
             if (distance <= bestDistance) {
                 bestDistance = distance
                 best = SkyTarget.Satellite(satellite.noradId)
+            }
+        }
+        bodies?.comets?.forEach { comet ->
+            if (!projection.project(SkyChart.apparent(comet.horizontal))) return@forEach
+            val distance = hypot(projection.x - x, projection.y - y)
+            if (distance <= bestDistance) {
+                bestDistance = distance
+                best = SkyTarget.Comet(comet.designation)
             }
         }
         return best

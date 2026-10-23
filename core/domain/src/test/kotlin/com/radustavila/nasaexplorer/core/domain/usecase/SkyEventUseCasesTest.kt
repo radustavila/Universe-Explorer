@@ -3,14 +3,18 @@ package com.radustavila.nasaexplorer.core.domain.usecase
 import app.cash.turbine.test
 import com.radustavila.nasaexplorer.core.domain.sky.SkyEventReminder
 import com.radustavila.nasaexplorer.core.domain.sky.SkyEventReminderLead
+import com.radustavila.nasaexplorer.core.model.CometPerihelion
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.model.LocalSolarEclipse
 import com.radustavila.nasaexplorer.core.model.MoonPhaseEvent
 import com.radustavila.nasaexplorer.core.model.MoonQuarter
 import com.radustavila.nasaexplorer.core.model.SkyEvent
 import com.radustavila.nasaexplorer.core.model.SolarEclipse
+import com.radustavila.nasaexplorer.core.testing.data.TestComets
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.data.TestSkyEvents
+import com.radustavila.nasaexplorer.core.testing.fake.FakeCometDebugSettingsRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeCometRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSkyEventCalendar
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSkyEventNotifier
@@ -49,11 +53,21 @@ class SkyEventUseCasesTest {
     private val reminders = FakeSkyEventReminderRepository()
     private val scheduler = FakeSkyEventReminderScheduler()
     private val notifier = FakeSkyEventNotifier()
+    private val comets = FakeCometRepository()
+    private val cometEvents = ObserveCometPerihelionEventsUseCase(
+        comets,
+        ObserveCometMagnitudeLimitUseCase(FakeCometDebugSettingsRepository()),
+    )
+
+    /** Bright enough for the calendar, at perihelion on 2026-08-20 09:00 UTC. */
+    private val brightComet = TestComets.comet(designation = "2026 B1", name = "C/2026 B1 (Test)", peakMagnitude = 8.0)
+        .copy(perihelionTime = Instant.parse("2026-08-20T09:00:00Z"))
 
     private val reschedule = RescheduleSkyEventRemindersUseCase(
         reminders,
         calendar,
         location,
+        cometEvents,
         scheduler,
         clock,
         dispatcher,
@@ -63,6 +77,7 @@ class SkyEventUseCasesTest {
         reminders,
         calendar,
         location,
+        cometEvents,
         notifier,
         reschedule,
         clock,
@@ -182,7 +197,7 @@ class SkyEventUseCasesTest {
     @Test
     fun `upcoming events skip quarter Moons and past events`() = scope.runTest {
         clock.currentInstant = Instant.parse("2026-08-12T18:00:00Z")
-        val upcoming = ObserveUpcomingSkyEventsUseCase(calendar, location, clock, dispatcher)
+        val upcoming = ObserveUpcomingSkyEventsUseCase(calendar, location, cometEvents, clock, dispatcher)
 
         upcoming(limit = 3).test {
             val events = awaitItem()
@@ -201,7 +216,7 @@ class SkyEventUseCasesTest {
 
     @Test
     fun `the month's events follow the saved place`() = scope.runTest {
-        val observe = ObserveSkyEventsUseCase(calendar, location, dispatcher)
+        val observe = ObserveSkyEventsUseCase(calendar, location, cometEvents, dispatcher)
 
         observe(Instant.parse("2026-08-01T00:00:00Z"), Instant.parse("2026-09-01T00:00:00Z")).test {
             assertNull(awaitItem().filterIsInstance<SolarEclipse>().single().local)
@@ -215,10 +230,49 @@ class SkyEventUseCasesTest {
 
     @Test
     fun `finding an event by id`() = scope.runTest {
-        val find = FindSkyEventUseCase(calendar, location, dispatcher)
+        val find = FindSkyEventUseCase(calendar, location, cometEvents, dispatcher)
 
         assertEquals(TestSkyEvents.perseids(), find(TestSkyEvents.perseids().id))
         assertNull(find("meteors-perseids:2027-08-13"))
+    }
+
+    @Test
+    fun `bright comets' perihelia join the month in time order, faint ones do not`() = scope.runTest {
+        comets.comets.value = listOf(brightComet, TestComets.comet().copy(perihelionTime = brightComet.perihelionTime))
+        val observe = ObserveSkyEventsUseCase(calendar, location, cometEvents, dispatcher)
+
+        observe(Instant.parse("2026-08-01T00:00:00Z"), Instant.parse("2026-09-01T00:00:00Z")).test {
+            val events = awaitItem()
+            val perihelion = events.filterIsInstance<CometPerihelion>().single()
+            assertEquals("2026 B1", perihelion.designation)
+            assertEquals(events.sortedBy { it.time }, events)
+            assertEquals(TestSkyEvents.august2026().size + 1, events.size)
+
+            comets.comets.value = emptyList()
+            assertTrue(awaitItem().none { it is CometPerihelion })
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `a comet's perihelion is found by id, is upcoming and can be reminded of`() = scope.runTest {
+        comets.comets.value = listOf(brightComet)
+        val perihelionId = "comet-perihelion-2026-b1:2026-08-20"
+        clock.currentInstant = Instant.parse("2026-08-19T12:00:00Z")
+
+        val found = FindSkyEventUseCase(calendar, location, cometEvents, dispatcher)(perihelionId)
+        assertEquals(brightComet.perihelionTime, found?.time)
+        ObserveUpcomingSkyEventsUseCase(calendar, location, cometEvents, clock, dispatcher)(limit = 10).test {
+            assertTrue(awaitItem().any { it.id == perihelionId })
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        setReminder(perihelionId, SkyEventReminderLead.ONE_DAY)
+        assertEquals(Instant.parse("2026-08-19T12:00:00Z"), scheduler.scheduledAt)
+
+        assertEquals(listOf(perihelionId), remind().map { it.id })
+        assertTrue(notifier.notified.single() is CometPerihelion)
+        assertTrue(reminders.current.isEmpty())
     }
 
     private companion object {

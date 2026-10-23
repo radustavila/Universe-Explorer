@@ -1,5 +1,7 @@
 package com.radustavila.nasaexplorer.feature.skymap
 
+import com.radustavila.nasaexplorer.core.model.CometSkyPosition
+import com.radustavila.nasaexplorer.core.model.EquatorialCoordinate
 import com.radustavila.nasaexplorer.core.model.HorizontalCoordinate
 import com.radustavila.nasaexplorer.core.model.LocationSource
 import com.radustavila.nasaexplorer.core.model.ObserverLocation
@@ -43,10 +45,22 @@ internal object SkyMapFixture {
         satellites = listOf(SatelliteSkyPosition(25544, "ISS (ZARYA)", HorizontalCoordinate(40.0, 160.0))),
     )
 
+    /** A comet bright enough for binoculars, low in the south-east under Mars. */
+    val comet = CometSkyPosition(
+        designation = "2026 B1",
+        name = "C/2026 B1 (Lemmon)",
+        horizontal = HorizontalCoordinate(altitudeDegrees = 22.0, azimuthDegrees = 138.0),
+        equatorial = EquatorialCoordinate(rightAscensionDegrees = 15.2, declinationDegrees = -12.4),
+        magnitude = 8.4,
+    )
+
+    val bodiesWithComet = bodies.copy(comets = listOf(comet))
+
     fun state(
         selected: SkyTarget? = null,
         selectedConstellation: String? = null,
         isNightMode: Boolean = false,
+        bodies: SkyMapBodies = this.bodies,
     ) = SkyMapUiState(
         isLocationLoaded = true,
         location = ObserverLocation(TestSky.BUCHAREST, "Bucharest", LocationSource.MANUAL),

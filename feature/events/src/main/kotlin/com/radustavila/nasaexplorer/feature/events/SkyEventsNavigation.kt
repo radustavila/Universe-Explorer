@@ -23,14 +23,19 @@ fun NavController.navigateToSkyEvents(eventId: String? = null, navOptions: NavOp
 
 /**
  * Reminder notifications open an event through [SkyEventsDeepLink]. Without a saved place the
- * screen offers [onSetLocation], which `:app` points at Sky tonight's location picker.
+ * screen offers [onSetLocation], which `:app` points at Sky tonight's location picker; a comet's
+ * perihelion offers [onCometClick], which opens the comet's details (F18).
  */
-fun NavGraphBuilder.skyEventsScreen(onBackClick: () -> Unit, onSetLocation: () -> Unit) {
+fun NavGraphBuilder.skyEventsScreen(
+    onBackClick: () -> Unit,
+    onSetLocation: () -> Unit,
+    onCometClick: (designation: String) -> Unit,
+) {
     composable<SkyEventsRoute>(
         deepLinks = listOf(
             navDeepLink { uriPattern = "${SkyEventsDeepLink.URI}?${SkyEventsDeepLink.EVENT_ARGUMENT}={event}" },
         ),
     ) {
-        SkyEventsScreen(onBackClick = onBackClick, onSetLocation = onSetLocation)
+        SkyEventsScreen(onBackClick = onBackClick, onSetLocation = onSetLocation, onCometClick = onCometClick)
     }
 }

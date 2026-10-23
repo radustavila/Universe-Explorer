@@ -11,6 +11,8 @@ import androidx.work.WorkerParameters
 import androidx.work.testing.SynchronousExecutor
 import androidx.work.testing.WorkManagerTestInitHelper
 import com.radustavila.nasaexplorer.core.domain.sky.SkyEventReminderLead
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveCometMagnitudeLimitUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveCometPerihelionEventsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RemindOfSkyEventsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RescheduleSkyEventRemindersUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetSkyEventReminderUseCase
@@ -18,6 +20,8 @@ import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.core.model.SkyEvent
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.data.TestSkyEvents
+import com.radustavila.nasaexplorer.core.testing.fake.FakeCometDebugSettingsRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeCometRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSkyEventCalendar
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSkyEventNotifier
@@ -49,10 +53,15 @@ class SkyEventReminderWorkerTest {
     private val reminders = FakeSkyEventReminderRepository()
     private val notifier = FakeSkyEventNotifier()
     private val scheduler = WorkManagerSkyEventReminderScheduler(context, clock)
+    private val cometEvents = ObserveCometPerihelionEventsUseCase(
+        FakeCometRepository(),
+        ObserveCometMagnitudeLimitUseCase(FakeCometDebugSettingsRepository()),
+    )
     private val reschedule = RescheduleSkyEventRemindersUseCase(
         reminders,
         calendar,
         location,
+        cometEvents,
         scheduler,
         clock,
         Dispatchers.Unconfined,
@@ -61,6 +70,7 @@ class SkyEventReminderWorkerTest {
         reminders,
         calendar,
         location,
+        cometEvents,
         notifier,
         reschedule,
         clock,

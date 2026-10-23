@@ -19,7 +19,10 @@ data class SkyMapUiState(
     val timeOffset: Duration = Duration.ZERO,
     val isNightMode: Boolean = false,
     val selected: SkyTarget? = null,
-    /** IAU abbreviation of the constellation the selection is in, when it is a star, the Sun, the Moon or a planet. */
+    /**
+     * IAU abbreviation of the constellation the selection is in, when it is a star, the Sun, the
+     * Moon, a planet or a comet.
+     */
     val selectedConstellation: String? = null,
 ) {
     val isLive: Boolean get() = timeOffset.isZero
@@ -37,4 +40,7 @@ sealed interface SkyTarget {
     data class Constellation(val index: Int) : SkyTarget
 
     data class Satellite(val noradId: Int) : SkyTarget
+
+    /** A comet F18 tracks, by its JPL designation ("2026 A2"). */
+    data class Comet(val designation: String) : SkyTarget
 }

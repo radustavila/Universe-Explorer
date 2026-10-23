@@ -1,6 +1,8 @@
 package com.radustavila.nasaexplorer.feature.skymap.render
 
+import com.radustavila.nasaexplorer.core.model.CometSkyPosition
 import com.radustavila.nasaexplorer.core.model.SkyMapBodies
+import com.radustavila.nasaexplorer.core.model.cometShortName
 import com.radustavila.nasaexplorer.core.model.SolarSystemBody
 import com.radustavila.nasaexplorer.core.model.SolarSystemPosition
 import com.radustavila.nasaexplorer.core.skymap.HorizontalSky
@@ -37,7 +39,15 @@ internal fun SkyTarget.direction(sky: HorizontalSky, bodies: SkyMapBodies?): Sky
         ?.let { SkyChart.apparent(it.horizontal) }
     is SkyTarget.Satellite -> bodies?.satellites?.firstOrNull { it.noradId == noradId }
         ?.let { SkyChart.apparent(it.horizontal) }
+    is SkyTarget.Comet -> bodies?.comet(designation)?.let { SkyChart.apparent(it.horizontal) }
 }
+
+/** The comet [designation] names, when it is on the map. */
+internal fun SkyMapBodies.comet(designation: String): CometSkyPosition? =
+    comets.firstOrNull { it.designation == designation }
+
+/** "Bok" for "C/2026 A2 (Bok)": short enough for the map. */
+internal fun CometSkyPosition.shortName(): String = cometShortName(name)
 
 /** "ISS", "Hubble", or the catalogue's name for a satellite without an everyday one. */
 internal fun SkyNames.satellite(noradId: Int, bodies: SkyMapBodies?): String =

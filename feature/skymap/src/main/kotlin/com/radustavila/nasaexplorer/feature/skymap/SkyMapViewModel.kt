@@ -17,6 +17,7 @@ import com.radustavila.nasaexplorer.core.model.ObserverLocation
 import com.radustavila.nasaexplorer.core.model.SkyMapBodies
 import com.radustavila.nasaexplorer.core.skymap.HorizontalSky
 import com.radustavila.nasaexplorer.core.skymap.SkyChart
+import com.radustavila.nasaexplorer.feature.skymap.render.comet
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Duration
 import java.time.Instant
@@ -43,8 +44,9 @@ import kotlinx.coroutines.launch
 
 /**
  * The sky map: the bundled catalogue turned to the saved location's sky, with the Sun, Moon,
- * planets and the ISS, for now or for any time the slider picks. Everything is computed on the
- * device; opening the screen only refreshes the ISS elements when they are due.
+ * planets, the ISS and any comet bright enough to look for, for now or for any time the slider
+ * picks. Everything is computed on the device; opening the screen only refreshes the ISS elements
+ * when they are due.
  *
  * Where the phone points is not here: the screen reads the rotation sensor and gestures itself, as
  * that changes every frame.
@@ -146,6 +148,7 @@ class SkyMapViewModel @Inject constructor(
         val position: EquatorialCoordinate = when (target) {
             is SkyTarget.StarTarget -> sky?.chart?.catalog?.stars?.getOrNull(target.index)?.position
             is SkyTarget.Body -> bodies?.solarSystem?.firstOrNull { it.body == target.body }?.equatorial
+            is SkyTarget.Comet -> bodies?.comet(target.designation)?.equatorial
             is SkyTarget.Constellation, is SkyTarget.Satellite -> null
         } ?: return null
         return findConstellation(position)
