@@ -1,6 +1,7 @@
 package com.radustavila.nasaexplorer.feature.skymap
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -14,12 +15,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Explore
+import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.TouchApp
 import androidx.compose.material.icons.outlined.ViewInAr
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
@@ -47,6 +53,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 const val SKY_MAP_SEARCH_FIELD_TEST_TAG = "sky-map-search-field"
+const val SKY_MAP_LAYERS_TEST_TAG = "sky-map-layers"
+const val SKY_MAP_DEEP_SKY_LAYER_TEST_TAG = "sky-map-deep-sky-layer"
 
 private val TOP_BAR_MAX_WIDTH = 720.dp
 private val RESULTS_MAX_HEIGHT = 360.dp
@@ -66,6 +74,8 @@ internal fun SkyMapTopBar(
     onSelect: (SkyTarget?) -> Unit,
     onNightModeChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    onDeepSkyLayerChange: (Boolean) -> Unit = {},
+    onObservingLogClick: () -> Unit = {},
 ) {
     var isSearching by rememberSaveable { mutableStateOf(false) }
     var query by rememberSaveable { mutableStateOf("") }
@@ -93,6 +103,7 @@ internal fun SkyMapTopBar(
                     Title(canSearch = uiState.sky != null, onSearchClick = { isSearching = true })
                 }
                 if (hasCompass) CompassToggle(camera)
+                LayersMenu(uiState.isDeepSkyOn, onDeepSkyLayerChange, onObservingLogClick)
                 ArToggle(isArOn, onArClick)
                 NightModeToggle(uiState.isNightMode && !isArOn, onNightModeChange, enabled = !isArOn)
             }
@@ -158,6 +169,33 @@ private fun CompassToggle(camera: SkyCameraState) {
                 if (isCompass) R.string.sky_map_touch_mode else R.string.sky_map_compass_mode,
             ),
         )
+    }
+}
+
+/** The map's layers (F23: galaxies, clusters and nebulae) and the way to the observing log. */
+@Composable
+private fun LayersMenu(isDeepSkyOn: Boolean, onDeepSkyLayerChange: (Boolean) -> Unit, onObservingLogClick: () -> Unit) {
+    var isOpen by rememberSaveable { mutableStateOf(false) }
+    Box {
+        IconButton(onClick = { isOpen = true }, modifier = Modifier.testTag(SKY_MAP_LAYERS_TEST_TAG)) {
+            Icon(Icons.Outlined.Layers, contentDescription = stringResource(R.string.sky_map_layers))
+        }
+        DropdownMenu(expanded = isOpen, onDismissRequest = { isOpen = false }) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.sky_map_layer_deep_sky)) },
+                onClick = { onDeepSkyLayerChange(!isDeepSkyOn) },
+                trailingIcon = { Checkbox(checked = isDeepSkyOn, onCheckedChange = null) },
+                modifier = Modifier.testTag(SKY_MAP_DEEP_SKY_LAYER_TEST_TAG),
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.sky_map_observing_log)) },
+                onClick = {
+                    isOpen = false
+                    onObservingLogClick()
+                },
+                leadingIcon = { Icon(Icons.Outlined.Checklist, contentDescription = null) },
+            )
+        }
     }
 }
 

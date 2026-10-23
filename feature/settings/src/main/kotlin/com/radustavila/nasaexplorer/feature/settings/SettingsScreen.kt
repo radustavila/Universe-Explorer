@@ -2,6 +2,8 @@ package com.radustavila.nasaexplorer.feature.settings
 
 import android.text.format.DateFormat
 import android.text.format.Formatter
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -73,6 +75,7 @@ import com.radustavila.nasaexplorer.core.model.MeasurementSystem
 import com.radustavila.nasaexplorer.core.model.StargazingAlertSettings
 import com.radustavila.nasaexplorer.core.model.StargazingRating
 import com.radustavila.nasaexplorer.core.model.TimeFormat
+import java.io.IOException
 import java.time.LocalDate
 import java.time.ZoneId
 
@@ -86,6 +89,7 @@ const val SETTINGS_WALLPAPER_SWITCH_TEST_TAG = "settings-wallpaper"
 const val SETTINGS_UNITS_EXAMPLE_TEST_TAG = "settings-units-example"
 const val SETTINGS_CLEAR_CACHE_TEST_TAG = "settings-clear-cache"
 const val SETTINGS_CLEAR_CACHE_CONFIRM_TEST_TAG = "settings-clear-cache-confirm"
+const val SETTINGS_EXPORT_OBSERVING_LOG_TEST_TAG = "settings-export-observing-log"
 const val SETTINGS_CUSTOMIZE_TODAY_TEST_TAG = "settings-customize-today"
 
 fun measurementOptionTestTag(system: MeasurementSystem) = "settings-measurement-${system.name}"
@@ -104,6 +108,16 @@ internal fun SettingsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    val exportLog = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(CSV_MIME_TYPE)) { uri ->
+        if (uri != null) {
+            viewModel.onExportObservingLog { csv ->
+                val stream = context.contentResolver.openOutputStream(uri) ?: throw IOException("Cannot open $uri")
+                stream.use { it.write(csv.toByteArray(Charsets.UTF_8)) }
+            }
+        }
+    }
+    val logFileName = stringResource(R.string.settings_observing_log_file_name)
 
     SettingsMessageEffect(uiState.message, snackbarHostState, viewModel::onMessageShown)
     LifecycleResumeEffect(viewModel) {
@@ -124,8 +138,11 @@ internal fun SettingsScreen(
         locationSection = locationSection,
         snackbarHostState = snackbarHostState,
         modifier = modifier,
+        onExportObservingLog = { exportLog.launch(logFileName) },
     )
 }
+
+private const val CSV_MIME_TYPE = "text/csv"
 
 /**
  * Every notification switch, reading "on" only while the system lets the app notify, like the
@@ -215,6 +232,7 @@ internal fun SettingsContent(
     locationSection: @Composable (Modifier) -> Unit,
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    onExportObservingLog: () -> Unit = {},
 ) {
     var confirmClear by rememberSaveable { mutableStateOf(false) }
 
@@ -270,6 +288,15 @@ internal fun SettingsContent(
                     )
                 }
                 storageSection(uiState.storage, onClearClick = { confirmClear = true })
+                item(key = "observing-log-title") { SectionTitle(R.string.settings_observing_log_title) }
+                item(key = "observing-log-export") {
+                    NavigationRow(
+                        title = stringResource(R.string.settings_observing_log_export),
+                        description = stringResource(R.string.settings_observing_log_export_description),
+                        onClick = onExportObservingLog,
+                        testTag = SETTINGS_EXPORT_OBSERVING_LOG_TEST_TAG,
+                    )
+                }
             }
         }
     }
@@ -648,6 +675,8 @@ private fun SettingsMessageEffect(message: SettingsMessage?, snackbarHostState: 
                 SettingsMessage.AURORA_NEEDS_PLACE -> R.string.settings_aurora_needs_place
                 SettingsMessage.STARGAZING_NEEDS_PLACE -> R.string.settings_stargazing_needs_place_message
                 SettingsMessage.EARTHQUAKE_NEEDS_PLACE -> R.string.settings_earthquake_needs_place_message
+                SettingsMessage.OBSERVING_LOG_EXPORTED -> R.string.settings_observing_log_exported
+                SettingsMessage.OBSERVING_LOG_EXPORT_FAILED -> R.string.settings_observing_log_export_failed
             },
         )
     }

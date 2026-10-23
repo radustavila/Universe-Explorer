@@ -16,15 +16,25 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
+import com.radustavila.nasaexplorer.core.model.DeepSkyObject
+import com.radustavila.nasaexplorer.core.model.ObservingLogEntry
 import com.radustavila.nasaexplorer.core.model.SolarSystemBody
 import com.radustavila.nasaexplorer.core.skymap.HorizontalSky
 import com.radustavila.nasaexplorer.feature.skymap.render.SkyNames
+import com.radustavila.nasaexplorer.feature.skymap.deepsky.bestMonthAndInstrument
+import com.radustavila.nasaexplorer.feature.skymap.deepsky.brightnessAndSize
+import com.radustavila.nasaexplorer.feature.skymap.deepsky.designationLine
+import com.radustavila.nasaexplorer.feature.skymap.deepsky.formatDay
+import com.radustavila.nasaexplorer.feature.skymap.deepsky.nameRes
+import com.radustavila.nasaexplorer.feature.skymap.deepsky.title
 import com.radustavila.nasaexplorer.feature.skymap.render.comet
+import com.radustavila.nasaexplorer.feature.skymap.render.deepSkyObject
 import com.radustavila.nasaexplorer.feature.skymap.render.direction
 import com.radustavila.nasaexplorer.feature.skymap.render.satellite
 import kotlin.math.roundToInt
@@ -32,6 +42,7 @@ import kotlin.math.roundToLong
 
 const val SKY_MAP_SELECTION_TEST_TAG = "sky-map-selection"
 const val SKY_MAP_COMET_DETAILS_TEST_TAG = "sky-map-comet-details"
+const val SKY_MAP_MARK_SEEN_TEST_TAG = "sky-map-mark-seen"
 
 private const val PERCENT = 100.0
 
@@ -43,9 +54,14 @@ internal fun SelectionCard(
     names: SkyNames,
     onClose: () -> Unit,
     onCometDetails: (designation: String) -> Unit,
+    onLogClick: (objectId: String) -> Unit = {},
 ) {
     val sky = uiState.sky ?: return
-    val details = listOfNotNull(position(uiState, sky, selected), brightness(uiState, sky, selected))
+    val deepSky = (selected as? SkyTarget.DeepSky)?.let(sky::deepSkyObject)
+    val details = listOfNotNull(
+        position(uiState, sky, selected),
+        if (deepSky != null) deepSky.brightnessAndSize(rememberUnitFormatter()) else brightness(uiState, sky, selected),
+    )
     Card(
         colors = translucentCardColors(),
         modifier = Modifier.fillMaxWidth().testTag(SKY_MAP_SELECTION_TEST_TAG),
@@ -65,6 +81,7 @@ internal fun SelectionCard(
                 )
                 details.firstOrNull()?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
                 details.getOrNull(1)?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
+                if (deepSky != null) DeepSkyDetails(deepSky, uiState.observingLog[deepSky.id], onLogClick)
                 if (selected is SkyTarget.Comet) {
                     TextButton(
                         onClick = { onCometDetails(selected.designation) },
@@ -91,12 +108,38 @@ private fun title(uiState: SkyMapUiState, sky: HorizontalSky, selected: SkyTarge
         is SkyTarget.Satellite -> names.satellite(selected.noradId, uiState.bodies)
         is SkyTarget.Comet -> uiState.bodies?.comet(selected.designation)?.name ?: selected.designation
         SkyTarget.GalacticCentre -> names.galacticCentre
+        is SkyTarget.DeepSky -> sky.deepSkyObject(selected)?.title() ?: selected.id
     }
+
+/** Best month, instrument and the observing log's mark (F23), with "Mark as seen" or "Edit". */
+@Composable
+private fun DeepSkyDetails(item: DeepSkyObject, entry: ObservingLogEntry?, onLogClick: (objectId: String) -> Unit) {
+    item.designationLine()?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
+    Text(item.bestMonthAndInstrument(), style = MaterialTheme.typography.bodySmall)
+    if (entry != null) {
+        Text(
+            text = stringResource(R.string.deep_sky_seen_on, entry.observedOn.formatDay()),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary,
+        )
+    }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        TextButton(onClick = { onLogClick(item.id) }, modifier = Modifier.testTag(SKY_MAP_MARK_SEEN_TEST_TAG)) {
+            Text(stringResource(if (entry == null) R.string.deep_sky_mark_seen else R.string.deep_sky_edit_mark))
+        }
+        item.nasaPageUrl?.let { url ->
+            val uriHandler = LocalUriHandler.current
+            TextButton(onClick = { uriHandler.openUri(url) }) { Text(stringResource(R.string.deep_sky_read_more)) }
+        }
+    }
+}
 
 /** "Star in Orion", or just the kind when the constellation is not known. */
 @Composable
 private fun subtitle(uiState: SkyMapUiState, sky: HorizontalSky, selected: SkyTarget): String {
-    val kind = stringResource(selected.kindRes())
+    val kind = stringResource(
+        (selected as? SkyTarget.DeepSky)?.let(sky::deepSkyObject)?.type?.nameRes() ?: selected.kindRes(),
+    )
     val constellation = uiState.selectedConstellation
         ?.let { id -> sky.chart.catalog.constellations.firstOrNull { it.id == id }?.name }
     return constellation?.let { stringResource(R.string.sky_map_kind_in, kind, it) } ?: kind

@@ -21,6 +21,7 @@ import com.radustavila.nasaexplorer.data.quiz.bank.AssetQuizBank
 import com.radustavila.nasaexplorer.data.quiz.bank.BankFunFactSource
 import com.radustavila.nasaexplorer.data.quiz.generator.BoosterLandingQuizSource
 import com.radustavila.nasaexplorer.data.quiz.generator.CometQuizSource
+import com.radustavila.nasaexplorer.data.quiz.generator.DeepSkyQuizSource
 import com.radustavila.nasaexplorer.data.quiz.generator.DeepSpaceFunFactSource
 import com.radustavila.nasaexplorer.data.quiz.generator.DeepSpaceQuizSource
 import com.radustavila.nasaexplorer.data.quiz.generator.ExoplanetFunFactSource
@@ -107,6 +108,10 @@ interface QuizQuestionSourcesModule {
     @Binds
     @IntoSet
     fun bindBoosterLandingQuizSource(impl: BoosterLandingQuizSource): QuizQuestionSource
+
+    @Binds
+    @IntoSet
+    fun bindDeepSkyQuizSource(impl: DeepSkyQuizSource): QuizQuestionSource
 
 }
 

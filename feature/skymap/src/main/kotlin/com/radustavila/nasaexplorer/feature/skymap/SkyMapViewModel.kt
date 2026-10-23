@@ -8,21 +8,30 @@ import com.radustavila.nasaexplorer.core.common.dispatchers.Dispatcher
 import com.radustavila.nasaexplorer.core.common.time.TimeProvider
 import com.radustavila.nasaexplorer.core.domain.usecase.FindConstellationUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.LoadSkyCatalogUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.MarkDeepSkySeenUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveObservingLogUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveObserverLocationUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSkyMapBodiesUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSkyMapDeepSkyLayerUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSkyMapNightModeUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshOrbitalElementsUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RemoveDeepSkySeenUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.SetSkyMapDeepSkyLayerUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetSkyMapNightModeUseCase
 import com.radustavila.nasaexplorer.core.model.EquatorialCoordinate
 import com.radustavila.nasaexplorer.core.model.GalacticCentre
 import com.radustavila.nasaexplorer.core.model.ObserverLocation
+import com.radustavila.nasaexplorer.core.model.ObservingConditions
+import com.radustavila.nasaexplorer.core.model.ObservingLogEntry
 import com.radustavila.nasaexplorer.core.model.SkyMapBodies
 import com.radustavila.nasaexplorer.core.skymap.HorizontalSky
 import com.radustavila.nasaexplorer.core.skymap.SkyChart
 import com.radustavila.nasaexplorer.feature.skymap.render.comet
+import com.radustavila.nasaexplorer.feature.skymap.render.deepSkyObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Duration
 import java.time.Instant
+import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -65,14 +74,23 @@ class SkyMapViewModel @Inject constructor(
     private val findConstellation: FindConstellationUseCase,
     private val setNightMode: SetSkyMapNightModeUseCase,
     private val refreshElements: RefreshOrbitalElementsUseCase,
+    observeDeepSkyLayer: ObserveSkyMapDeepSkyLayerUseCase,
+    private val setDeepSkyLayer: SetSkyMapDeepSkyLayerUseCase,
+    observeLog: ObserveObservingLogUseCase,
+    private val markSeen: MarkDeepSkySeenUseCase,
+    private val removeSeen: RemoveDeepSkySeenUseCase,
     private val timeProvider: TimeProvider,
     @Dispatcher(AppDispatcher.Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     private val timeOffset = MutableStateFlow(Duration.ZERO)
     private val selection = MutableStateFlow<SkyTarget?>(
-        SkyTarget.GalacticCentre.takeIf { savedStateHandle.get<Boolean>(SHOW_GALACTIC_CENTRE) == true },
+        savedStateHandle.get<String>(DEEP_SKY_ID)?.let(SkyTarget::DeepSky)
+            ?: SkyTarget.GalacticCentre.takeIf { savedStateHandle.get<Boolean>(SHOW_GALACTIC_CENTRE) == true },
     )
+
+    private val choices: Flow<Choices> =
+        combine(observeNightMode(), observeDeepSkyLayer(), observeLog(), ::Choices)
 
     private val location = observeLocation().distinctUntilChanged()
 
@@ -101,9 +119,9 @@ class SkyMapViewModel @Inject constructor(
     val uiState: StateFlow<SkyMapUiState> = combine(
         scene,
         timeOffset,
-        observeNightMode(),
+        choices,
         selection,
-    ) { scene, offset, nightMode, selected ->
+    ) { scene, offset, choices, selected ->
         SkyMapUiState(
             isLocationLoaded = scene.location != null,
             location = scene.location?.value,
@@ -111,9 +129,11 @@ class SkyMapViewModel @Inject constructor(
             bodies = scene.bodies,
             instant = scene.instant,
             timeOffset = offset,
-            isNightMode = nightMode,
+            isNightMode = choices.nightMode,
             selected = selected,
             selectedConstellation = selected?.let { constellationOf(it, scene.sky, scene.bodies) },
+            isDeepSkyOn = choices.deepSky,
+            observingLog = choices.log,
         )
     }.flowOn(defaultDispatcher).stateIn(
         scope = viewModelScope,
@@ -143,6 +163,19 @@ class SkyMapViewModel @Inject constructor(
         selection.value = target
     }
 
+    fun onDeepSkyLayerChange(enabled: Boolean) {
+        viewModelScope.launch { setDeepSkyLayer(enabled) }
+    }
+
+    /** "Mark as seen" (F23), or an edit of the object's earlier mark. */
+    fun onMarkSeen(objectId: String, observedOn: LocalDate, conditions: ObservingConditions?, note: String?) {
+        viewModelScope.launch { markSeen(objectId, observedOn, conditions, note) }
+    }
+
+    fun onRemoveSeen(objectId: String) {
+        viewModelScope.launch { removeSeen(objectId) }
+    }
+
     private fun clock(): Flow<Instant> = flow {
         while (true) {
             emit(timeProvider.now())
@@ -151,18 +184,26 @@ class SkyMapViewModel @Inject constructor(
     }
 
     private fun constellationOf(target: SkyTarget, sky: HorizontalSky?, bodies: SkyMapBodies?): String? {
-        val position: EquatorialCoordinate = when (target) {
+        // The deep-sky catalogue says which constellation each object is in.
+        if (target is SkyTarget.DeepSky) return sky?.deepSkyObject(target)?.constellation
+        val position: EquatorialCoordinate? = when (target) {
             is SkyTarget.StarTarget -> sky?.chart?.catalog?.stars?.getOrNull(target.index)?.position
             is SkyTarget.Body -> bodies?.solarSystem?.firstOrNull { it.body == target.body }?.equatorial
             is SkyTarget.Comet -> bodies?.comet(target.designation)?.equatorial
             SkyTarget.GalacticCentre -> GalacticCentre.POSITION
-            is SkyTarget.Constellation, is SkyTarget.Satellite -> null
-        } ?: return null
-        return findConstellation(position)
+            is SkyTarget.Constellation, is SkyTarget.Satellite, is SkyTarget.DeepSky -> null
+        }
+        return position?.let(findConstellation::invoke)
     }
 
     /** Distinguishes "location read, none saved" from "not read yet". */
     private data class LoadedLocation(val value: ObserverLocation?)
+
+    private data class Choices(
+        val nightMode: Boolean,
+        val deepSky: Boolean,
+        val log: Map<String, ObservingLogEntry>,
+    )
 
     private data class Scene(
         val location: LoadedLocation?,
@@ -176,6 +217,9 @@ class SkyMapViewModel @Inject constructor(
 
         /** [SkyMapRoute.showGalacticCentre]'s key in the saved state. */
         private const val SHOW_GALACTIC_CENTRE = "showGalacticCentre"
+
+        /** [SkyMapRoute.deepSkyId]'s key in the saved state. */
+        private const val DEEP_SKY_ID = "deepSkyId"
         private const val STATE_TIMEOUT_MILLIS = 5_000L
     }
 }

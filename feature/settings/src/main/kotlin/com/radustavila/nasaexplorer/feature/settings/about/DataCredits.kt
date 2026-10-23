@@ -57,6 +57,7 @@ internal val DATA_CREDITS: List<DataCredit> = listOf(
         "https://www.star.nesdis.noaa.gov/socd/lsa/SeaLevelRise/",
     ),
     DataCredit(R.string.credit_nsidc, R.string.credit_nsidc_description, "https://doi.org/10.7265/a98x-0f50"),
+    DataCredit(R.string.credit_openngc, R.string.credit_openngc_description, "https://github.com/mattiaverga/OpenNGC"),
     DataCredit(
         R.string.credit_lroc,
         R.string.credit_lroc_description,

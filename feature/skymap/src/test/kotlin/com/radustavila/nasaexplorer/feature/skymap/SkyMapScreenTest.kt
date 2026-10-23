@@ -22,6 +22,12 @@ import com.radustavila.nasaexplorer.feature.skymap.ar.ArLens
 import com.radustavila.nasaexplorer.feature.skymap.ar.ArProblem
 import com.radustavila.nasaexplorer.feature.skymap.ar.SKY_MAP_ALIGN_BUTTON_TEST_TAG
 import com.radustavila.nasaexplorer.feature.skymap.ar.SkyArState
+import com.radustavila.nasaexplorer.core.model.ObservingConditions
+import com.radustavila.nasaexplorer.core.testing.data.TestDeepSky
+import com.radustavila.nasaexplorer.feature.skymap.deepsky.MARK_SEEN_DIALOG_TEST_TAG
+import com.radustavila.nasaexplorer.feature.skymap.deepsky.MARK_SEEN_NOTE_TEST_TAG
+import com.radustavila.nasaexplorer.feature.skymap.deepsky.formatDay
+import java.time.LocalDate
 import java.time.Duration
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -44,6 +50,10 @@ class SkyMapScreenTest {
     private val cometClicks = mutableListOf<String>()
 
     private var arClicks = 0
+    private val layerChanges = mutableListOf<Boolean>()
+    private val marks = mutableListOf<List<Any?>>()
+    private val removals = mutableListOf<String>()
+    private var logClicks = 0
 
     private fun show(
         uiState: SkyMapUiState,
@@ -51,6 +61,12 @@ class SkyMapScreenTest {
         hasCompass: Boolean = false,
         ar: SkyArState = SkyArState(),
     ) {
+        val deepSky = DeepSkyActions(
+            onLayerChange = { layerChanges += it },
+            onMarkSeen = { id, day, conditions, note -> marks += listOf(id, day, conditions, note) },
+            onRemoveSeen = { removals += it },
+            onObservingLogClick = { logClicks++ },
+        )
         composeTestRule.setContent {
             NasaTheme {
                 SkyMapContent(
@@ -71,6 +87,7 @@ class SkyMapScreenTest {
                         Box(modifier.testTag(CAMERA_STAND_IN))
                         LaunchedEffect(Unit) { ar.onCameraReady(ArLens(fieldOfViewDegrees = 40.0)) }
                     },
+                    deepSky = deepSky,
                 )
             }
         }
@@ -136,6 +153,65 @@ class SkyMapScreenTest {
 
         composeTestRule.onNodeWithTag(SKY_MAP_COMET_DETAILS_TEST_TAG).assertTextEquals("Comet details").performClick()
         assertEquals(listOf("2026 B1"), cometClicks)
+    }
+
+    @Test
+    fun `a selected galaxy shows its kind, size, best month and a way to log it`() {
+        val m31 = SkyMapFixture.deepSkyId(messier = 31)
+        show(SkyMapFixture.state(selected = SkyTarget.DeepSky(m31), selectedConstellation = "And"))
+
+        composeTestRule.onNodeWithText("M31 · Andromeda Galaxy").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Galaxy in Andromeda").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Magnitude 3.4 · 178′ × 70′").assertIsDisplayed()
+        composeTestRule.onNodeWithText("NGC 224").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Best in October · Naked eye").assertIsDisplayed()
+
+        composeTestRule.onNodeWithTag(SKY_MAP_MARK_SEEN_TEST_TAG).assertTextEquals("Mark as seen").performClick()
+        composeTestRule.onNodeWithTag(MARK_SEEN_DIALOG_TEST_TAG).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Good").performClick()
+        composeTestRule.onNodeWithTag(MARK_SEEN_NOTE_TEST_TAG).performTextInput("Dark site, 10x50")
+        composeTestRule.onNodeWithText("Save").performClick()
+
+        assertEquals(listOf(listOf(m31, LocalDate.now(), ObservingConditions.GOOD, "Dark site, 10x50")), marks)
+    }
+
+    @Test
+    fun `a logged object shows the day it was seen and can be taken out of the log`() {
+        val m42 = SkyMapFixture.deepSkyId(messier = 42)
+        val entry = TestDeepSky.entry(objectId = m42, observedOn = LocalDate.of(2026, 1, 12))
+        show(
+            SkyMapFixture.state(selected = SkyTarget.DeepSky(m42), selectedConstellation = "Ori")
+                .copy(observingLog = mapOf(m42 to entry)),
+        )
+
+        composeTestRule.onNodeWithText("Seen on ${entry.observedOn.formatDay()}").assertIsDisplayed()
+        composeTestRule.onNodeWithTag(SKY_MAP_MARK_SEEN_TEST_TAG).assertTextEquals("Edit").performClick()
+        composeTestRule.onNodeWithText("Remove from my log").performClick()
+
+        assertEquals(listOf(m42), removals)
+    }
+
+    @Test
+    fun `Messier objects are found by number, with or without a space`() {
+        show(SkyMapFixture.state())
+
+        composeTestRule.onNodeWithContentDescription("Search the sky").performClick()
+        composeTestRule.onNodeWithTag(SKY_MAP_SEARCH_FIELD_TEST_TAG).performTextInput("m 13")
+        composeTestRule.onNodeWithText("M13 · Hercules Globular Cluster").performClick()
+
+        assertEquals(listOf<SkyTarget?>(SkyTarget.DeepSky(SkyMapFixture.deepSkyId(messier = 13))), selections)
+    }
+
+    @Test
+    fun `the layers menu switches the deep-sky layer and opens the observing log`() {
+        show(SkyMapFixture.state())
+
+        composeTestRule.onNodeWithTag(SKY_MAP_LAYERS_TEST_TAG).performClick()
+        composeTestRule.onNodeWithTag(SKY_MAP_DEEP_SKY_LAYER_TEST_TAG).performClick()
+        composeTestRule.onNodeWithText("Observing log").performClick()
+
+        assertEquals(listOf(false), layerChanges)
+        assertEquals(1, logClicks)
     }
 
     @Test

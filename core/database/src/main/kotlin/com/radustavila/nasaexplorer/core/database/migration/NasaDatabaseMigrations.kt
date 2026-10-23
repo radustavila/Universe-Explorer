@@ -191,9 +191,30 @@ object NasaDatabaseMigrations {
         }
     }
 
+    /**
+     * v7 -> v8: adds the observing log (F23), one "seen" mark per deep-sky object. A new, empty table;
+     * nothing else changes.
+     */
+    val MIGRATION_7_8 = object : Migration(7, 8) {
+        override fun migrate(connection: SQLiteConnection) {
+            connection.execSQL(
+                "CREATE TABLE IF NOT EXISTS `observing_log` (`object_id` TEXT NOT NULL, " +
+                    "`observed_on` TEXT NOT NULL, `conditions` TEXT, `note` TEXT, " +
+                    "`logged_at_epoch_millis` INTEGER NOT NULL, PRIMARY KEY(`object_id`))",
+            )
+        }
+    }
+
     /** Every migration the database ships with, in order. */
-    val ALL: Array<Migration> =
-        arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
+    val ALL: Array<Migration> = arrayOf(
+        MIGRATION_1_2,
+        MIGRATION_2_3,
+        MIGRATION_3_4,
+        MIGRATION_4_5,
+        MIGRATION_5_6,
+        MIGRATION_6_7,
+        MIGRATION_7_8,
+    )
 
     private class MigratedFavorite(
         val itemId: String,

@@ -1,6 +1,7 @@
 package com.radustavila.nasaexplorer.feature.skymap
 
 import com.radustavila.nasaexplorer.core.model.ObserverLocation
+import com.radustavila.nasaexplorer.core.model.ObservingLogEntry
 import com.radustavila.nasaexplorer.core.model.SkyMapBodies
 import com.radustavila.nasaexplorer.core.model.SolarSystemBody
 import com.radustavila.nasaexplorer.core.skymap.HorizontalSky
@@ -24,6 +25,10 @@ data class SkyMapUiState(
      * Moon, a planet or a comet.
      */
     val selectedConstellation: String? = null,
+    /** Galaxies, clusters and nebulae on the map (F23). */
+    val isDeepSkyOn: Boolean = true,
+    /** The observing log's marks by object id. */
+    val observingLog: Map<String, ObservingLogEntry> = emptyMap(),
 ) {
     val isLive: Boolean get() = timeOffset.isZero
 }
@@ -46,4 +51,7 @@ sealed interface SkyTarget {
 
     /** The centre of the Milky Way, Sgr A*, which the Milky Way planner (F20) opens the map on. */
     data object GalacticCentre : SkyTarget
+
+    /** A galaxy, cluster or nebula of the deep-sky catalogue (F23), by its OpenNGC name ("NGC0224"). */
+    data class DeepSky(val id: String) : SkyTarget
 }

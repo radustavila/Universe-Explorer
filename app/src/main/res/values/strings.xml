@@ -47,6 +47,8 @@
     <string name="universe_moon_map_description">Every landing site from Luna and Apollo to today, and the side the Sun lights right now</string>
     <string name="universe_search_title">Search everything</string>
     <string name="universe_search_description">Pictures, planets, asteroids, events and favourites saved on this device</string>
+    <string name="universe_observing_log_title">Observing log</string>
+    <string name="universe_observing_log_description">Messier and Caldwell checklists: galaxies, clusters and nebulae you have seen</string>
 
     <!-- Launcher shortcuts (res/xml/shortcuts.xml). Short labels stay under about 10 characters. -->
     <string name="shortcut_search_short">Search</string>

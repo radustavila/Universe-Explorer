@@ -34,6 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.motion.rememberReducedMotion
+import com.radustavila.nasaexplorer.core.model.DeepSkyObject
+import com.radustavila.nasaexplorer.core.model.ObservingConditions
+import com.radustavila.nasaexplorer.core.model.ObservingLogEntry
 import com.radustavila.nasaexplorer.core.model.SolarSystemBody
 import com.radustavila.nasaexplorer.feature.skymap.ar.ArBar
 import com.radustavila.nasaexplorer.feature.skymap.ar.ArCameraPreview
@@ -42,11 +45,15 @@ import com.radustavila.nasaexplorer.feature.skymap.ar.ArProblemCard
 import com.radustavila.nasaexplorer.feature.skymap.ar.SkyArState
 import com.radustavila.nasaexplorer.feature.skymap.ar.rememberArToggle
 import com.radustavila.nasaexplorer.feature.skymap.ar.rememberSkyArState
+import com.radustavila.nasaexplorer.feature.skymap.deepsky.MarkSeenDialog
+import com.radustavila.nasaexplorer.feature.skymap.deepsky.title
 import com.radustavila.nasaexplorer.feature.skymap.render.SkyPalette
+import com.radustavila.nasaexplorer.feature.skymap.render.deepSkyObject
 import com.radustavila.nasaexplorer.feature.skymap.render.direction
 import com.radustavila.nasaexplorer.feature.skymap.sensor.hasRotationSensor
 import com.radustavila.nasaexplorer.feature.skymap.sensor.rememberDeviceOrientation
 import java.time.Duration
+import java.time.LocalDate
 import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
@@ -61,6 +68,7 @@ fun SkyMapScreen(
     onCometClick: (designation: String) -> Unit,
     locationSection: @Composable () -> Unit,
     modifier: Modifier = Modifier,
+    onObservingLogClick: () -> Unit = {},
     viewModel: SkyMapViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -110,8 +118,23 @@ fun SkyMapScreen(
         ar = ar,
         onArClick = toggleAr,
         arCamera = { ArCameraPreview(ar, it) },
+        deepSky = DeepSkyActions(
+            onLayerChange = viewModel::onDeepSkyLayerChange,
+            onMarkSeen = viewModel::onMarkSeen,
+            onRemoveSeen = viewModel::onRemoveSeen,
+            onObservingLogClick = onObservingLogClick,
+        ),
     )
 }
+
+/** What the deep-sky layer (F23) can do from the map: switch it, log an object, open the log. */
+internal class DeepSkyActions(
+    val onLayerChange: (Boolean) -> Unit = {},
+    val onMarkSeen: (objectId: String, observedOn: LocalDate, conditions: ObservingConditions?, note: String?) -> Unit =
+        { _, _, _, _ -> },
+    val onRemoveSeen: (objectId: String) -> Unit = {},
+    val onObservingLogClick: () -> Unit = {},
+)
 
 /** Ties the map to the camera while AR is on: its lens, and AR's end when the map is moved by touch. */
 @Composable
@@ -149,13 +172,10 @@ internal fun SkyMapContent(
     ar: SkyArState = remember { SkyArState() },
     onArClick: () -> Unit = {},
     arCamera: @Composable (Modifier) -> Unit = {},
+    deepSky: DeepSkyActions = remember { DeepSkyActions() },
 ) {
     val isNightMode = uiState.isNightMode && !ar.isOn
-    val palette = when {
-        ar.isOn -> SkyPalette.AR
-        isNightMode -> SkyPalette.NIGHT
-        else -> SkyPalette.REGULAR
-    }
+    val palette = if (ar.isOn) SkyPalette.AR else if (isNightMode) SkyPalette.NIGHT else SkyPalette.REGULAR
     LinkArToCamera(ar, camera)
     SkyMapTheme(isNightMode = isNightMode) {
         val sun = uiState.bodies?.solarSystem?.firstOrNull { it.body == SolarSystemBody.SUN }
@@ -183,6 +203,7 @@ internal fun SkyMapContent(
                     onCometClick = onCometClick,
                     hasCompass = hasCompass,
                     isCompassUnsure = isCompassUnsure,
+                    deepSky = deepSky,
                 )
             }
             Column(Modifier.align(Alignment.TopCenter), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -195,6 +216,8 @@ internal fun SkyMapContent(
                     onBackClick = onBackClick,
                     onSelect = onSelect,
                     onNightModeChange = onNightModeChange,
+                    onDeepSkyLayerChange = deepSky.onLayerChange,
+                    onObservingLogClick = deepSky.onObservingLogClick,
                 )
                 ar.problem?.let { problem ->
                     ArProblemCard(
@@ -222,8 +245,10 @@ private fun SkyMapLayers(
     onCometClick: (designation: String) -> Unit,
     hasCompass: Boolean,
     isCompassUnsure: Boolean,
+    deepSky: DeepSkyActions,
 ) {
     val sky = checkNotNull(uiState.sky)
+    var loggingId by rememberSaveable { mutableStateOf<String?>(null) }
     val names = rememberSkyNames()
     val reducedMotion = rememberReducedMotion()
     val looking = rememberLookingText(camera)
@@ -251,6 +276,7 @@ private fun SkyMapLayers(
             palette = palette,
             names = names,
             description = stringResource(R.string.sky_map_description, looking),
+            showDeepSky = uiState.isDeepSkyOn,
             onTap = { target ->
                 // A tap shows what is there without swinging the map round to it.
                 lookedAt = target
@@ -266,25 +292,36 @@ private fun SkyMapLayers(
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            DirectionHint(
-                looking = looking,
-                camera = camera,
-                hasCompass = hasCompass,
-                isCompassUnsure = isCompassUnsure,
-            )
+            DirectionHint(looking, camera, hasCompass, isCompassUnsure)
             uiState.selected?.let { selected ->
-                SelectionCard(
-                    uiState = uiState,
-                    selected = selected,
-                    names = names,
-                    onClose = { onSelect(null) },
-                    onCometDetails = onCometClick,
-                )
+                SelectionCard(uiState, selected, names, { onSelect(null) }, onCometClick) { loggingId = it }
             }
             // AR shows the sky as it is now: no time travel over the camera.
             if (ar.isOn) ArBar(ar, camera) else TimeBar(uiState, onTimeOffsetChange, onBackToNow)
         }
     }
+    loggingId?.let { id -> sky.deepSkyObject(SkyTarget.DeepSky(id)) }?.let { item ->
+        LogDialog(item, uiState.observingLog[item.id], deepSky, onClose = { loggingId = null })
+    }
+}
+
+/** "Mark as seen" for [item] (F23), or the edit of its [entry]. */
+@Composable
+private fun LogDialog(item: DeepSkyObject, entry: ObservingLogEntry?, deepSky: DeepSkyActions, onClose: () -> Unit) {
+    MarkSeenDialog(
+        title = item.title(),
+        entry = entry,
+        today = LocalDate.now(),
+        onSave = { day, conditions, note ->
+            deepSky.onMarkSeen(item.id, day, conditions, note)
+            onClose()
+        },
+        onRemove = {
+            deepSky.onRemoveSeen(item.id)
+            onClose()
+        },
+        onDismiss = onClose,
+    )
 }
 
 /** "Looking south-east, 32° up", updated only when the rounded numbers change. */

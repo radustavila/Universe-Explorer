@@ -1,5 +1,14 @@
 package com.radustavila.nasaexplorer.feature.skymap
 
+import java.time.LocalDate
+import com.radustavila.nasaexplorer.core.testing.fake.FakeObservingLogRepository
+import com.radustavila.nasaexplorer.core.testing.data.TestDeepSky
+import com.radustavila.nasaexplorer.core.model.ObservingConditions
+import com.radustavila.nasaexplorer.core.domain.usecase.SetSkyMapDeepSkyLayerUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RemoveDeepSkySeenUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveSkyMapDeepSkyLayerUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveObservingLogUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.MarkDeepSkySeenUseCase
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
@@ -53,6 +62,7 @@ class SkyMapViewModelTest {
     private val preferences = FakeSkyMapPreferencesRepository()
     private val comets = FakeCometRepository()
     private val cometCalculator = FakeCometSkyCalculator()
+    private val log = FakeObservingLogRepository()
 
     @Test
     fun `without a saved location there is no sky, only the question where`() = runTest {
@@ -192,6 +202,41 @@ class SkyMapViewModelTest {
         }
     }
 
+    @Test
+    fun `opened on a deep-sky object, it is selected in the catalogue's constellation`() = runTest {
+        location.setLocation(TestSky.location())
+        catalog.catalog = TestSkyMap.catalog().copy(deepSky = TestDeepSky.objects())
+
+        createViewModel(deepSkyId = TestDeepSky.M31.id).uiState.test {
+            val state = awaitUntil { it.sky != null && it.selectedConstellation != null }
+            assertEquals(SkyTarget.DeepSky(TestDeepSky.M31.id), state.selected)
+            assertEquals("And", state.selectedConstellation)
+            assertTrue(state.isDeepSkyOn)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `the deep-sky layer switch and the observing log reach the state`() = runTest {
+        location.setLocation(TestSky.location())
+        val viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            awaitUntil { it.sky != null }
+            viewModel.onDeepSkyLayerChange(false)
+            awaitUntil { !it.isDeepSkyOn }
+
+            viewModel.onMarkSeen(TestDeepSky.M42.id, LocalDate.of(2026, 1, 12), ObservingConditions.GOOD, " Trapezium ")
+            val entry = awaitUntil { TestDeepSky.M42.id in it.observingLog }.observingLog.getValue(TestDeepSky.M42.id)
+            assertEquals("Trapezium", entry.note)
+            assertEquals(clock.currentInstant, entry.loggedAt)
+
+            viewModel.onRemoveSeen(TestDeepSky.M42.id)
+            awaitUntil { it.observingLog.isEmpty() }
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
     private fun angleBetween(a: SkyVector, b: SkyVector): Double =
         Math.toDegrees(acos((a dot b).coerceIn(-1.0, 1.0)))
 
@@ -201,11 +246,13 @@ class SkyMapViewModelTest {
         return state
     }
 
-    private fun createViewModel(showGalacticCentre: Boolean = false): SkyMapViewModel {
+    private fun createViewModel(showGalacticCentre: Boolean = false, deepSkyId: String? = null): SkyMapViewModel {
         val dispatcher = mainDispatcherRule.testDispatcher
         val metadata = FakeSyncMetadataRepository()
         return SkyMapViewModel(
-            savedStateHandle = SavedStateHandle(mapOf("showGalacticCentre" to showGalacticCentre)),
+            savedStateHandle = SavedStateHandle(
+                mapOf("showGalacticCentre" to showGalacticCentre, "deepSkyId" to deepSkyId),
+            ),
             observeLocation = ObserveObserverLocationUseCase(location),
             observeNightMode = ObserveSkyMapNightModeUseCase(preferences),
             loadCatalog = LoadSkyCatalogUseCase(catalog, dispatcher),
@@ -224,6 +271,11 @@ class SkyMapViewModelTest {
                 RefreshSourceUseCase(metadata, clock),
                 FakeHomeWidgetUpdater(),
             ),
+            observeDeepSkyLayer = ObserveSkyMapDeepSkyLayerUseCase(preferences),
+            setDeepSkyLayer = SetSkyMapDeepSkyLayerUseCase(preferences),
+            observeLog = ObserveObservingLogUseCase(log),
+            markSeen = MarkDeepSkySeenUseCase(log, clock),
+            removeSeen = RemoveDeepSkySeenUseCase(log),
             timeProvider = clock,
             defaultDispatcher = dispatcher,
         )

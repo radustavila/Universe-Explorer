@@ -177,6 +177,7 @@ internal fun SkyTarget.kindRes(): Int = when (this) {
     is SkyTarget.Satellite -> satelliteKindRes(noradId)
     is SkyTarget.Comet -> R.string.sky_map_kind_comet
     SkyTarget.GalacticCentre -> R.string.sky_map_kind_galactic_centre
+    is SkyTarget.DeepSky -> R.string.sky_map_kind_deep_sky
 }
 
 private const val GALACTIC_CENTRE_KEY = "galactic-centre"
@@ -191,6 +192,7 @@ internal val SkyTargetSaver = Saver<SkyTarget?, String>(
             is SkyTarget.Satellite -> "satellite:${target.noradId}"
             is SkyTarget.Comet -> "comet:${target.designation}"
             SkyTarget.GalacticCentre -> GALACTIC_CENTRE_KEY
+            is SkyTarget.DeepSky -> "deep-sky:${target.id}"
             null -> ""
         }
     },
@@ -203,6 +205,7 @@ internal val SkyTargetSaver = Saver<SkyTarget?, String>(
             "satellite" -> value?.toIntOrNull()?.let(SkyTarget::Satellite)
             "comet" -> value?.let(SkyTarget::Comet)
             GALACTIC_CENTRE_KEY -> SkyTarget.GalacticCentre
+            "deep-sky" -> value?.let(SkyTarget::DeepSky)
             else -> null
         }
     },

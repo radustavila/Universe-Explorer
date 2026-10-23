@@ -9,6 +9,7 @@ import com.radustavila.nasaexplorer.core.model.AuroraAlertSettings
 import com.radustavila.nasaexplorer.core.model.MeasurementSystem
 import com.radustavila.nasaexplorer.core.model.TimeFormat
 import com.radustavila.nasaexplorer.core.model.UnitPreferences
+import com.radustavila.nasaexplorer.core.testing.data.TestDeepSky
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
 import org.junit.Assert.assertEquals
@@ -230,6 +231,36 @@ class SettingsViewModelTest {
 
             assertEquals(SettingsMessage.CACHE_CLEAR_FAILED, awaitUntil { it.message != null }.message)
             assertEquals(1, images.clearCount)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `the observing log is exported as CSV to the picked file`() = runTest {
+        fixture.observingLog.save(TestDeepSky.entry(objectId = TestDeepSky.M31.id, note = "First light"))
+        val viewModel = createViewModel()
+        var written: String? = null
+
+        viewModel.uiState.test {
+            viewModel.onExportObservingLog { written = it }
+
+            assertEquals(SettingsMessage.OBSERVING_LOG_EXPORTED, awaitUntil { it.message != null }.message)
+            val lines = written!!.trimEnd().lines()
+            assertEquals(2, lines.size)
+            val expected = "NGC0224,NGC 224,M31,,Andromeda Galaxy,GALAXY,And,2026-10-20,GOOD,First light"
+            assertTrue(lines[1].startsWith(expected))
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `a file that cannot be written is reported`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            viewModel.onExportObservingLog { throw IOException("read-only") }
+
+            assertEquals(SettingsMessage.OBSERVING_LOG_EXPORT_FAILED, awaitUntil { it.message != null }.message)
             cancelAndIgnoreRemainingEvents()
         }
     }
