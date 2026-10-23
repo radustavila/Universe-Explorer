@@ -47,6 +47,7 @@ import com.radustavila.nasaexplorer.feature.favorites.FAVORITES_LIST_TEST_TAG
 import com.radustavila.nasaexplorer.feature.feed.FEED_LIST_TEST_TAG
 import com.radustavila.nasaexplorer.feature.mars.marsPhotoTestTag
 import com.radustavila.nasaexplorer.feature.mars.photo.MARS_PHOTO_CONTENT_TEST_TAG
+import com.radustavila.nasaexplorer.feature.mars.rail.MARS_RAIL_TEST_TAG
 import com.radustavila.nasaexplorer.feature.sky.SKY_LIST_TEST_TAG
 import com.radustavila.nasaexplorer.feature.sky.component.SKY_ISS_CARD_TEST_TAG
 import com.radustavila.nasaexplorer.feature.sky.component.SKY_LOCATION_HEADER_TEST_TAG
@@ -67,6 +68,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import com.radustavila.nasaexplorer.core.designsystem.R as DesignSystemR
 import com.radustavila.nasaexplorer.feature.earth.R as EarthR
+import com.radustavila.nasaexplorer.feature.favorites.R as FavoritesR
 
 /**
  * End-to-end coverage on a real device/emulator: the real Activity, the real navigation graph, the
@@ -219,6 +221,8 @@ class NasaExplorerEndToEndTest {
 
         composeTestRule.onAllNodesWithText(string(R.string.destination_universe)).onFirst().performClick()
         composeTestRule.onNodeWithTag(GALLERY_RAILS_TEST_TAG).assertIsDisplayed()
+        // The tab's other features come first; the rails start below the fold.
+        composeTestRule.onNodeWithTag(GALLERY_RAILS_TEST_TAG).performScrollToNode(hasText(item.title))
         composeTestRule.onNodeWithText(item.title).performClick()
 
         composeTestRule.onNodeWithTag(MEDIA_DETAILS_CONTENT_TEST_TAG).assertIsDisplayed()
@@ -245,6 +249,8 @@ class NasaExplorerEndToEndTest {
         launchApp()
 
         composeTestRule.onAllNodesWithText(string(R.string.destination_universe)).onFirst().performClick()
+        // Scroll to the rail itself: a photo's nearest scrollable parent is the rail's own LazyRow.
+        composeTestRule.onNodeWithTag(GALLERY_RAILS_TEST_TAG).performScrollToNode(hasTestTag(MARS_RAIL_TEST_TAG))
         composeTestRule.onNodeWithTag(marsPhotoTestTag(photo.id)).performClick()
 
         composeTestRule.onNodeWithTag(MARS_PHOTO_CONTENT_TEST_TAG).assertIsDisplayed()
@@ -297,7 +303,8 @@ class NasaExplorerEndToEndTest {
 
         composeTestRule.onNodeWithText(string(R.string.destination_favorites)).performClick()
         composeTestRule.onNodeWithTag(FAVORITES_LIST_TEST_TAG).assertIsDisplayed()
-        composeTestRule.onNodeWithText("Earth, 16 Oct 2026", substring = true).performClick()
+        // The title is the capture time in the device's language and time zone; the source label is not.
+        composeTestRule.onNodeWithText(string(FavoritesR.string.favorites_source_epic)).performClick()
 
         // Opened for that photo: a way back, held still, and already saved.
         composeTestRule.onNodeWithContentDescription(string(EarthR.string.earth_today_back)).assertIsDisplayed()
@@ -319,12 +326,17 @@ class NasaExplorerEndToEndTest {
         launchApp()
 
         composeTestRule.onAllNodesWithText(string(R.string.destination_universe)).onFirst().performClick()
+        composeTestRule.onNodeWithTag(GALLERY_RAILS_TEST_TAG)
+            .performScrollToNode(hasText(string(R.string.universe_sky_title)))
         composeTestRule.onNodeWithText(string(R.string.universe_sky_title)).performClick()
 
         composeTestRule.onNodeWithTag(SKY_LOCATION_HEADER_TEST_TAG).assertIsDisplayed()
         composeTestRule.onNodeWithText("Bucharest").assertIsDisplayed()
+        // The stargazing forecast comes first, so the Moon card may be below the fold once computed.
         composeTestRule.waitUntil(SKY_COMPUTE_TIMEOUT_MILLIS) {
-            composeTestRule.onAllNodesWithTag(SKY_MOON_CARD_TEST_TAG).fetchSemanticsNodes().isNotEmpty()
+            runCatching {
+                composeTestRule.onNodeWithTag(SKY_LIST_TEST_TAG).performScrollToNode(hasTestTag(SKY_MOON_CARD_TEST_TAG))
+            }.isSuccess
         }
         composeTestRule.onNodeWithTag(SKY_LIST_TEST_TAG).performScrollToNode(hasTestTag(SKY_ISS_CARD_TEST_TAG))
         composeTestRule.onNodeWithTag(SKY_ISS_CARD_TEST_TAG).assertIsDisplayed()

@@ -154,5 +154,6 @@ dependencies {
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.coil.compose)
     androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(libs.androidx.work.testing)
     kspAndroidTest(libs.hilt.compiler)
 }
