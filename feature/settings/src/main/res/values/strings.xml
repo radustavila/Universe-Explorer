@@ -75,6 +75,12 @@
     <string name="settings_clear_cache_dialog_text">Downloaded images, network responses and cached data are deleted and downloaded again when needed. Your favourites and their offline copies are kept.</string>
     <string name="settings_clear_cache_confirm">Clear</string>
     <string name="settings_clear_cache_cancel">Cancel</string>
+    <string name="settings_observing_log_title">Observing log</string>
+    <string name="settings_observing_log_export">Export as CSV</string>
+    <string name="settings_observing_log_export_description">Every galaxy, cluster and nebula you marked as seen, with dates, sky and notes, for a spreadsheet</string>
+    <string name="settings_observing_log_file_name">observing-log.csv</string>
+    <string name="settings_observing_log_exported">Observing log exported</string>
+    <string name="settings_observing_log_export_failed">Could not write the file</string>
     <string name="settings_cache_cleared">Cache cleared</string>
     <string name="settings_cache_clear_failed">Part of the cache could not be cleared</string>
 
@@ -138,6 +144,8 @@
     <string name="credit_usgs">U.S. Geological Survey</string>
     <string name="credit_usgs_description">Recent earthquakes, from the USGS Earthquake Hazards Program feeds (public domain)</string>
     <string name="credit_stsci">Space Telescope Science Institute</string>
+    <string name="credit_openngc">OpenNGC by Mattia Verga</string>
+    <string name="credit_openngc_description">The galaxies, clusters and nebulae of the sky map and the observing log, licensed CC BY-SA 4.0; the trimmed catalogue in the app is CC BY-SA 4.0 too</string>
     <string name="credit_stsci_description">Webb\'s weekly observing schedules, which STScI publishes for NASA without claiming copyright. No endorsement by NASA or STScI is implied.</string>
     <string name="credit_noaa_gml">NOAA Global Monitoring Laboratory</string>
     <string name="credit_noaa_gml_description">Monthly mean CO₂ at Mauna Loa, from Dr. Xin Lan, NOAA/GML (gml.noaa.gov/ccgg/trends/), from May 1974 (public domain)</string>

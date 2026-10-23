@@ -16,15 +16,17 @@ data object SkyTonightRoute
 fun NavController.navigateToSkyTonight(navOptions: NavOptions? = null) = navigate(SkyTonightRoute, navOptions)
 
 /**
- * The sky tonight widget opens this screen through [SkyTonightDeepLink]. [nextInTheSky], [comets]
- * and [milkyWay] are other features' cards (the sky events calendar's, the bright comets' and the
- * Milky Way planner's), which `:app` passes in; they are shown below the planets.
+ * The sky tonight widget opens this screen through [SkyTonightDeepLink]. [nextInTheSky], [comets],
+ * [milkyWay] and [deepSky] are other features' cards (the sky events calendar's, the bright comets',
+ * the Milky Way planner's and the observing log's "Tonight's best"), which `:app` passes in; they are
+ * shown below the planets.
  */
 fun NavGraphBuilder.skyTonightScreen(
     onBackClick: () -> Unit,
     nextInTheSky: (@Composable () -> Unit)? = null,
     comets: (@Composable () -> Unit)? = null,
     milkyWay: (@Composable () -> Unit)? = null,
+    deepSky: (@Composable () -> Unit)? = null,
 ) {
     composable<SkyTonightRoute>(
         deepLinks = listOf(navDeepLink { uriPattern = SkyTonightDeepLink.URI }),
@@ -34,6 +36,7 @@ fun NavGraphBuilder.skyTonightScreen(
             nextInTheSky = nextInTheSky,
             comets = comets,
             milkyWay = milkyWay,
+            deepSky = deepSky,
         )
     }
 }

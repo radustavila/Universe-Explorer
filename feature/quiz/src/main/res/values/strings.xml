@@ -157,6 +157,19 @@
     <!-- %1$s booster serial, %2$s landing place ("Of Course I Still Love You"). -->
     <string name="quiz_e_booster_landed_yes">Yes: %1$s came back down on %2$s, ready to fly again. Data: Launch Library 2.</string>
     <string name="quiz_e_booster_landed_no">No: %1$s was lost trying to land on %2$s. Data: Launch Library 2.</string>
+    <!-- Deep sky (F23). %1$s is a Messier number ("M13"). -->
+    <string name="quiz_q_deep_sky_type">What kind of object is %1$s?</string>
+    <string name="quiz_q_deep_sky_constellation">Which constellation holds %1$s?</string>
+    <!-- %1$s Messier number, %2$s common name ("Hercules Globular Cluster"), %3$s constellation. -->
+    <string name="quiz_e_deep_sky">%1$s is the %2$s, in %3$s. Data: OpenNGC.</string>
+    <string name="quiz_deep_sky_galaxy">Galaxy</string>
+    <string name="quiz_deep_sky_open_cluster">Open star cluster</string>
+    <string name="quiz_deep_sky_globular_cluster">Globular star cluster</string>
+    <string name="quiz_deep_sky_planetary_nebula">Planetary nebula</string>
+    <string name="quiz_deep_sky_nebula">Nebula</string>
+    <string name="quiz_deep_sky_supernova_remnant">Supernova remnant</string>
+    <string name="quiz_deep_sky_dark_nebula">Dark nebula</string>
+    <string name="quiz_deep_sky_star_group">Star group</string>
     <!-- %1$s spacecraft, %2$s distance. -->
     <string name="quiz_f_spacecraft_distance">%1$s is %2$s from Earth right now, farther than any other spacecraft.</string>
     <!-- %1$s the number of people, already formatted. -->

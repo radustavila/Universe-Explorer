@@ -59,6 +59,9 @@ import com.radustavila.nasaexplorer.feature.sky.location.ObserverLocationSection
 import com.radustavila.nasaexplorer.feature.sky.navigateToSkyTonight
 import com.radustavila.nasaexplorer.feature.sky.skyTonightScreen
 import com.radustavila.nasaexplorer.feature.skymap.navigateToSkyMap
+import com.radustavila.nasaexplorer.feature.skymap.log.DeepSkyTonightCard
+import com.radustavila.nasaexplorer.feature.skymap.log.navigateToObservingLog
+import com.radustavila.nasaexplorer.feature.skymap.log.observingLogScreen
 import com.radustavila.nasaexplorer.feature.skymap.skyMapScreen
 import com.radustavila.nasaexplorer.feature.spaceweather.navigateToSmallBody
 import com.radustavila.nasaexplorer.feature.spaceweather.neighbourhoodScreen
@@ -151,6 +154,12 @@ fun NasaNavHost(
                     )
                 },
                 milkyWay = { MilkyWayTonightCard(onOpen = { navController.navigateToMilkyWay() }) },
+                deepSky = {
+                    DeepSkyTonightCard(
+                        onOpenLog = { navController.navigateToObservingLog() },
+                        onObjectClick = { id -> navController.navigateToSkyMap(deepSkyId = id) },
+                    )
+                },
             )
             skyEventsScreen(
                 onBackClick = navController::popBackStack,
@@ -169,6 +178,7 @@ fun NasaNavHost(
                 onBackClick = navController::popBackStack,
                 onCometClick = navController::navigateToCometDetails,
                 locationSection = { ObserverLocationSection() },
+                onObservingLogClick = { navController.navigateToObservingLog() },
             )
             cometsScreen(
                 onBackClick = navController::popBackStack,
@@ -184,6 +194,10 @@ fun NasaNavHost(
             webbScreen(
                 onBackClick = navController::popBackStack,
                 onTargetClick = { query -> navController.navigateToGallerySearch(query) },
+            )
+            observingLogScreen(
+                onBackClick = navController::popBackStack,
+                onShowOnSkyMap = { id -> navController.navigateToSkyMap(deepSkyId = id) },
             )
             gallerySearchScreen(
                 onMediaClick = navController::navigateToNasaMedia,

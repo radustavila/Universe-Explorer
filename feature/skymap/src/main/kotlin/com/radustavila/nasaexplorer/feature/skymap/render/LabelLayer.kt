@@ -35,6 +35,9 @@ internal class LabelLayer(
     private val layouts = HashMap<TextStyle, HashMap<String, TextLayoutResult>>()
     private var namedStarsFor: List<*>? = null
     private var namedStars = IntArray(0)
+    private var deepSkyTargetsFor: List<*>? = null
+    private var deepSkyTargets = emptyArray<SkyTarget.DeepSky>()
+    private val placement = DeepSkyPlacement()
 
     /** Cardinal points on the horizon; call first, as other labels keep off them. */
     fun drawCardinals(scope: DrawScope, frame: SkyFrame, projection: SkyProjection) = with(scope) {
@@ -80,10 +83,29 @@ internal class LabelLayer(
             .map(SkyTarget::StarTarget)
             .filter { it != selected }
             .forEach { scope.label(frame, projection, it) }
+        if (frame.showDeepSky) drawDeepSkyLabels(scope, frame, projection)
         val rankLimit = constellationRankLimit(frame.fieldOfViewDegrees)
         catalog.constellations.forEachIndexed { index, figure ->
             val target = SkyTarget.Constellation(index)
             if (figure.rank <= rankLimit && target != selected) scope.label(frame, projection, target)
+        }
+    }
+
+    /** Messier, then Caldwell, then other objects, as the zoom allows; [DeepSkyStyle] decides. */
+    private fun drawDeepSkyLabels(scope: DrawScope, frame: SkyFrame, projection: SkyProjection) {
+        val chart = frame.sky.chart
+        val objects = chart.catalog.deepSky
+        if (deepSkyTargetsFor !== objects) {
+            deepSkyTargets = Array(objects.size) { SkyTarget.DeepSky(objects[it].id) }
+            deepSkyTargetsFor = objects
+        }
+        val fieldOfView = frame.fieldOfViewDegrees
+        for (index in objects.indices) {
+            val item = objects[index]
+            val target = deepSkyTargets[index]
+            val isNamed = target != frame.selected && DeepSkyStyle.isLabelled(item, fieldOfView) &&
+                DeepSkyStyle.isShown(item, chart.deepSkyMagnitudes[index], fieldOfView)
+            if (isNamed) scope.label(frame, projection, target)
         }
     }
 
@@ -121,10 +143,11 @@ internal class LabelLayer(
         is SkyTarget.Satellite -> names.satellite(target.noradId, bodies)
         is SkyTarget.Comet -> bodies?.comet(target.designation)?.shortName()
         SkyTarget.GalacticCentre -> names.galacticCentre.ifEmpty { null }
+        is SkyTarget.DeepSky -> sky.deepSkyObject(target)?.let(DeepSkyStyle::shortName)
     }
 
     private fun styleOf(target: SkyTarget): TextStyle = when (target) {
-        is SkyTarget.StarTarget -> styles.star
+        is SkyTarget.StarTarget, is SkyTarget.DeepSky -> styles.star
         is SkyTarget.Constellation, SkyTarget.GalacticCentre -> styles.constellation
         is SkyTarget.Body, is SkyTarget.Satellite, is SkyTarget.Comet -> styles.body
     }
@@ -136,6 +159,7 @@ internal class LabelLayer(
         is SkyTarget.Satellite -> palette.iss
         is SkyTarget.Comet -> palette.comet
         SkyTarget.GalacticCentre -> palette.galacticCentre
+        is SkyTarget.DeepSky -> palette.cluster
     }
 
     /** Radius of the dot or disc a label sits next to, so the label clears it. */
@@ -150,6 +174,7 @@ internal class LabelLayer(
             is SkyTarget.Satellite -> SkyBodyPainter.satelliteRadius(this)
             is SkyTarget.Comet -> SkyBodyPainter.cometRadius(this)
             SkyTarget.GalacticCentre -> SkyBodyPainter.galacticCentreRadius(this)
+            is SkyTarget.DeepSky -> deepSkyLabelGap(placement, frame, target, projection)
             is SkyTarget.Constellation -> 0f
         }
 
@@ -190,4 +215,21 @@ internal class LabelLayer(
             else -> ALL_CONSTELLATIONS
         }
     }
+}
+
+private const val MAX_DEEP_SKY_LABEL_GAP_DP = 12f
+
+/** How far a deep-sky object's name keeps from its centre: past its symbol, but close to a big one. */
+private fun DrawScope.deepSkyLabelGap(
+    placement: DeepSkyPlacement,
+    frame: SkyFrame,
+    target: SkyTarget.DeepSky,
+    projection: SkyProjection,
+): Float {
+    val chart = frame.sky.chart
+    val index = chart.deepSkyIndex(target.id)
+    if (index < 0 || !placement.place(frame.sky, index, projection)) return 0f
+    val minRadius = DeepSkyLayer.MIN_RADIUS_DP.dp.toPx()
+    val radius = DeepSkyLayer.symbolRadius(chart.catalog.deepSky[index], placement.pixelsPerDegree, minRadius)
+    return minOf(radius, MAX_DEEP_SKY_LABEL_GAP_DP.dp.toPx())
 }

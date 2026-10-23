@@ -20,12 +20,14 @@ import com.radustavila.nasaexplorer.feature.skymap.SkyTarget
 
 /**
  * Draws [SkyFrame]s on a Compose canvas at frame rate, back to front: sky colour, constellation
- * figures, stars ([StarLayer]), the Sun, Moon, planets and ISS ([SkyBodyPainter]), the ground, then
+ * figures, galaxies, clusters and nebulae ([DeepSkyLayer]), stars ([StarLayer]), the Sun, Moon,
+ * planets and ISS ([SkyBodyPainter]), the ground, then
  * names ([LabelLayer]) and the selection on top.
  */
 internal class SkyRenderer(textMeasurer: TextMeasurer, styles: SkyTextStyles) {
 
     private val stars = StarLayer()
+    private val deepSky = DeepSkyLayer()
     private val labels = LabelLayer(textMeasurer, styles)
 
     private var linesFor: SkyChart? = null
@@ -40,6 +42,7 @@ internal class SkyRenderer(textMeasurer: TextMeasurer, styles: SkyTextStyles) {
         val sun = frame.bodies?.solarSystem?.firstOrNull { it.body == SolarSystemBody.SUN }
         drawRect(frame.palette.background(sun?.horizontal?.altitudeDegrees))
         drawFigures(frame, projection)
+        deepSky.draw(this, frame, projection)
         stars.draw(this, frame, projection)
         val bodies = SkyBodyPainter(this, frame, projection)
         bodies.drawBodies()

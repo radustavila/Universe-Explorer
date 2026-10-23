@@ -96,6 +96,9 @@ sealed interface QuizArg {
 
     /** The month of a monthly value: "Sep 2026". */
     data class Month(val date: LocalDate) : QuizArg
+
+    /** "Globular cluster": what kind of deep-sky object (F23). */
+    data class DeepSkyTypeName(val type: DeepSkyType) : QuizArg
 }
 
 /**
@@ -157,6 +160,13 @@ enum class QuizPhrase {
     FACT_CLIMATE_CO2,
     FACT_CLIMATE_SEA_ICE,
     FACT_CLIMATE_SEA_LEVEL,
+
+    // Deep sky (F23).
+    ANSWER_DEEP_SKY_TYPE,
+    DEEP_SKY_TYPE_QUESTION,
+    DEEP_SKY_TYPE_EXPLANATION,
+    DEEP_SKY_CONSTELLATION_QUESTION,
+    DEEP_SKY_CONSTELLATION_EXPLANATION,
 
     // Live facts.
     FACT_SPACECRAFT_DISTANCE,

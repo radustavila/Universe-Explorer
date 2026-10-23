@@ -9,6 +9,7 @@ import androidx.compose.ui.platform.LocalResources
 import com.radustavila.nasaexplorer.core.designsystem.skyevent.SkyEventText
 import com.radustavila.nasaexplorer.core.designsystem.units.UnitFormatter
 import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
+import com.radustavila.nasaexplorer.core.model.DeepSkyType
 import com.radustavila.nasaexplorer.core.model.QuizArg
 import com.radustavila.nasaexplorer.core.model.QuizPhrase
 import com.radustavila.nasaexplorer.core.model.QuizText
@@ -55,7 +56,7 @@ class QuizTextFormatter(
         is QuizArg.DayAndTime -> units.dayAndTime(arg.at)
         is QuizArg.Day -> units.day(arg.at)
         is QuizArg.PlanetName -> skyText.planet(arg.planet)
-        is QuizArg.MoonPhaseName -> resources.getString(moonPhaseName(arg.phase))
+        is QuizArg.MoonPhaseName, is QuizArg.DeepSkyTypeName -> resources.getString(nameRes(arg))
         is QuizArg.Ppm, is QuizArg.TemperatureChange, is QuizArg.Millimetres, is QuizArg.MillionSquareKm,
         is QuizArg.Month,
         -> climateArg(arg)
@@ -69,6 +70,26 @@ class QuizTextFormatter(
         is QuizArg.MillionSquareKm -> units.millionArea(arg.value)
         is QuizArg.Month -> units.month(arg.date)
         else -> error("Not a climate value: $arg")
+    }
+
+    /** A Moon phase's or a kind of deep-sky object's name (F23). */
+    @StringRes
+    private fun nameRes(arg: QuizArg): Int = when (arg) {
+        is QuizArg.MoonPhaseName -> moonPhaseName(arg.phase)
+        is QuizArg.DeepSkyTypeName -> deepSkyTypeName(arg.type)
+        else -> error("Not a name: $arg")
+    }
+
+    @StringRes
+    private fun deepSkyTypeName(type: DeepSkyType): Int = when (type) {
+        DeepSkyType.GALAXY -> R.string.quiz_deep_sky_galaxy
+        DeepSkyType.OPEN_CLUSTER -> R.string.quiz_deep_sky_open_cluster
+        DeepSkyType.GLOBULAR_CLUSTER -> R.string.quiz_deep_sky_globular_cluster
+        DeepSkyType.PLANETARY_NEBULA -> R.string.quiz_deep_sky_planetary_nebula
+        DeepSkyType.NEBULA -> R.string.quiz_deep_sky_nebula
+        DeepSkyType.SUPERNOVA_REMNANT -> R.string.quiz_deep_sky_supernova_remnant
+        DeepSkyType.DARK_NEBULA -> R.string.quiz_deep_sky_dark_nebula
+        DeepSkyType.STAR_GROUP -> R.string.quiz_deep_sky_star_group
     }
 
     private sealed interface Wording {
@@ -126,6 +147,11 @@ class QuizTextFormatter(
             QuizPhrase.FACT_CLIMATE_CO2 to Wording.Single(R.string.quiz_f_climate_co2),
             QuizPhrase.FACT_CLIMATE_SEA_ICE to Wording.Single(R.string.quiz_f_climate_sea_ice),
             QuizPhrase.FACT_CLIMATE_SEA_LEVEL to Wording.Single(R.string.quiz_f_climate_sea_level),
+            QuizPhrase.ANSWER_DEEP_SKY_TYPE to Wording.Single(NO_WORDS),
+            QuizPhrase.DEEP_SKY_TYPE_QUESTION to Wording.Single(R.string.quiz_q_deep_sky_type),
+            QuizPhrase.DEEP_SKY_TYPE_EXPLANATION to Wording.Single(R.string.quiz_e_deep_sky),
+            QuizPhrase.DEEP_SKY_CONSTELLATION_QUESTION to Wording.Single(R.string.quiz_q_deep_sky_constellation),
+            QuizPhrase.DEEP_SKY_CONSTELLATION_EXPLANATION to Wording.Single(R.string.quiz_e_deep_sky),
             QuizPhrase.FACT_SPACECRAFT_DISTANCE to Wording.Single(R.string.quiz_f_spacecraft_distance),
             QuizPhrase.FACT_PEOPLE_IN_SPACE to Wording.Plural(R.plurals.quiz_f_people_in_space),
             QuizPhrase.FACT_CONFIRMED_EXOPLANETS to Wording.Plural(R.plurals.quiz_f_confirmed_exoplanets),

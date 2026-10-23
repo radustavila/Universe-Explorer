@@ -41,12 +41,25 @@ data class ConstellationFigure(
     val lines: List<List<EquatorialCoordinate>>,
 )
 
-/** The bundled star catalogue and constellation figures. */
+/** The bundled star catalogue, constellation figures and deep-sky objects (F23). */
 data class SkyCatalog(
     /** Brightest first. */
     val stars: List<Star>,
     val constellations: List<ConstellationFigure>,
-)
+    /** Brightest first, those without a magnitude last. */
+    val deepSky: List<DeepSkyObject> = emptyList(),
+) {
+    /**
+     * Each IAU abbreviation's name; a constellation drawn in parts keeps the words they share
+     * ("Ser" is "Serpens", not "Serpens Caput").
+     */
+    fun constellationNames(): Map<String, String> = constellations.groupBy { it.id }.mapValues { (_, figures) ->
+        figures.map { it.name.split(' ') }
+            .reduce { shared, words -> shared.zip(words).takeWhile { (a, b) -> a == b }.map { it.first } }
+            .joinToString(" ")
+            .ifEmpty { figures.first().name }
+    }
+}
 
 /** The Sun, the Moon and the planets drawn on the sky map. */
 enum class SolarSystemBody {

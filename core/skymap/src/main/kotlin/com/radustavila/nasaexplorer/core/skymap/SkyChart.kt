@@ -65,6 +65,40 @@ class SkyChart(val catalog: SkyCatalog) {
         return low
     }
 
+    val deepSkyCount: Int = catalog.deepSky.size
+
+    /** x, y, z of each deep-sky object, in catalogue order (brightest first). */
+    private val deepSkyVectors = FloatArray(deepSkyCount * VECTOR_FLOATS).also { vectors ->
+        catalog.deepSky.forEachIndexed { i, item -> vectors.put(i, SkyVector.of(item.position)) }
+    }
+
+    /**
+     * A point [NORTH_STEP_DEGREES] north of each deep-sky object (south past the pole), so the map
+     * can turn a galaxy's position angle, measured from north, into a screen angle.
+     */
+    private val deepSkyNorthVectors = FloatArray(deepSkyCount * VECTOR_FLOATS).also { vectors ->
+        catalog.deepSky.forEachIndexed { i, item ->
+            val declination = item.position.declinationDegrees
+            val north = EquatorialCoordinate(
+                item.position.rightAscensionDegrees,
+                if (declination + NORTH_STEP_DEGREES <= MAX_DECLINATION) {
+                    declination + NORTH_STEP_DEGREES
+                } else {
+                    declination - NORTH_STEP_DEGREES
+                },
+            )
+            vectors.put(i, SkyVector.of(north))
+        }
+    }
+
+    /** NaN where the magnitude is unknown. */
+    val deepSkyMagnitudes = FloatArray(deepSkyCount) { catalog.deepSky[it].magnitude ?: Float.NaN }
+
+    private val deepSkyIndices: Map<String, Int> = catalog.deepSky.withIndex().associate { (i, item) -> item.id to i }
+
+    /** Index of the deep-sky object [id] names, or -1. */
+    fun deepSkyIndex(id: String): Int = deepSkyIndices[id] ?: -1
+
     private val labelVectors = FloatArray(catalog.constellations.size * VECTOR_FLOATS).also { vectors ->
         catalog.constellations.forEachIndexed { i, figure -> vectors.put(i, SkyVector.of(figure.labelPosition)) }
     }
@@ -78,6 +112,8 @@ class SkyChart(val catalog: SkyCatalog) {
             stars = rotate(matrix, starVectors),
             segments = rotate(matrix, segmentVectors),
             labels = rotate(matrix, labelVectors),
+            deepSky = rotate(matrix, deepSkyVectors),
+            deepSkyNorth = rotate(matrix, deepSkyNorthVectors),
         )
     }
 
@@ -118,6 +154,10 @@ class SkyChart(val catalog: SkyCatalog) {
     companion object {
         /** Floats per vector in the flat arrays: east, north, up (or x, y, z). */
         const val VECTOR_FLOATS = 3
+
+        /** How far north of a deep-sky object its north marker is. */
+        const val NORTH_STEP_DEGREES = 0.5
+        private const val MAX_DECLINATION = 90.0
 
         /** Refraction is below a hundredth of a degree above this height (sin 60 degrees). */
         private const val REFRACTION_LIMIT = 0.866
@@ -170,7 +210,13 @@ class HorizontalSky internal constructor(
     val segments: FloatArray,
     /** One point per constellation name. */
     val labels: FloatArray,
+    /** x, y, z per deep-sky object. */
+    val deepSky: FloatArray = FloatArray(0),
+    /** A point [SkyChart.NORTH_STEP_DEGREES] north of each deep-sky object (south past the pole). */
+    val deepSkyNorth: FloatArray = FloatArray(0),
 ) {
+    fun deepSky(index: Int) = deepSky.vectorAt(index)
+
     fun star(index: Int) = stars.vectorAt(index)
 
     fun label(index: Int) = labels.vectorAt(index)

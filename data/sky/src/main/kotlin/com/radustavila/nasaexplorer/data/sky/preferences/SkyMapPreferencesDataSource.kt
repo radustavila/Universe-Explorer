@@ -32,7 +32,19 @@ class SkyMapPreferencesDataSource @Inject constructor(
         }
     }
 
+    override fun observeDeepSkyLayer(): Flow<Boolean> =
+        dataStore.data.catch { emit(emptyPreferences()) }.map { it[DEEP_SKY_LAYER] ?: true }.distinctUntilChanged()
+
+    override suspend fun setDeepSkyLayer(enabled: Boolean) {
+        try {
+            dataStore.edit { it[DEEP_SKY_LAYER] = enabled }
+        } catch (_: IOException) {
+            // Keeps the previous value; the switch can be flipped again.
+        }
+    }
+
     private companion object {
         val NIGHT_MODE = booleanPreferencesKey("sky_map_night_mode")
+        val DEEP_SKY_LAYER = booleanPreferencesKey("sky_map_deep_sky_layer")
     }
 }

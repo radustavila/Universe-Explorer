@@ -55,4 +55,12 @@ class FakeSkyMapPreferencesRepository : SkyMapPreferencesRepository {
     override suspend fun setNightMode(enabled: Boolean) {
         nightMode.value = enabled
     }
+
+    private val deepSkyLayer = MutableStateFlow(true)
+
+    override fun observeDeepSkyLayer(): Flow<Boolean> = deepSkyLayer
+
+    override suspend fun setDeepSkyLayer(enabled: Boolean) {
+        deepSkyLayer.value = enabled
+    }
 }

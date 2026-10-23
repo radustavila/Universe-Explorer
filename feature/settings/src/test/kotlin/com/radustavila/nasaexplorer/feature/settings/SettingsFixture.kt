@@ -5,23 +5,24 @@ import com.radustavila.nasaexplorer.core.domain.usecase.CheckAuroraAlertUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.CheckEarthquakeAlertUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.CheckStargazingAlertUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ClearCacheUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ExportObservingLogUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.MeasureStorageUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveAuroraAlertSettingsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDailyWallpaperEnabledUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEarthquakeAlertEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveIssPassRemindersEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveNewApodNotificationsEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveObserverLocationUseCase
-import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEarthquakeAlertEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveStargazingAlertSettingsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveUnitPreferencesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RescheduleIssPassReminderUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetAuroraAlertEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetAuroraAlertLocationUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetDailyWallpaperEnabledUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.SetEarthquakeAlertEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetIssPassRemindersEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetMeasurementSystemUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetNewApodNotificationsEnabledUseCase
-import com.radustavila.nasaexplorer.core.domain.usecase.SetEarthquakeAlertEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetStargazingAlertEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetStargazingAlertMinimumScoreUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetTimeFormatUseCase
@@ -30,12 +31,14 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeAuroraAlertRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeCacheStorage
 import com.radustavila.nasaexplorer.core.testing.fake.FakeCloudForecastRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeDarkSkyCalculator
+import com.radustavila.nasaexplorer.core.testing.fake.FakeDeepSkyCatalogRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeAlertNotifier
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeAlertRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeIssPassReminderScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeObservingLogRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSatellitePassPredictor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSatelliteRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSkyPreferencesRepository
@@ -48,6 +51,7 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import com.radustavila.nasaexplorer.core.testing.fake.FakeUserPreferencesRepository
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
 /** A [SettingsViewModel] over fakes, shared by the ViewModel and screen tests. */
 internal class SettingsFixture {
@@ -69,6 +73,8 @@ internal class SettingsFixture {
 
     /** Measured, never a cleaner: "Clear cache" must not reach offline favourites. */
     val offlineFavorites = FakeCacheStorage(StorageKind.OFFLINE_FAVORITES, bytes = 3_000_000)
+    val observingLog = FakeObservingLogRepository()
+    private val io = UnconfinedTestDispatcher()
 
     fun createViewModel(): SettingsViewModel {
         val checkAurora = CheckAuroraAlertUseCase(aurora, FakeSpaceWeatherRepository(), FakeAuroraAlertNotifier(), clock)
@@ -119,6 +125,8 @@ internal class SettingsFixture {
                     clock,
                 ),
             ),
+            exportObservingLog = ExportObservingLogUseCase(observingLog, FakeDeepSkyCatalogRepository(), io),
+            ioDispatcher = io,
         )
     }
 

@@ -1,6 +1,8 @@
 package com.radustavila.nasaexplorer.backup
 
 import com.radustavila.nasaexplorer.core.database.NasaDatabase
+import com.radustavila.nasaexplorer.core.database.dao.FavoriteDao
+import com.radustavila.nasaexplorer.core.database.dao.ObservingLogDao
 import com.radustavila.nasaexplorer.storage.DatabaseStorage
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
@@ -58,6 +60,15 @@ class BackupRulesTest {
         assertEquals(expected, includes("data_extraction_rules.xml", "cloud-backup"))
         assertEquals(expected, includes("data_extraction_rules.xml", "device-transfer"))
         assertEquals(expected, includes("backup_rules.xml"))
+    }
+
+    @Test
+    fun `the observing log is kept in the backed-up favourites database`() {
+        // F23: "seen" marks survive a reinstall because they live next to the favourites.
+        val daos = NasaDatabase::class.java.methods.map { it.returnType }
+        assertTrue(ObservingLogDao::class.java in daos)
+        assertTrue(FavoriteDao::class.java in daos)
+        assertTrue("database" to NasaDatabase.NAME in includes("backup_rules.xml"))
     }
 
     @Test

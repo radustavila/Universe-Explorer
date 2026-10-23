@@ -51,4 +51,8 @@ enum class SettingsMessage {
 
     /** Strong-quake alerts were turned on without a saved place. */
     EARTHQUAKE_NEEDS_PLACE,
+
+    /** The observing log (F23) was written to the file the user picked, or could not be. */
+    OBSERVING_LOG_EXPORTED,
+    OBSERVING_LOG_EXPORT_FAILED,
 }

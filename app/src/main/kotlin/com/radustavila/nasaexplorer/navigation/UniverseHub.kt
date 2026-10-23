@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.BlurOn
+import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Newspaper
@@ -30,6 +31,7 @@ import com.radustavila.nasaexplorer.feature.milkyway.navigateToMilkyWay
 import com.radustavila.nasaexplorer.feature.news.navigateToNews
 import com.radustavila.nasaexplorer.feature.search.navigateToSearch
 import com.radustavila.nasaexplorer.feature.sky.navigateToSkyTonight
+import com.radustavila.nasaexplorer.feature.skymap.log.navigateToObservingLog
 import com.radustavila.nasaexplorer.feature.skymap.navigateToSkyMap
 import com.radustavila.nasaexplorer.feature.universe.navigateToGallerySearch
 import com.radustavila.nasaexplorer.feature.webb.WebbNowCard
@@ -88,7 +90,10 @@ internal fun universeHubEntries(navController: NavHostController): List<HubEntry
     },
 ) + observingHubEntries(navController)
 
-/** The Universe entries for going out to look: the sky map (F17), comets (F18), the Milky Way (F20). */
+/**
+ * The Universe entries for going out to look: the sky map (F17), comets (F18), the Milky Way (F20),
+ * the observing log (F23).
+ */
 private fun observingHubEntries(navController: NavHostController): List<HubEntry> = listOf(
     HubEntry(
         key = "skymap",
@@ -111,6 +116,13 @@ private fun observingHubEntries(navController: NavHostController): List<HubEntry
         descriptionRes = R.string.universe_milky_way_description,
         onClick = { navController.navigateToMilkyWay() },
     ), // F20
+    HubEntry(
+        key = "observing-log",
+        icon = Icons.Outlined.Checklist,
+        titleRes = R.string.universe_observing_log_title,
+        descriptionRes = R.string.universe_observing_log_description,
+        onClick = { navController.navigateToObservingLog() },
+    ), // F23
 )
 
 /**

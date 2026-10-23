@@ -95,3 +95,11 @@ class ObserveSkyMapNightModeUseCase @Inject constructor(private val repository: 
 class SetSkyMapNightModeUseCase @Inject constructor(private val repository: SkyMapPreferencesRepository) {
     suspend operator fun invoke(enabled: Boolean) = repository.setNightMode(enabled)
 }
+
+class ObserveSkyMapDeepSkyLayerUseCase @Inject constructor(private val repository: SkyMapPreferencesRepository) {
+    operator fun invoke(): Flow<Boolean> = repository.observeDeepSkyLayer()
+}
+
+class SetSkyMapDeepSkyLayerUseCase @Inject constructor(private val repository: SkyMapPreferencesRepository) {
+    suspend operator fun invoke(enabled: Boolean) = repository.setDeepSkyLayer(enabled)
+}

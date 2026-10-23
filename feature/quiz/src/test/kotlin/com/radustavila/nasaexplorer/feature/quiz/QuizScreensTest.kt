@@ -18,6 +18,7 @@ import androidx.compose.ui.test.performScrollToNode
 import androidx.test.core.app.ApplicationProvider
 import com.radustavila.nasaexplorer.core.designsystem.notification.NotificationPermissionToggle
 import com.radustavila.nasaexplorer.core.designsystem.units.UnitFormatter
+import com.radustavila.nasaexplorer.core.model.DeepSkyType
 import com.radustavila.nasaexplorer.core.model.MeasurementSystem
 import com.radustavila.nasaexplorer.core.model.MoonPhase
 import com.radustavila.nasaexplorer.core.model.Planet
@@ -188,6 +189,19 @@ class QuizScreensTest {
             ),
         )
         assertEquals("+1.38 °C", phrase(QuizPhrase.ANSWER_VALUE, QuizArg.TemperatureChange(1.38)))
+        assertEquals(
+            "M13 is the Hercules Globular Cluster, in Hercules. Data: OpenNGC.",
+            phrase(
+                QuizPhrase.DEEP_SKY_TYPE_EXPLANATION,
+                QuizArg.Text("M13"),
+                QuizArg.Text("Hercules Globular Cluster"),
+                QuizArg.Text("Hercules"),
+            ),
+        )
+        assertEquals(
+            "Globular star cluster",
+            phrase(QuizPhrase.ANSWER_DEEP_SKY_TYPE, QuizArg.DeepSkyTypeName(DeepSkyType.GLOBULAR_CLUSTER)),
+        )
         assertEquals("Plain words.", format.format(QuizText.Plain("Plain words.")))
         // Every phrase has wording.
         val args = listOf(QuizArg.Count(2), QuizArg.Text("A"), QuizArg.Day(Instant.EPOCH), QuizArg.Text("B"))

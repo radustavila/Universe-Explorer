@@ -1,5 +1,6 @@
 package com.radustavila.nasaexplorer.core.skymap
 
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
@@ -9,7 +10,7 @@ import org.junit.Test
 /** Reads the bundled files themselves, so a regenerated catalogue is checked too. */
 class ResourceSkyCatalogTest {
 
-    private val catalog = ResourceSkyCatalog().read()
+    private val catalog = runBlocking { ResourceSkyCatalog(ResourceDeepSkyCatalog()).read() }
 
     @Test
     fun `every naked-eye star is there, brightest first`() {
@@ -49,8 +50,22 @@ class ResourceSkyCatalogTest {
     }
 
     @Test
+    fun `the deep-sky catalogue comes with the stars`() {
+        assertEquals(1775, catalog.deepSky.size)
+    }
+
+    @Test
+    fun `constellation names join Serpens' two parts`() {
+        val names = catalog.constellationNames()
+        assertEquals(88, names.size)
+        assertEquals("Serpens", names["Ser"])
+        assertEquals("Ursa Major", names["UMa"])
+        assertTrue(catalog.deepSky.all { it.constellation in names })
+    }
+
+    @Test
     fun `the catalogue is read once`() = runTest {
-        val repository = ResourceSkyCatalog()
+        val repository = ResourceSkyCatalog(ResourceDeepSkyCatalog())
 
         assertSame(repository.catalog(), repository.catalog())
     }
