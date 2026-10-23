@@ -37,16 +37,23 @@ class EarthquakeRepositoryImpl @Inject constructor(
 
     private suspend fun refresh(feed: EarthquakeFeed): DataResult<Unit> {
         val lastModified = (localDataSource.lastModified(feed) as? DataResult.Success)?.data
-        val download = when (val result = remoteDataSource.fetchFeed(feed, lastModified)) {
-            is DataResult.Success -> result.data
-            is DataResult.Failure -> return result
+        return when (val result = remoteDataSource.fetchFeed(feed, lastModified)) {
+            is DataResult.Failure -> result
+            is DataResult.Success -> when (val download = result.data) {
+                EarthquakeFeedDownload.NotModified -> DataResult.Success(Unit)
+                is EarthquakeFeedDownload.Updated -> store(feed, download)
+            }
         }
-        if (download !is EarthquakeFeedDownload.Updated) return DataResult.Success(Unit)
+    }
 
+    private suspend fun store(feed: EarthquakeFeed, download: EarthquakeFeedDownload.Updated): DataResult<Unit> {
         val features = download.feed.features
         val quakes = features.mapNotNull { it.toDomainOrNull() }.distinctBy(Earthquake::id)
         // A non-empty feed of which nothing parses is a format change, not a quiet planet.
-        if (quakes.isEmpty() && features.isNotEmpty()) return DataResult.Failure(AppError.EmptyResponse)
-        return localDataSource.replaceFeed(feed, quakes, download.lastModified, timeProvider.now())
+        return if (quakes.isEmpty() && features.isNotEmpty()) {
+            DataResult.Failure(AppError.EmptyResponse)
+        } else {
+            localDataSource.replaceFeed(feed, quakes, download.lastModified, timeProvider.now())
+        }
     }
 }

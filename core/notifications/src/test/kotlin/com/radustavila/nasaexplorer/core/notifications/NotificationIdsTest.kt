@@ -77,7 +77,14 @@ class NotificationIdsTest {
         )
 
         assertEquals(
-            setOf("aurora_alerts", "iss_passes", "satellite_passes", "sky_events", "stargazing_alerts", "earthquake_alerts"),
+            setOf(
+                "aurora_alerts",
+                "iss_passes",
+                "satellite_passes",
+                "sky_events",
+                "stargazing_alerts",
+                "earthquake_alerts",
+            ),
             shadowOf(notificationManager).allNotifications.map { it.channelId }.toSet(),
         )
         assertEquals(6, shadowOf(notificationManager).allNotifications.size)

@@ -5,17 +5,26 @@ import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.usecase.GetEventImageryLayerUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDataFreshnessUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.CheckEarthquakeAlertUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEarthquakesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveOpenEarthEventsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEarthEventsUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEarthquakesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshSourceUseCase
 import com.radustavila.nasaexplorer.core.map.gibs.GibsImagery
 import com.radustavila.nasaexplorer.core.map.gibs.GibsLayer
 import com.radustavila.nasaexplorer.core.map.gibs.GibsTileMatrixSet
 import com.radustavila.nasaexplorer.core.map.gibs.GibsTime
 import com.radustavila.nasaexplorer.core.model.EarthEventCategory
+import com.radustavila.nasaexplorer.core.model.EarthquakeFilter
 import com.radustavila.nasaexplorer.core.model.EventImageryLayer
 import com.radustavila.nasaexplorer.core.testing.data.TestEarthEvents
+import com.radustavila.nasaexplorer.core.testing.data.TestEarthquakes
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthEventRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeAlertNotifier
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeAlertRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
@@ -45,6 +54,7 @@ class EarthEventsViewModelTest {
     private val repository = FakeEarthEventRepository()
     private val metadata = FakeSyncMetadataRepository()
     private val networkMonitor = FakeNetworkMonitor()
+    private val quakeRepository = FakeEarthquakeRepository()
 
     private val storm = TestEarthEvents.storm()
     private val fire = TestEarthEvents.wildfire()
@@ -58,6 +68,18 @@ class EarthEventsViewModelTest {
             getEventImageryLayer = GetEventImageryLayerUseCase(repository),
             timeProvider = clock,
             observeDataFreshness = ObserveDataFreshnessUseCase(metadata, networkMonitor),
+            observeEarthquakes = ObserveEarthquakesUseCase(quakeRepository, clock),
+            refreshEarthquakes = RefreshEarthquakesUseCase(
+                quakeRepository,
+                RefreshSourceUseCase(metadata, clock),
+                CheckEarthquakeAlertUseCase(
+                    FakeEarthquakeAlertRepository(),
+                    FakeObserverLocationRepository(),
+                    quakeRepository,
+                    FakeEarthquakeAlertNotifier(),
+                    clock,
+                ),
+            ),
         )
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
         return viewModel
@@ -288,5 +310,88 @@ class EarthEventsViewModelTest {
         networkMonitor.setOnline(false)
 
         assertTrue(viewModel.uiState.value.isOffline)
+    }
+
+    private val sicily = TestEarthquakes.earthquake(time = TestEarthEvents.NOW.minus(Duration.ofHours(1)))
+    private val fiji = TestEarthquakes.small(time = TestEarthEvents.NOW.minus(Duration.ofHours(3)))
+
+    @Test
+    fun `quakes M2_5 and up show by default and each filter counts its own`() = runTest {
+        quakeRepository.setEarthquakes(listOf(sicily, fiji))
+
+        val state = createViewModel().uiState.value
+
+        assertEquals(EarthquakeFilter.MAGNITUDE_2_5, state.earthquakeFilter)
+        assertEquals(listOf(sicily, fiji), state.visibleEarthquakes)
+        assertEquals(
+            listOf(
+                EarthquakeFilter.MAGNITUDE_2_5 to 2,
+                EarthquakeFilter.MAGNITUDE_4_5 to 1,
+                EarthquakeFilter.SIGNIFICANT to 0,
+            ),
+            state.earthquakeCounts,
+        )
+    }
+
+    @Test
+    fun `picking a filter switches to it, picking it again hides the quakes`() = runTest {
+        quakeRepository.setEarthquakes(listOf(sicily, fiji))
+        val viewModel = createViewModel()
+
+        viewModel.onEarthquakeFilterSelected(EarthquakeFilter.MAGNITUDE_4_5)
+        assertEquals(listOf(sicily), viewModel.uiState.value.visibleEarthquakes)
+
+        viewModel.onEarthquakeFilterSelected(EarthquakeFilter.MAGNITUDE_4_5)
+        assertNull(viewModel.uiState.value.earthquakeFilter)
+        assertTrue(viewModel.uiState.value.visibleEarthquakes.isEmpty())
+    }
+
+    @Test
+    fun `a quake and an event are never selected together`() = runTest {
+        repository.setEvents(listOf(storm))
+        quakeRepository.setEarthquakes(listOf(sicily))
+        val viewModel = createViewModel()
+
+        viewModel.onEventSelected(storm.id)
+        viewModel.onEarthquakeSelected(sicily.id)
+        assertEquals(sicily, viewModel.uiState.value.selectedEarthquake)
+        assertNull(viewModel.uiState.value.selectedEvent)
+
+        viewModel.onEventSelected(storm.id)
+        assertNull(viewModel.uiState.value.selectedEarthquake)
+    }
+
+    @Test
+    fun `opened on a quake, it is selected and the map moves to it once`() = runTest {
+        quakeRepository.setEarthquakes(listOf(sicily, fiji))
+        val viewModel = createViewModel(SavedStateHandle(mapOf(EarthEventsViewModel.ARG_EARTHQUAKE to fiji.id)))
+
+        assertEquals(fiji, viewModel.uiState.value.selectedEarthquake)
+        assertEquals(fiji, viewModel.uiState.value.focusEarthquake)
+        viewModel.onEarthquakeFocused()
+        assertNull(viewModel.uiState.value.focusEarthquake)
+    }
+
+    @Test
+    fun `the list shows the filtered quakes and a pick goes back to the map on that quake`() = runTest {
+        quakeRepository.setEarthquakes(listOf(sicily, fiji))
+        val viewModel = createViewModel()
+
+        viewModel.onEarthquakeListToggled()
+        assertTrue(viewModel.uiState.value.showEarthquakeList)
+
+        viewModel.onEarthquakeListItemSelected(fiji.id)
+        val state = viewModel.uiState.value
+        assertFalse(state.showEarthquakeList)
+        assertEquals(fiji, state.selectedEarthquake)
+        assertEquals(fiji, state.focusEarthquake)
+    }
+
+    @Test
+    fun `quakes refresh on open, at most every 15 minutes, even with the refresh button`() = runTest {
+        val viewModel = createViewModel()
+        viewModel.onRefresh()
+
+        assertEquals(1, quakeRepository.refreshCallCount)
     }
 }

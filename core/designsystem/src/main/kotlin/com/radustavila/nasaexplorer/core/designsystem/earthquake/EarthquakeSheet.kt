@@ -96,25 +96,31 @@ fun EarthquakeSheet(
                     modifier = Modifier.padding(end = 12.dp),
                 )
             }
-            FilledTonalButton(
-                onClick = { onOpenPage(quake.url) },
-                modifier = Modifier.padding(top = 6.dp).testTag(EARTHQUAKE_PAGE_BUTTON_TEST_TAG),
-            ) {
-                Text(stringResource(R.string.earthquake_open_page))
-                Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                Icon(
-                    Icons.AutoMirrored.Outlined.OpenInNew,
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                )
-            }
-            Text(
-                text = stringResource(R.string.earthquake_credit),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            PageLinkAndCredit(onClick = { onOpenPage(quake.url) })
         }
     }
+}
+
+/** The USGS event page, and under it the credit USGS asks for. */
+@Composable
+private fun PageLinkAndCredit(onClick: () -> Unit) {
+    FilledTonalButton(
+        onClick = onClick,
+        modifier = Modifier.padding(top = 6.dp).testTag(EARTHQUAKE_PAGE_BUTTON_TEST_TAG),
+    ) {
+        Text(stringResource(R.string.earthquake_open_page))
+        Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+        Icon(
+            Icons.AutoMirrored.Outlined.OpenInNew,
+            contentDescription = null,
+            modifier = Modifier.size(ButtonDefaults.IconSize),
+        )
+    }
+    Text(
+        text = stringResource(R.string.earthquake_credit),
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
 }
 
 @Composable

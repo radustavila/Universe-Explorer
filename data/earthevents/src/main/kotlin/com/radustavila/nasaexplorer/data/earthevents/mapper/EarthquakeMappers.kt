@@ -6,6 +6,7 @@ import com.radustavila.nasaexplorer.core.model.GeoCoordinate
 import com.radustavila.nasaexplorer.data.earthevents.local.EarthquakeEntity
 import com.radustavila.nasaexplorer.data.earthevents.remote.EarthquakeFeed
 import com.radustavila.nasaexplorer.data.earthevents.remote.dto.EarthquakeFeatureDto
+import com.radustavila.nasaexplorer.data.earthevents.remote.dto.EarthquakePropertiesDto
 import java.time.Instant
 
 /**
@@ -14,29 +15,36 @@ import java.time.Instant
  * and explosions).
  */
 internal fun EarthquakeFeatureDto.toDomainOrNull(): Earthquake? {
-    val id = id?.trim()?.takeIf(String::isNotEmpty) ?: return null
-    val properties = properties ?: return null
-    if (properties.type != null && properties.type != EARTHQUAKE_TYPE) return null
-    val magnitude = properties.mag?.takeIf(Double::isFinite) ?: return null
-    val time = properties.time ?: return null
-    val coordinates = geometry?.coordinates?.takeIf { it.size >= 2 } ?: return null
+    val id = id?.trim()?.takeIf(String::isNotEmpty)
+    val coordinates = geometry?.coordinates?.takeIf { it.size >= 2 && it.isOnTheGlobe() }
+    val quake = properties?.takeIf { it.type == null || it.type == EARTHQUAKE_TYPE }
+    return if (id != null && coordinates != null) quake?.toDomainOrNull(id, coordinates) else null
+}
+
+private fun EarthquakePropertiesDto.toDomainOrNull(id: String, coordinates: List<Double>): Earthquake? {
+    val magnitude = mag?.takeIf(Double::isFinite)
+    val time = time
+    if (magnitude == null || time == null) return null
     val (longitude, latitude) = coordinates
-    if (latitude !in -MAX_LATITUDE..MAX_LATITUDE || longitude !in -MAX_LONGITUDE..MAX_LONGITUDE) return null
     return Earthquake(
         id = id,
         magnitude = magnitude,
-        place = properties.place?.trim()?.takeIf(String::isNotEmpty),
+        place = place?.trim()?.takeIf(String::isNotEmpty),
         time = Instant.ofEpochMilli(time),
         position = GeoCoordinate(latitude = latitude, longitude = longitude),
         // Depth is sometimes missing for quakes too fresh to be located in depth; USGS then uses 10.
         depthKm = coordinates.getOrNull(2)?.takeIf(Double::isFinite) ?: DEFAULT_DEPTH_KM,
-        url = properties.url?.takeIf { it.startsWith("https://") } ?: "$EVENT_PAGE$id",
-        feltReports = properties.felt?.takeIf { it > 0 },
-        alertLevel = EarthquakeAlertLevel.fromKey(properties.alert),
-        tsunami = properties.tsunami == 1,
-        significance = properties.sig ?: 0,
+        url = url?.takeIf { it.startsWith("https://") } ?: "$EVENT_PAGE$id",
+        feltReports = felt?.takeIf { it > 0 },
+        alertLevel = EarthquakeAlertLevel.fromKey(alert),
+        tsunami = tsunami == 1,
+        significance = sig ?: 0,
     )
 }
+
+/** `[longitude, latitude, …]` within range. */
+private fun List<Double>.isOnTheGlobe(): Boolean =
+    get(1) in -MAX_LATITUDE..MAX_LATITUDE && get(0) in -MAX_LONGITUDE..MAX_LONGITUDE
 
 internal fun Earthquake.toEntity(feed: EarthquakeFeed) = EarthquakeEntity(
     feed = feed.key,

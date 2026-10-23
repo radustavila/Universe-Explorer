@@ -44,8 +44,10 @@ class SystemTrayEarthquakeAlertNotifierTest {
         notifier.notifyEarthquake(alert.copy(earthquake = TestEarthquakes.significant(), isNearby = false))
 
         val posted = shadowOf(notificationManager).allNotifications.single()
-        assertEquals("Earthquake at sea, tsunami possible", posted.extras.getCharSequence(Notification.EXTRA_TITLE).toString())
-        assertTrue(posted.extras.getCharSequence(Notification.EXTRA_TEXT).toString().contains("Check official tsunami warnings."))
+        val title = posted.extras.getCharSequence(Notification.EXTRA_TITLE).toString()
+        assertEquals("Earthquake at sea, tsunami possible", title)
+        val text = posted.extras.getCharSequence(Notification.EXTRA_TEXT).toString()
+        assertTrue(text, text.contains("Check official tsunami warnings."))
     }
 
     @Test

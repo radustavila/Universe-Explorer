@@ -96,10 +96,10 @@ data class EarthquakePlace(
         private val WITH_DISTANCE = Regex("""^\s*(\d+(?:\.\d+)?)\s*km\s+([NESW]{1,3})\s+of\s+(.+?)\s*$""")
 
         fun parse(place: String): EarthquakePlace? {
-            if (place.isBlank()) return null
-            val match = WITH_DISTANCE.matchEntire(place) ?: return EarthquakePlace(name = place.trim())
-            val (distance, direction, name) = match.destructured
-            return EarthquakePlace(name = name, distanceKm = distance.toDouble(), direction = direction)
+            val trimmed = place.trim().takeIf(String::isNotEmpty) ?: return null
+            return WITH_DISTANCE.matchEntire(trimmed)?.destructured?.let { (distance, direction, name) ->
+                EarthquakePlace(name = name, distanceKm = distance.toDouble(), direction = direction)
+            } ?: EarthquakePlace(name = trimmed)
         }
     }
 }
@@ -107,13 +107,13 @@ data class EarthquakePlace(
 /** Which quakes the events map shows; one at a time, or none. [key] is saved, never rename one. */
 enum class EarthquakeFilter(val key: String, val minimumMagnitude: Double?, val window: Duration) {
     /** USGS's default feed: magnitude 2.5 and up, past week. */
-    MAGNITUDE_2_5("m2_5", minimumMagnitude = 2.5, window = Duration.ofDays(7)),
+    MAGNITUDE_2_5("m2_5", minimumMagnitude = 2.5, window = Duration.ofDays(DAYS_IN_WEEK)),
 
     /** Magnitude 4.5 and up, past week: felt widely, about a hundred a week. */
-    MAGNITUDE_4_5("m4_5", minimumMagnitude = 4.5, window = Duration.ofDays(7)),
+    MAGNITUDE_4_5("m4_5", minimumMagnitude = 4.5, window = Duration.ofDays(DAYS_IN_WEEK)),
 
     /** USGS's significant earthquakes of the past month. */
-    SIGNIFICANT("significant", minimumMagnitude = null, window = Duration.ofDays(30)),
+    SIGNIFICANT("significant", minimumMagnitude = null, window = Duration.ofDays(DAYS_IN_MONTH)),
     ;
 
     fun matches(quake: Earthquake, now: Instant): Boolean {
@@ -127,6 +127,10 @@ enum class EarthquakeFilter(val key: String, val minimumMagnitude: Double?, val 
         fun fromKey(key: String?): EarthquakeFilter? = entries.firstOrNull { it.key == key }
     }
 }
+
+/** USGS's feed windows: `_week` and `_month`. */
+private const val DAYS_IN_WEEK = 7L
+private const val DAYS_IN_MONTH = 30L
 
 /**
  * A quake worth a notification: [earthquake] struck [distanceKm] from the saved place. [isNearby]

@@ -28,6 +28,7 @@ internal fun NavHostController.openSearchTarget(target: SearchTarget) {
         is SearchTarget.SkyEventEntry -> navigateToSkyEvents(target.id)
         is SearchTarget.NewsEntry -> navigateToNewsItem(target.id)
         is SearchTarget.CometEntry -> navigateToCometDetails(target.designation)
+        is SearchTarget.EarthquakeEntry -> navigateToEarthEvents(earthquakeId = target.id)
         is SearchTarget.Favorite -> openFavorite(target.item)
     }
 }

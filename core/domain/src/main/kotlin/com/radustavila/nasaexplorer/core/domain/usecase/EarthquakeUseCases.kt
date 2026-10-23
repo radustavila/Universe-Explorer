@@ -70,11 +70,20 @@ class CheckEarthquakeAlertUseCase @Inject constructor(
 ) {
     /** @return the alert that was posted, or null when none was due. */
     suspend operator fun invoke(): EarthquakeAlert? {
-        if (!alertRepository.enabled.first()) return null
-        val place = locationRepository.location.first()?.coordinate ?: return null
+        val due = dueAlerts()
+        val alert = due.maxByOrNull { it.earthquake.magnitude } ?: return null
+        notifier.notifyEarthquake(alert)
+        alertRepository.setAlertedUntil(due.maxOf { it.earthquake.time })
+        return alert
+    }
+
+    /** Every quake that would alert now, when the alert is on and a place is saved. */
+    private suspend fun dueAlerts(): List<EarthquakeAlert> {
+        val enabled = alertRepository.enabled.first()
+        val place = locationRepository.location.first()?.coordinate?.takeIf { enabled } ?: return emptyList()
         val now = timeProvider.now()
         val alertedUntil = alertRepository.alertedUntil()
-        val due = earthquakeRepository.observeEarthquakes().first()
+        return earthquakeRepository.observeEarthquakes().first()
             .filter { quake -> !quake.time.isBefore(now.minus(MAX_AGE)) }
             .filter { quake -> alertedUntil == null || quake.time.isAfter(alertedUntil) }
             .mapNotNull { quake ->
@@ -83,10 +92,6 @@ class CheckEarthquakeAlertUseCase @Inject constructor(
                 val tsunami = quake.tsunami && distance <= TSUNAMI_RADIUS_KM
                 if (nearby || tsunami) EarthquakeAlert(quake, distance, isNearby = nearby) else null
             }
-        val alert = due.maxByOrNull { it.earthquake.magnitude } ?: return null
-        notifier.notifyEarthquake(alert)
-        alertRepository.setAlertedUntil(due.maxOf { it.earthquake.time })
-        return alert
     }
 
     companion object {

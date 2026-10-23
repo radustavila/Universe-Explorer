@@ -6,6 +6,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.ClearCacheUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.MeasureStorageUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveAuroraAlertSettingsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDailyWallpaperEnabledUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEarthquakeAlertEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveIssPassRemindersEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveNewApodNotificationsEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveObserverLocationUseCase
@@ -14,6 +15,7 @@ import com.radustavila.nasaexplorer.core.domain.usecase.ObserveUnitPreferencesUs
 import com.radustavila.nasaexplorer.core.domain.usecase.SetAuroraAlertEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetAuroraAlertLocationUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetDailyWallpaperEnabledUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.SetEarthquakeAlertEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetIssPassRemindersEnabledUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetMeasurementSystemUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SetNewApodNotificationsEnabledUseCase
@@ -60,12 +62,14 @@ class SettingsViewModel @Inject constructor(
     private val setDailyWallpaper: SetDailyWallpaperEnabledUseCase,
     private val measureStorage: MeasureStorageUseCase,
     private val clearCache: ClearCacheUseCase,
+    observeEarthquakeAlerts: ObserveEarthquakeAlertEnabledUseCase,
+    private val setEarthquakeAlertEnabled: SetEarthquakeAlertEnabledUseCase,
 ) : ViewModel() {
 
     private val storage = MutableStateFlow(StorageUiState())
     private val message = MutableStateFlow<SettingsMessage?>(null)
 
-    private val alerts = combine(observeAuroraAlerts(), observeStargazingAlerts(), ::Pair)
+    private val alerts = combine(observeAuroraAlerts(), observeStargazingAlerts(), observeEarthquakeAlerts(), ::Triple)
 
     private val choices = combine(
         observeUnitPreferences(),
@@ -73,13 +77,14 @@ class SettingsViewModel @Inject constructor(
         alerts,
         observeIssReminders(),
         observeDailyWallpaper(),
-    ) { units, newApod, (aurora, stargazing), iss, wallpaper ->
+    ) { units, newApod, (aurora, stargazing, earthquakes), iss, wallpaper ->
         SettingsUiState(
             units = units,
             newApodNotificationsEnabled = newApod,
             auroraAlerts = aurora,
             issRemindersEnabled = iss,
             stargazingAlerts = stargazing,
+            earthquakeAlertsEnabled = earthquakes,
             dailyWallpaperEnabled = wallpaper,
         )
     }
@@ -152,6 +157,17 @@ class SettingsViewModel @Inject constructor(
                 return@launch
             }
             setStargazingAlertEnabled(enabled)
+        }
+    }
+
+    /** Quakes are checked against the saved place; without one the user is told to save it first. */
+    fun onEarthquakeAlertsChange(enabled: Boolean) {
+        viewModelScope.launch {
+            if (enabled && observeObserverLocation().first() == null) {
+                message.value = SettingsMessage.EARTHQUAKE_NEEDS_PLACE
+                return@launch
+            }
+            setEarthquakeAlertEnabled(enabled)
         }
     }
 

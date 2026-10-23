@@ -65,7 +65,8 @@ class EarthEventsDatabaseMigrationTest {
             db.execSQL(
                 "CREATE TABLE IF NOT EXISTS `earth_event` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, " +
                     "`category` TEXT NOT NULL, `closed_at` INTEGER, `last_update` INTEGER NOT NULL, " +
-                    "`sources` TEXT NOT NULL, `geometry` TEXT NOT NULL, `cached_at` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+                    "`sources` TEXT NOT NULL, `geometry` TEXT NOT NULL, `cached_at` INTEGER NOT NULL, " +
+                    "PRIMARY KEY(`id`))",
             )
             db.execSQL("CREATE INDEX IF NOT EXISTS `index_earth_event_last_update` ON `earth_event` (`last_update`)")
             db.execSQL(

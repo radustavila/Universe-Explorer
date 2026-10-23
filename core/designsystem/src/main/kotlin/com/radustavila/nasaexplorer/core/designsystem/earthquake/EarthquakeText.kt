@@ -21,9 +21,13 @@ object EarthquakeText {
     /** "61 km WNW of Leni, Italy" (or "38 mi WNW of …"), USGS's own text for other places. */
     fun place(resources: Resources, formatter: UnitFormatter, quake: Earthquake): String {
         val place = quake.parsedPlace ?: return resources.getString(R.string.earthquake_place_unknown)
-        val distance = place.distanceKm ?: return place.name
-        val direction = place.direction ?: return place.name
-        return resources.getString(R.string.earthquake_place_offset, formatter.distance(distance), direction, place.name)
+        val distance = place.distanceKm
+        val direction = place.direction
+        return if (distance != null && direction != null) {
+            resources.getString(R.string.earthquake_place_offset, formatter.distance(distance), direction, place.name)
+        } else {
+            place.name
+        }
     }
 
     /** "M 5.7, 61 km WNW of Leni, Italy". */

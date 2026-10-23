@@ -3,27 +3,29 @@ package com.radustavila.nasaexplorer.di
 import com.radustavila.nasaexplorer.core.database.di.FavoritesModule
 import com.radustavila.nasaexplorer.core.datastore.di.DataStoreBindingModule
 import com.radustavila.nasaexplorer.core.domain.connectivity.NetworkMonitor
+import com.radustavila.nasaexplorer.core.domain.earthquake.EarthquakeAlertRepository
+import com.radustavila.nasaexplorer.core.domain.earthquake.EarthquakeRepository
 import com.radustavila.nasaexplorer.core.domain.location.CityDirectory
 import com.radustavila.nasaexplorer.core.domain.location.DeviceLocationProvider
 import com.radustavila.nasaexplorer.core.domain.location.ObserverLocationRepository
 import com.radustavila.nasaexplorer.core.domain.repository.ApodRepository
 import com.radustavila.nasaexplorer.core.domain.repository.AuroraAlertRepository
 import com.radustavila.nasaexplorer.core.domain.repository.EarthEventRepository
-import com.radustavila.nasaexplorer.core.domain.repository.NewsRepository
 import com.radustavila.nasaexplorer.core.domain.repository.EpicRepository
 import com.radustavila.nasaexplorer.core.domain.repository.ExoplanetRepository
 import com.radustavila.nasaexplorer.core.domain.repository.FavoritesRepository
 import com.radustavila.nasaexplorer.core.domain.repository.LaunchRepository
 import com.radustavila.nasaexplorer.core.domain.repository.MarsPhotoRepository
 import com.radustavila.nasaexplorer.core.domain.repository.NasaMediaRepository
+import com.radustavila.nasaexplorer.core.domain.repository.NewsRepository
 import com.radustavila.nasaexplorer.core.domain.repository.SmallBodiesRepository
 import com.radustavila.nasaexplorer.core.domain.repository.SpaceWeatherRepository
 import com.radustavila.nasaexplorer.core.domain.repository.SyncMetadataRepository
 import com.radustavila.nasaexplorer.core.domain.repository.TodayCardsRepository
 import com.radustavila.nasaexplorer.core.domain.repository.UserPreferencesRepository
 import com.radustavila.nasaexplorer.core.domain.sky.IssPassReminderScheduler
-import com.radustavila.nasaexplorer.core.domain.sky.SatellitePassReminderScheduler
 import com.radustavila.nasaexplorer.core.domain.sky.PeopleInSpaceRepository
+import com.radustavila.nasaexplorer.core.domain.sky.SatellitePassReminderScheduler
 import com.radustavila.nasaexplorer.core.domain.sky.SatelliteRepository
 import com.radustavila.nasaexplorer.core.domain.sky.SkyPreferencesRepository
 import com.radustavila.nasaexplorer.core.domain.sync.EpicSyncScheduler
@@ -39,6 +41,8 @@ import com.radustavila.nasaexplorer.core.testing.fake.FakeAuroraAlertRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeCityDirectory
 import com.radustavila.nasaexplorer.core.testing.fake.FakeDeviceLocationProvider
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthEventRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeAlertRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNewsRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEpicRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeEpicSyncScheduler
@@ -194,8 +198,9 @@ object TestFavoritesModule {
 }
 
 /**
- * Earth events start empty, so the Today card stays hidden unless a test seeds the fake; no EONET
- * calls (nor the events cache evictor, which this module also contributes).
+ * Earth events and quakes start empty, so the Today card stays hidden unless a test seeds the fake;
+ * no EONET or USGS calls (nor the events cache evictor or search sources, which this module also
+ * contributes). The strong-quake alert stays off.
  */
 @Module
 @TestInstallIn(components = [SingletonComponent::class], replaces = [EarthEventsDataModule::class])
@@ -207,6 +212,14 @@ object TestEarthEventsDataModule {
 
     @Provides
     fun provideEarthEventRepository(fake: FakeEarthEventRepository): EarthEventRepository = fake
+
+    @Provides
+    @Singleton
+    fun provideEarthquakeRepository(): EarthquakeRepository = FakeEarthquakeRepository()
+
+    @Provides
+    @Singleton
+    fun provideEarthquakeAlertRepository(): EarthquakeAlertRepository = FakeEarthquakeAlertRepository()
 }
 
 /**

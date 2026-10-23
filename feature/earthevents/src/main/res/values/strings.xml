@@ -113,4 +113,14 @@
         <item quantity="one">and %d other event</item>
         <item quantity="other">and %d other events</item>
     </plurals>
+
+    <!-- Earthquakes from USGS (F19). Chip labels take the count, like earth_events_filter_label. -->
+    <string name="earth_events_quakes_m2_5">Quakes M2.5+ · %1$d</string>
+    <string name="earth_events_quakes_m4_5">Quakes M4.5+ · %1$d</string>
+    <string name="earth_events_quakes_significant">Significant quakes · %1$d</string>
+    <string name="earth_events_quakes_show_list">Show the earthquakes as a list</string>
+    <string name="earth_events_quakes_show_map">Show the map</string>
+    <string name="earth_events_quakes_list_empty">No earthquakes for this filter yet</string>
+    <!-- List row's second line: %1$s date and time, %2$s depth ("10 km deep, shallow"). -->
+    <string name="earth_events_quake_row_details">%1$s · %2$s</string>
 </resources>

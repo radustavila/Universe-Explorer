@@ -11,6 +11,11 @@ object TestEarthquakes {
 
     val NOW: Instant = Instant.parse("2026-10-23T11:00:00Z")
 
+    private const val SMALL_AGE_HOURS = 5L
+
+    /** Older than a week: only the "significant" filter shows it. */
+    private const val SIGNIFICANT_AGE_DAYS = 12L
+
     fun earthquake(
         id: String = "us6000u4bk",
         magnitude: Double = 5.7,
@@ -39,7 +44,7 @@ object TestEarthquakes {
     /** A small, deep quake far from anyone: shown on the map, never an alert. */
     fun small(
         id: String = "us7000qx2a",
-        time: Instant = NOW.minus(Duration.ofHours(5)),
+        time: Instant = NOW.minus(Duration.ofHours(SMALL_AGE_HOURS)),
     ): Earthquake = earthquake(
         id = id,
         magnitude = 2.9,
@@ -55,7 +60,7 @@ object TestEarthquakes {
     /** The month's strongest: significant, with a tsunami flag. */
     fun significant(
         id: String = "us6000tzzz",
-        time: Instant = NOW.minus(Duration.ofDays(12)),
+        time: Instant = NOW.minus(Duration.ofDays(SIGNIFICANT_AGE_DAYS)),
     ): Earthquake = earthquake(
         id = id,
         magnitude = 7.7,

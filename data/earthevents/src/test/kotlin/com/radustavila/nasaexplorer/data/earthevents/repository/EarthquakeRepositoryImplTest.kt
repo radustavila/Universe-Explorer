@@ -68,7 +68,8 @@ class EarthquakeRepositoryImplTest {
     fun tearDown() = database.close()
 
     private fun serveBothFeeds() {
-        answers[WEEK_PATH] = server.fixtureResponse(UsgsFixtures.WEEK).addHeader("Last-Modified", UsgsFixtures.LAST_MODIFIED)
+        answers[WEEK_PATH] = server.fixtureResponse(UsgsFixtures.WEEK)
+            .addHeader("Last-Modified", UsgsFixtures.LAST_MODIFIED)
         answers[SIGNIFICANT_PATH] = server.fixtureResponse(UsgsFixtures.SIGNIFICANT)
             .addHeader("Last-Modified", UsgsFixtures.LAST_MODIFIED)
     }

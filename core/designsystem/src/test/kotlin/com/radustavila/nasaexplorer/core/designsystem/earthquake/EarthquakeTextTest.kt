@@ -18,7 +18,8 @@ class EarthquakeTextTest {
 
     private val resources = ApplicationProvider.getApplicationContext<Context>().resources
     private val metric = UnitFormatter(resources, Locale.UK, MeasurementSystem.METRIC, true, zone = ZoneId.of("UTC"))
-    private val imperial = UnitFormatter(resources, Locale.US, MeasurementSystem.IMPERIAL, true, zone = ZoneId.of("UTC"))
+    private val imperial =
+        UnitFormatter(resources, Locale.US, MeasurementSystem.IMPERIAL, true, zone = ZoneId.of("UTC"))
     private val sicily = TestEarthquakes.earthquake()
 
     @Test

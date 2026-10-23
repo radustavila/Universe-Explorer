@@ -53,7 +53,9 @@ class RetrofitUsgsRemoteDataSource @Inject constructor(
                 when {
                     response.code() == HTTP_NOT_MODIFIED -> EarthquakeFeedDownload.NotModified
                     !response.isSuccessful -> throw HttpException(response)
-                    else -> response.body()?.let { EarthquakeFeedDownload.Updated(it, response.headers()[LAST_MODIFIED]) }
+                    else -> response.body()?.let { feed ->
+                        EarthquakeFeedDownload.Updated(feed, lastModified = response.headers()[LAST_MODIFIED])
+                    }
                 }
             }.flatMap { download ->
                 download?.let { DataResult.Success(it) } ?: DataResult.Failure(AppError.EmptyResponse)

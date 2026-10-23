@@ -19,7 +19,11 @@ class EarthquakeSearchableSourceTest {
         listOf(
             TestEarthquakes.earthquake(id = "sicily"),
             TestEarthquakes.earthquake(id = "calabria", magnitude = 6.2, place = "10 km S of Crotone, Italy"),
-            TestEarthquakes.earthquake(id = "old", place = "5 km N of Rome, Italy", time = NOW.minus(Duration.ofDays(9))),
+            TestEarthquakes.earthquake(
+                id = "old",
+                place = "5 km N of Rome, Italy",
+                time = NOW.minus(Duration.ofDays(9)),
+            ),
             TestEarthquakes.small(),
         ),
     )

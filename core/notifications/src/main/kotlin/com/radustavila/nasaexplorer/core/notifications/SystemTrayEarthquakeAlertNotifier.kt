@@ -44,7 +44,8 @@ class SystemTrayEarthquakeAlertNotifier @Inject constructor(
             formatter.distance(alert.distanceKm),
             formatter.time(quake.time),
         )
-        val title = if (alert.isNearby) R.string.earthquake_alert_title_nearby else R.string.earthquake_alert_title_tsunami
+        val title =
+            if (alert.isNearby) R.string.earthquake_alert_title_nearby else R.string.earthquake_alert_title_tsunami
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_earthquake)

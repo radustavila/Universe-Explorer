@@ -14,6 +14,7 @@ data class SettingsUiState(
     val auroraAlerts: AuroraAlertSettings = AuroraAlertSettings(),
     val issRemindersEnabled: Boolean = false,
     val stargazingAlerts: StargazingAlertSettings = StargazingAlertSettings(),
+    val earthquakeAlertsEnabled: Boolean = false,
     /** The saved observer location, which ISS reminders and clear-night alerts need and aurora alerts can use. */
     val observerLocation: ObserverLocation? = null,
     val dailyWallpaperEnabled: Boolean = false,
@@ -47,4 +48,7 @@ enum class SettingsMessage {
 
     /** Clear-night alerts were turned on without a saved place. */
     STARGAZING_NEEDS_PLACE,
+
+    /** Strong-quake alerts were turned on without a saved place. */
+    EARTHQUAKE_NEEDS_PLACE,
 }

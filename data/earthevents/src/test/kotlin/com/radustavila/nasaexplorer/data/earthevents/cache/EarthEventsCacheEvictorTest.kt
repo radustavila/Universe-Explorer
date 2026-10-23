@@ -73,7 +73,8 @@ class EarthEventsCacheEvictorTest {
     fun `quakes older than the longest feed window go`() = runTest {
         val quakes = RoomEarthquakesLocalDataSource(database.earthquakeDao(), UnconfinedTestDispatcher())
         val recent = TestEarthquakes.earthquake(id = "recent", time = now.minus(Duration.ofDays(3)))
-        val old = TestEarthquakes.significant(id = "old", time = now.minus(EarthEventsCacheEvictor.EARTHQUAKE_RETENTION).minusSeconds(1))
+        val tooOld = now.minus(EarthEventsCacheEvictor.EARTHQUAKE_RETENTION).minusSeconds(1)
+        val old = TestEarthquakes.significant(id = "old", time = tooOld)
         quakes.replaceFeed(EarthquakeFeed.SIGNIFICANT_MONTH, listOf(recent, old), lastModified = null, at = now)
 
         assertEquals(1, evictor.evict(now))
