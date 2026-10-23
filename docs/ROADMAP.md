@@ -17,14 +17,40 @@ and read that feature's section in the doc before writing code.
 
 ## Direction
 
-The app focuses on the universe and Earth. Launches stay a single small card on purpose.
+The app focuses on the universe and Earth. Launches stay small: one card and, from F27, one screen
+(no launch news or events).
 
 Bottom bar: **Today · Universe · Earth · Favourites · More** (defined in F0).
 
 ## Next batch, in build order
 
-Chosen by comparing the app with NASA's own app and the main astronomy apps (2026-10-22). Every source
+Chosen by comparing the app again with the main space, sky and launch apps (2026-10-23). Every source
 is free and allows commercial use unless noted.
+
+| # | Section | Feature | What it adds | APIs |
+|---|---|---|---|---|
+| F19 | Earth | Earthquakes | Recent quakes on the Earth maps and in Live Earth events; opt-in strong-quake alert | USGS GeoJSON feeds (public domain) |
+| F20 | Universe | Milky Way planner | When the galactic core is up in a dark, moonless sky; twilight times | Astronomy Engine (offline) |
+| F21 | Today | NASA podcasts | Latest episodes in News, played in the app with background playback | NASA podcast RSS |
+| F27 | Launches | Launches screen | Upcoming and past launches, details, booster landings, launch reminders | Launch Library 2 (15 requests/hour) |
+| F22 | Universe | AR sky | The camera behind the sky map, field of view matched to the lens, alignment | CameraX (on device) |
+| F23 | Universe | Deep sky and observing log | Messier and bright NGC objects on the sky map; Messier and Caldwell checklists | OpenNGC (CC BY-SA 4.0) |
+| F24 | Universe | Webb right now | What JWST is observing now and next this week | STScI observing schedules |
+| F25 | Universe | Moon map | Zoomable Moon with landing sites and today's terminator | Own tiles from the LRO WAC mosaic (PDS), NSSDCA |
+| F26 | Earth | Climate vital signs | CO2, global temperature, sea level and Arctic sea ice as small charts | NOAA GML, NASA GISTEMP, NOAA STAR, NSIDC (see M4) |
+
+Do not use Open-Meteo or 7Timer (non-commercial free tiers) or Stellarium data (GPL).
+
+## Before monetizing (ads, premium)
+
+| # | Task |
+|---|---|
+| M1 | Rename the app: no "NASA" in the name, no NASA logos, add "Not affiliated with NASA" |
+| M2 | Ask the APOD editors for permission to show APOD with banner ads; until then no ads on APOD screens |
+| M3 | AdMob banners with Google UMP consent (EEA/UK), privacy policy, Play Data safety form |
+| M4 | Confirm commercial terms with Launch Library 2, CelesTrak and NSIDC (F26); replace wheretheiss.at with on-device SGP4 |
+
+## Built (F0–F18)
 
 | # | Section | Feature | What it adds | APIs |
 |---|---|---|---|---|
@@ -36,22 +62,6 @@ is free and allows commercial use unless noted.
 | F14 | Today | NASA news and video | NASA stories, Image of the Day, NASA YouTube videos and live streams | NASA RSS, YouTube feed |
 | F17 | Universe | Sky map | Stars, constellations, planets and ISS, aimed by moving the phone; red night mode | HYG (CC BY-SA 4.0), d3-celestial, Astronomy Engine |
 | F18 | Universe | Bright comets | Comets visible now and where to look | JPL SBDB query, JPL Horizons |
-
-Do not use Open-Meteo or 7Timer (non-commercial free tiers) or Stellarium data (GPL).
-
-## Before monetizing (ads, premium)
-
-| # | Task |
-|---|---|
-| M1 | Rename the app: no "NASA" in the name, no NASA logos, add "Not affiliated with NASA" |
-| M2 | Ask the APOD editors for permission to show APOD with banner ads; until then no ads on APOD screens |
-| M3 | AdMob banners with Google UMP consent (EEA/UK), privacy policy, Play Data safety form |
-| M4 | Confirm commercial terms with Launch Library 2 and CelesTrak; replace wheretheiss.at with on-device SGP4 |
-
-## Built (F0–F10)
-
-| # | Section | Feature | What it adds | APIs |
-|---|---|---|---|---|
 | F1 | Universe | APOD upgrades | Archive search, jump to date, On this day, daily wallpaper, correct share links, alt text | science.nasa.gov apod-basic |
 | F4 | Earth | Earth today | Daily whole-Earth photos from DSCOVR, played as a rotation | EPIC |
 | F0 | All | Shared groundwork | Per-API rate limits, cache eviction, favourites for every source, the 5-tab navigation | – |
