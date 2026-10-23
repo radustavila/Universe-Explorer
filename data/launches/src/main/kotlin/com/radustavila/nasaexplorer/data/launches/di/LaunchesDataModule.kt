@@ -1,7 +1,18 @@
 package com.radustavila.nasaexplorer.data.launches.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
+import com.radustavila.nasaexplorer.core.common.dispatchers.AppDispatcher
+import com.radustavila.nasaexplorer.core.common.dispatchers.ApplicationScope
+import com.radustavila.nasaexplorer.core.common.dispatchers.Dispatcher
+import com.radustavila.nasaexplorer.core.domain.launch.LaunchReminderRepository
+import com.radustavila.nasaexplorer.core.domain.launch.LaunchReminderScheduler
 import com.radustavila.nasaexplorer.core.domain.repository.LaunchRepository
 import com.radustavila.nasaexplorer.core.domain.search.SearchableSource
 import com.radustavila.nasaexplorer.core.domain.sky.PeopleInSpaceRepository
@@ -15,6 +26,8 @@ import com.radustavila.nasaexplorer.data.launches.local.PeopleInSpaceLocalDataSo
 import com.radustavila.nasaexplorer.data.launches.local.PersonInSpaceDao
 import com.radustavila.nasaexplorer.data.launches.local.RoomPeopleInSpaceLocalDataSource
 import com.radustavila.nasaexplorer.data.launches.local.RoomLaunchLocalDataSource
+import com.radustavila.nasaexplorer.data.launches.reminder.DataStoreLaunchReminderRepository
+import com.radustavila.nasaexplorer.data.launches.reminder.WorkManagerLaunchReminderScheduler
 import com.radustavila.nasaexplorer.data.launches.remote.LaunchLibraryService
 import com.radustavila.nasaexplorer.data.launches.remote.LaunchRemoteDataSource
 import com.radustavila.nasaexplorer.data.launches.remote.RetrofitLaunchRemoteDataSource
@@ -31,12 +44,20 @@ import dagger.multibindings.IntoSet
 import java.net.URI
 import javax.inject.Qualifier
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.plus
 import retrofit2.Retrofit
 import retrofit2.create
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
 annotation class LaunchLibraryApi
+
+/** The DataStore holding the launch reminders the user turned on. */
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class LaunchRemindersStore
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -60,17 +81,27 @@ interface LaunchesDataModule {
     @Binds
     @IntoSet
     fun bindLaunchSearchableSource(impl: LaunchSearchableSource): SearchableSource
+
+    @Binds
+    fun bindLaunchReminderRepository(impl: DataStoreLaunchReminderRepository): LaunchReminderRepository
+
+    @Binds
+    fun bindLaunchReminderScheduler(impl: WorkManagerLaunchReminderScheduler): LaunchReminderScheduler
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
 object LaunchesInfrastructureModule {
 
+    /** Backed up with the user's other choices (see the app's backup rules). */
+    const val REMINDERS_STORE_NAME = "launch_reminders"
+
     @Provides
     @Singleton
     fun provideLaunchesDatabase(@ApplicationContext context: Context): LaunchesDatabase =
         Room.databaseBuilder(context, LaunchesDatabase::class.java, LaunchesDatabase.NAME)
-            // A disposable mirror of Launch Library 2: rebuilding it costs one refresh.
+            // From 4 on Room migrates (see LaunchesDatabase); older versions, or a downgrade, are
+            // rebuilt, which costs one refresh.
             .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
 
@@ -94,6 +125,19 @@ object LaunchesInfrastructureModule {
     @IntoSet
     fun provideLaunchLibraryRateBudget(): HostRateBudget =
         HostRateBudget.LAUNCH_LIBRARY.copy(host = URI(BuildConfig.LAUNCH_LIBRARY_BASE_URL).host)
+
+    @Provides
+    @Singleton
+    @LaunchRemindersStore
+    fun provideLaunchRemindersDataStore(
+        @ApplicationContext context: Context,
+        @ApplicationScope applicationScope: CoroutineScope,
+        @Dispatcher(AppDispatcher.IO) ioDispatcher: CoroutineDispatcher,
+    ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
+        corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() },
+        scope = applicationScope + ioDispatcher,
+        produceFile = { context.preferencesDataStoreFile(REMINDERS_STORE_NAME) },
+    )
 
     @Provides
     @Singleton

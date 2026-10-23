@@ -1,0 +1,301 @@
+{
+  "id": "e2886a96-5ce9-4f45-872f-4e25a00be837",
+  "url": "https://lldev.thespacedevs.com/2.3.0/launches/e2886a96-5ce9-4f45-872f-4e25a00be837/",
+  "name": "Falcon 9 Block 5 | Starlink Group 15-16",
+  "response_mode": "detailed",
+  "slug": "falcon-9-block-5-starlink-group-15-16",
+  "launch_designator": null,
+  "status": {
+    "id": 5,
+    "name": "On Hold",
+    "abbrev": "Hold",
+    "description": "Launch has been put on hold, the new date is not yet known."
+  },
+  "last_updated": "2026-10-16T16:02:46Z",
+  "net": "2026-10-25T05:07:00Z",
+  "net_precision": {
+    "id": 1,
+    "name": "Minute",
+    "abbrev": "MIN",
+    "description": "The T-0 is accurate to the minute."
+  },
+  "window_end": "2026-10-25T09:07:00Z",
+  "window_start": "2026-10-25T05:07:00Z",
+  "image": {
+    "id": 1296,
+    "name": "Starlink night fairing",
+    "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon2520925_image_20221009234147.png",
+    "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305192320.png",
+    "credit": "SpaceX",
+    "single_use": false
+  },
+  "infographic": null,
+  "probability": null,
+  "weather_concerns": null,
+  "failreason": "",
+  "hashtag": null,
+  "launch_service_provider": {
+    "response_mode": "normal",
+    "id": 121,
+    "url": "https://lldev.thespacedevs.com/2.3.0/agencies/121/",
+    "name": "SpaceX",
+    "abbrev": "SpX",
+    "type": {
+      "id": 3,
+      "name": "Commercial"
+    },
+    "featured": true,
+    "description": "Space Exploration Technologies Corp., known as SpaceX, is an American aerospace manufacturer and space transport services company headquartered in Hawthorne, California. It was founded in 2002 by entrepreneur Elon Musk with the goal of reducing space transportation costs and enabling the colonization of Mars. SpaceX operates from many pads, on the East Coast of the US they operate from SLC-40 at Cape Canaveral Space Force Station and historic LC-39A at Kennedy Space Center. They also operate from SLC-4E at Vandenberg Space Force Base, California, usually for polar launches. Another launch site is being developed at Boca Chica, Texas.",
+    "administrator": "CEO: Elon Musk",
+    "founding_year": 2002,
+    "launchers": "Falcon | Starship",
+    "spacecraft": "Dragon",
+    "parent": null,
+    "image": {
+      "id": 1736,
+      "name": "Falcon 9 liftoff from LC-39A",
+      "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon_9_image_20230807133459.jpeg",
+      "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305193628.jpeg",
+      "credit": "SpaceX",
+      "single_use": false
+    },
+    "total_launch_count": 739,
+    "consecutive_successful_launches": 224,
+    "successful_launches": 724,
+    "failed_launches": 15,
+    "pending_launches": 135,
+    "consecutive_successful_landings": 33,
+    "successful_landings": 684,
+    "failed_landings": 29,
+    "attempted_landings": 712,
+    "successful_landings_spacecraft": 63,
+    "failed_landings_spacecraft": 3,
+    "attempted_landings_spacecraft": 68,
+    "successful_landings_payload": 1,
+    "failed_landings_payload": 0,
+    "attempted_landings_payload": 1,
+    "info_url": "https://www.spacex.com/",
+    "wiki_url": "https://en.wikipedia.org/wiki/SpaceX"
+  },
+  "rocket": {
+    "id": 9273,
+    "configuration": {
+      "response_mode": "detailed",
+      "id": 164,
+      "url": "https://lldev.thespacedevs.com/2.3.0/launcher_configurations/164/",
+      "name": "Falcon 9",
+      "full_name": "Falcon 9 Block 5",
+      "variant": "Block 5",
+      "active": true,
+      "is_placeholder": false,
+      "reusable": true,
+      "image": {
+        "id": 1736,
+        "name": "Falcon 9 liftoff from LC-39A",
+        "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon_9_image_20230807133459.jpeg",
+        "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305193628.jpeg",
+        "credit": "SpaceX",
+        "single_use": false
+      },
+      "info_url": "https://www.spacex.com/vehicles/falcon-9/",
+      "wiki_url": "https://en.wikipedia.org/wiki/Falcon_9",
+      "description": "Falcon 9 is a two-stage rocket designed and manufactured by SpaceX for the reliable and safe transport of satellites and the Dragon spacecraft into orbit. The Block 5 variant is the fifth major interval aimed at improving upon the ability for rapid reusability.",
+      "alias": "",
+      "min_stage": 2,
+      "max_stage": 2,
+      "length": 70.0,
+      "diameter": 3.65,
+      "maiden_flight": "2018-05-11",
+      "launch_cost": 52000000,
+      "launch_mass": 549.0,
+      "leo_capacity": 22800.0,
+      "gto_capacity": 8300.0,
+      "geo_capacity": null,
+      "sso_capacity": null,
+      "to_thrust": 7607.0,
+      "apogee": 200.0,
+      "total_launch_count": 640,
+      "consecutive_successful_launches": 342,
+      "successful_launches": 639,
+      "failed_launches": 1,
+      "pending_launches": 119,
+      "attempted_landings": 630,
+      "successful_landings": 625,
+      "failed_landings": 5,
+      "consecutive_successful_landings": 325,
+      "fastest_turnaround": "PT38M31S"
+    },
+    "launcher_stage": [
+      {
+        "id": 1033,
+        "type": "Core",
+        "reused": true,
+        "launcher_flight_number": 26,
+        "launcher": {
+          "response_mode": "normal",
+          "id": 125,
+          "url": "https://lldev.thespacedevs.com/2.3.0/launchers/125/",
+          "flight_proven": true,
+          "serial_number": "B1082",
+          "is_placeholder": false,
+          "status": {
+            "id": 3,
+            "name": "active"
+          },
+          "image": {
+            "id": 2632,
+            "name": "B1082 landing at LZ-4 (USSF-62)",
+            "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/b1082_landing_a_image_20251219191159.jpg",
+            "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/b1082_landing_a_image_thumbnail_20251219191159.jpeg",
+            "credit": "USSF SSC",
+            "single_use": true
+          },
+          "details": "Falcon 9 Block 5 booster.",
+          "successful_landings": 25,
+          "attempted_landings": 25,
+          "flights": 25,
+          "last_launch_date": "2026-10-01T18:32:00Z",
+          "first_launch_date": "2024-01-03T03:44:20Z",
+          "fastest_turnaround": "P25DT10M"
+        },
+        "previous_flight_date": "2026-10-01T18:32:00Z",
+        "turn_around_time": "P22DT10H57M",
+        "landing": {
+          "id": 1969,
+          "url": "https://lldev.thespacedevs.com/2.3.0/landings/1969/",
+          "attempt": true,
+          "success": null,
+          "description": "The Falcon 9 first stage B1082 will land on ASDS OCISLY after its 26th flight.",
+          "downrange_distance": 574.0,
+          "landing_location": {
+            "id": 1,
+            "name": "Of Course I Still Love You",
+            "active": true,
+            "abbrev": "OCISLY",
+            "description": "The second ASDS barge, Of Course I Still Love You (OCISLY) services launches in the Pacific Ocean and was the site of the first landing of a SpaceX Falcon 9 first stage during CRS-8, the launch of a Dragon spacecraft to the International Space Station.",
+            "location": null,
+            "longitude": null,
+            "latitude": null,
+            "image": {
+              "id": 1969,
+              "name": "OCISLY empty",
+              "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/ocisly_empty_image_20240310164323.png",
+              "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/ocisly_empty_image_thumbnail_20240310164323.png",
+              "credit": "SpaceX",
+              "single_use": true
+            },
+            "successful_landings": 230,
+            "attempted_landings": 238,
+            "failed_landings": 8
+          },
+          "type": {
+            "id": 1,
+            "name": "Autonomous Spaceport Drone Ship",
+            "abbrev": "ASDS",
+            "description": "An autonomous spaceport drone ship (ASDS) is an ocean-going vessel derived from a deck barge, outfitted with station-keeping engines and a large landing platform. Construction of such ships was commissioned by aerospace company SpaceX to allow for recovery of rocket first-stages at sea for high-velocity missions which do not carry enough fuel to return to the launch site after lofting spacecraft onto an orbital trajectory."
+          }
+        },
+        "previous_flight": {
+          "id": "67213393-7983-4c06-8b44-b8c785a5ed79",
+          "url": "https://lldev.thespacedevs.com/2.3.0/launches/67213393-7983-4c06-8b44-b8c785a5ed79/",
+          "name": "Falcon 9 Block 5 | Transporter 18 (Dedicated SSO Rideshare)"
+        }
+      }
+    ],
+    "spacecraft_stage": [],
+    "payloads": []
+  },
+  "mission": {
+    "id": 7872,
+    "name": "Starlink Group 15-16",
+    "type": "Communications",
+    "description": "A batch of 27 satellites for the Starlink mega-constellation - SpaceX's project for space-based Internet communication system.",
+    "image": null,
+    "orbit": {
+      "id": 8,
+      "name": "Low Earth Orbit",
+      "abbrev": "LEO"
+    },
+    "vid_urls": []
+  },
+  "pad": {
+    "id": 16,
+    "url": "https://lldev.thespacedevs.com/2.3.0/pads/16/",
+    "active": true,
+    "name": "Space Launch Complex 4E",
+    "image": {
+      "id": 1342,
+      "name": "Falcon 9 Block 5 | SARah 2 & 3 from SLC-4E",
+      "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon2520925_image_20231223073520.jpeg",
+      "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305192449.jpeg",
+      "credit": "SpaceX",
+      "single_use": false
+    },
+    "description": "Space Launch Complex 4 East (SLC-4E) is a launch site at Vandenberg Space Force Base, California, U.S.\r\n\r\nThe pad was previously used by Atlas and Titan rockets between 1963 and 2005. The pad was built for use by Atlas-Agena rockets, but was later rebuilt to handle Titan rockets.",
+    "info_url": null,
+    "wiki_url": "https://en.wikipedia.org/wiki/Vandenberg_Space_Launch_Complex_4#SLC-4E",
+    "map_url": "https://www.google.com/maps?q=34.632,-120.611",
+    "latitude": 34.632,
+    "longitude": -120.611,
+    "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/pad_16_20200803143532.jpg",
+    "total_launch_count": 303,
+    "orbital_launch_attempt_count": 303,
+    "fastest_turnaround": "P2DT7H48M21S",
+    "location": {
+      "response_mode": "normal",
+      "id": 11,
+      "url": "https://lldev.thespacedevs.com/2.3.0/locations/11/",
+      "name": "Vandenberg SFB, CA, USA",
+      "active": true,
+      "description": "Vandenberg Space Force Base is a United States Space Force Base in Santa Barbara County, California. Established in 1941, Vandenberg Space Force Base is a space launch base, launching spacecraft from the Western Range, and also performs missile testing. The United States Space Force's Space Launch Delta 30 serves as the host delta for the base, equivalent to an Air Force air base wing. In addition to its military space launch mission, Vandenberg Space Force Base also hosts space launches for civil and commercial space entities, such as NASA and SpaceX.",
+      "image": {
+        "id": 2226,
+        "name": "Vandenberg SFB imaged by Sentinel-2",
+        "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/vandenberg_sfb__image_20240920082910.jpeg",
+        "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/vandenberg_sfb__image_thumbnail_20240920082910.jpeg",
+        "credit": "Contains modified Copernicus Sentinel data 2020",
+        "single_use": true
+      },
+      "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/location_11_20200803142416.jpg",
+      "longitude": -120.52023,
+      "latitude": 34.75133,
+      "timezone_name": "America/Los_Angeles",
+      "total_launch_count": 919,
+      "total_landing_count": 37
+    }
+  },
+  "webcast_live": false,
+  "orbital_launch_attempt_count": 7425,
+  "location_launch_attempt_count": 921,
+  "pad_launch_attempt_count": 305,
+  "agency_launch_attempt_count": 742,
+  "orbital_launch_attempt_count_year": 252,
+  "location_launch_attempt_count_year": 69,
+  "pad_launch_attempt_count_year": 67,
+  "agency_launch_attempt_count_year": 123,
+  "flightclub_url": "https://flightclub.io/result?llId=e2886a96-5ce9-4f45-872f-4e25a00be837",
+  "vid_urls": [
+    {
+      "priority": 10,
+      "source": "x.com",
+      "publisher": "SpaceX",
+      "title": "Starlink Mission",
+      "description": "Livestream on X",
+      "feature_image": "https://pbs.twimg.com/media/HUhJ_OAWkAAPj75.jpg",
+      "url": "https://x.com/i/broadcasts/1mGPaZgYgLDJN",
+      "type": {
+        "id": 1,
+        "name": "Official Webcast"
+      },
+      "language": {
+        "id": 1,
+        "name": "English",
+        "code": "en"
+      },
+      "start_time": "2026-10-24T05:19:00Z",
+      "end_time": "2026-10-24T07:19:00Z",
+      "live": false
+    }
+  ],
+  "pad_turnaround": "P3DT7H15M"
+}

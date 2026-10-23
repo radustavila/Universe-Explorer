@@ -31,7 +31,7 @@ class LaunchRemoteDataSourceTest {
     }
 
     @Test
-    fun `asks for a few upcoming launches with their livestreams in one call`() = runTest {
+    fun `asks for the next 30 upcoming launches in detail in one call`() = runTest {
         server.enqueueFixture(UPCOMING_FIXTURE)
 
         val result = remoteDataSource.fetchUpcoming()
@@ -40,9 +40,35 @@ class LaunchRemoteDataSourceTest {
         assertEquals(1, server.requestCount)
         val url = server.takeRequest().requestUrl!!
         assertEquals("/2.3.0/launches/upcoming/", url.encodedPath)
-        assertEquals("5", url.queryParameter("limit"))
+        assertEquals("30", url.queryParameter("limit"))
         assertEquals("detailed", url.queryParameter("mode"))
         assertEquals("true", url.queryParameter("hide_recent_previous"))
+    }
+
+    @Test
+    fun `asks for the last 20 launches in detail in one call`() = runTest {
+        server.enqueueFixture(PREVIOUS_DETAILED_FIXTURE)
+
+        val result = remoteDataSource.fetchPrevious()
+
+        assertEquals(4, (result as DataResult.Success).data.size)
+        val url = server.takeRequest().requestUrl!!
+        assertEquals("/2.3.0/launches/previous/", url.encodedPath)
+        assertEquals("20", url.queryParameter("limit"))
+        assertEquals("detailed", url.queryParameter("mode"))
+    }
+
+    @Test
+    fun `re-checks one launch by its id`() = runTest {
+        server.enqueueFixture(SCRUBBED_FIXTURE)
+
+        val result = remoteDataSource.fetchLaunch("e2886a96-5ce9-4f45-872f-4e25a00be837")
+
+        assertEquals("e2886a96-5ce9-4f45-872f-4e25a00be837", (result as DataResult.Success).data.id)
+        assertEquals(
+            "/2.3.0/launches/e2886a96-5ce9-4f45-872f-4e25a00be837/",
+            server.takeRequest().requestUrl!!.encodedPath,
+        )
     }
 
     @Test

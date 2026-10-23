@@ -12,7 +12,10 @@ import java.time.ZoneOffset
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 
-/** Cached upcoming launches by mission, rocket or pad ("Starship", "Vandenberg"), soonest first. */
+/**
+ * Cached launches by mission, rocket, pad or provider ("Starship", "Vandenberg"): upcoming ones
+ * soonest first, then past ones most recent first. A hit opens the launch's detail page.
+ */
 class LaunchSearchableSource @Inject constructor(
     private val repository: LaunchRepository,
 ) : SearchableSource {
@@ -21,9 +24,9 @@ class LaunchSearchableSource @Inject constructor(
 
     override suspend fun search(query: String, limit: Int): DataResult<List<SearchHit>> = readLocally {
         val terms = SearchText.terms(query)
-        repository.observeUpcomingLaunches().first()
+        (repository.observeUpcomingLaunches().first() + repository.observePastLaunches().first())
             .asSequence()
-            .filter { SearchText.matchesAll(terms, it.name, it.rocket, it.pad) }
+            .filter { SearchText.matchesAll(terms, it.name, it.rocket, it.pad, it.provider) }
             .take(limit)
             .map { launch ->
                 SearchHit(

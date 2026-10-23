@@ -103,6 +103,12 @@ enum class SyncSource(val key: String) {
 
     /** Small Steps, Giant Leaps. */
     NASA_PODCAST_SMALL_STEPS("nasa_podcast_small_steps"),
+
+    /**
+     * Launch Library 2 past launches (F27), refreshed only when the Launches screen opens. Same host
+     * and hourly budget as [LAUNCHES].
+     */
+    LAUNCHES_PAST("launch_library_previous"),
     ;
 
     companion object {

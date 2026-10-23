@@ -10,12 +10,15 @@ import com.radustavila.nasaexplorer.core.domain.usecase.AnnounceLatestApodUseCas
 import com.radustavila.nasaexplorer.core.domain.usecase.ApplyDailyWallpaperUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.CacheOnThisDayUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshSourceUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RescheduleLaunchRemindersUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeApodsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.SynchronizeUpcomingLaunchesUseCase
 import com.radustavila.nasaexplorer.core.testing.data.TestApods
 import com.radustavila.nasaexplorer.core.testing.fake.FakeApodRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLatestApodWidgetUpdater
+import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchReminderRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchReminderScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNewApodNotifier
@@ -216,6 +219,12 @@ class ApodSyncWorkerTest {
                             networkMonitor = networkMonitor,
                             refreshSource = RefreshSourceUseCase(metadata, FakeTimeProvider()),
                             widgetUpdater = FakeHomeWidgetUpdater(),
+                            rescheduleLaunchReminders = RescheduleLaunchRemindersUseCase(
+                                launchRepository = launchRepository,
+                                reminderRepository = FakeLaunchReminderRepository(),
+                                scheduler = FakeLaunchReminderScheduler(),
+                                timeProvider = FakeTimeProvider(),
+                            ),
                         ),
                         applyDailyWallpaper = ApplyDailyWallpaperUseCase(
                             apodRepository = repository,

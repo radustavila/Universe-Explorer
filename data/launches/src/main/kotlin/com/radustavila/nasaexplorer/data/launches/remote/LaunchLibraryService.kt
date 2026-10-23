@@ -2,13 +2,15 @@ package com.radustavila.nasaexplorer.data.launches.remote
 
 import com.radustavila.nasaexplorer.data.launches.remote.dto.AstronautListDto
 import com.radustavila.nasaexplorer.data.launches.remote.dto.LaunchListDto
+import com.radustavila.nasaexplorer.data.launches.remote.dto.LaunchDto
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
  * Launch Library 2 by The Space Devs (no key). Anonymous clients get 15 calls an hour per IP, so the
- * app keeps a single endpoint call per refresh. The crew list in Sky tonight uses the
- * same service and budget.
+ * app keeps a single endpoint call per refresh. The card, the Launches screen and the crew list in
+ * Sky tonight use the same service and budget.
  */
 interface LaunchLibraryService {
 
@@ -24,6 +26,17 @@ interface LaunchLibraryService {
         @Query("hide_recent_previous") hideRecentPrevious: Boolean = true,
     ): LaunchListDto
 
+    /** The latest launches that flew (or failed), most recent first, with outcome and booster landings. */
+    @GET("2.3.0/launches/previous/")
+    suspend fun getPreviousLaunches(
+        @Query("limit") limit: Int = PREVIOUS_LIMIT,
+        @Query("mode") mode: String = "detailed",
+    ): LaunchListDto
+
+    /** One launch in detail; only to re-check a launch shortly before its reminder fires. */
+    @GET("2.3.0/launches/{id}/")
+    suspend fun getLaunch(@Path("id") id: String): LaunchDto
+
     /** Everyone in orbit right now, one page (about a dozen people; the limit leaves room). */
     @GET("2.3.0/astronauts/")
     suspend fun getAstronautsInSpace(
@@ -36,9 +49,12 @@ interface LaunchLibraryService {
         const val IN_SPACE_LIMIT = 50
 
         /**
-         * The card shows three; two spare launches keep it full when one lifts off between two
-         * refreshes, which the hourly budget spaces out.
+         * The Launches screen's Upcoming tab and every detail page; the card shows the first three
+         * of the same rows, so neither needs a call of its own.
          */
-        const val UPCOMING_LIMIT = 5
+        const val UPCOMING_LIMIT = 30
+
+        /** The Past tab. */
+        const val PREVIOUS_LIMIT = 20
     }
 }

@@ -14,6 +14,8 @@ import kotlinx.coroutines.withContext
 /** Remote boundary of the launches module. Returns [DataResult] instead of throwing. */
 interface LaunchRemoteDataSource {
     suspend fun fetchUpcoming(): DataResult<List<LaunchDto>>
+    suspend fun fetchPrevious(): DataResult<List<LaunchDto>>
+    suspend fun fetchLaunch(id: String): DataResult<LaunchDto>
     suspend fun fetchAstronautsInSpace(): DataResult<List<AstronautDto>>
 }
 
@@ -25,6 +27,14 @@ class RetrofitLaunchRemoteDataSource @Inject constructor(
 
     override suspend fun fetchUpcoming(): DataResult<List<LaunchDto>> = withContext(ioDispatcher) {
         safeNetworkCall { service.getUpcomingLaunches().results }
+    }
+
+    override suspend fun fetchPrevious(): DataResult<List<LaunchDto>> = withContext(ioDispatcher) {
+        safeNetworkCall { service.getPreviousLaunches().results }
+    }
+
+    override suspend fun fetchLaunch(id: String): DataResult<LaunchDto> = withContext(ioDispatcher) {
+        safeNetworkCall { service.getLaunch(id) }
     }
 
     override suspend fun fetchAstronautsInSpace(): DataResult<List<AstronautDto>> = withContext(ioDispatcher) {
