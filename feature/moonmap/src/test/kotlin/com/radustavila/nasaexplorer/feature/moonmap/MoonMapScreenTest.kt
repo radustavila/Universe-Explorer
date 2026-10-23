@@ -66,6 +66,31 @@ class MoonMapScreenTest {
     }
 
     @Test
+    fun `zoom buttons step the map one level`() {
+        val steps = mutableListOf<Int>()
+        composeTestRule.setContent {
+            NasaTheme {
+                MoonMapScreen(
+                    uiState = MoonMapFixture.state(),
+                    onBackClick = {},
+                    onProgrammeToggled = {},
+                    onSiteSelected = {},
+                    onSiteDismissed = {},
+                    onDownloadTiles = {},
+                    onRemoveTiles = {},
+                    onOpenPage = {},
+                    map = MoonMapFixture.map,
+                    onZoom = { steps += it },
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag(MOON_MAP_ZOOM_IN_TEST_TAG).performClick()
+        composeTestRule.onNodeWithTag(MOON_MAP_ZOOM_OUT_TEST_TAG).performClick()
+        assertEquals(listOf(1, -1), steps)
+    }
+
+    @Test
     fun `a hidden programme's chip is not selected`() {
         setContent(MoonMapFixture.state().copy(shownProgrammes = setOf(LunarProgramme.LUNA)))
 

@@ -2,6 +2,8 @@
 <resources>
     <string name="moon_map_title">Moon map</string>
     <string name="moon_map_back">Back</string>
+    <string name="moon_map_zoom_in">Zoom in</string>
+    <string name="moon_map_zoom_out">Zoom out</string>
     <string name="moon_map_lit_as_of">Sunlit side as of %1$s</string>
     <string name="moon_map_pole_note">The map stops at 85° N and S; the poles do not fit its projection.</string>
 

@@ -19,8 +19,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -62,6 +65,8 @@ import kotlin.math.roundToInt
 const val MOON_MAP_FILTERS_TEST_TAG = "moon-map-filters"
 const val MOON_MAP_TILES_PANEL_TEST_TAG = "moon-map-tiles"
 const val MOON_MAP_SITE_SHEET_TEST_TAG = "moon-map-site-sheet"
+const val MOON_MAP_ZOOM_IN_TEST_TAG = "moon-map-zoom-in"
+const val MOON_MAP_ZOOM_OUT_TEST_TAG = "moon-map-zoom-out"
 
 /**
  * The map's slot, so tests can render the controls without MapLibre's native renderer. A tap on a
@@ -93,12 +98,22 @@ internal fun MoonMapRoute(
         onDownloadTiles = viewModel::onDownloadTiles,
         onRemoveTiles = viewModel::onRemoveTiles,
         onOpenPage = openPage,
+        onZoom = { step ->
+            val camera = mapState.camera
+            mapState.animateTo(camera.center, (camera.zoom + step).coerceIn(MIN_ZOOM, MAX_ZOOM))
+        },
         map = { deepTilesDirectory, overlays, onSiteClick, onMapClick, modifier ->
             SpaceMap(
                 style = SpaceMapStyle.Moon(deepTilesDirectory),
                 state = mapState,
                 overlays = overlays,
-                onShapeClick = { click -> if (click.overlayId != NIGHT_OVERLAY_ID) onSiteClick(click.shapeId) },
+                onShapeClick = { click ->
+                    if (click.overlayId != NIGHT_OVERLAY_ID) {
+                        onSiteClick(click.shapeId)
+                        // Centre the site, so zooming in next lands on it.
+                        mapState.animateTo(click.position)
+                    }
+                },
                 onMapClick = { onMapClick() },
                 modifier = modifier,
             )
@@ -124,25 +139,14 @@ fun MoonMapScreen(
     onOpenPage: (String) -> Unit,
     map: MoonMapSlot,
     modifier: Modifier = Modifier,
+    onZoom: (step: Int) -> Unit = {},
 ) {
     val overlays = remember(uiState.nightSide, uiState.sites, uiState.selectedSite) {
         moonMapOverlays(uiState.nightSide, uiState.sites, uiState.selectedSite)
     }
     Scaffold(
         modifier = modifier,
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.moon_map_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.moon_map_back),
-                        )
-                    }
-                },
-            )
-        },
+        topBar = { MoonMapTopBar(onBackClick) },
     ) { padding ->
         Box(
             Modifier
@@ -162,6 +166,12 @@ fun MoonMapScreen(
                 shown = uiState.shownProgrammes,
                 onToggle = onProgrammeToggled,
                 modifier = Modifier.align(Alignment.TopStart),
+            )
+            ZoomButtons(
+                onZoom = onZoom,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 12.dp),
             )
             BottomPanel(
                 illumination = uiState.illumination,
@@ -186,6 +196,19 @@ fun MoonMapScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun MoonMapTopBar(onBackClick: () -> Unit) {
+    TopAppBar(
+        title = { Text(stringResource(R.string.moon_map_title)) },
+        navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.moon_map_back))
+            }
+        },
+    )
+}
+
 @Composable
 private fun ProgrammeChips(
     programmes: List<LunarProgramme>,
@@ -207,6 +230,18 @@ private fun ProgrammeChips(
                     Box(Modifier.size(10.dp).background(programme.color, CircleShape))
                 },
             )
+        }
+    }
+}
+
+@Composable
+private fun ZoomButtons(onZoom: (step: Int) -> Unit, modifier: Modifier = Modifier) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        FilledTonalIconButton(onClick = { onZoom(1) }, modifier = Modifier.testTag(MOON_MAP_ZOOM_IN_TEST_TAG)) {
+            Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.moon_map_zoom_in))
+        }
+        FilledTonalIconButton(onClick = { onZoom(-1) }, modifier = Modifier.testTag(MOON_MAP_ZOOM_OUT_TEST_TAG)) {
+            Icon(Icons.Filled.Remove, contentDescription = stringResource(R.string.moon_map_zoom_out))
         }
     }
 }
@@ -357,4 +392,6 @@ internal fun SiteDetails(site: LunarLandingSite, illumination: MoonIllumination?
 private val MOON_START = MapCamera(center = GeoPoint(latitude = 0.0, longitude = 0.0), zoom = 1.0)
 
 private const val PANEL_ALPHA = 0.92f
+private const val MIN_ZOOM = 0.5
+private const val MAX_ZOOM = 8.0
 private const val PERCENT = 100
