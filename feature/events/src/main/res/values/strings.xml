@@ -21,6 +21,7 @@
     <string name="sky_events_category_meteors">Meteors</string>
     <string name="sky_events_category_comets">Comets</string>
     <string name="sky_events_category_seasons">Seasons</string>
+    <string name="sky_events_category_milky_way">Milky Way</string>
 
     <!-- List rows: one short line under the event's name. -->
     <string name="sky_events_solar_local_total">Total from your place</string>
@@ -130,4 +131,12 @@
     <string name="sky_events_search_words_meteors">meteor meteors shower shooting stars</string>
     <string name="sky_events_search_words_comets">comet comets perihelion</string>
     <string name="sky_events_search_words_seasons">season equinox solstice</string>
+    <string name="sky_events_search_words_milky_way">milky way galaxy galactic core astrophotography</string>
+    <!-- The best Milky Way night around a new Moon (F20). -->
+    <string name="sky_events_milky_way_meaning">The darkest, moonless stretch around this new Moon with the core of our galaxy up: the night to photograph the Milky Way.</string>
+    <string name="sky_events_milky_way_window">Dark, moonless and with the core up from %1$s to %2$s</string>
+    <string name="sky_events_milky_way_core">The core gets %1$d° high in the %2$s around %3$s</string>
+    <string name="sky_events_milky_way_moon">Moon %1$d%% lit</string>
+    <string name="sky_events_milky_way_summary">%1$s–%2$s, core %3$d° high</string>
+    <string name="sky_events_milky_way_planner">Open the Milky Way planner</string>
 </resources>

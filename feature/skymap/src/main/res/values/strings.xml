@@ -93,4 +93,8 @@
     <string name="sky_map_cardinal_sw">SW</string>
     <string name="sky_map_cardinal_w">W</string>
     <string name="sky_map_cardinal_nw">NW</string>
+    <!-- The Milky Way's core (F20). -->
+    <string name="sky_map_galactic_centre">Galactic centre</string>
+    <string name="sky_map_milky_way_core">Milky Way core</string>
+    <string name="sky_map_kind_galactic_centre">Core of the Milky Way</string>
 </resources>

@@ -90,6 +90,7 @@ private fun title(uiState: SkyMapUiState, sky: HorizontalSky, selected: SkyTarge
         is SkyTarget.Constellation -> sky.chart.catalog.constellations.getOrNull(selected.index)?.name.orEmpty()
         is SkyTarget.Satellite -> names.satellite(selected.noradId, uiState.bodies)
         is SkyTarget.Comet -> uiState.bodies?.comet(selected.designation)?.name ?: selected.designation
+        SkyTarget.GalacticCentre -> names.galacticCentre
     }
 
 /** "Star in Orion", or just the kind when the constellation is not known. */

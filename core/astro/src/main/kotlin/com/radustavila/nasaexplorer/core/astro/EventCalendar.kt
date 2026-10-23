@@ -1,7 +1,9 @@
 package com.radustavila.nasaexplorer.core.astro
 
+import com.radustavila.nasaexplorer.core.domain.sky.MilkyWayCalculator
 import com.radustavila.nasaexplorer.core.domain.sky.SkyEventCalendar
 import com.radustavila.nasaexplorer.core.model.GeoCoordinate
+import com.radustavila.nasaexplorer.core.model.MilkyWayNightEvent
 import com.radustavila.nasaexplorer.core.model.MoonPhaseEvent
 import com.radustavila.nasaexplorer.core.model.MoonQuarter
 import com.radustavila.nasaexplorer.core.model.MoonSize
@@ -17,8 +19,10 @@ import io.github.cosinekitty.astronomy.geoMoon
 import io.github.cosinekitty.astronomy.nextLunarApsis
 import io.github.cosinekitty.astronomy.nextMoonQuarter
 import io.github.cosinekitty.astronomy.searchLunarApsis
+import io.github.cosinekitty.astronomy.searchMoonPhase
 import io.github.cosinekitty.astronomy.searchMoonQuarter
 import io.github.cosinekitty.astronomy.seasons
+import java.time.Duration
 import java.time.Instant
 import javax.inject.Inject
 import kotlin.math.abs
@@ -26,13 +30,16 @@ import kotlin.math.abs
 /**
  * [SkyEventCalendar] on Astronomy Engine: every search runs on the device, for any year.
  * Eclipses, planet events and meteor showers are found by [EclipseSearch], [PlanetEventSearch]
- * and [MeteorShowerSearch]; Moon phases and seasons here.
+ * and [MeteorShowerSearch]; Moon phases and seasons here, and the best Milky Way night around each
+ * new Moon through [milkyWay] (F20).
  *
  * Accuracy is Astronomy Engine's (about a minute for phases, seasons and eclipse contacts). Meteor
  * shower peaks come from [MeteorShowerTable] and are good to a few hours, as are the showers
  * themselves.
  */
-class EventCalendar @Inject constructor() : SkyEventCalendar {
+class EventCalendar @Inject constructor(
+    private val milkyWay: MilkyWayCalculator,
+) : SkyEventCalendar {
 
     override fun events(
         from: Instant,
@@ -56,6 +63,7 @@ class EventCalendar @Inject constructor() : SkyEventCalendar {
             }
             if (SkyEventCategory.METEORS in categories) addAll(MeteorShowerSearch.peaks(range, site))
             if (SkyEventCategory.SEASONS in categories) addAll(seasonEvents(range))
+            if (SkyEventCategory.MILKY_WAY in categories && observer != null) addAll(milkyWayNights(range, observer))
         }
         // The range's end is exclusive.
         return events.filter { it.time >= from && it.time < until }.sortedBy { it.time }
@@ -110,7 +118,43 @@ class EventCalendar @Inject constructor() : SkyEventCalendar {
             )
         }
 
+    /**
+     * Around each new Moon, the night with the longest Milky Way window from the three nights
+     * before it to the three after. Every new Moon near [range] is looked at, as its best night
+     * can fall a few days either side; only nights that depend on the new Moon alone are picked,
+     * so a narrower range (an event looked up by id) finds the same night.
+     */
+    private fun milkyWayNights(range: ClosedRange<Instant>, observer: GeoCoordinate): List<MilkyWayNightEvent> {
+        val searchFrom = range.start.minus(NEW_MOON_MARGIN)
+        val searchUntil = range.endInclusive.plus(NEW_MOON_MARGIN)
+        return generateSequence(searchMoonPhase(NEW_MOON, searchFrom.toAstronomyTime(), LUNAR_MONTH_SEARCH_DAYS)) {
+            searchMoonPhase(NEW_MOON, it.addDays(1.0), LUNAR_MONTH_SEARCH_DAYS)
+        }
+            .takeWhile { it.toInstant() < searchUntil }
+            .mapNotNull { newMoon ->
+                val nights = milkyWay.nights(observer, newMoon.toInstant().minus(NIGHTS_BEFORE_NEW_MOON), NIGHTS_AROUND)
+                nights.mapNotNull { night -> night.window?.let { night to it } }
+                    .maxByOrNull { (_, window) -> window.duration }
+                    ?.let { (night, window) ->
+                        MilkyWayNightEvent(
+                            time = window.start,
+                            end = window.end,
+                            best = window.best,
+                            coreAltitudeDegrees = window.coreAtBest.altitudeDegrees,
+                            coreAzimuthDegrees = window.coreAtBest.azimuthDegrees,
+                            moonIlluminatedFraction = night.moonIlluminatedFraction,
+                        )
+                    }
+            }
+            .toList()
+    }
+
     private companion object {
+        const val NEW_MOON = 0.0
+        const val LUNAR_MONTH_SEARCH_DAYS = 32.0
+        const val NIGHTS_AROUND = 7
+        val NIGHTS_BEFORE_NEW_MOON: Duration = Duration.ofHours(84)
+        val NEW_MOON_MARGIN: Duration = Duration.ofDays(5)
         const val KM_PER_AU = 1.4959787069098932e8
         const val HALF_LUNAR_MONTH_DAYS = 15.0
         const val MOON_SIZE_FRACTION = 0.1

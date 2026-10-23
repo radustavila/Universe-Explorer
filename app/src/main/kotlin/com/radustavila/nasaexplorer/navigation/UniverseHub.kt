@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.BlurOn
 import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Newspaper
@@ -25,6 +26,7 @@ import com.radustavila.nasaexplorer.feature.exoplanets.navigateToExoplanets
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhotos
 import com.radustavila.nasaexplorer.feature.mars.rail.MarsRail
+import com.radustavila.nasaexplorer.feature.milkyway.navigateToMilkyWay
 import com.radustavila.nasaexplorer.feature.news.navigateToNews
 import com.radustavila.nasaexplorer.feature.search.navigateToSearch
 import com.radustavila.nasaexplorer.feature.sky.navigateToSkyTonight
@@ -81,6 +83,10 @@ internal fun universeHubEntries(navController: NavHostController): List<HubEntry
     HubEntry("news", Icons.Outlined.Newspaper, R.string.universe_news_title, R.string.universe_news_description) {
         navController.navigateToNews()
     },
+) + observingHubEntries(navController)
+
+/** The Universe entries for going out to look: the sky map (F17), comets (F18), the Milky Way (F20). */
+private fun observingHubEntries(navController: NavHostController): List<HubEntry> = listOf(
     HubEntry(
         key = "skymap",
         icon = Icons.Outlined.Explore,
@@ -95,6 +101,13 @@ internal fun universeHubEntries(navController: NavHostController): List<HubEntry
         descriptionRes = R.string.universe_comets_description,
         onClick = { navController.navigateToComets() },
     ), // F18
+    HubEntry(
+        key = "milky-way",
+        icon = Icons.Outlined.BlurOn,
+        titleRes = R.string.universe_milky_way_title,
+        descriptionRes = R.string.universe_milky_way_description,
+        onClick = { navController.navigateToMilkyWay() },
+    ), // F20
 )
 
 /**

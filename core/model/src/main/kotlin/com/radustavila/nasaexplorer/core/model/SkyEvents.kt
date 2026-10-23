@@ -14,6 +14,9 @@ enum class SkyEventCategory {
     /** The perihelia of the comets F18 tracks that are predicted to be bright enough to look for. */
     COMETS,
     SEASONS,
+
+    /** The best night around each new Moon to photograph the galactic core (F20); needs a place. */
+    MILKY_WAY,
 }
 
 /**
@@ -303,6 +306,26 @@ data class CometPerihelion(
     private companion object {
         val NOT_ID_CHARACTERS = Regex("[^a-z0-9]+")
     }
+}
+
+/**
+ * The best night around a new Moon to photograph the Milky Way's core from the observer's place
+ * (F20): the longest stretch that night with the Sun 18° down, the core at least 10° up and no
+ * bright Moon. Listed at the window's start.
+ */
+data class MilkyWayNightEvent(
+    override val time: Instant,
+    val end: Instant,
+    /** When the core is highest in the window. */
+    val best: Instant,
+    /** Where the core is at [best], with refraction, degrees. */
+    val coreAltitudeDegrees: Double,
+    val coreAzimuthDegrees: Double,
+    /** Lit fraction of the Moon that night, 0–1. */
+    val moonIlluminatedFraction: Double,
+) : SkyEvent {
+    override val id: String get() = SkyEventId.of("milky-way", time)
+    override val category: SkyEventCategory get() = SkyEventCategory.MILKY_WAY
 }
 
 /**

@@ -1,5 +1,6 @@
 package com.radustavila.nasaexplorer.feature.skymap.render
 
+import com.radustavila.nasaexplorer.core.model.GalacticCentre
 import com.radustavila.nasaexplorer.core.model.SkyMapBodies
 import com.radustavila.nasaexplorer.core.skymap.HorizontalSky
 import com.radustavila.nasaexplorer.core.skymap.SkyChart
@@ -9,8 +10,8 @@ import com.radustavila.nasaexplorer.feature.skymap.SkyTarget
 import kotlin.math.hypot
 
 /**
- * What a tap at a screen point means: the Sun, Moon, a planet, the ISS or a comet first, then the
- * nearest drawn star.
+ * What a tap at a screen point means: the Sun, Moon, a planet, the ISS, a comet or the galactic
+ * centre first, then the nearest drawn star.
  */
 internal object SkyHitTest {
 
@@ -24,12 +25,13 @@ internal object SkyHitTest {
         sky: HorizontalSky,
         bodies: SkyMapBodies?,
         projection: SkyProjection,
-    ): SkyTarget? = findBody(x, y, radius, bodies, projection) ?: findStar(x, y, radius, sky, projection)
+    ): SkyTarget? = findBody(x, y, radius, sky, bodies, projection) ?: findStar(x, y, radius, sky, projection)
 
     private fun findBody(
         x: Float,
         y: Float,
         radius: Float,
+        sky: HorizontalSky,
         bodies: SkyMapBodies?,
         projection: SkyProjection,
     ): SkyTarget? {
@@ -58,6 +60,10 @@ internal object SkyHitTest {
                 bestDistance = distance
                 best = SkyTarget.Comet(comet.designation)
             }
+        }
+        if (projection.project(sky.direction(GalacticCentre.POSITION))) {
+            val distance = hypot(projection.x - x, projection.y - y)
+            if (distance <= bestDistance) best = SkyTarget.GalacticCentre
         }
         return best
     }

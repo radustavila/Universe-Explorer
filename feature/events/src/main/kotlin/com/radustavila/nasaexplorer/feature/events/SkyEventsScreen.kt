@@ -73,6 +73,7 @@ fun SkyEventsScreen(
     onSetLocation: () -> Unit,
     onCometClick: (designation: String) -> Unit,
     modifier: Modifier = Modifier,
+    onMilkyWayClick: () -> Unit = {},
     viewModel: SkyEventsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -88,6 +89,7 @@ fun SkyEventsScreen(
         onSheetDismiss = viewModel::onSheetDismiss,
         onReminderChange = viewModel::onReminderChange,
         onCometClick = onCometClick,
+        onMilkyWayClick = onMilkyWayClick,
         modifier = modifier,
     )
 }
@@ -107,6 +109,7 @@ fun SkyEventsContent(
     onReminderChange: (String, SkyEventReminderLead?) -> Unit,
     onCometClick: (designation: String) -> Unit,
     modifier: Modifier = Modifier,
+    onMilkyWayClick: () -> Unit = {},
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
@@ -151,7 +154,7 @@ fun SkyEventsContent(
     }
 
     uiState.selected?.let { event ->
-        EventSheet(event, uiState, snackbarHostState, onSheetDismiss, onReminderChange, onCometClick)
+        EventSheet(event, uiState, snackbarHostState, onSheetDismiss, onReminderChange, onCometClick, onMilkyWayClick)
     }
 }
 
@@ -165,6 +168,7 @@ private fun EventSheet(
     onDismiss: () -> Unit,
     onReminderChange: (String, SkyEventReminderLead?) -> Unit,
     onCometClick: (designation: String) -> Unit,
+    onMilkyWayClick: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val lead = uiState.reminders[event.id]
@@ -186,6 +190,7 @@ private fun EventSheet(
             onReminderClick = reminder.onClick,
             onLeadChange = { onReminderChange(event.id, it) },
             onCometClick = onCometClick,
+            onMilkyWayClick = onMilkyWayClick,
             modifier = Modifier.verticalScroll(rememberScrollState()),
         )
     }

@@ -7,6 +7,7 @@ import com.radustavila.nasaexplorer.core.model.LunarEclipse
 import com.radustavila.nasaexplorer.core.model.LunarEclipseType
 import com.radustavila.nasaexplorer.core.model.MeteorShower
 import com.radustavila.nasaexplorer.core.model.MeteorShowerPeak
+import com.radustavila.nasaexplorer.core.model.MilkyWayNightEvent
 import com.radustavila.nasaexplorer.core.model.MoonPhaseEvent
 import com.radustavila.nasaexplorer.core.model.MoonQuarter
 import com.radustavila.nasaexplorer.core.model.MoonSize
@@ -37,7 +38,7 @@ import org.junit.Test
  */
 class EventCalendarTest {
 
-    private val calendar = EventCalendar()
+    private val calendar = EventCalendar(AstronomyEngineMilkyWayCalculator(AstronomyEngineDarkSkyCalculator()))
 
     @Test
     fun `total lunar eclipse of 2026-03-03, seen from Los Angeles but not from Spain`() {
@@ -232,6 +233,23 @@ class EventCalendarTest {
 
         // No transits in an ordinary year, although Mercury passes the Sun three times.
         assertTrue(events("2026-01-01", "2027-01-01", observer = null).none { it is PlanetTransit })
+    }
+
+    @Test
+    fun `the best Milky Way night around July's new Moon, only with a place and only in season`() {
+        // New Moon on 14 July 2026 at 09:44 UTC.
+        val july = events("2026-07-01", "2026-08-01", observer = MADRID).filterIsInstance<MilkyWayNightEvent>()
+
+        val night = july.single()
+        assertTrue(night.time in Instant.parse("2026-07-10T18:00:00Z")..Instant.parse("2026-07-18T06:00:00Z"))
+        assertTrue(night.end.isAfter(night.time.plus(Duration.ofHours(1))))
+        assertTrue(night.coreAltitudeDegrees in 10.0..21.5)
+        assertTrue(night.moonIlluminatedFraction < 0.1)
+        assertEquals(SkyEventCategory.MILKY_WAY, night.category)
+        assertTrue(night.id.startsWith("milky-way:"))
+
+        assertTrue(events("2026-07-01", "2026-08-01", observer = null).none { it is MilkyWayNightEvent })
+        assertTrue(events("2026-12-01", "2027-01-01", observer = MADRID).none { it is MilkyWayNightEvent })
     }
 
     @Test

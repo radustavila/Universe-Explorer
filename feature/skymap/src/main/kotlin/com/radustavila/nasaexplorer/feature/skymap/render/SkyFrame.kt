@@ -1,6 +1,7 @@
 package com.radustavila.nasaexplorer.feature.skymap.render
 
 import com.radustavila.nasaexplorer.core.model.CometSkyPosition
+import com.radustavila.nasaexplorer.core.model.GalacticCentre
 import com.radustavila.nasaexplorer.core.model.SkyMapBodies
 import com.radustavila.nasaexplorer.core.model.cometShortName
 import com.radustavila.nasaexplorer.core.model.SolarSystemBody
@@ -29,6 +30,9 @@ internal data class SkyNames(
     val satellites: Map<Int, String>,
     /** N, NE, E, SE, S, SW, W, NW. */
     val cardinals: List<String>,
+    /** The core's two names: on the map, and the other one search also finds it by. */
+    val galacticCentre: String = "",
+    val milkyWayCore: String = "",
 )
 
 /** Where [this] target is in the sky drawn by [sky] and [bodies], refracted; null when it is not there. */
@@ -40,6 +44,7 @@ internal fun SkyTarget.direction(sky: HorizontalSky, bodies: SkyMapBodies?): Sky
     is SkyTarget.Satellite -> bodies?.satellites?.firstOrNull { it.noradId == noradId }
         ?.let { SkyChart.apparent(it.horizontal) }
     is SkyTarget.Comet -> bodies?.comet(designation)?.let { SkyChart.apparent(it.horizontal) }
+    SkyTarget.GalacticCentre -> sky.direction(GalacticCentre.POSITION)
 }
 
 /** The comet [designation] names, when it is on the map. */

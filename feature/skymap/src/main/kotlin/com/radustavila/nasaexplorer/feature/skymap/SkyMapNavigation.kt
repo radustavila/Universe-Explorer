@@ -10,10 +10,12 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
 
+/** The sky map; [showGalacticCentre] opens it turned to the Milky Way's core, selected (F20). */
 @Serializable
-data object SkyMapRoute
+data class SkyMapRoute(val showGalacticCentre: Boolean = false)
 
-fun NavController.navigateToSkyMap(navOptions: NavOptions? = null) = navigate(SkyMapRoute, navOptions)
+fun NavController.navigateToSkyMap(showGalacticCentre: Boolean = false, navOptions: NavOptions? = null) =
+    navigate(SkyMapRoute(showGalacticCentre), navOptions)
 
 /**
  * The sky map; registered inside the Universe tab's graph. [locationSection] is shown when no place
