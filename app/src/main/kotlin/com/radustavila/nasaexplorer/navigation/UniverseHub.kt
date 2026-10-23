@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Newspaper
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.radustavila.nasaexplorer.R
+import com.radustavila.nasaexplorer.feature.comets.navigateToComets
 import com.radustavila.nasaexplorer.feature.dsn.navigateToDsn
 import com.radustavila.nasaexplorer.feature.events.navigateToSkyEvents
 import com.radustavila.nasaexplorer.feature.exoplanets.navigateToExoplanets
@@ -86,6 +88,13 @@ internal fun universeHubEntries(navController: NavHostController): List<HubEntry
         descriptionRes = R.string.universe_skymap_description,
         onClick = { navController.navigateToSkyMap() },
     ), // F17
+    HubEntry(
+        key = "comets",
+        icon = Icons.Outlined.AutoAwesome,
+        titleRes = R.string.universe_comets_title,
+        descriptionRes = R.string.universe_comets_description,
+        onClick = { navController.navigateToComets() },
+    ), // F18
 )
 
 /**

@@ -88,6 +88,9 @@ enum class SyncSource(val key: String) {
 
     /** NASA's YouTube channel feed. */
     NASA_YOUTUBE("nasa_youtube"),
+
+    /** JPL SBDB comet candidates and their Horizons ephemerides (F18), refreshed together daily. */
+    COMETS("jpl_comets"),
     ;
 
     companion object {

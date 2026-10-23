@@ -2,6 +2,7 @@ package com.radustavila.nasaexplorer.navigation
 
 import androidx.navigation.NavHostController
 import com.radustavila.nasaexplorer.core.model.SearchTarget
+import com.radustavila.nasaexplorer.feature.comets.navigateToCometDetails
 import com.radustavila.nasaexplorer.feature.details.navigateToDetails
 import com.radustavila.nasaexplorer.feature.earthevents.navigateToEarthEvents
 import com.radustavila.nasaexplorer.feature.events.navigateToSkyEvents
@@ -26,6 +27,7 @@ internal fun NavHostController.openSearchTarget(target: SearchTarget) {
         is SearchTarget.LaunchEntry -> navigateToTopLevel(TopLevelDestination.TODAY)
         is SearchTarget.SkyEventEntry -> navigateToSkyEvents(target.id)
         is SearchTarget.NewsEntry -> navigateToNewsItem(target.id)
+        is SearchTarget.CometEntry -> navigateToCometDetails(target.designation)
         is SearchTarget.Favorite -> openFavorite(target.item)
     }
 }

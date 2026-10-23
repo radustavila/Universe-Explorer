@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="comets_title">Bright comets</string>
+    <string name="comets_back">Back</string>
+    <string name="comets_refresh_failed">Couldn\'t refresh the comets. Showing the last download.</string>
+
+    <string name="comets_visible_title">Visible now</string>
+    <string name="comets_faint_title">Fainter comets</string>
+    <string name="comets_faint_description">Beyond small telescopes tonight. They are listed because they are near the Sun and may brighten.</string>
+    <string name="comets_empty_title">No bright comet tonight</string>
+    <string name="comets_empty_description">No comet is predicted to be brighter than magnitude %1$s. The list is checked every day.</string>
+    <string name="comets_none_title">No comets yet</string>
+    <string name="comets_none_description">The list of comets near the Sun downloads once a day. Pull down to try again.</string>
+    <string name="comets_offline_title">Comets need one download</string>
+    <string name="comets_offline_description">Connect once and the list will work offline for weeks.</string>
+    <string name="comets_disclaimer">Comet brightness predictions are often off by a magnitude or more, so treat them as a guide.</string>
+    <string name="comets_credit">Data: NASA JPL Small-Body Database and Horizons</string>
+
+    <string name="comets_place_prompt">Save your place to see where to look and when each comet is highest.</string>
+    <string name="comets_place_action">Set your place</string>
+
+    <string name="comets_magnitude_line">Predicted magnitude %1$s · %2$s</string>
+    <string name="comets_magnitude_unknown">No brightness prediction</string>
+    <string name="comets_visibility_naked_eye">naked eye</string>
+    <string name="comets_visibility_binoculars">binoculars</string>
+    <string name="comets_visibility_telescope">telescope</string>
+    <string name="comets_visibility_too_faint">too faint for small telescopes</string>
+    <string name="comets_best">Best at %1$s, %2$d° up in the %3$s</string>
+    <string name="comets_best_short">Best %1$s, %2$s</string>
+    <string name="comets_not_visible">Not high enough in a dark sky tonight</string>
+    <string name="comets_rises_at">Rises %1$s</string>
+    <string name="comets_sets_at">Sets %1$s</string>
+    <string name="comets_always_up">Above the horizon all night</string>
+    <string name="comets_never_rises">Below the horizon today</string>
+    <string name="comets_constellation">In %1$s</string>
+    <string name="comets_distance_earth">%1$s au from Earth</string>
+    <string name="comets_separator">" · "</string>
+    <string name="comets_peak">Brightest around %1$s, magnitude %2$s</string>
+
+    <string name="comets_details_now_title">Right now</string>
+    <string name="comets_details_now_position">%1$d° up in the %2$s</string>
+    <string name="comets_details_now_below">Below the horizon, towards the %1$s</string>
+    <string name="comets_details_tonight_title">Tonight</string>
+    <string name="comets_details_brightness_title">Brightness</string>
+    <string name="comets_details_curve_description">Predicted magnitude from %1$s to %2$s; brighter is higher. Today is marked.</string>
+    <string name="comets_details_curve_today">Today</string>
+    <string name="comets_details_orbit_title">Orbit</string>
+    <string name="comets_details_perihelion">Closest to the Sun on %1$s, %2$s au from it</string>
+    <string name="comets_details_distances">%1$s au from the Sun, %2$s au from Earth</string>
+    <string name="comets_details_missing">This comet is no longer on the list.</string>
+    <string name="comets_details_limits">Naked eye to magnitude %1$s, binoculars to %2$s, small telescopes to %3$s.</string>
+
+    <string name="comets_card_title">Comets</string>
+    <string name="comets_card_open">All comets</string>
+    <string name="comets_card_empty">No comet is bright enough to find tonight.</string>
+    <string name="comets_card_line">Magnitude %1$s · %2$s</string>
+
+    <string name="comets_compass_n">north</string>
+    <string name="comets_compass_ne">north-east</string>
+    <string name="comets_compass_e">east</string>
+    <string name="comets_compass_se">south-east</string>
+    <string name="comets_compass_s">south</string>
+    <string name="comets_compass_sw">south-west</string>
+    <string name="comets_compass_w">west</string>
+    <string name="comets_compass_nw">north-west</string>
+</resources>

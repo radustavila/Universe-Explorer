@@ -1,0 +1,130 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "4d5600fa12180c146d4e5260e7acfac6",
+    "entities": [
+      {
+        "tableName": "comet",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`designation` TEXT NOT NULL, `name` TEXT NOT NULL, `absolute_magnitude` REAL, `slope_parameter` REAL, `perihelion_distance_au` REAL NOT NULL, `eccentricity` REAL NOT NULL, `perihelion_time` INTEGER, `fetched_at` INTEGER NOT NULL, PRIMARY KEY(`designation`))",
+        "fields": [
+          {
+            "fieldPath": "designation",
+            "columnName": "designation",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "absoluteMagnitude",
+            "columnName": "absolute_magnitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "slopeParameter",
+            "columnName": "slope_parameter",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "perihelionDistanceAu",
+            "columnName": "perihelion_distance_au",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eccentricity",
+            "columnName": "eccentricity",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "perihelionTimeMillis",
+            "columnName": "perihelion_time",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "fetchedAtMillis",
+            "columnName": "fetched_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "designation"
+          ]
+        }
+      },
+      {
+        "tableName": "comet_ephemeris",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`designation` TEXT NOT NULL, `time` INTEGER NOT NULL, `ra_deg` REAL NOT NULL, `dec_deg` REAL NOT NULL, `magnitude` REAL, `sun_distance_au` REAL NOT NULL, `earth_distance_au` REAL NOT NULL, `fetched_at` INTEGER NOT NULL, PRIMARY KEY(`designation`, `time`))",
+        "fields": [
+          {
+            "fieldPath": "designation",
+            "columnName": "designation",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeMillis",
+            "columnName": "time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rightAscensionDegrees",
+            "columnName": "ra_deg",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "declinationDegrees",
+            "columnName": "dec_deg",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "magnitude",
+            "columnName": "magnitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "sunDistanceAu",
+            "columnName": "sun_distance_au",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "earthDistanceAu",
+            "columnName": "earth_distance_au",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fetchedAtMillis",
+            "columnName": "fetched_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "designation",
+            "time"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4d5600fa12180c146d4e5260e7acfac6')"
+    ]
+  }
+}
