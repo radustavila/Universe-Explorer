@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Earth tab section (F26). -->
+    <string name="climate_section_title">Vital signs</string>
+    <string name="climate_section_loading">Downloading the climate records…</string>
+    <string name="climate_section_offline">The climate records download the first time you are online.</string>
+    <string name="climate_section_sources">Data: NOAA, NASA GISS and NSIDC. Tap a sign for its full record.</string>
+    <!-- %1$s a number. -->
+    <string name="climate_value_ppm">%1$s ppm</string>
+    <!-- %1$s a signed change ("+88 ppm"), %2$d a year. -->
+    <string name="climate_change_since">%1$s since %2$d</string>
+    <!-- %1$s a month ("Sep 2026"). -->
+    <string name="climate_last_value">Latest value: %1$s</string>
+
+    <string name="climate_co2_title">Carbon dioxide</string>
+    <string name="climate_co2_subtitle">Monthly mean at Mauna Loa, Hawaii</string>
+    <string name="climate_temperature_title">Global temperature</string>
+    <string name="climate_temperature_subtitle">Monthly anomaly against the 1951–1980 average</string>
+    <string name="climate_sea_level_title">Sea level</string>
+    <string name="climate_sea_level_subtitle">Global mean from satellite altimetry, seasons removed</string>
+    <string name="climate_sea_ice_title">Arctic sea ice</string>
+    <string name="climate_sea_ice_subtitle">Extent each September, the yearly low</string>
+
+    <string name="climate_co2_explanation">Carbon dioxide traps heat in the atmosphere. Since 1958 it has been measured on the slopes of Mauna Loa, far from local sources, in parts per million (ppm) of dry air. It rises and falls a little each year as northern forests grow and shed their leaves, and climbs year after year because of fossil fuels. Before the industrial age it stood at about 280 ppm. This chart starts in May 1974, with NOAA\'s own measurements.</string>
+    <string name="climate_temperature_explanation">How much warmer or cooler each month was across the land and oceans than the average of 1951–1980. NASA\'s Goddard Institute for Space Studies combines thousands of weather stations, ships and buoys into one global value. Single months jump around with weather and El Niño; the long climb since the 1970s is the warming.</string>
+    <string name="climate_sea_level_explanation">Satellites have measured the height of the ocean surface since late 1992: TOPEX/Poseidon, then the Jason missions and Sentinel-6 Michael Freilich. The sea rises as ocean water warms and expands and as glaciers and ice sheets melt. The yearly ups and downs of the seasons are removed. NOAA updates this record irregularly, so its latest value can be months old.</string>
+    <string name="climate_sea_ice_explanation">Arctic sea ice is frozen ocean water that grows each winter and melts each summer, reaching its smallest extent in September. Extent is the ocean area with at least 15 % ice cover, measured by satellites since 1978. Less ice leaves darker water that absorbs more sunlight, which warms the Arctic further.</string>
+
+    <!-- Credits ask for these exact words: keep them as they are. -->
+    <string name="climate_co2_credit" translatable="false">Dr. Xin Lan, NOAA/GML (gml.noaa.gov/ccgg/trends/). Monthly mean CO₂ at Mauna Loa Observatory, Hawaii.</string>
+    <string name="climate_temperature_credit" translatable="false">GISTEMP Team: GISS Surface Temperature Analysis (GISTEMP), version 4. NASA Goddard Institute for Space Studies (data.giss.nasa.gov/gistemp/). Lenssen, N., et al. (2024), J. Geophys. Res. Atmos., 129, e2023JD040179.</string>
+    <string name="climate_sea_level_credit" translatable="false">Altimetry data are provided by NOAA Laboratory for Satellite Altimetry.</string>
+    <string name="climate_sea_ice_credit" translatable="false">Fetterer, F., Knowles, K., Meier, W. N., Savoie, M., Windnagel, A. K. &amp; Stafford, T. (2025). Sea Ice Index. (G02135, Version 4). [Data Set]. Boulder, Colorado USA. National Snow and Ice Data Center. https://doi.org/10.7265/a98x-0f50. Monthly September extent, Northern Hemisphere.</string>
+
+    <!-- Detail screen. -->
+    <string name="climate_back">Back</string>
+    <string name="climate_about">About this record</string>
+    <string name="climate_source">Source</string>
+    <string name="climate_open_source">Open the data source</string>
+    <string name="climate_chart_hint">Touch or drag along the chart to read a value.</string>
+    <!-- %1$s a month, %2$s its value. -->
+    <string name="climate_readout">%1$s · %2$s</string>
+    <!-- For screen readers: %1$s the record, %2$d its first year, %3$d its last year, %4$s the latest value. -->
+    <string name="climate_chart_description">Line chart of %1$s from %2$d to %3$d. Latest value %4$s.</string>
+    <string name="climate_refresh_failed">Couldn\'t update the record</string>
+    <string name="climate_none_title">No record yet</string>
+    <string name="climate_none_description">Pull down to download it.</string>
+    <string name="climate_offline_title">You\'re offline</string>
+    <string name="climate_offline_description">The record downloads the first time you are online.</string>
+</resources>

@@ -1,0 +1,50 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "c8a487443fed0c2f9a3761c0a4022344",
+    "entities": [
+      {
+        "tableName": "climate_point",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`indicator` TEXT NOT NULL, `date` TEXT NOT NULL, `value` REAL NOT NULL, `fetched_at` INTEGER NOT NULL, PRIMARY KEY(`indicator`, `date`))",
+        "fields": [
+          {
+            "fieldPath": "indicator",
+            "columnName": "indicator",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "value",
+            "columnName": "value",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fetchedAtMillis",
+            "columnName": "fetched_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "indicator",
+            "date"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c8a487443fed0c2f9a3761c0a4022344')"
+    ]
+  }
+}

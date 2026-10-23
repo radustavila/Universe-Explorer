@@ -112,6 +112,18 @@ enum class SyncSource(val key: String) {
      * and hourly budget as [LAUNCHES].
      */
     LAUNCHES_PAST("launch_library_previous"),
+
+    /** NOAA GML monthly mean CO₂ at Mauna Loa (F26), refreshed at most weekly. */
+    CLIMATE_CO2("noaa_gml_co2"),
+
+    /** NASA GISTEMP v4 global temperature anomalies (F26). */
+    CLIMATE_TEMPERATURE("nasa_gistemp"),
+
+    /** NOAA STAR global mean sea level from satellite altimetry (F26); months behind. */
+    CLIMATE_SEA_LEVEL("noaa_star_sea_level"),
+
+    /** NSIDC Sea Ice Index G02135 v4: Arctic extent each September (F26). */
+    CLIMATE_SEA_ICE("nsidc_sea_ice"),
     ;
 
     companion object {
