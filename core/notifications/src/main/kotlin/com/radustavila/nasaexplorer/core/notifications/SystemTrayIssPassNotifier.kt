@@ -46,7 +46,7 @@ class SystemTrayIssPassNotifier @Inject constructor(
             .setContentTitle(context.getString(R.string.iss_pass_notification_title, start))
             .setContentText(text)
             .setStyle(NotificationCompat.BigTextStyle().bigText(text))
-            .setContentIntent(context.openAppIntent(REQUEST_CODE))
+            .setContentIntent(context.openAppIntent(NotificationIds.RequestCodes.ISS_PASS))
             .setAutoCancel(true)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             // Useless after the pass: gone once it has ended.
@@ -54,7 +54,7 @@ class SystemTrayIssPassNotifier @Inject constructor(
             .build()
 
         try {
-            notificationManager.notify(NOTIFICATION_ID, notification)
+            notificationManager.notify(NotificationIds.ISS_PASS, notification)
         } catch (_: SecurityException) {
             // The permission was revoked between the check above and this call.
         }
@@ -70,7 +70,5 @@ class SystemTrayIssPassNotifier @Inject constructor(
 
     private companion object {
         const val CHANNEL_ID = "iss_passes"
-        const val NOTIFICATION_ID = 2
-        const val REQUEST_CODE = 1
     }
 }

@@ -57,7 +57,7 @@ class SystemTrayAuroraAlertNotifier @Inject constructor(
 
         try {
             // A single id: a later storm replaces an unread earlier alert instead of stacking up.
-            notificationManager.notify(NOTIFICATION_ID, notification)
+            notificationManager.notify(NotificationIds.AURORA_ALERT, notification)
         } catch (_: SecurityException) {
             // The permission was revoked between the check above and this call.
         }
@@ -78,7 +78,7 @@ class SystemTrayAuroraAlertNotifier @Inject constructor(
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         return PendingIntent.getActivity(
             context,
-            REQUEST_CODE,
+            NotificationIds.RequestCodes.AURORA_ALERT,
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
@@ -86,7 +86,5 @@ class SystemTrayAuroraAlertNotifier @Inject constructor(
 
     private companion object {
         const val CHANNEL_ID = "aurora_alerts"
-        const val NOTIFICATION_ID = 2
-        const val REQUEST_CODE = 1
     }
 }
