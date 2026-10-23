@@ -20,13 +20,18 @@ import kotlinx.coroutines.flow.first
  * allows only 15 anonymous calls an hour, so the source is refreshed at most once per
  * [MIN_REFRESH_INTERVAL] (and not before a 429's `Retry-After`), whatever triggered the sync. It is
  * best-effort: its failures never decide whether the APOD sync is retried, since a retry would only
- * spend more of that budget. A successful refresh re-renders the next-launch widget.
+ * spend more of that budget. A successful refresh re-renders the next-launch widget and re-arms
+ * the launch reminders, whose NETs may have moved.
+ *
+ * The Launches screen calls it too when it opens: the same hourly limit applies, so opening the
+ * screen never adds a call the sync would not have made.
  */
 class SynchronizeUpcomingLaunchesUseCase @Inject constructor(
     private val launchRepository: LaunchRepository,
     private val networkMonitor: NetworkMonitor,
     private val refreshSource: RefreshSourceUseCase,
     private val widgetUpdater: HomeWidgetUpdater,
+    private val rescheduleLaunchReminders: RescheduleLaunchRemindersUseCase,
 ) {
     suspend operator fun invoke(): SourceRefreshResult<Int> {
         if (!networkMonitor.isOnline.first()) {
@@ -34,7 +39,12 @@ class SynchronizeUpcomingLaunchesUseCase @Inject constructor(
         }
         return refreshSource(SyncSource.LAUNCHES, minInterval = MIN_REFRESH_INTERVAL) {
             launchRepository.refreshUpcomingLaunches()
-        }.also { outcome -> if (outcome.succeeded()) widgetUpdater.update(HomeWidget.NEXT_LAUNCH) }
+        }.also { outcome ->
+            if (outcome.succeeded()) {
+                widgetUpdater.update(HomeWidget.NEXT_LAUNCH)
+                rescheduleLaunchReminders()
+            }
+        }
     }
 
     companion object {

@@ -48,4 +48,10 @@
     <!-- %1$s magnitude and place ("M 5.7, 61 km WNW of Leni, Italy"), %2$s distance from the user's place, %3$s local time. -->
     <string name="earthquake_alert_text">%1$s: %2$s from your place, at %3$s. Data: U.S. Geological Survey.</string>
     <string name="earthquake_alert_text_tsunami">%1$s: %2$s from your place, at %3$s. Check official tsunami warnings. Data: U.S. Geological Survey.</string>
+    <string name="launch_reminder_channel_name">Launch reminders</string>
+    <string name="launch_reminder_channel_description">Tells you shortly before a launch you set a reminder on lifts off.</string>
+    <!-- %1$s local lift-off time, %2$s launch pad ("Space Launch Complex 40, Cape Canaveral SFS, FL, USA"). -->
+    <string name="launch_reminder_text">Lifts off at %1$s from %2$s.</string>
+    <string name="launch_reminder_text_no_pad">Lifts off at %1$s.</string>
+    <string name="launch_reminder_watch">Watch live</string>
 </resources>

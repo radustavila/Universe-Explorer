@@ -1,0 +1,1675 @@
+{
+  "count": 339,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "18441371-8b2e-457c-afb5-1ec1b11ab630",
+      "url": "https://lldev.thespacedevs.com/2.3.0/launches/18441371-8b2e-457c-afb5-1ec1b11ab630/",
+      "name": "Falcon 9 Block 5 | Crew-13",
+      "response_mode": "detailed",
+      "slug": "falcon-9-block-5-crew-13",
+      "launch_designator": "2026-226",
+      "status": {
+        "id": 3,
+        "name": "Launch Successful",
+        "abbrev": "Success",
+        "description": "The launch vehicle successfully inserted its payload(s) into the target orbit(s)."
+      },
+      "last_updated": "2026-10-18T02:03:46Z",
+      "net": "2026-10-01T15:10:06Z",
+      "net_precision": {
+        "id": 0,
+        "name": "Second",
+        "abbrev": "SEC",
+        "description": "The T-0 is accurate to the second."
+      },
+      "window_end": "2026-10-01T15:10:06Z",
+      "window_start": "2026-10-01T15:10:06Z",
+      "image": {
+        "id": 1385,
+        "name": "Crew Dragon at sunset",
+        "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon2520925_image_20220301072106.jpeg",
+        "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305192609.jpeg",
+        "credit": "SpaceX",
+        "single_use": false
+      },
+      "infographic": null,
+      "probability": 60,
+      "weather_concerns": "Cumulus Cloud Rule, Flight Through Precipitation, Thick Cloud Layers Rule",
+      "failreason": "",
+      "hashtag": null,
+      "launch_service_provider": {
+        "response_mode": "normal",
+        "id": 121,
+        "url": "https://lldev.thespacedevs.com/2.3.0/agencies/121/",
+        "name": "SpaceX",
+        "abbrev": "SpX",
+        "type": {
+          "id": 3,
+          "name": "Commercial"
+        },
+        "featured": true,
+        "description": "Space Exploration Technologies Corp., known as SpaceX, is an American aerospace manufacturer and space transport services company headquartered in Hawthorne, California. It was founded in 2002 by entrepreneur Elon Musk with the goal of reducing space transportation costs and enabling the colonization of Mars. SpaceX operates from many pads, on the East Coast of the US they operate from SLC-40 at Cape Canaveral Space Force Station and historic LC-39A at Kennedy Space Center. They also operate from SLC-4E at Vandenberg Space Force Base, California, usually for polar launches. Another launch site is being developed at Boca Chica, Texas.",
+        "administrator": "CEO: Elon Musk",
+        "founding_year": 2002,
+        "launchers": "Falcon | Starship",
+        "spacecraft": "Dragon",
+        "parent": null,
+        "image": {
+          "id": 1736,
+          "name": "Falcon 9 liftoff from LC-39A",
+          "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon_9_image_20230807133459.jpeg",
+          "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305193628.jpeg",
+          "credit": "SpaceX",
+          "single_use": false
+        },
+        "total_launch_count": 739,
+        "consecutive_successful_launches": 224,
+        "successful_launches": 724,
+        "failed_launches": 15,
+        "pending_launches": 135,
+        "consecutive_successful_landings": 33,
+        "successful_landings": 684,
+        "failed_landings": 29,
+        "attempted_landings": 712,
+        "successful_landings_spacecraft": 63,
+        "failed_landings_spacecraft": 3,
+        "attempted_landings_spacecraft": 68,
+        "successful_landings_payload": 1,
+        "failed_landings_payload": 0,
+        "attempted_landings_payload": 1,
+        "info_url": "https://www.spacex.com/",
+        "wiki_url": "https://en.wikipedia.org/wiki/SpaceX"
+      },
+      "rocket": {
+        "id": 7600,
+        "configuration": {
+          "response_mode": "detailed",
+          "id": 164,
+          "url": "https://lldev.thespacedevs.com/2.3.0/launcher_configurations/164/",
+          "name": "Falcon 9",
+          "full_name": "Falcon 9 Block 5",
+          "variant": "Block 5",
+          "active": true,
+          "is_placeholder": false,
+          "reusable": true,
+          "image": {
+            "id": 1736,
+            "name": "Falcon 9 liftoff from LC-39A",
+            "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon_9_image_20230807133459.jpeg",
+            "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305193628.jpeg",
+            "credit": "SpaceX",
+            "single_use": false
+          },
+          "info_url": "https://www.spacex.com/vehicles/falcon-9/",
+          "wiki_url": "https://en.wikipedia.org/wiki/Falcon_9",
+          "description": "Falcon 9 is a two-stage rocket designed and manufactured by SpaceX for the reliable and safe transport of satellites and the Dragon spacecraft into orbit. The Block 5 variant is the fifth major interval aimed at improving upon the ability for rapid reusability.",
+          "alias": "",
+          "min_stage": 2,
+          "max_stage": 2,
+          "length": 70.0,
+          "diameter": 3.65,
+          "maiden_flight": "2018-05-11",
+          "launch_cost": 52000000,
+          "launch_mass": 549.0,
+          "leo_capacity": 22800.0,
+          "gto_capacity": 8300.0,
+          "geo_capacity": null,
+          "sso_capacity": null,
+          "to_thrust": 7607.0,
+          "apogee": 200.0,
+          "total_launch_count": 640,
+          "consecutive_successful_launches": 342,
+          "successful_launches": 639,
+          "failed_launches": 1,
+          "pending_launches": 119,
+          "attempted_landings": 630,
+          "successful_landings": 625,
+          "failed_landings": 5,
+          "consecutive_successful_landings": 325,
+          "fastest_turnaround": "PT38M31S"
+        },
+        "launcher_stage": [
+          {
+            "id": 924,
+            "type": "Core",
+            "reused": true,
+            "launcher_flight_number": 3,
+            "launcher": {
+              "response_mode": "normal",
+              "id": 240,
+              "url": "https://lldev.thespacedevs.com/2.3.0/launchers/240/",
+              "flight_proven": true,
+              "serial_number": "B1101",
+              "is_placeholder": false,
+              "status": {
+                "id": 3,
+                "name": "active"
+              },
+              "image": {
+                "id": 2688,
+                "name": "B1101 at SLC-40 (Crew-12)",
+                "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/b1101_at_slc-40_image_20260208171031.jpg",
+                "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/b1101_at_slc-40_image_thumbnail_20260208171033.jpeg",
+                "credit": "SpaceX",
+                "single_use": true
+              },
+              "details": "Falcon 9 booster.",
+              "successful_landings": 3,
+              "attempted_landings": 3,
+              "flights": 3,
+              "last_launch_date": "2026-10-01T15:10:06Z",
+              "first_launch_date": "2026-01-04T06:48:10Z",
+              "fastest_turnaround": "P40DT3H27M46S"
+            },
+            "previous_flight_date": "2026-02-13T10:15:56Z",
+            "turn_around_time": "P230DT4H54M10S",
+            "landing": {
+              "id": 1847,
+              "url": "https://lldev.thespacedevs.com/2.3.0/landings/1847/",
+              "attempt": true,
+              "success": true,
+              "description": "The Falcon 9 first stage B1101 has landed back at the launch site at Landing Zone 40 after its 3rd flight.",
+              "downrange_distance": 0.3,
+              "landing_location": {
+                "id": 62,
+                "name": "Landing Zone 40",
+                "active": true,
+                "abbrev": "LZ-40",
+                "description": "Landing Pad at SLC-40 for Falcon 9 boosters. Built as an replacement for LZ-1 & LZ-2.",
+                "location": {
+                  "response_mode": "normal",
+                  "id": 12,
+                  "url": "https://lldev.thespacedevs.com/2.3.0/locations/12/",
+                  "name": "Cape Canaveral SFS, FL, USA",
+                  "active": true,
+                  "description": "Cape Canaveral Space Force Station (CCSFS) is an installation of the United States Space Force's Space Launch Delta 45, located on Cape Canaveral in Brevard County, Florida.",
+                  "image": {
+                    "id": 2200,
+                    "name": "Cape Canaveral & KSC seen from orbit (STS-43)",
+                    "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/cape_canaveral__image_20240918151615.jpg",
+                    "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/cape_canaveral__image_thumbnail_20240918151616.jpeg",
+                    "credit": "NASA",
+                    "single_use": true
+                  },
+                  "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/location_12_20200803142519.jpg",
+                  "longitude": -80.577778,
+                  "latitude": 28.488889,
+                  "timezone_name": "America/New_York",
+                  "total_launch_count": 1131,
+                  "total_landing_count": 83
+                },
+                "longitude": -80.5752619,
+                "latitude": 28.5634384,
+                "image": {
+                  "id": 2695,
+                  "name": "LZ-40 at SLC-40",
+                  "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/lz-40_at_slc-40_image_20260213111727.jpg",
+                  "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/lz-40_at_slc-40_image_thumbnail_20260213111727.jpeg",
+                  "credit": "SpaceX",
+                  "single_use": true
+                },
+                "successful_landings": 8,
+                "attempted_landings": 8,
+                "failed_landings": 0
+              },
+              "type": {
+                "id": 2,
+                "name": "Return to Launch Site",
+                "abbrev": "RTLS",
+                "description": "A return to launch site usually means that after stage separation the booster flips and does a burn back towards the launch site, landing near where it initially launched from."
+              }
+            },
+            "previous_flight": {
+              "id": "862b54e3-7bf8-48e5-8cd1-d77257d5fde9",
+              "url": "https://lldev.thespacedevs.com/2.3.0/launches/862b54e3-7bf8-48e5-8cd1-d77257d5fde9/",
+              "name": "Falcon 9 Block 5 | Crew-12"
+            }
+          }
+        ],
+        "spacecraft_stage": [
+          {
+            "id": 907,
+            "url": "https://lldev.thespacedevs.com/2.3.0/spacecraft_flights/907/",
+            "destination": "International Space Station",
+            "mission_end": null,
+            "spacecraft": {
+              "id": 595,
+              "name": "Crew Dragon Grace",
+              "serial_number": "C213"
+            },
+            "landing": {
+              "id": 1848,
+              "url": "https://lldev.thespacedevs.com/2.3.0/landings/1848/",
+              "attempt": true,
+              "success": null,
+              "description": "The Crew Dragon Grace capsule will splash down in the Pacific Ocean.",
+              "downrange_distance": null,
+              "landing_location": {
+                "id": 18,
+                "name": "Pacific Ocean",
+                "active": true,
+                "abbrev": "PAC",
+                "description": "Pacific Ocean",
+                "location": null,
+                "longitude": null,
+                "latitude": null,
+                "image": {
+                  "id": 2242,
+                  "name": "Pacific Ocean from the ISS",
+                  "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/pacific_ocean_f_image_20240920094534.jpg",
+                  "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/pacific_ocean_f_image_thumbnail_20240920094534.jpeg",
+                  "credit": "NASA",
+                  "single_use": true
+                },
+                "successful_landings": 54,
+                "attempted_landings": 56,
+                "failed_landings": 2
+              },
+              "type": {
+                "id": 4,
+                "name": "Parachute Landing",
+                "abbrev": "PCL",
+                "description": "Unpowered landing using parachute(s)."
+              }
+            },
+            "duration": "P16DT10H53M40.139563S",
+            "turn_around_time": "P443DT5H40M6S",
+            "response_mode": "detailed",
+            "launch_crew": [
+              {
+                "id": 5245,
+                "role": {
+                  "id": 24,
+                  "role": "Spacecraft Commander",
+                  "priority": 1
+                },
+                "astronaut": {
+                  "id": 582,
+                  "name": "Jessica Watkins"
+                }
+              },
+              {
+                "id": 5247,
+                "role": {
+                  "id": 3,
+                  "role": "Flight Engineer",
+                  "priority": 2
+                },
+                "astronaut": {
+                  "id": 642,
+                  "name": "Joshua Kutryk"
+                }
+              },
+              {
+                "id": 5246,
+                "role": {
+                  "id": 2,
+                  "role": "Pilot",
+                  "priority": 2
+                },
+                "astronaut": {
+                  "id": 710,
+                  "name": "Luke Delaney"
+                }
+              },
+              {
+                "id": 5251,
+                "role": {
+                  "id": 3,
+                  "role": "Flight Engineer",
+                  "priority": 2
+                },
+                "astronaut": {
+                  "id": 915,
+                  "name": "Sergey Teteryatnikov"
+                }
+              }
+            ]
+          }
+        ],
+        "payloads": []
+      },
+      "mission": {
+        "id": 6043,
+        "name": "Crew-13",
+        "type": "Human Exploration",
+        "description": "SpaceX Crew-13 is the thirteenth crewed operational flight of a Crew Dragon spacecraft to the International Space Station as part of NASA's Commercial Crew Program.",
+        "image": null,
+        "orbit": {
+          "id": 8,
+          "name": "Low Earth Orbit",
+          "abbrev": "LEO"
+        },
+        "vid_urls": []
+      },
+      "pad": {
+        "id": 80,
+        "url": "https://lldev.thespacedevs.com/2.3.0/pads/80/",
+        "active": true,
+        "name": "Space Launch Complex 40",
+        "image": {
+          "id": 2113,
+          "name": "F9 liftoff from SLC-40 (SES-24)",
+          "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/f9_liftoff_from_image_20240621050513.jpeg",
+          "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/f9_liftoff_from_image_thumbnail_20240621050514.jpeg",
+          "credit": "SpaceX",
+          "single_use": false
+        },
+        "description": "",
+        "info_url": null,
+        "wiki_url": "https://en.wikipedia.org/wiki/Cape_Canaveral_Air_Force_Station_Space_Launch_Complex_40",
+        "map_url": "https://www.google.com/maps?q=28.56194122,-80.57735736",
+        "latitude": 28.56194122,
+        "longitude": -80.57735736,
+        "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/pad_80_20200803143323.jpg",
+        "total_launch_count": 403,
+        "orbital_launch_attempt_count": 403,
+        "fastest_turnaround": "P1DT21H",
+        "location": {
+          "response_mode": "normal",
+          "id": 12,
+          "url": "https://lldev.thespacedevs.com/2.3.0/locations/12/",
+          "name": "Cape Canaveral SFS, FL, USA",
+          "active": true,
+          "description": "Cape Canaveral Space Force Station (CCSFS) is an installation of the United States Space Force's Space Launch Delta 45, located on Cape Canaveral in Brevard County, Florida.",
+          "image": {
+            "id": 2200,
+            "name": "Cape Canaveral & KSC seen from orbit (STS-43)",
+            "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/cape_canaveral__image_20240918151615.jpg",
+            "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/cape_canaveral__image_thumbnail_20240918151616.jpeg",
+            "credit": "NASA",
+            "single_use": true
+          },
+          "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/location_12_20200803142519.jpg",
+          "longitude": -80.577778,
+          "latitude": 28.488889,
+          "timezone_name": "America/New_York",
+          "total_launch_count": 1131,
+          "total_landing_count": 83
+        }
+      },
+      "webcast_live": false,
+      "orbital_launch_attempt_count": 7407,
+      "location_launch_attempt_count": 1130,
+      "pad_launch_attempt_count": 402,
+      "agency_launch_attempt_count": 733,
+      "orbital_launch_attempt_count_year": 234,
+      "location_launch_attempt_count_year": 54,
+      "pad_launch_attempt_count_year": 48,
+      "agency_launch_attempt_count_year": 114,
+      "flightclub_url": "https://flightclub.io/result?llId=18441371-8b2e-457c-afb5-1ec1b11ab630",
+      "vid_urls": [
+        {
+          "priority": 8,
+          "source": "youtube.com",
+          "publisher": "NASA",
+          "title": "NASA's SpaceX Crew-13 Launch",
+          "description": "Four new crew members are heading to the International Space Station!\n\nNASA astronauts Jessica Watkins and Luke Delaney, CSA (Canadian Space Agency) astronaut Joshua Kutryk, and Roscosmos cosmonaut Sergey Teteryatnikov are lifting off aboard a SpaceX Dragon spacecraft to spend several months living, working, and conducting scientific research in low Earth orbit.\n\nNASA's SpaceX Crew-13 mission is scheduled to lift off from Space Launch Complex 40 at Cape Canaveral Space Force Station in Florida at 11:10 a.m. EDT (1510 UTC) on Thursday, Oct. 1. The four members of Crew-13 will arrive at the space station later that day.\n\nLearn more about the Crew-13 mission: https://www.nasa.gov/mission/nasas-spacex-crew-13/\nGet daily updates from the station: https://www.nasa.gov/blogs/spacestation/",
+          "feature_image": "https://i.ytimg.com/vi/7ZiUbT1-djA/maxresdefault.jpg",
+          "url": "https://www.youtube.com/watch?v=7ZiUbT1-djA",
+          "type": {
+            "id": 1,
+            "name": "Official Webcast"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-10-01T13:19:16Z",
+          "end_time": "2026-10-01T15:43:23Z",
+          "live": false
+        },
+        {
+          "priority": 9,
+          "source": "plus.nasa.gov",
+          "publisher": "NASA",
+          "title": "NASA’s SpaceX Crew-13 Launch",
+          "description": "Coverage of the Launch of the NASA/SpaceX Crew-13 Crew to the International Space Station.",
+          "feature_image": "https://plus.nasa.gov/wp-content/uploads/2026/09/crew-13-launch-key-art-r1-horizontal-program-tile-16-9-without-title.jpg",
+          "url": "https://plus.nasa.gov/scheduled-video/nasas-spacex-crew-13-launch/",
+          "type": {
+            "id": 1,
+            "name": "Official Webcast"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-10-01T13:20:00Z",
+          "end_time": "2026-10-01T15:42:00Z",
+          "live": false
+        },
+        {
+          "priority": 10,
+          "source": "x.com",
+          "publisher": "SpaceX",
+          "title": "Crew-13 Mission",
+          "description": "Livestream on X",
+          "feature_image": "https://pbs.twimg.com/media/HS2miUMXAAAoAiS.jpg",
+          "url": "https://x.com/i/broadcasts/1qxvvepEVdRxB",
+          "type": {
+            "id": 1,
+            "name": "Official Webcast"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-10-01T14:19:59Z",
+          "end_time": "2026-10-01T15:42:20Z",
+          "live": false
+        },
+        {
+          "priority": 11,
+          "source": "youtube.com",
+          "publisher": "Spaceflight Now",
+          "title": "SpaceX Falcon 9 rocket launches NASA's Crew 13 mission to the space station",
+          "description": "Watch live coverage as SpaceX launches a Falcon 9 carrying a crew of four on a mission to the International Space Station. Liftoff from Space Launch Complex 40 at Cape Canaveral Space Force Station is scheduled for 11:10 a.m. EDT (1510 UTC) on Thursday,  Oct. 1, 2026. The first-stage booster making its third flight, will return to Landing Zone 40 adjacent to the launch pad about seven-and-a-half minutes after launch.\n\nAboard Dragon 'Grace' for the Crew 13 mission are commander Jessica Watkins and pilot Luke Delaney, both from NASA. Mission Specialists are Joshua Kutryk of CSA (Canadian Space Agency) and cosmonaut Sergey Teteryatnikov of Roscosmos. They are due to dock with the space station less than nine hours after launch to begin a six-month stay.\n\nCommentary will be provided by Sp...",
+          "feature_image": "https://i.ytimg.com/vi/6_Vbc21msHU/maxresdefault.jpg",
+          "url": "https://www.youtube.com/watch?v=6_Vbc21msHU",
+          "type": {
+            "id": 3,
+            "name": "Unofficial Webcast"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-10-01T11:01:56Z",
+          "end_time": "2026-10-01T15:43:32Z",
+          "live": false
+        },
+        {
+          "priority": 12,
+          "source": "youtube.com",
+          "publisher": "NASASpaceflight",
+          "title": "SpaceX Launches Crew-13 Dragon to the International Space Station",
+          "description": "Instantaneous launch window: October 1st at 11:10:06 EDT (15:10:06 UTC)\n\nMission: Falcon 9 launch of Crew-13 to the International Space Station\nLaunch location: Space Launch Complex 40 (SLC-40), Cape Canaveral Space Force Station, Earth.\nTarget orbit: Low-Earth Orbit (LEO) - 51.6º orbital inclination\nBooster: B1101-3; 230d 4h 54min 11s turnaround\nBooster history: Starlink Group 6-88 and Crew-12\nBooster recovery: Landing Zone 40 (LZ-40)\nDragon capsule: C213-2 (Grace); 443d 5h 38min 25s turnaround\nCapsule history: Axiom-4\nTotal time in flight: 20d 2h 59min 49s\nCapsule recovery: Shannon off the coast of California.\nRocket trajectory: Northeast hugging the east coast of the United States.\nMission Commander: Jessica Watkins (United States) - 2nd spaceflight.\nMission Pilot: Luke Delaney (Un...",
+          "feature_image": "https://i.ytimg.com/vi/jxLT_ckNbIs/maxresdefault.jpg",
+          "url": "https://www.youtube.com/watch?v=jxLT_ckNbIs",
+          "type": {
+            "id": 3,
+            "name": "Unofficial Webcast"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-10-01T11:11:11Z",
+          "end_time": "2026-10-01T16:00:56Z",
+          "live": false
+        },
+        {
+          "priority": 13,
+          "source": "youtube.com",
+          "publisher": "Canadian Space Agency",
+          "title": "Launch of Joshua Kutryk to the International Space Station",
+          "description": "Canadian Space Agency astronaut Joshua Kutryk is ready for his biggest adventure yet! He will live and work for about six months aboard the International Space Station as part of NASA's Crew-13 mission. \n\nThe Station is a research laboratory that orbits the Earth. During his time there, Josh will conduct scientific experiments and test new technologies. \nLearn more: https://www.asc-csa.gc.ca/eng/missions/crew-13/ \n\nVersion en français : https://www.youtube.com/@Agencespatialecanadienne/streams\n\nOriginal version without simultaneous translation: https://www.youtube.com/@mediasASC-CSAmedia/streams\n\nCredits: Canadian Space Agency, NASA",
+          "feature_image": "https://i.ytimg.com/vi/gxR5eK8JE_I/maxresdefault.jpg",
+          "url": "https://www.youtube.com/watch?v=gxR5eK8JE_I",
+          "type": {
+            "id": 1,
+            "name": "Official Webcast"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-10-01T14:20:20Z",
+          "end_time": "2026-10-01T15:22:58Z",
+          "live": false
+        },
+        {
+          "priority": 14,
+          "source": "youtube.com",
+          "publisher": "Роскосмос ТВ",
+          "title": "Трансляция запуска экипажа Crew-13 c космонавтом Роскосмоса Сергеем Тетерятниковым",
+          "description": "1 октября в 18:10 по московскому времени с космодрома на мысе Канаверал запланирован старт ракеты-носителя Falcon-9 с пилотируемым кораблем Crew Dragon, которому предстоит доставить на Международную космическую станцию экипаж миссии Crew-13.\n\nВ составе экипажа — космонавт Роскосмоса Сергей Тетерятников и астронавты NASA Джессика Уоткинс и Люк Дилейни, а также астронавт Канадского космического агентства Джошуа Кутрик.\n\nСайт Роскосмоса: https://www.roscosmos.ru/\nРоскосмос в социальных сетях: \nVk: https://vk.com/roscosmos\nOk: https://ok.ru/roscosmos  \nTelegram: https://t.me/roscosmos_gk \nRutube: https://rutube.ru/channel/770606/\n\nНовый telegram-канал о путешествиях на космодромы: https://t.me/cosmotours\n\n#Роскосмос  #РоскосмосТВ",
+          "feature_image": "https://i.ytimg.com/vi/Mkf_wAw8kLc/maxresdefault.jpg",
+          "url": "https://www.youtube.com/watch?v=Mkf_wAw8kLc",
+          "type": {
+            "id": 1,
+            "name": "Official Webcast"
+          },
+          "language": {
+            "id": 3,
+            "name": "Russian",
+            "code": "ru"
+          },
+          "start_time": "2026-10-01T14:18:38Z",
+          "end_time": "2026-10-01T15:28:31Z",
+          "live": false
+        }
+      ],
+      "pad_turnaround": "P17DT20H21M6S"
+    },
+    {
+      "id": "4651fd8a-43de-4166-bf8f-c168b3bd1d2c",
+      "url": "https://lldev.thespacedevs.com/2.3.0/launches/4651fd8a-43de-4166-bf8f-c168b3bd1d2c/",
+      "name": "Falcon Heavy | NROL-97",
+      "response_mode": "detailed",
+      "slug": "falcon-heavy-nrol-97",
+      "launch_designator": "2026-228",
+      "status": {
+        "id": 3,
+        "name": "Launch Successful",
+        "abbrev": "Success",
+        "description": "The launch vehicle successfully inserted its payload(s) into the target orbit(s)."
+      },
+      "last_updated": "2026-10-02T14:51:48Z",
+      "net": "2026-10-02T03:54:00Z",
+      "net_precision": {
+        "id": 1,
+        "name": "Minute",
+        "abbrev": "MIN",
+        "description": "The T-0 is accurate to the minute."
+      },
+      "window_end": "2026-10-02T04:42:00Z",
+      "window_start": "2026-10-02T03:53:00Z",
+      "image": {
+        "id": 1739,
+        "name": "[AUTO] Falcon Heavy - image",
+        "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon_heavy_image_20220129192819.jpeg",
+        "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305193632.jpeg",
+        "credit": null,
+        "single_use": true
+      },
+      "infographic": null,
+      "probability": 90,
+      "weather_concerns": "Cumulus Cloud Rule, Thick Cloud Layers Rule",
+      "failreason": "",
+      "hashtag": null,
+      "launch_service_provider": {
+        "response_mode": "normal",
+        "id": 121,
+        "url": "https://lldev.thespacedevs.com/2.3.0/agencies/121/",
+        "name": "SpaceX",
+        "abbrev": "SpX",
+        "type": {
+          "id": 3,
+          "name": "Commercial"
+        },
+        "featured": true,
+        "description": "Space Exploration Technologies Corp., known as SpaceX, is an American aerospace manufacturer and space transport services company headquartered in Hawthorne, California. It was founded in 2002 by entrepreneur Elon Musk with the goal of reducing space transportation costs and enabling the colonization of Mars. SpaceX operates from many pads, on the East Coast of the US they operate from SLC-40 at Cape Canaveral Space Force Station and historic LC-39A at Kennedy Space Center. They also operate from SLC-4E at Vandenberg Space Force Base, California, usually for polar launches. Another launch site is being developed at Boca Chica, Texas.",
+        "administrator": "CEO: Elon Musk",
+        "founding_year": 2002,
+        "launchers": "Falcon | Starship",
+        "spacecraft": "Dragon",
+        "parent": null,
+        "image": {
+          "id": 1736,
+          "name": "Falcon 9 liftoff from LC-39A",
+          "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon_9_image_20230807133459.jpeg",
+          "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305193628.jpeg",
+          "credit": "SpaceX",
+          "single_use": false
+        },
+        "total_launch_count": 739,
+        "consecutive_successful_launches": 224,
+        "successful_launches": 724,
+        "failed_launches": 15,
+        "pending_launches": 135,
+        "consecutive_successful_landings": 33,
+        "successful_landings": 684,
+        "failed_landings": 29,
+        "attempted_landings": 712,
+        "successful_landings_spacecraft": 63,
+        "failed_landings_spacecraft": 3,
+        "attempted_landings_spacecraft": 68,
+        "successful_landings_payload": 1,
+        "failed_landings_payload": 0,
+        "attempted_landings_payload": 1,
+        "info_url": "https://www.spacex.com/",
+        "wiki_url": "https://en.wikipedia.org/wiki/SpaceX"
+      },
+      "rocket": {
+        "id": 8574,
+        "configuration": {
+          "response_mode": "detailed",
+          "id": 161,
+          "url": "https://lldev.thespacedevs.com/2.3.0/launcher_configurations/161/",
+          "name": "Falcon Heavy",
+          "full_name": "Falcon Heavy",
+          "variant": "Heavy",
+          "active": true,
+          "is_placeholder": false,
+          "reusable": true,
+          "image": {
+            "id": 1739,
+            "name": "[AUTO] Falcon Heavy - image",
+            "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon_heavy_image_20220129192819.jpeg",
+            "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305193632.jpeg",
+            "credit": null,
+            "single_use": true
+          },
+          "info_url": "https://www.spacex.com/vehicles/falcon-heavy/index.html",
+          "wiki_url": "https://en.wikipedia.org/wiki/Falcon_Heavy",
+          "description": "The Falcon Heavy is a variant of the Falcon 9 full thrust launch vehicle and consists of a standard Falcon 9 rocket core, with two additional boosters derived from the Falcon 9 first stage.",
+          "alias": "",
+          "min_stage": 3,
+          "max_stage": 3,
+          "length": 70.0,
+          "diameter": 12.2,
+          "maiden_flight": "2018-02-06",
+          "launch_cost": 90000000,
+          "launch_mass": 1400.0,
+          "leo_capacity": 63800.0,
+          "gto_capacity": 26700.0,
+          "geo_capacity": null,
+          "sso_capacity": null,
+          "to_thrust": 22819.0,
+          "apogee": 200.0,
+          "total_launch_count": 14,
+          "consecutive_successful_launches": 14,
+          "successful_launches": 14,
+          "failed_launches": 0,
+          "pending_launches": 12,
+          "attempted_landings": 27,
+          "successful_landings": 25,
+          "failed_landings": 2,
+          "consecutive_successful_landings": 19,
+          "fastest_turnaround": "P32DT16H27M56S"
+        },
+        "launcher_stage": [
+          {
+            "id": 987,
+            "type": "Core",
+            "reused": false,
+            "launcher_flight_number": 1,
+            "launcher": {
+              "response_mode": "normal",
+              "id": 261,
+              "url": "https://lldev.thespacedevs.com/2.3.0/launchers/261/",
+              "flight_proven": false,
+              "serial_number": "B1106",
+              "is_placeholder": false,
+              "status": {
+                "id": 2,
+                "name": "expended"
+              },
+              "image": {
+                "id": 1739,
+                "name": "[AUTO] Falcon Heavy - image",
+                "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon_heavy_image_20220129192819.jpeg",
+                "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305193632.jpeg",
+                "credit": null,
+                "single_use": true
+              },
+              "details": "Falcon Heavy core booster expended during the launch of the NROL-97 mission.",
+              "successful_landings": 0,
+              "attempted_landings": 0,
+              "flights": 1,
+              "last_launch_date": "2026-10-02T03:54:00Z",
+              "first_launch_date": "2026-10-02T03:54:00Z",
+              "fastest_turnaround": null
+            },
+            "previous_flight_date": null,
+            "turn_around_time": null,
+            "landing": {
+              "id": 1960,
+              "url": "https://lldev.thespacedevs.com/2.3.0/landings/1960/",
+              "attempt": false,
+              "success": null,
+              "description": "The Falcon Heavy center core B1106 will be expended.",
+              "downrange_distance": null,
+              "landing_location": {
+                "id": 6,
+                "name": "Atlantic Ocean",
+                "active": true,
+                "abbrev": "ATL",
+                "description": "Atlantic Ocean",
+                "location": null,
+                "longitude": null,
+                "latitude": null,
+                "image": {
+                  "id": 2230,
+                  "name": "Sun glint on the Atlantic Ocean",
+                  "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/sun_glint_on_th_image_20240920085841.jpg",
+                  "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/sun_glint_on_th_image_thumbnail_20240920085841.jpeg",
+                  "credit": "NASA",
+                  "single_use": true
+                },
+                "successful_landings": 38,
+                "attempted_landings": 42,
+                "failed_landings": 4
+              },
+              "type": {
+                "id": 8,
+                "name": "Expended",
+                "abbrev": "EXP",
+                "description": "Vehicle did not perform any landing operations after launch"
+              }
+            },
+            "previous_flight": null
+          },
+          {
+            "id": 988,
+            "type": "Strap-On Booster",
+            "reused": true,
+            "launcher_flight_number": 2,
+            "launcher": {
+              "response_mode": "normal",
+              "id": 250,
+              "url": "https://lldev.thespacedevs.com/2.3.0/launchers/250/",
+              "flight_proven": true,
+              "serial_number": "B1104",
+              "is_placeholder": false,
+              "status": {
+                "id": 3,
+                "name": "active"
+              },
+              "image": {
+                "id": 1736,
+                "name": "Falcon 9 liftoff from LC-39A",
+                "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon_9_image_20230807133459.jpeg",
+                "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305193628.jpeg",
+                "credit": "SpaceX",
+                "single_use": false
+              },
+              "details": "Falcon 9 booster.",
+              "successful_landings": 2,
+              "attempted_landings": 2,
+              "flights": 2,
+              "last_launch_date": "2026-10-02T03:54:00Z",
+              "first_launch_date": "2026-08-30T11:26:04Z",
+              "fastest_turnaround": "P32DT16H27M56S"
+            },
+            "previous_flight_date": "2026-08-30T11:26:04Z",
+            "turn_around_time": "P32DT16H27M56S",
+            "landing": {
+              "id": 1959,
+              "url": "https://lldev.thespacedevs.com/2.3.0/landings/1959/",
+              "attempt": true,
+              "success": true,
+              "description": "The Falcon Heavy side booster B1104 has landed back at the launch site at Landing Zone 1 after its 2nd flight.",
+              "downrange_distance": 14.9,
+              "landing_location": {
+                "id": 4,
+                "name": "Landing Zone 1",
+                "active": false,
+                "abbrev": "LZ-1",
+                "description": "LZ-1 Pad located at Cape Canaveral Space Force Station at the previous LC-13.",
+                "location": {
+                  "response_mode": "normal",
+                  "id": 12,
+                  "url": "https://lldev.thespacedevs.com/2.3.0/locations/12/",
+                  "name": "Cape Canaveral SFS, FL, USA",
+                  "active": true,
+                  "description": "Cape Canaveral Space Force Station (CCSFS) is an installation of the United States Space Force's Space Launch Delta 45, located on Cape Canaveral in Brevard County, Florida.",
+                  "image": {
+                    "id": 2200,
+                    "name": "Cape Canaveral & KSC seen from orbit (STS-43)",
+                    "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/cape_canaveral__image_20240918151615.jpg",
+                    "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/cape_canaveral__image_thumbnail_20240918151616.jpeg",
+                    "credit": "NASA",
+                    "single_use": true
+                  },
+                  "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/location_12_20200803142519.jpg",
+                  "longitude": -80.577778,
+                  "latitude": 28.488889,
+                  "timezone_name": "America/New_York",
+                  "total_launch_count": 1131,
+                  "total_landing_count": 83
+                },
+                "longitude": -80.542963,
+                "latitude": 28.485712,
+                "image": {
+                  "id": 1968,
+                  "name": "LZ-1 empty",
+                  "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/lz-1_empty_image_20240310163411.jpg",
+                  "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/lz-1_empty_image_thumbnail_20240310163411.jpeg",
+                  "credit": "SpaceX",
+                  "single_use": true
+                },
+                "successful_landings": 54,
+                "attempted_landings": 55,
+                "failed_landings": 1
+              },
+              "type": {
+                "id": 2,
+                "name": "Return to Launch Site",
+                "abbrev": "RTLS",
+                "description": "A return to launch site usually means that after stage separation the booster flips and does a burn back towards the launch site, landing near where it initially launched from."
+              }
+            },
+            "previous_flight": {
+              "id": "521f3a1c-f977-4306-9b7f-495858719adf",
+              "url": "https://lldev.thespacedevs.com/2.3.0/launches/521f3a1c-f977-4306-9b7f-495858719adf/",
+              "name": "Falcon Heavy | Nancy Grace Roman Space Telescope"
+            }
+          },
+          {
+            "id": 989,
+            "type": "Strap-On Booster",
+            "reused": true,
+            "launcher_flight_number": 4,
+            "launcher": {
+              "response_mode": "normal",
+              "id": 111,
+              "url": "https://lldev.thespacedevs.com/2.3.0/launchers/111/",
+              "flight_proven": true,
+              "serial_number": "B1072",
+              "is_placeholder": false,
+              "status": {
+                "id": 3,
+                "name": "active"
+              },
+              "image": {
+                "id": 2120,
+                "name": "B1072 and B1086 during landing (GOES-U)",
+                "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/b1072_and_b1086_image_20240626195649.jpeg",
+                "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/b1072_and_b1086_image_thumbnail_20240626195649.jpeg",
+                "credit": "SpaceX",
+                "single_use": true
+              },
+              "details": "Falcon Heavy side booster first flown during the GOES-U mission.",
+              "successful_landings": 4,
+              "attempted_landings": 4,
+              "flights": 4,
+              "last_launch_date": "2026-10-02T03:54:00Z",
+              "first_launch_date": "2024-06-25T21:26:00Z",
+              "fastest_turnaround": "P32DT16H27M56S"
+            },
+            "previous_flight_date": "2026-08-30T11:26:04Z",
+            "turn_around_time": "P32DT16H27M56S",
+            "landing": {
+              "id": 1958,
+              "url": "https://lldev.thespacedevs.com/2.3.0/landings/1958/",
+              "attempt": true,
+              "success": true,
+              "description": "The Falcon Heavy side booster B1072 has landed back at the launch site at Landing Zone 2 after its 4th flight.",
+              "downrange_distance": 14.6,
+              "landing_location": {
+                "id": 5,
+                "name": "Landing Zone 2",
+                "active": true,
+                "abbrev": "LZ-2",
+                "description": "LZ-2 Pad located at Cape Canaveral Space Force Station at the previous LC-13. Directly next to LZ-1",
+                "location": {
+                  "response_mode": "normal",
+                  "id": 12,
+                  "url": "https://lldev.thespacedevs.com/2.3.0/locations/12/",
+                  "name": "Cape Canaveral SFS, FL, USA",
+                  "active": true,
+                  "description": "Cape Canaveral Space Force Station (CCSFS) is an installation of the United States Space Force's Space Launch Delta 45, located on Cape Canaveral in Brevard County, Florida.",
+                  "image": {
+                    "id": 2200,
+                    "name": "Cape Canaveral & KSC seen from orbit (STS-43)",
+                    "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/cape_canaveral__image_20240918151615.jpg",
+                    "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/cape_canaveral__image_thumbnail_20240918151616.jpeg",
+                    "credit": "NASA",
+                    "single_use": true
+                  },
+                  "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/location_12_20200803142519.jpg",
+                  "longitude": -80.577778,
+                  "latitude": 28.488889,
+                  "timezone_name": "America/New_York",
+                  "total_launch_count": 1131,
+                  "total_landing_count": 83
+                },
+                "longitude": -80.544964,
+                "latitude": 28.48775,
+                "image": {
+                  "id": 1976,
+                  "name": "LZ-2",
+                  "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/lz-2_image_20240310172018.png",
+                  "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/lz-2_image_thumbnail_20240310172019.png",
+                  "credit": "SpaceX",
+                  "single_use": true
+                },
+                "successful_landings": 20,
+                "attempted_landings": 20,
+                "failed_landings": 0
+              },
+              "type": {
+                "id": 2,
+                "name": "Return to Launch Site",
+                "abbrev": "RTLS",
+                "description": "A return to launch site usually means that after stage separation the booster flips and does a burn back towards the launch site, landing near where it initially launched from."
+              }
+            },
+            "previous_flight": {
+              "id": "521f3a1c-f977-4306-9b7f-495858719adf",
+              "url": "https://lldev.thespacedevs.com/2.3.0/launches/521f3a1c-f977-4306-9b7f-495858719adf/",
+              "name": "Falcon Heavy | Nancy Grace Roman Space Telescope"
+            }
+          }
+        ],
+        "spacecraft_stage": [],
+        "payloads": []
+      },
+      "mission": {
+        "id": 7165,
+        "name": "NROL-97",
+        "type": "Government/Top Secret",
+        "description": "Classified payload for the US National Reconnaissance Office.",
+        "image": null,
+        "orbit": {
+          "id": 25,
+          "name": "Unknown",
+          "abbrev": "N/A"
+        },
+        "vid_urls": []
+      },
+      "pad": {
+        "id": 87,
+        "url": "https://lldev.thespacedevs.com/2.3.0/pads/87/",
+        "active": true,
+        "name": "Launch Complex 39A",
+        "image": {
+          "id": 2119,
+          "name": "FH liftoff from LC-39A (GOES-U)",
+          "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/fh_liftoff_from_image_20240626200232.jpeg",
+          "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/fh_liftoff_from_image_thumbnail_20240626200233.jpeg",
+          "credit": "SpaceX",
+          "single_use": true
+        },
+        "description": "",
+        "info_url": null,
+        "wiki_url": "https://en.wikipedia.org/wiki/Kennedy_Space_Center_Launch_Complex_39#Launch_Pad_39A",
+        "map_url": "https://www.google.com/maps?q=28.60822681,-80.60428186",
+        "latitude": 28.60822681,
+        "longitude": -80.60428186,
+        "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/pad_87_20200803143537.jpg",
+        "total_launch_count": 224,
+        "orbital_launch_attempt_count": 223,
+        "fastest_turnaround": "P5DT6H20M30S",
+        "location": {
+          "response_mode": "normal",
+          "id": 27,
+          "url": "https://lldev.thespacedevs.com/2.3.0/locations/27/",
+          "name": "Kennedy Space Center, FL, USA",
+          "active": true,
+          "description": "The John F. Kennedy Space Center, located on Merritt Island, Florida, is one of NASA's ten field centers. Since 1968, KSC has been NASA's primary launch center of American spaceflight, research, and technology. Launch operations for the Apollo, Skylab and Space Shuttle programs were carried out from Kennedy Space Center Launch Complex 39 and managed by KSC. Located on the east coast of Florida, KSC is adjacent to Cape Canaveral Space Force Station (CCSFS).",
+          "image": {
+            "id": 2200,
+            "name": "Cape Canaveral & KSC seen from orbit (STS-43)",
+            "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/cape_canaveral__image_20240918151615.jpg",
+            "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/cape_canaveral__image_thumbnail_20240918151616.jpeg",
+            "credit": "NASA",
+            "single_use": true
+          },
+          "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/location_27_20200803142447.jpg",
+          "longitude": -80.650833,
+          "latitude": 28.524167,
+          "timezone_name": "America/New_York",
+          "total_launch_count": 283,
+          "total_landing_count": 0
+        }
+      },
+      "webcast_live": false,
+      "orbital_launch_attempt_count": 7409,
+      "location_launch_attempt_count": 283,
+      "pad_launch_attempt_count": 224,
+      "agency_launch_attempt_count": 735,
+      "orbital_launch_attempt_count_year": 236,
+      "location_launch_attempt_count_year": 4,
+      "pad_launch_attempt_count_year": 3,
+      "agency_launch_attempt_count_year": 116,
+      "flightclub_url": "https://flightclub.io/result?llId=4651fd8a-43de-4166-bf8f-c168b3bd1d2c",
+      "vid_urls": [
+        {
+          "priority": 7,
+          "source": "youtube.com",
+          "publisher": "The Space Devs",
+          "title": "SpaceX NROL-97",
+          "description": "On Friday October 02, 2026 at 03:54 UTC, SpaceX launched the NROL-97 mission with a Falcon Heavy from Launch Complex 39A at Kennedy Space Center, FL, USA.\n\nDescription generated from the Launch Library 2 API.\n——————————————————————\nObject in the Launch Library 2 API: https://ll.thespacedevs.com/2.3.0/launches/4651fd8a-43de-4166-bf8f-c168b3bd1d2c/?format=json\nRelated news in the Spaceflight News API: https://api.spaceflightnewsapi.net/v4/articles/?launch=4651fd8a-43de-4166-bf8f-c168b3bd1d2c\n——————————————————————\n\nRehosted on YouTube by The Space Devs.\nSupport our work on https://www.patreon.com/TheSpaceDevs\n——————————————————————\nWebsite: https://thespacedevs.com\nX: https://x.com/thespacedevs\nDiscord: https://discord.com/invite/p7ntkNA\n——————————————————————\n\nOriginal video: https://x...",
+          "feature_image": "https://i.ytimg.com/vi/5ypJLI6uwNs/maxresdefault.jpg",
+          "url": "https://www.youtube.com/watch?v=5ypJLI6uwNs",
+          "type": {
+            "id": 4,
+            "name": "Unofficial Re-stream"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-10-02T04:11:01Z",
+          "end_time": "2026-10-02T04:34:25Z",
+          "live": false
+        },
+        {
+          "priority": 8,
+          "source": "youtube.com",
+          "publisher": "Spaceflight Now",
+          "title": "SpaceX Falcon Heavy launches its first mission for U.S. spy satellite agency",
+          "description": "Watch live coverage as SpaceX launches a Falcon Heavy rocket from Kennedy Space Center on a classified mission for the National Reconnaissance Office. Liftoff from Launch Complex 39A is scheduled for Thursday, Oct. 1, 2026, at 11:53 p.m. EDT (0353 UTC on Oct. 2).\n\nThe Falcon Heavy's side boosters will return to land at Cape Canaveral just under eight minutes after launch. The rocket will take an north-easterly trajectory upon departure from Florida's Space Coast. \n\nLive commentary will be provided by Spaceflight Now’s Will Robinson-Smith starting about 2 hours prior to launch.\n\nVideos like this are made possible by the support of our members. Join this channel to get access to perks:\nhttps://www.youtube.com/channel/UCoLdERT4-TJ82PJOHSrsZLQ/join",
+          "feature_image": "https://i.ytimg.com/vi/4KZtaO-VtrI/maxresdefault.jpg",
+          "url": "https://www.youtube.com/watch?v=4KZtaO-VtrI",
+          "type": {
+            "id": 3,
+            "name": "Unofficial Webcast"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-10-02T01:52:44Z",
+          "end_time": "2026-10-02T04:08:45Z",
+          "live": false
+        },
+        {
+          "priority": 9,
+          "source": "youtube.com",
+          "publisher": "NASASpaceflight",
+          "title": "SpaceX Falcon Heavy Launches NROL-97",
+          "description": "Launch Window: October 1st from 23:53 to 00:42 EDT (03:53-04:42 UTC on the 2nd)\nCurrent T0: October 1st at 23:53 EDT (03:53 UTC on the 2nd)\n\nMission: Falcon Heavy launch of NROL-97 for the National Reconnaissance Office\nLaunch location: Launch Complex 39A, Kennedy Space Center, Earth.\nTarget orbit: Classified - But suspected to be Medium Earth Orbit\nCenter Core: B1106-1\nCenter Core history: New Booster\nCenter Core Recovery: None, will be expended\nMY Side Booster: B1072-4; 32d 16h 26min 56s turnaround\nMY Side Booster history: GOES-U, Viasat-3 F3, NASA's Roman\nPY Side Booster: B1104-2; 32d 16h 26min 56s turnaround\nPY Side Booster history: NASA's Roman\nSide boosters recovery: Landing Zone 1 (LZ-1) and Landing Zone 2 (LZ-2)\nFairing halves: SN240-4 (passive) and SN241-5 (active)\nFairing re...",
+          "feature_image": "https://i.ytimg.com/vi/aqYtiH1UduQ/maxresdefault.jpg",
+          "url": "https://www.youtube.com/watch?v=aqYtiH1UduQ",
+          "type": {
+            "id": 3,
+            "name": "Unofficial Webcast"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-10-02T01:58:31Z",
+          "end_time": "2026-10-02T04:35:56Z",
+          "live": false
+        },
+        {
+          "priority": 10,
+          "source": "x.com",
+          "publisher": "SpaceX",
+          "title": "NROL-97 Mission",
+          "description": "Livestream on X",
+          "feature_image": "https://pbs.twimg.com/media/HS6leNzXIAAeUXh.jpg",
+          "url": "https://x.com/i/broadcasts/1oJMvNkPPXlxQ",
+          "type": {
+            "id": 1,
+            "name": "Official Webcast"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-10-02T03:39:56Z",
+          "end_time": "2026-10-02T04:03:21Z",
+          "live": false
+        }
+      ],
+      "pad_turnaround": "P32DT16H27M56S"
+    },
+    {
+      "id": "9e24bef7-c44b-4fdc-ba52-68545ce9457e",
+      "url": "https://lldev.thespacedevs.com/2.3.0/launches/9e24bef7-c44b-4fdc-ba52-68545ce9457e/",
+      "name": "Electron | Owlright, Owlright, Owlright (StriX Launch 13)",
+      "response_mode": "detailed",
+      "slug": "electron-owlright-owlright-owlright-strix-launch-1",
+      "launch_designator": "2026-223",
+      "status": {
+        "id": 3,
+        "name": "Launch Successful",
+        "abbrev": "Success",
+        "description": "The launch vehicle successfully inserted its payload(s) into the target orbit(s)."
+      },
+      "last_updated": "2026-09-28T23:36:52Z",
+      "net": "2026-09-26T00:39:00Z",
+      "net_precision": {
+        "id": 1,
+        "name": "Minute",
+        "abbrev": "MIN",
+        "description": "The T-0 is accurate to the minute."
+      },
+      "window_end": "2026-09-26T00:39:00Z",
+      "window_start": "2026-09-26T00:39:00Z",
+      "image": {
+        "id": 1727,
+        "name": "[AUTO] Electron - image",
+        "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/electron_image_20190705175640.jpeg",
+        "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305193613.jpeg",
+        "credit": null,
+        "single_use": true
+      },
+      "infographic": null,
+      "probability": null,
+      "weather_concerns": null,
+      "failreason": "",
+      "hashtag": null,
+      "launch_service_provider": {
+        "response_mode": "normal",
+        "id": 147,
+        "url": "https://lldev.thespacedevs.com/2.3.0/agencies/147/",
+        "name": "Rocket Lab",
+        "abbrev": "RL",
+        "type": {
+          "id": 3,
+          "name": "Commercial"
+        },
+        "featured": true,
+        "description": "Rocket Lab is an American aerospace manufacturer with a wholly owned New Zealand subsidiary. The company develops lightweight, cost-effective commercial rocket launch services. The Electron Program was founded on the premise that small payloads such as CubeSats require dedicated small launch vehicles and flexibility not currently offered by traditional rocket systems. Its rocket, the Electron, is a light-weight rocket and is now operating commercially. The company is also producing a variety of spacecrafts and spacecrafts components.",
+        "administrator": "CEO: Peter Beck",
+        "founding_year": 2006,
+        "launchers": "Electron",
+        "spacecraft": "",
+        "parent": null,
+        "image": {
+          "id": 24,
+          "name": "[AUTO] Rocket Lab - image",
+          "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/rocket2520lab2520ltd_image_20190207032456.jpeg",
+          "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305184649.jpeg",
+          "credit": null,
+          "single_use": true
+        },
+        "total_launch_count": 97,
+        "consecutive_successful_launches": 56,
+        "successful_launches": 93,
+        "failed_launches": 4,
+        "pending_launches": 60,
+        "consecutive_successful_landings": 4,
+        "successful_landings": 7,
+        "failed_landings": 2,
+        "attempted_landings": 9,
+        "successful_landings_spacecraft": 0,
+        "failed_landings_spacecraft": 0,
+        "attempted_landings_spacecraft": 0,
+        "successful_landings_payload": 0,
+        "failed_landings_payload": 0,
+        "attempted_landings_payload": 0,
+        "info_url": "https://rocketlabcorp.com",
+        "wiki_url": "https://en.wikipedia.org/wiki/Rocket_Lab"
+      },
+      "rocket": {
+        "id": 8269,
+        "configuration": {
+          "response_mode": "detailed",
+          "id": 26,
+          "url": "https://lldev.thespacedevs.com/2.3.0/launcher_configurations/26/",
+          "name": "Electron",
+          "full_name": "Electron",
+          "variant": "",
+          "active": true,
+          "is_placeholder": false,
+          "reusable": false,
+          "image": {
+            "id": 1727,
+            "name": "[AUTO] Electron - image",
+            "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/electron_image_20190705175640.jpeg",
+            "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305193613.jpeg",
+            "credit": null,
+            "single_use": true
+          },
+          "info_url": "https://www.rocketlabusa.com/electron/",
+          "wiki_url": "https://en.wikipedia.org/wiki/Rocket_Lab_Electron",
+          "description": "Electron is a two-stage orbital expendable launch vehicle (with an optional third stage) developed by the American aerospace company Rocket Lab. Electron is a small-lift launch vehicle designed to launch small satellites and cubesats to sun-synchronous orbit and low earth orbit. The Electron is the first orbital class rocket to use electric-pump-fed engines, powered by the 9 Rutherford engines on the first stage. It is also used as a suborbital testbed (called HASTE) for hypersonics research.",
+          "alias": "",
+          "min_stage": 2,
+          "max_stage": 3,
+          "length": 18.0,
+          "diameter": 1.2,
+          "maiden_flight": "2017-05-25",
+          "launch_cost": 6000000,
+          "launch_mass": 13.0,
+          "leo_capacity": 300.0,
+          "gto_capacity": null,
+          "geo_capacity": null,
+          "sso_capacity": 225.0,
+          "to_thrust": 162.0,
+          "apogee": null,
+          "total_launch_count": 97,
+          "consecutive_successful_launches": 56,
+          "successful_launches": 93,
+          "failed_launches": 4,
+          "pending_launches": 57,
+          "attempted_landings": 9,
+          "successful_landings": 7,
+          "failed_landings": 2,
+          "consecutive_successful_landings": 4,
+          "fastest_turnaround": "PT21H55M"
+        },
+        "launcher_stage": [],
+        "spacecraft_stage": [],
+        "payloads": []
+      },
+      "mission": {
+        "id": 6850,
+        "name": "Owlright, Owlright, Owlright (StriX Launch 13)",
+        "type": "Earth Science",
+        "description": "Synthetic aperture radar satellite for Japanese Earth imaging company Synspective.",
+        "image": null,
+        "orbit": {
+          "id": 8,
+          "name": "Low Earth Orbit",
+          "abbrev": "LEO"
+        },
+        "vid_urls": []
+      },
+      "pad": {
+        "id": 185,
+        "url": "https://lldev.thespacedevs.com/2.3.0/pads/185/",
+        "active": true,
+        "name": "Rocket Lab Launch Complex 1B",
+        "image": {
+          "id": 1358,
+          "name": "Electron on LC-1B (CAPSTONE)",
+          "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/electron25202_image_20231125062347.jpeg",
+          "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305192519.jpeg",
+          "credit": "Rocket Lab",
+          "single_use": false
+        },
+        "description": "",
+        "info_url": null,
+        "wiki_url": "https://en.wikipedia.org/wiki/Rocket_Lab_Launch_Complex_1",
+        "map_url": "https://www.google.com/maps?q=-39.262833,177.864469",
+        "latitude": -39.262833,
+        "longitude": 177.864469,
+        "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/pad_185_20200803143540.jpg",
+        "total_launch_count": 41,
+        "orbital_launch_attempt_count": 41,
+        "fastest_turnaround": "P6DT21H17M",
+        "location": {
+          "response_mode": "normal",
+          "id": 10,
+          "url": "https://lldev.thespacedevs.com/2.3.0/locations/10/",
+          "name": "Rocket Lab Launch Complex 1, Mahia Peninsula, New Zealand",
+          "active": true,
+          "description": "Rocket Lab Launch Complex 1 is a commercial spaceport located close to Ahuriri Point at the southern tip of Māhia Peninsula, on the east coast of New Zealand's North Island. It is owned and operated by private spaceflight company Rocket Lab and supports launches of the company's Electron rocket for small satellites. With the launch of Electron on 25 May 2017, it became the first private spaceport to host an orbital launch attempt, and the first site in New Zealand to host an orbital launch attempt. With the Electron launch of 21 January 2018, it became the first private spaceport to host a successful orbital launch.",
+          "image": {
+            "id": 2206,
+            "name": "Rocket Lab Launch Complex 1",
+            "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/rocket_lab_laun_image_20240918164228.jpg",
+            "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/rocket_lab_laun_image_thumbnail_20240918164228.jpeg",
+            "credit": "Rocket Lab",
+            "single_use": true
+          },
+          "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/location_10_20200803142509.jpg",
+          "longitude": 177.86586,
+          "latitude": -39.26085,
+          "timezone_name": "Pacific/Auckland",
+          "total_launch_count": 84,
+          "total_landing_count": 17
+        }
+      },
+      "webcast_live": false,
+      "orbital_launch_attempt_count": 7404,
+      "location_launch_attempt_count": 84,
+      "pad_launch_attempt_count": 41,
+      "agency_launch_attempt_count": 97,
+      "orbital_launch_attempt_count_year": 231,
+      "location_launch_attempt_count_year": 15,
+      "pad_launch_attempt_count_year": 7,
+      "agency_launch_attempt_count_year": 18,
+      "flightclub_url": null,
+      "vid_urls": [
+        {
+          "priority": 10,
+          "source": "youtube.com",
+          "publisher": "Rocket Lab",
+          "title": "Rocket Lab - 'Owlright, Owlright, Owlright' Launch",
+          "description": "",
+          "feature_image": "https://i.ytimg.com/vi/hkLw0Kf_iSA/maxresdefault.jpg",
+          "url": "https://www.youtube.com/watch?v=hkLw0Kf_iSA",
+          "type": {
+            "id": 1,
+            "name": "Official Webcast"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-09-26T00:15:53Z",
+          "end_time": "2026-09-26T01:41:14Z",
+          "live": false
+        }
+      ],
+      "pad_turnaround": "P6DT21H17M"
+    },
+    {
+      "id": "df88cfbf-f504-4e11-8370-e33dd6280b5b",
+      "url": "https://lldev.thespacedevs.com/2.3.0/launches/df88cfbf-f504-4e11-8370-e33dd6280b5b/",
+      "name": "Falcon 9 Block 5 | USSF-481",
+      "response_mode": "detailed",
+      "slug": "falcon-9-block-5-ussf-481",
+      "launch_designator": "2026-235",
+      "status": {
+        "id": 3,
+        "name": "Launch Successful",
+        "abbrev": "Success",
+        "description": "The launch vehicle successfully inserted its payload(s) into the target orbit(s)."
+      },
+      "last_updated": "2026-10-16T23:19:59Z",
+      "net": "2026-10-16T00:01:05Z",
+      "net_precision": {
+        "id": 0,
+        "name": "Second",
+        "abbrev": "SEC",
+        "description": "The T-0 is accurate to the second."
+      },
+      "window_end": "2026-10-16T03:44:00Z",
+      "window_start": "2026-10-15T23:44:00Z",
+      "image": {
+        "id": 2797,
+        "name": "Falcon 9 liftoff from SLC-4E (USSF-366)",
+        "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon_9_liftof_image_20260816171423.jpg",
+        "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon_9_liftof_image_thumbnail_20260816171423.jpeg",
+        "credit": "SpaceX",
+        "single_use": true
+      },
+      "infographic": null,
+      "probability": null,
+      "weather_concerns": null,
+      "failreason": "",
+      "hashtag": null,
+      "launch_service_provider": {
+        "response_mode": "normal",
+        "id": 121,
+        "url": "https://lldev.thespacedevs.com/2.3.0/agencies/121/",
+        "name": "SpaceX",
+        "abbrev": "SpX",
+        "type": {
+          "id": 3,
+          "name": "Commercial"
+        },
+        "featured": true,
+        "description": "Space Exploration Technologies Corp., known as SpaceX, is an American aerospace manufacturer and space transport services company headquartered in Hawthorne, California. It was founded in 2002 by entrepreneur Elon Musk with the goal of reducing space transportation costs and enabling the colonization of Mars. SpaceX operates from many pads, on the East Coast of the US they operate from SLC-40 at Cape Canaveral Space Force Station and historic LC-39A at Kennedy Space Center. They also operate from SLC-4E at Vandenberg Space Force Base, California, usually for polar launches. Another launch site is being developed at Boca Chica, Texas.",
+        "administrator": "CEO: Elon Musk",
+        "founding_year": 2002,
+        "launchers": "Falcon | Starship",
+        "spacecraft": "Dragon",
+        "parent": null,
+        "image": {
+          "id": 1736,
+          "name": "Falcon 9 liftoff from LC-39A",
+          "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon_9_image_20230807133459.jpeg",
+          "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305193628.jpeg",
+          "credit": "SpaceX",
+          "single_use": false
+        },
+        "total_launch_count": 739,
+        "consecutive_successful_launches": 224,
+        "successful_launches": 724,
+        "failed_launches": 15,
+        "pending_launches": 135,
+        "consecutive_successful_landings": 33,
+        "successful_landings": 684,
+        "failed_landings": 29,
+        "attempted_landings": 712,
+        "successful_landings_spacecraft": 63,
+        "failed_landings_spacecraft": 3,
+        "attempted_landings_spacecraft": 68,
+        "successful_landings_payload": 1,
+        "failed_landings_payload": 0,
+        "attempted_landings_payload": 1,
+        "info_url": "https://www.spacex.com/",
+        "wiki_url": "https://en.wikipedia.org/wiki/SpaceX"
+      },
+      "rocket": {
+        "id": 9267,
+        "configuration": {
+          "response_mode": "detailed",
+          "id": 164,
+          "url": "https://lldev.thespacedevs.com/2.3.0/launcher_configurations/164/",
+          "name": "Falcon 9",
+          "full_name": "Falcon 9 Block 5",
+          "variant": "Block 5",
+          "active": true,
+          "is_placeholder": false,
+          "reusable": true,
+          "image": {
+            "id": 1736,
+            "name": "Falcon 9 liftoff from LC-39A",
+            "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon_9_image_20230807133459.jpeg",
+            "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305193628.jpeg",
+            "credit": "SpaceX",
+            "single_use": false
+          },
+          "info_url": "https://www.spacex.com/vehicles/falcon-9/",
+          "wiki_url": "https://en.wikipedia.org/wiki/Falcon_9",
+          "description": "Falcon 9 is a two-stage rocket designed and manufactured by SpaceX for the reliable and safe transport of satellites and the Dragon spacecraft into orbit. The Block 5 variant is the fifth major interval aimed at improving upon the ability for rapid reusability.",
+          "alias": "",
+          "min_stage": 2,
+          "max_stage": 2,
+          "length": 70.0,
+          "diameter": 3.65,
+          "maiden_flight": "2018-05-11",
+          "launch_cost": 52000000,
+          "launch_mass": 549.0,
+          "leo_capacity": 22800.0,
+          "gto_capacity": 8300.0,
+          "geo_capacity": null,
+          "sso_capacity": null,
+          "to_thrust": 7607.0,
+          "apogee": 200.0,
+          "total_launch_count": 640,
+          "consecutive_successful_launches": 342,
+          "successful_launches": 639,
+          "failed_launches": 1,
+          "pending_launches": 119,
+          "attempted_landings": 630,
+          "successful_landings": 625,
+          "failed_landings": 5,
+          "consecutive_successful_landings": 325,
+          "fastest_turnaround": "PT38M31S"
+        },
+        "launcher_stage": [
+          {
+            "id": 1028,
+            "type": "Core",
+            "reused": true,
+            "launcher_flight_number": 28,
+            "launcher": {
+              "response_mode": "normal",
+              "id": 124,
+              "url": "https://lldev.thespacedevs.com/2.3.0/launchers/124/",
+              "flight_proven": true,
+              "serial_number": "B1081",
+              "is_placeholder": false,
+              "status": {
+                "id": 3,
+                "name": "active"
+              },
+              "image": {
+                "id": 1641,
+                "name": "B1081 at LZ-1 after Crew-7 launch",
+                "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/124_image_20230827172435.jpeg",
+                "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305193351.jpeg",
+                "credit": "SpaceX",
+                "single_use": false
+              },
+              "details": "Launched Crew-7 on its first flight.",
+              "successful_landings": 28,
+              "attempted_landings": 28,
+              "flights": 28,
+              "last_launch_date": "2026-10-16T00:01:05Z",
+              "first_launch_date": "2023-08-26T07:27:27Z",
+              "fastest_turnaround": "P24DT19H13M20S"
+            },
+            "previous_flight_date": "2026-09-10T15:42:30Z",
+            "turn_around_time": "P35DT8H18M35S",
+            "landing": {
+              "id": 1965,
+              "url": "https://lldev.thespacedevs.com/2.3.0/landings/1965/",
+              "attempt": true,
+              "success": true,
+              "description": "The Falcon 9 first stage B1081 has landed on ASDS OCISLY after its 28th flight.",
+              "downrange_distance": 574.0,
+              "landing_location": {
+                "id": 1,
+                "name": "Of Course I Still Love You",
+                "active": true,
+                "abbrev": "OCISLY",
+                "description": "The second ASDS barge, Of Course I Still Love You (OCISLY) services launches in the Pacific Ocean and was the site of the first landing of a SpaceX Falcon 9 first stage during CRS-8, the launch of a Dragon spacecraft to the International Space Station.",
+                "location": null,
+                "longitude": null,
+                "latitude": null,
+                "image": {
+                  "id": 1969,
+                  "name": "OCISLY empty",
+                  "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/ocisly_empty_image_20240310164323.png",
+                  "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/ocisly_empty_image_thumbnail_20240310164323.png",
+                  "credit": "SpaceX",
+                  "single_use": true
+                },
+                "successful_landings": 230,
+                "attempted_landings": 238,
+                "failed_landings": 8
+              },
+              "type": {
+                "id": 1,
+                "name": "Autonomous Spaceport Drone Ship",
+                "abbrev": "ASDS",
+                "description": "An autonomous spaceport drone ship (ASDS) is an ocean-going vessel derived from a deck barge, outfitted with station-keeping engines and a large landing platform. Construction of such ships was commissioned by aerospace company SpaceX to allow for recovery of rocket first-stages at sea for high-velocity missions which do not carry enough fuel to return to the launch site after lofting spacecraft onto an orbital trajectory."
+              }
+            },
+            "previous_flight": {
+              "id": "3e0456da-14b1-4ac3-b59e-35fefb1d1530",
+              "url": "https://lldev.thespacedevs.com/2.3.0/launches/3e0456da-14b1-4ac3-b59e-35fefb1d1530/",
+              "name": "Falcon 9 Block 5 | USSF-153"
+            }
+          }
+        ],
+        "spacecraft_stage": [],
+        "payloads": []
+      },
+      "mission": {
+        "id": 7866,
+        "name": "USSF-481",
+        "type": "Government/Top Secret",
+        "description": "A classified mission for the United States Space Force. It is possibly a batch of classified LEO satellites based on SpaceX’s Starshield satellite bus, based on locations of ascent rocket stage drop zones being fits with previous SDA Transport Layer launches.",
+        "image": null,
+        "orbit": {
+          "id": 13,
+          "name": "Polar Orbit",
+          "abbrev": "PO"
+        },
+        "vid_urls": []
+      },
+      "pad": {
+        "id": 16,
+        "url": "https://lldev.thespacedevs.com/2.3.0/pads/16/",
+        "active": true,
+        "name": "Space Launch Complex 4E",
+        "image": {
+          "id": 1342,
+          "name": "Falcon 9 Block 5 | SARah 2 & 3 from SLC-4E",
+          "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/falcon2520925_image_20231223073520.jpeg",
+          "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/255bauto255d__image_thumbnail_20240305192449.jpeg",
+          "credit": "SpaceX",
+          "single_use": false
+        },
+        "description": "Space Launch Complex 4 East (SLC-4E) is a launch site at Vandenberg Space Force Base, California, U.S.\r\n\r\nThe pad was previously used by Atlas and Titan rockets between 1963 and 2005. The pad was built for use by Atlas-Agena rockets, but was later rebuilt to handle Titan rockets.",
+        "info_url": null,
+        "wiki_url": "https://en.wikipedia.org/wiki/Vandenberg_Space_Launch_Complex_4#SLC-4E",
+        "map_url": "https://www.google.com/maps?q=34.632,-120.611",
+        "latitude": 34.632,
+        "longitude": -120.611,
+        "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/pad_16_20200803143532.jpg",
+        "total_launch_count": 303,
+        "orbital_launch_attempt_count": 303,
+        "fastest_turnaround": "P2DT7H48M21S",
+        "location": {
+          "response_mode": "normal",
+          "id": 11,
+          "url": "https://lldev.thespacedevs.com/2.3.0/locations/11/",
+          "name": "Vandenberg SFB, CA, USA",
+          "active": true,
+          "description": "Vandenberg Space Force Base is a United States Space Force Base in Santa Barbara County, California. Established in 1941, Vandenberg Space Force Base is a space launch base, launching spacecraft from the Western Range, and also performs missile testing. The United States Space Force's Space Launch Delta 30 serves as the host delta for the base, equivalent to an Air Force air base wing. In addition to its military space launch mission, Vandenberg Space Force Base also hosts space launches for civil and commercial space entities, such as NASA and SpaceX.",
+          "image": {
+            "id": 2226,
+            "name": "Vandenberg SFB imaged by Sentinel-2",
+            "image_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/vandenberg_sfb__image_20240920082910.jpeg",
+            "thumbnail_url": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/images/vandenberg_sfb__image_thumbnail_20240920082910.jpeg",
+            "credit": "Contains modified Copernicus Sentinel data 2020",
+            "single_use": true
+          },
+          "map_image": "https://thespacedevs-dev.nyc3.digitaloceanspaces.com/media/map_images/location_11_20200803142416.jpg",
+          "longitude": -120.52023,
+          "latitude": 34.75133,
+          "timezone_name": "America/Los_Angeles",
+          "total_launch_count": 919,
+          "total_landing_count": 37
+        }
+      },
+      "webcast_live": false,
+      "orbital_launch_attempt_count": 7416,
+      "location_launch_attempt_count": 919,
+      "pad_launch_attempt_count": 303,
+      "agency_launch_attempt_count": 739,
+      "orbital_launch_attempt_count_year": 243,
+      "location_launch_attempt_count_year": 67,
+      "pad_launch_attempt_count_year": 65,
+      "agency_launch_attempt_count_year": 120,
+      "flightclub_url": null,
+      "vid_urls": [
+        {
+          "priority": 8,
+          "source": "youtube.com",
+          "publisher": "The Space Devs",
+          "title": "SpaceX USSF-481",
+          "description": "On Friday October 16, 2026 at 00:01 UTC, SpaceX launched the USSF-481 mission with a Falcon 9 Block 5 from Space Launch Complex 4E at Vandenberg SFB, CA, USA.\n\nDescription generated from the Launch Library 2 API.\n——————————————————————\nObject in the Launch Library 2 API: https://ll.thespacedevs.com/2.3.0/launches/df88cfbf-f504-4e11-8370-e33dd6280b5b/?format=json\nRelated news in the Spaceflight News API: https://api.spaceflightnewsapi.net/v4/articles/?launch=df88cfbf-f504-4e11-8370-e33dd6280b5b\n——————————————————————\n\nRehosted on YouTube by The Space Devs.\nSupport our work on https://www.patreon.com/TheSpaceDevs\n——————————————————————\nWebsite: https://thespacedevs.com\nX: https://x.com/thespacedevs\nDiscord: https://discord.com/invite/p7ntkNA\n——————————————————————\n\nOriginal video: https...",
+          "feature_image": "https://i.ytimg.com/vi/0rd-mypixIg/hqdefault.jpg",
+          "url": "https://www.youtube.com/watch?v=0rd-mypixIg",
+          "type": {
+            "id": 4,
+            "name": "Unofficial Re-stream"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-10-16T00:20:53Z",
+          "end_time": "2026-10-16T00:20:53Z",
+          "live": false
+        },
+        {
+          "priority": 9,
+          "source": "youtube.com",
+          "publisher": "Spaceflight Now",
+          "title": "SpaceX Falcon 9 rocket launches from California on classified U.S. Space Force mission",
+          "description": "Watch live coverage as SpaceX launches a Falcon 9 rocket from California carrying a classified payload for the U.S. Space Force. Liftoff from Space Launch Complex 4E (SLC-4E) at Vandenberg Space Force Base is scheduled for Thursday, Oct. 15 at 5:01 p.m. PDT (8:01 p.m. EDT  / 0001 UTC).\n\nThe first-stage booster, serial number B1081, launching for a 28th time, will land on the drone ship 'Of Course I Still Love You' about 8.5 minutes into the flight.\n\nThe USSF-481 mission will take a southerly trajectory upon departure from Vandenberg. \n\nLive commentary from Spaceflight Now's Will Robinson-Smith will be provided starting about 30 minutes prior to launch.\n\nVideos like this are made possible by the support of our members. Join this channel to get access to perks:\nhttps://www.youtube.com/c...",
+          "feature_image": "https://i.ytimg.com/vi/vzFtQ3zsl4s/maxresdefault.jpg",
+          "url": "https://www.youtube.com/watch?v=vzFtQ3zsl4s",
+          "type": {
+            "id": 3,
+            "name": "Unofficial Webcast"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-10-15T23:30:45Z",
+          "end_time": "2026-10-16T00:20:26Z",
+          "live": false
+        },
+        {
+          "priority": 10,
+          "source": "x.com",
+          "publisher": "SpaceX",
+          "title": "USSF-481 Mission",
+          "description": "Livestream on X",
+          "feature_image": "https://pbs.twimg.com/media/HUHkTJDWQAArGXd.jpg",
+          "url": "https://x.com/i/broadcasts/1aJbdEzYpPaKX",
+          "type": {
+            "id": 1,
+            "name": "Official Webcast"
+          },
+          "language": {
+            "id": 1,
+            "name": "English",
+            "code": "en"
+          },
+          "start_time": "2026-10-15T23:48:56Z",
+          "end_time": "2026-10-16T00:10:55Z",
+          "live": false
+        }
+      ],
+      "pad_turnaround": "P2DT23H32M54S"
+    }
+  ]
+}

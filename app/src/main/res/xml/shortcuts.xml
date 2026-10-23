@@ -48,6 +48,19 @@
 
     <shortcut
         android:enabled="true"
+        android:icon="@drawable/ic_shortcut_launches"
+        android:shortcutId="launches"
+        android:shortcutLongLabel="@string/shortcut_launches_long"
+        android:shortcutShortLabel="@string/shortcut_launches_short">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="nasaexplorer://launches"
+            android:targetClass="com.radustavila.nasaexplorer.MainActivity"
+            android:targetPackage="com.radustavila.nasaexplorer" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
         android:icon="@drawable/ic_shortcut_space_weather"
         android:shortcutId="space_weather"
         android:shortcutLongLabel="@string/shortcut_space_weather_long"

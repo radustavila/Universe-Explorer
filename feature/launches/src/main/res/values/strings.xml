@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="launches_card_title">Next launches</string>
-    <string name="launches_open_livestream">Watch the livestream</string>
     <string name="launches_open_page">Open launch details</string>
+    <string name="launches_see_all">See all</string>
     <string name="launches_watch_livestream">Watch the %1$s livestream</string>
     <!-- "No earlier than", the launch industry's term for a not yet confirmed target date. -->
     <string name="launches_net_date">NET %1$s</string>
@@ -24,4 +24,63 @@
         <item quantity="one">T%1$s%2$dd %3$s</item>
         <item quantity="other">T%1$s%2$dd %3$s</item>
     </plurals>
+    <!-- Coarse NETs: %1$d is the quarter (1–4) or half (1–2), %2$d the year. -->
+    <string name="launches_net_quarter">Q%1$d %2$d</string>
+    <string name="launches_net_half">H%1$d %2$d</string>
+
+    <!-- Launches screen (F27) -->
+    <string name="launches_title">Launches</string>
+    <string name="launches_back">Back</string>
+    <string name="launches_tab_upcoming">Upcoming</string>
+    <string name="launches_tab_past">Past</string>
+    <string name="launches_filter_provider_all">All providers</string>
+    <string name="launches_filter_crewed">Crewed only</string>
+    <string name="launches_none_title">No launches yet</string>
+    <string name="launches_none_description">The list loads the next time the app is online.</string>
+    <string name="launches_offline_title">You\'re offline</string>
+    <string name="launches_offline_description">Launches appear here once the app has been online.</string>
+    <string name="launches_filtered_empty">No launches match these filters.</string>
+    <string name="launches_crewed">Crewed</string>
+    <!-- %1$s launch name -->
+    <string name="launches_reminder_off">Remind me 15 minutes before %1$s lifts off</string>
+    <string name="launches_reminder_on">Reminder on for %1$s. Tap to turn it off.</string>
+    <string name="launches_reminder_blocked">Notifications are off for this app, so launch reminders can\'t be shown.</string>
+    <string name="launches_credit">Data: The Space Devs / Launch Library 2</string>
+
+    <!-- Launch detail page -->
+    <string name="launches_details_missing">This launch is no longer in the saved list.</string>
+    <string name="launches_details_liftoff">Lift-off</string>
+    <!-- %1$s and %2$s local times -->
+    <string name="launches_details_window">Window %1$s – %2$s</string>
+    <!-- %1$d percent -->
+    <string name="launches_details_weather">Weather %1$d%% go</string>
+    <string name="launches_details_mission">Mission</string>
+    <!-- %1$s orbit name ("Low Earth Orbit") -->
+    <string name="launches_details_orbit">Orbit: %1$s</string>
+    <!-- %1$s orbit name, %2$s its abbreviation: "Orbit: Low Earth Orbit (LEO)" -->
+    <string name="launches_details_orbit_abbrev">Orbit: %1$s (%2$s)</string>
+    <!-- A name and its abbreviation: "Of Course I Still Love You (OCISLY)" -->
+    <string name="launches_details_name_abbrev">%1$s (%2$s)</string>
+    <string name="launches_details_rocket">Rocket</string>
+    <!-- %1$s provider ("SpaceX") -->
+    <string name="launches_details_provider">Flown by %1$s</string>
+    <plurals name="launches_details_crew">
+        <item quantity="one">%1$d person on board</item>
+        <item quantity="other">%1$d people on board</item>
+    </plurals>
+    <string name="launches_details_boosters">Booster landing</string>
+    <!-- %1$s booster serial ("B1090"), %2$d which flight of that booster -->
+    <string name="launches_details_booster_flight">%1$s · flight %2$d</string>
+    <string name="launches_details_booster_new">%1$s · first flight</string>
+    <string name="launches_details_booster_unassigned">Booster not assigned yet</string>
+    <!-- %1$s landing place ("Of Course I Still Love You (OCISLY)") -->
+    <string name="launches_details_landing_planned">Landing on %1$s</string>
+    <string name="launches_details_landing_success">Landed on %1$s</string>
+    <string name="launches_details_landing_failure">Landing failed on %1$s</string>
+    <string name="launches_details_landing_expended">Expended, no landing</string>
+    <string name="launches_details_landing_unknown">Landing not announced</string>
+    <string name="launches_details_pad">Launch pad</string>
+    <string name="launches_details_webcasts">Watch</string>
+    <string name="launches_details_failure">What went wrong</string>
+    <string name="launches_details_more">More on Space Launch Now</string>
 </resources>
