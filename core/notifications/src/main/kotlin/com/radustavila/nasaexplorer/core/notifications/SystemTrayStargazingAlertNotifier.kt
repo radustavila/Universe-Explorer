@@ -50,7 +50,7 @@ class SystemTrayStargazingAlertNotifier @Inject constructor(
 
         try {
             // Its own tag: tonight's alert replaces last night's unread one, never another feature's.
-            notificationManager.notify(TAG, NOTIFICATION_ID, notification)
+            notificationManager.notify(NotificationIds.STARGAZING_TAG, NotificationIds.STARGAZING_ALERT, notification)
         } catch (_: SecurityException) {
             // The permission was revoked between the check above and this call.
         }
@@ -71,7 +71,7 @@ class SystemTrayStargazingAlertNotifier @Inject constructor(
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         return PendingIntent.getActivity(
             context,
-            REQUEST_CODE,
+            NotificationIds.RequestCodes.STARGAZING_ALERT,
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
@@ -79,8 +79,5 @@ class SystemTrayStargazingAlertNotifier @Inject constructor(
 
     private companion object {
         const val CHANNEL_ID = "stargazing_alerts"
-        const val TAG = "stargazing"
-        const val NOTIFICATION_ID = 1
-        const val REQUEST_CODE = 11
     }
 }

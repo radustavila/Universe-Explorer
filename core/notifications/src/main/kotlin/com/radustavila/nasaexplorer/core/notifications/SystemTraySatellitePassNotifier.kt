@@ -48,7 +48,7 @@ class SystemTraySatellitePassNotifier @Inject constructor(
             .setContentTitle(title(pass, start))
             .setContentText(text)
             .setStyle(NotificationCompat.BigTextStyle().bigText(text))
-            .setContentIntent(context.openAppIntent(REQUEST_CODE))
+            .setContentIntent(context.openAppIntent(NotificationIds.RequestCodes.SATELLITE_PASS))
             .setAutoCancel(true)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             // Useless after the pass: gone once it has ended.
@@ -56,7 +56,7 @@ class SystemTraySatellitePassNotifier @Inject constructor(
             .build()
 
         try {
-            notificationManager.notify(NOTIFICATION_ID_BASE + pass.satellite.set.ordinal, notification)
+            notificationManager.notify(NotificationIds.satellitePass(pass.satellite.set), notification)
         } catch (_: SecurityException) {
             // The permission was revoked between the check above and this call.
         }
@@ -81,9 +81,5 @@ class SystemTraySatellitePassNotifier @Inject constructor(
 
     private companion object {
         const val CHANNEL_ID = "satellite_passes"
-
-        /** One id per set from here up, clear of the other notifiers' ids. */
-        const val NOTIFICATION_ID_BASE = 40
-        const val REQUEST_CODE = 4
     }
 }

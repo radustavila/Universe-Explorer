@@ -65,7 +65,7 @@ class SystemTraySkyEventNotifier @Inject constructor(
             .build()
 
         try {
-            notificationManager.notify(event.id, NOTIFICATION_ID, notification)
+            notificationManager.notify(event.id, NotificationIds.SKY_EVENT, notification)
         } catch (_: SecurityException) {
             // The permission was revoked between the check above and this call.
         }
@@ -97,7 +97,6 @@ class SystemTraySkyEventNotifier @Inject constructor(
 
     private companion object {
         const val CHANNEL_ID = "sky_events"
-        const val NOTIFICATION_ID = 4
         val EXPIRES_AFTER_START: Duration = Duration.ofHours(6)
     }
 }
