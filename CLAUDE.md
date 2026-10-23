@@ -194,7 +194,7 @@ A new module must be added to `settings.gradle.kts`.
 
 ## Roadmap
 
-New features (F0–F18 built, F19–F27 next; M1–M4 must land before ads or premium) are specified in a Claude Docs doc linked from `docs/ROADMAP.md`;
+New features (F0–F18 built, F19–F28 next, F29 after the first release; M1–M4 must land before ads or premium) are specified in a Claude Docs doc linked from `docs/ROADMAP.md`;
 that doc is the source of truth. Read the feature's brief there before implementing; don't copy briefs or status into
 the repo.
 
