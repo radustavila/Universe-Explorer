@@ -36,7 +36,7 @@ class EarthquakeSearchableSourceTest {
         assertEquals(listOf("calabria", "sicily"), hits.map { it.id })
         val top = hits.first()
         assertEquals(SearchSource.EARTHQUAKES, top.source)
-        assertEquals("10 km S of Crotone, Italy", top.title)
+        assertEquals("Crotone, Italy", top.title)
         assertEquals("M 6.2", top.subtitle)
         assertEquals(SearchTarget.EarthquakeEntry("calabria"), top.target)
         assertEquals(LocalDate.of(2026, 10, 23), top.date)

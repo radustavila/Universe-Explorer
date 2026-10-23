@@ -79,6 +79,9 @@ private const val EVENT_IMAGERY_ZOOM = 5.0
 /** Zoom the map moves to for a quake opened from search, the alert or the list. */
 private const val EARTHQUAKE_FOCUS_ZOOM = 4.0
 
+/** How far above the map's centre a focused quake sits, clear of its sheet. */
+private const val FOCUS_OFFSET_DP = 140.0
+
 /**
  * The live map's slot, so tests can render the screen without MapLibre's native renderer. Taps on
  * shapes come back with the overlay and shape ids ([com.radustavila.nasaexplorer.core.map.overlay.MapShapeClick]).
@@ -106,11 +109,9 @@ internal fun EarthEventsRoute(
     LaunchedEffect(focus?.id) {
         if (focus == null) return@LaunchedEffect
         val zoom = maxOf(mapState.camera.zoom, EARTHQUAKE_FOCUS_ZOOM)
-        if (reducedMotion) {
-            mapState.moveTo(MapCamera(focus.mapPosition, zoom))
-        } else {
-            mapState.animateTo(focus.mapPosition, zoom)
-        }
+        // The quake's sheet covers the bottom of the map: aim below the quake so it shows above.
+        val target = focus.mapPosition.southBy(FOCUS_OFFSET_DP, zoom)
+        if (reducedMotion) mapState.moveTo(MapCamera(target, zoom)) else mapState.animateTo(target, zoom)
         viewModel.onEarthquakeFocused()
     }
 

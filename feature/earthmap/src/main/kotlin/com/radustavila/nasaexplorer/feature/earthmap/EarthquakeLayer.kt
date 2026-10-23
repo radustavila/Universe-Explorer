@@ -35,7 +35,8 @@ private fun Earthquake.marker(selected: Boolean) = MapMarker(
     position = GeoPoint(latitude = position.latitude, longitude = position.longitude),
     color = depth.color.copy(alpha = if (selected) 1f else MARKER_ALPHA),
     radius = if (selected) markerRadius + 3.dp else markerRadius,
-    strokeColor = if (selected) Color.White else Color.Black.copy(alpha = STROKE_ALPHA),
+    // A light rim tells quakes from the events' dark-rimmed markers.
+    strokeColor = if (selected) Color.White else Color.White.copy(alpha = STROKE_ALPHA),
     strokeWidth = if (selected) 3.dp else 1.dp,
 )
 

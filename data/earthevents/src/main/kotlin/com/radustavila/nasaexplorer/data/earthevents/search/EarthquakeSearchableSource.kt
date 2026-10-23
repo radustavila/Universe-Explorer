@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.first
 
 /**
  * Cached quakes by place ("Italy", "Alaska"), strongest first, as far back as the map shows them.
- * The magnitude is data ("M 5.7"), the place USGS's own words.
+ * The magnitude is data ("M 5.7"), the place USGS's own name for it.
  */
 class EarthquakeSearchableSource @Inject constructor(
     private val repository: EarthquakeRepository,
@@ -39,7 +39,8 @@ class EarthquakeSearchableSource @Inject constructor(
                 SearchHit(
                     source = source,
                     id = quake.id,
-                    title = quake.place.orEmpty(),
+                    // USGS's "61 km WNW of" is in kilometres; the place name alone reads in any units.
+                    title = quake.parsedPlace?.name ?: quake.place.orEmpty(),
                     target = SearchTarget.EarthquakeEntry(quake.id),
                     subtitle = "M ${MAGNITUDE_FORMAT.format(Locale.ROOT, quake.magnitude)}",
                     date = quake.time.atOffset(ZoneOffset.UTC).toLocalDate(),
