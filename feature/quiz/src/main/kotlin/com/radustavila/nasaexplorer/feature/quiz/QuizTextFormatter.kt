@@ -56,8 +56,7 @@ class QuizTextFormatter(
         is QuizArg.DayAndTime -> units.dayAndTime(arg.at)
         is QuizArg.Day -> units.day(arg.at)
         is QuizArg.PlanetName -> skyText.planet(arg.planet)
-        is QuizArg.MoonPhaseName -> resources.getString(moonPhaseName(arg.phase))
-        is QuizArg.DeepSkyTypeName -> resources.getString(deepSkyTypeName(arg.type))
+        is QuizArg.MoonPhaseName, is QuizArg.DeepSkyTypeName -> resources.getString(nameRes(arg))
         is QuizArg.Ppm, is QuizArg.TemperatureChange, is QuizArg.Millimetres, is QuizArg.MillionSquareKm,
         is QuizArg.Month,
         -> climateArg(arg)
@@ -71,6 +70,14 @@ class QuizTextFormatter(
         is QuizArg.MillionSquareKm -> units.millionArea(arg.value)
         is QuizArg.Month -> units.month(arg.date)
         else -> error("Not a climate value: $arg")
+    }
+
+    /** A Moon phase's or a kind of deep-sky object's name (F23). */
+    @StringRes
+    private fun nameRes(arg: QuizArg): Int = when (arg) {
+        is QuizArg.MoonPhaseName -> moonPhaseName(arg.phase)
+        is QuizArg.DeepSkyTypeName -> deepSkyTypeName(arg.type)
+        else -> error("Not a name: $arg")
     }
 
     @StringRes
