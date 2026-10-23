@@ -38,6 +38,10 @@ is free and allows commercial use unless noted.
 | F24 | Universe | Webb right now | What JWST is observing now and next this week | STScI observing schedules |
 | F25 | Universe | Moon map | Zoomable Moon with landing sites and today's terminator | Own tiles from the LRO WAC mosaic (PDS), NSSDCA |
 | F26 | Earth | Climate vital signs | CO2, global temperature, sea level and Arctic sea ice as small charts | NOAA GML, NASA GISTEMP, NOAA STAR, NSIDC (see M4) |
+| F28 | Today | Daily quiz and fun facts | 5 questions a day, practice by topic, streaks, badges, a "Did you know" card; F19–F27 each add their own questions | Own question bank + the app's own data (offline) |
+
+After the first release: **F29** Play Games leaderboards and achievements, and a "find it in the sky" quiz
+(Google Play Games Services v2; needs F28, F22, F23).
 
 Do not use Open-Meteo or 7Timer (non-commercial free tiers) or Stellarium data (GPL).
 
