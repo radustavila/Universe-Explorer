@@ -36,7 +36,7 @@ internal class SkyRenderer(textMeasurer: TextMeasurer, styles: SkyTextStyles) {
     private val highlightPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
 
     fun draw(scope: DrawScope, frame: SkyFrame) = with(scope) {
-        val projection = SkyProjection(frame.view, size.width, size.height, frame.fieldOfViewDegrees)
+        val projection = SkyProjection(frame.view, size.width, size.height, frame.fieldOfViewDegrees, frame.lens)
         val sun = frame.bodies?.solarSystem?.firstOrNull { it.body == SolarSystemBody.SUN }
         drawRect(frame.palette.background(sun?.horizontal?.altitudeDegrees))
         drawFigures(frame, projection)
@@ -127,11 +127,12 @@ internal class SkyRenderer(textMeasurer: TextMeasurer, styles: SkyTextStyles) {
                 drawCircle(palette.horizon, horizon.radius, center, style = stroke)
             }
             is HorizonShape.Line -> {
-                // Far along the line both ways, then across to the ground's side.
-                val reach = size.width + size.height
+                // Far along the line both ways, then across to the ground's side; far enough to cover
+                // the screen when the line lies beyond it, as a camera's horizon does looking down.
+                val point = Offset(horizon.pointX, horizon.pointY)
+                val reach = size.width + size.height + (point - center).getDistance()
                 val along = Offset(-horizon.normalY, horizon.normalX) * reach
                 val down = Offset(-horizon.normalX, -horizon.normalY) * reach
-                val point = Offset(horizon.pointX, horizon.pointY)
                 val start = point - along
                 val end = point + along
                 val ground = Path().apply {

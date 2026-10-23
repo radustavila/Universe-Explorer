@@ -3,6 +3,7 @@ package com.radustavila.nasaexplorer.core.notifications.di
 import com.radustavila.nasaexplorer.core.domain.announcement.AuroraAlertNotifier
 import com.radustavila.nasaexplorer.core.domain.announcement.NewApodNotifier
 import com.radustavila.nasaexplorer.core.domain.earthquake.EarthquakeAlertNotifier
+import com.radustavila.nasaexplorer.core.domain.launch.LaunchReminderNotifier
 import com.radustavila.nasaexplorer.core.domain.quiz.QuizReminderNotifier
 import com.radustavila.nasaexplorer.core.domain.sky.IssPassNotifier
 import com.radustavila.nasaexplorer.core.domain.sky.SatellitePassNotifier
@@ -11,6 +12,7 @@ import com.radustavila.nasaexplorer.core.domain.stargazing.StargazingAlertNotifi
 import com.radustavila.nasaexplorer.core.notifications.SystemTrayAuroraAlertNotifier
 import com.radustavila.nasaexplorer.core.notifications.SystemTrayEarthquakeAlertNotifier
 import com.radustavila.nasaexplorer.core.notifications.SystemTrayIssPassNotifier
+import com.radustavila.nasaexplorer.core.notifications.SystemTrayLaunchReminderNotifier
 import com.radustavila.nasaexplorer.core.notifications.SystemTrayNewApodNotifier
 import com.radustavila.nasaexplorer.core.notifications.SystemTrayQuizReminderNotifier
 import com.radustavila.nasaexplorer.core.notifications.SystemTraySatellitePassNotifier
@@ -45,6 +47,9 @@ interface NotificationsModule {
 
     @Binds
     fun bindEarthquakeAlertNotifier(impl: SystemTrayEarthquakeAlertNotifier): EarthquakeAlertNotifier
+
+    @Binds
+    fun bindLaunchReminderNotifier(impl: SystemTrayLaunchReminderNotifier): LaunchReminderNotifier
 
     @Binds
     fun bindQuizReminderNotifier(impl: SystemTrayQuizReminderNotifier): QuizReminderNotifier

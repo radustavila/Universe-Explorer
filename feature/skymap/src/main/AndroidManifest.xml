@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- AR sky (F22): asked for only when AR is switched on; the picture stays on the screen. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- The camera permission would otherwise make Play require a camera; the map works without one. -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+</manifest>

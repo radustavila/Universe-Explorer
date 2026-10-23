@@ -106,6 +106,12 @@ enum class SyncSource(val key: String) {
 
     /** STScI's weekly JWST observing schedule (F24): the index page and the newest week's file, daily. */
     JWST_SCHEDULE("stsci_jwst_schedule"),
+
+    /**
+     * Launch Library 2 past launches (F27), refreshed only when the Launches screen opens. Same host
+     * and hourly budget as [LAUNCHES].
+     */
+    LAUNCHES_PAST("launch_library_previous"),
     ;
 
     companion object {

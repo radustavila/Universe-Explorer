@@ -13,11 +13,15 @@ import androidx.navigation.toRoute
 import androidx.test.core.app.ApplicationProvider
 import com.radustavila.nasaexplorer.MainActivity
 import com.radustavila.nasaexplorer.R
+import com.radustavila.nasaexplorer.core.model.LaunchDeepLink
 import com.radustavila.nasaexplorer.feature.details.DetailsRoute
 import com.radustavila.nasaexplorer.feature.details.detailsScreen
 import com.radustavila.nasaexplorer.feature.earthmap.earthMapScreen
 import com.radustavila.nasaexplorer.feature.feed.FeedRoute
 import com.radustavila.nasaexplorer.feature.feed.feedScreen
+import com.radustavila.nasaexplorer.feature.launches.LaunchDetailsRoute
+import com.radustavila.nasaexplorer.feature.launches.launchDetailsScreen
+import com.radustavila.nasaexplorer.feature.launches.launchesScreen
 import com.radustavila.nasaexplorer.feature.search.SearchRoute
 import com.radustavila.nasaexplorer.feature.search.searchScreen
 import com.radustavila.nasaexplorer.feature.sky.skyTonightScreen
@@ -104,6 +108,7 @@ class AppLinksTest {
                 "nasaexplorer://search",
                 "nasaexplorer://today",
                 "nasaexplorer://sky",
+                "nasaexplorer://launches",
                 "nasaexplorer://spaceweather",
                 "nasaexplorer://earthmap",
             ),
@@ -123,6 +128,16 @@ class AppLinksTest {
         assertEquals("crab", requireNotNull(navController.currentBackStackEntry).toRoute<SearchRoute>().query)
     }
 
+    @Test
+    fun `a launch reminder's link opens that launch`() {
+        val navController = navController()
+        val id = "e2886a96-5ce9-4f45-872f-4e25a00be837"
+
+        assertTrue(navController.handleDeepLink(Intent(Intent.ACTION_VIEW, LaunchDeepLink.uriFor(id).toUri())))
+
+        assertEquals(id, requireNotNull(navController.currentBackStackEntry).toRoute<LaunchDetailsRoute>().id)
+    }
+
     private fun webIntent(url: String) = Intent(Intent.ACTION_VIEW, url.toUri())
         .addCategory(Intent.CATEGORY_BROWSABLE)
         .setPackage(context.packageName)
@@ -138,6 +153,8 @@ class AppLinksTest {
             skyTonightScreen(onBackClick = {})
             spaceWeatherScreen(onBackClick = {})
             earthMapScreen(onBackClick = {})
+            launchesScreen(onBackClick = {}, onLaunchClick = {})
+            launchDetailsScreen(onBackClick = {})
         }
     }
 

@@ -20,6 +20,7 @@ import com.radustavila.nasaexplorer.core.domain.sync.ExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
 import com.radustavila.nasaexplorer.core.domain.usecase.RemindOfDailyQuizUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RescheduleSkyEventRemindersOnLocationChangeUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RestoreLaunchRemindersUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ScheduleAuroraAlertRefreshUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ScheduleStargazingAlertUseCase
 import com.radustavila.nasaexplorer.data.comets.sync.CometsSyncScheduler
@@ -81,6 +82,9 @@ class NasaExplorerApplication :
     lateinit var rescheduleSkyEventReminders: Lazy<RescheduleSkyEventRemindersOnLocationChangeUseCase>
 
     @Inject
+    lateinit var restoreLaunchReminders: Lazy<RestoreLaunchRemindersUseCase>
+
+    @Inject
     lateinit var rearmQuizReminder: Lazy<RemindOfDailyQuizUseCase>
 
     @Inject
@@ -107,6 +111,8 @@ class NasaExplorerApplication :
         applicationScope.launch(ioDispatcher) { offlineFavoriteImages.get().backfillOnce() }
         // Sky event reminders follow the saved place, whichever screen changes it.
         applicationScope.launch(ioDispatcher) { rescheduleSkyEventReminders.get().invoke() }
+        // Launch reminders restored from a backup come without their WorkManager job.
+        applicationScope.launch(ioDispatcher) { restoreLaunchReminders.get().invoke() }
         // Re-arms the daily quiz reminder (F28), e.g. one restored from a backup; posts nothing.
         applicationScope.launch(ioDispatcher) { rearmQuizReminder.get().invoke(notify = false) }
     }

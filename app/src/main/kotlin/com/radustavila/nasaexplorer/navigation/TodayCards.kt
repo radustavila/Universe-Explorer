@@ -30,6 +30,8 @@ import com.radustavila.nasaexplorer.feature.earthevents.navigateToEarthEvents
 import com.radustavila.nasaexplorer.feature.events.navigateToSkyEvents
 import com.radustavila.nasaexplorer.feature.events.next.NextInTheSkyCard
 import com.radustavila.nasaexplorer.feature.launches.NextLaunchesCard
+import com.radustavila.nasaexplorer.feature.launches.navigateToLaunchDetails
+import com.radustavila.nasaexplorer.feature.launches.navigateToLaunches
 import com.radustavila.nasaexplorer.feature.news.navigateToNews
 import com.radustavila.nasaexplorer.feature.news.navigateToNewsItem
 import com.radustavila.nasaexplorer.feature.news.today.LatestFromNasaCard
@@ -74,7 +76,12 @@ internal fun todayCards(navController: NavHostController): Map<TodayCardId, @Com
         EarthTodayCard(onClick = { navController.navigateToTopLevel(TopLevelDestination.EARTH) })
     }, // F4
     TodayCardId.EARTH_EVENTS to { RightNowOnEarthCard(onClick = { navController.navigateToEarthEvents() }) }, // F9
-    TodayCardId.NEXT_LAUNCHES to { NextLaunchesCard() }, // F2
+    TodayCardId.NEXT_LAUNCHES to {
+        NextLaunchesCard(
+            onSeeAllClick = { navController.navigateToLaunches() },
+            onLaunchClick = navController::navigateToLaunchDetails,
+        )
+    }, // F2, F27
     TodayCardId.ISS_NOW to { IssNowCard(onClick = { navController.navigateToSkyTonight() }) }, // F5
     TodayCardId.SKY_TONIGHT to { SkyTonightSummaryCard(onClick = { navController.navigateToSkyTonight() }) }, // F5
     TodayCardId.SPACE_WEATHER to { SpaceWeatherTodayCard(onClick = { navController.navigateToSpaceWeather() }) }, // F6

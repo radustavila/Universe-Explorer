@@ -27,8 +27,11 @@ internal object NotificationIds {
     const val EARTHQUAKE_ALERT = 6
     const val EARTHQUAKE_TAG = "earthquake"
 
+    /** Posted with the launch's id as tag, so each launch's reminder stands alone. */
+    const val LAUNCH_REMINDER = 7
+
     /** Posted with [QUIZ_TAG]: today's reminder replaces yesterday's unread one. */
-    const val QUIZ_REMINDER = 7
+    const val QUIZ_REMINDER = 8
     const val QUIZ_TAG = "quiz"
 
     /** One id per [SatelliteSet] from here up ([satellitePass]), clear of the ids above. */
@@ -39,7 +42,7 @@ internal object NotificationIds {
     /**
      * Request codes of the notifications' content intents. A pending intent is shared by equal
      * intents with the same code, so a shared code could retarget another notification's tap.
-     * Sky events use the event id's hash instead (one per event).
+     * Sky events and launch reminders use the id's hash instead (one per event or launch).
      */
     object RequestCodes {
         const val NEW_APOD = 0

@@ -3,9 +3,13 @@ package com.radustavila.nasaexplorer.core.domain.usecase
 import com.radustavila.nasaexplorer.core.common.error.AppError
 import com.radustavila.nasaexplorer.core.common.result.DataResult
 import com.radustavila.nasaexplorer.core.domain.announcement.HomeWidget
+import com.radustavila.nasaexplorer.core.domain.launch.LaunchReminder
 import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
 import com.radustavila.nasaexplorer.core.model.SyncSource
+import com.radustavila.nasaexplorer.core.testing.data.TestLaunches
 import com.radustavila.nasaexplorer.core.testing.fake.FakeHomeWidgetUpdater
+import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchReminderRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchReminderScheduler
 import com.radustavila.nasaexplorer.core.testing.fake.FakeLaunchRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
 import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
@@ -24,12 +28,20 @@ class SynchronizeUpcomingLaunchesUseCaseTest {
     private val metadata = FakeSyncMetadataRepository()
     private val clock = FakeTimeProvider()
     private val widgets = FakeHomeWidgetUpdater()
+    private val reminders = FakeLaunchReminderRepository()
+    private val scheduler = FakeLaunchReminderScheduler()
 
     private val synchronizeLaunches = SynchronizeUpcomingLaunchesUseCase(
         launchRepository = repository,
         networkMonitor = networkMonitor,
         refreshSource = RefreshSourceUseCase(metadata, clock),
         widgetUpdater = widgets,
+        rescheduleLaunchReminders = RescheduleLaunchRemindersUseCase(
+            launchRepository = repository,
+            reminderRepository = reminders,
+            scheduler = scheduler,
+            timeProvider = clock,
+        ),
     )
 
     @Test
@@ -88,6 +100,17 @@ class SynchronizeUpcomingLaunchesUseCaseTest {
         repository.refreshResult = DataResult.Failure(AppError.Timeout)
         synchronizeLaunches()
         assertEquals(1, widgets.updated.size)
+    }
+
+    @Test
+    fun `a successful refresh re-arms the launch reminders for the NETs it brought`() = runTest {
+        val launch = TestLaunches.launch(net = clock.currentInstant.plus(Duration.ofHours(3)))
+        repository.setLaunches(listOf(launch))
+        reminders.setReminder(LaunchReminder(launch.id))
+
+        synchronizeLaunches()
+
+        assertEquals(launch.net.minus(RECHECK_BEFORE), scheduler.scheduledAt)
     }
 
     private fun FakeTimeProvider.advanceBy(duration: Duration) {

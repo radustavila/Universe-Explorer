@@ -11,6 +11,7 @@ import androidx.compose.ui.test.performClick
 import com.radustavila.nasaexplorer.core.designsystem.units.LocalUnitPreferences
 import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.LaunchStatus
+import com.radustavila.nasaexplorer.core.model.NetPrecision
 import com.radustavila.nasaexplorer.core.model.TimeFormat
 import com.radustavila.nasaexplorer.core.model.UnitPreferences
 import com.radustavila.nasaexplorer.core.testing.data.TestLaunches
@@ -64,27 +65,47 @@ class NextLaunchesCardTest {
     }
 
     @Test
-    fun `tapping a launch opens its livestream`() {
+    fun `tapping a launch opens its detail page, the play button its livestream`() {
         val opened = mutableListOf<String>()
+        val clicked = mutableListOf<String>()
         val launch = TestLaunches.launch()
 
-        setCard(listOf(launch), onOpenUrl = opened::add)
+        setCard(listOf(launch), onOpenUrl = opened::add, onLaunchClick = clicked::add)
         composeTestRule.onNodeWithTag(LAUNCH_ROW_TEST_TAG).performClick()
         composeTestRule.onNodeWithTag(LAUNCH_LIVESTREAM_BUTTON_TEST_TAG).performClick()
 
-        assertEquals(listOf(launch.livestreamUrl, launch.livestreamUrl), opened)
+        assertEquals(listOf(launch.id), clicked)
+        assertEquals(listOf(launch.livestreamUrl), opened)
     }
 
     @Test
-    fun `a launch without a livestream opens its page and shows no watch button`() {
-        val opened = mutableListOf<String>()
+    fun `a launch without a livestream shows no watch button`() {
+        val clicked = mutableListOf<String>()
         val launch = TestLaunches.launch(livestreamUrl = null)
 
-        setCard(listOf(launch), onOpenUrl = opened::add)
+        setCard(listOf(launch), onLaunchClick = clicked::add)
         composeTestRule.onAllNodesWithTag(LAUNCH_LIVESTREAM_BUTTON_TEST_TAG).assertCountEquals(0)
         composeTestRule.onAllNodesWithTag(LAUNCH_ROW_TEST_TAG).onFirst().performClick()
 
-        assertEquals(listOf(launch.pageUrl), opened)
+        assertEquals(listOf(launch.id), clicked)
+    }
+
+    @Test
+    fun `See all opens the Launches screen`() {
+        var seeAll = 0
+        setCard(TestLaunches.upcoming(size = 1), onSeeAllClick = { seeAll++ })
+
+        composeTestRule.onNodeWithTag(LAUNCHES_SEE_ALL_TEST_TAG).performClick()
+
+        assertEquals(1, seeAll)
+    }
+
+    @Test
+    fun `a launch known only to the month shows the month instead of a countdown`() {
+        val net = Instant.parse("2026-11-30T00:00:00Z")
+        setCard(listOf(TestLaunches.launch(net = net, status = LaunchStatus.TBD, netPrecision = NetPrecision.MONTH)))
+
+        composeTestRule.onNodeWithText("NET November 2026").assertExists()
     }
 
     @Test
@@ -116,12 +137,21 @@ class NextLaunchesCardTest {
     private fun setCard(
         launches: List<com.radustavila.nasaexplorer.core.model.Launch>,
         onOpenUrl: (String) -> Unit = {},
+        onLaunchClick: (String) -> Unit = {},
+        onSeeAllClick: () -> Unit = {},
         timeFormat: TimeFormat = TimeFormat.SYSTEM,
         freshness: DataFreshness = DataFreshness(),
     ) {
         composeTestRule.setContent {
             CompositionLocalProvider(LocalUnitPreferences provides UnitPreferences(timeFormat = timeFormat)) {
-                NextLaunchesCardContent(launches = launches, now = { now }, onOpenUrl = onOpenUrl, freshness = freshness)
+                NextLaunchesCardContent(
+                    launches = launches,
+                    now = { now },
+                    onLaunchClick = onLaunchClick,
+                    onOpenUrl = onOpenUrl,
+                    onSeeAllClick = onSeeAllClick,
+                    freshness = freshness,
+                )
             }
         }
     }

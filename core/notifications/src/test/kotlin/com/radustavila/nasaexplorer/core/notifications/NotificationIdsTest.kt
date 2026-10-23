@@ -12,6 +12,7 @@ import com.radustavila.nasaexplorer.core.model.ObservingWindow
 import com.radustavila.nasaexplorer.core.model.SatelliteSet
 import com.radustavila.nasaexplorer.core.model.StargazingAlert
 import com.radustavila.nasaexplorer.core.testing.data.TestEarthquakes
+import com.radustavila.nasaexplorer.core.testing.data.TestLaunches
 import com.radustavila.nasaexplorer.core.testing.data.TestSatellites
 import com.radustavila.nasaexplorer.core.testing.data.TestSky
 import com.radustavila.nasaexplorer.core.testing.data.TestSkyEvents
@@ -75,6 +76,9 @@ class NotificationIdsTest {
         SystemTrayEarthquakeAlertNotifier(context, preferences).notifyEarthquake(
             EarthquakeAlert(TestEarthquakes.earthquake(), distanceKm = 331.0, isNearby = true),
         )
+        SystemTrayLaunchReminderNotifier(context, preferences).notifyLiftoffSoon(
+            TestLaunches.launch(net = Instant.now().plusSeconds(900)),
+        )
         SystemTrayQuizReminderNotifier(context).notifyDailyQuiz(streak = 3)
 
         assertEquals(
@@ -85,11 +89,12 @@ class NotificationIdsTest {
                 "sky_events",
                 "stargazing_alerts",
                 "earthquake_alerts",
+                "launch_reminders",
                 "quiz_reminders",
             ),
             shadowOf(notificationManager).allNotifications.map { it.channelId }.toSet(),
         )
-        assertEquals(7, shadowOf(notificationManager).allNotifications.size)
+        assertEquals(8, shadowOf(notificationManager).allNotifications.size)
     }
 
     private fun intConstants(holder: Class<*>): Map<String, Int> =

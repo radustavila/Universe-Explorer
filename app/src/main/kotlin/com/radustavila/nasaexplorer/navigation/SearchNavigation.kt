@@ -7,11 +7,11 @@ import com.radustavila.nasaexplorer.feature.details.navigateToDetails
 import com.radustavila.nasaexplorer.feature.earthevents.navigateToEarthEvents
 import com.radustavila.nasaexplorer.feature.events.navigateToSkyEvents
 import com.radustavila.nasaexplorer.feature.exoplanets.navigateToExoplanetDetails
+import com.radustavila.nasaexplorer.feature.launches.navigateToLaunchDetails
 import com.radustavila.nasaexplorer.feature.news.navigateToNewsItem
 import com.radustavila.nasaexplorer.feature.news.navigateToPodcastEpisode
 import com.radustavila.nasaexplorer.feature.spaceweather.navigateToSmallBody
 import com.radustavila.nasaexplorer.feature.universe.navigateToNasaMedia
-import com.radustavila.nasaexplorer.ui.navigateToTopLevel
 
 /**
  * Opens a universal search result in its feature's screen. The search module cannot know those
@@ -23,9 +23,9 @@ internal fun NavHostController.openSearchTarget(target: SearchTarget) {
         is SearchTarget.NasaMediaItem -> navigateToNasaMedia(target.nasaId)
         is SearchTarget.ExoplanetEntry -> navigateToExoplanetDetails(target.name)
         is SearchTarget.SmallBody -> navigateToSmallBody(target.designation)
-        // Neither has a screen per item: events are listed together, launches on the Today tab.
+        // No screen per item: events are listed together.
         is SearchTarget.EarthEventEntry -> navigateToEarthEvents()
-        is SearchTarget.LaunchEntry -> navigateToTopLevel(TopLevelDestination.TODAY)
+        is SearchTarget.LaunchEntry -> navigateToLaunchDetails(target.id)
         is SearchTarget.SkyEventEntry -> navigateToSkyEvents(target.id)
         is SearchTarget.NewsEntry -> navigateToNewsItem(target.id)
         is SearchTarget.CometEntry -> navigateToCometDetails(target.designation)

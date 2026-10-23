@@ -10,6 +10,7 @@ import kotlin.math.hypot
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
+import kotlin.math.sqrt
 import kotlin.math.tan
 
 /**
@@ -59,10 +60,23 @@ class SkyView private constructor(val forward: SkyVector, val up: SkyVector) {
     }
 }
 
+/** How directions are laid out on the screen. */
+enum class SkyLens {
+    /**
+     * Angles are kept, so constellations keep their shapes even at the edges of a wide view, and
+     * circles on the sky (the horizon among them) stay circles on the screen.
+     */
+    STEREOGRAPHIC,
+
+    /**
+     * As a camera lens draws the sky (gnomonic): great circles, the horizon among them, are straight
+     * lines. For drawing over a camera's picture (F22); only for views well under 180 degrees.
+     */
+    RECTILINEAR,
+}
+
 /**
- * A stereographic projection of the sky centred on [view]: angles are kept, so constellations keep
- * their shapes even at the edges of a wide view, and circles on the sky (the horizon among them)
- * stay circles on the screen.
+ * A projection of the sky centred on [view], stereographic unless [lens] says otherwise.
  *
  * [fieldOfViewDegrees] spans the shorter side of the [width] by [height] pixel screen. Projecting
  * writes into [x] and [y] instead of allocating, as the renderer projects thousands of stars a frame.
@@ -72,12 +86,19 @@ class SkyProjection(
     val width: Float,
     val height: Float,
     val fieldOfViewDegrees: Double,
+    val lens: SkyLens = SkyLens.STEREOGRAPHIC,
 ) {
     val centerX: Float = width / 2f
     val centerY: Float = height / 2f
 
-    /** Pixels per unit of the stereographic plane: `tan(angle / 2)` from the centre. */
-    val scale: Double = min(width, height) / 2.0 / tan(Math.toRadians(fieldOfViewDegrees) / 4.0)
+    private val isRectilinear = lens == SkyLens.RECTILINEAR
+
+    /**
+     * Pixels per unit of the projection plane: `tan(angle / 2)` from the centre for the
+     * stereographic lens, `tan(angle)` for the rectilinear one.
+     */
+    val scale: Double = min(width, height) / 2.0 /
+        tan(Math.toRadians(fieldOfViewDegrees) / if (isRectilinear) 2.0 else 4.0)
 
     private val rx = view.right.x
     private val ry = view.right.y
@@ -98,7 +119,11 @@ class SkyProjection(
     /** Cosine of the largest angle from the centre that can still land on the screen. */
     private val visibleCosine: Double = run {
         val halfDiagonal = hypot(width.toDouble(), height.toDouble()) / 2.0
-        cos(min(PI - BEHIND_MARGIN, 2.0 * atan(halfDiagonal / scale) + EDGE_MARGIN))
+        if (isRectilinear) {
+            cos(min(PI / 2.0 - BEHIND_MARGIN, atan(halfDiagonal / scale) + EDGE_MARGIN))
+        } else {
+            cos(min(PI - BEHIND_MARGIN, 2.0 * atan(halfDiagonal / scale) + EDGE_MARGIN))
+        }
     }
 
     /**
@@ -108,7 +133,7 @@ class SkyProjection(
     fun project(east: Double, north: Double, up: Double): Boolean {
         val depth = east * fx + north * fy + up * fz
         if (depth < visibleCosine) return false
-        val factor = scale / (1.0 + depth)
+        val factor = if (isRectilinear) scale / depth else scale / (1.0 + depth)
         x = (centerX + (east * rx + north * ry + up * rz) * factor).toFloat()
         y = (centerY - (east * ux + north * uy + up * uz) * factor).toFloat()
         return true
@@ -125,17 +150,27 @@ class SkyProjection(
      * and gestures, which need a screen direction even off screen.
      */
     fun projectUnbounded(direction: SkyVector): Pair<Float, Float>? {
-        val depth = direction dot view.forward
-        if (depth <= -1.0 + BEHIND_EPSILON) return null
-        val factor = scale / (1.0 + depth)
-        return (centerX + (direction dot view.right) * factor).toFloat() to
-            (centerY - (direction dot view.up) * factor).toFloat()
+        val sideways = direction dot view.right
+        val upwards = direction dot view.up
+        val factor = unboundedFactor(direction dot view.forward, hypot(sideways, upwards)) ?: return null
+        return (centerX + sideways * factor).toFloat() to (centerY - upwards * factor).toFloat()
+    }
+
+    /** Pixels per unit off the axis for a direction at [depth], [offAxis] from the axis; null straight behind. */
+    private fun unboundedFactor(depth: Double, offAxis: Double): Double? = when {
+        depth <= -1.0 + BEHIND_EPSILON -> null
+        !isRectilinear -> scale / (1.0 + depth)
+        depth > MIN_RECTILINEAR_DEPTH -> scale / depth
+        // A flat lens has no picture of what is beside or behind it: keep only which way it is.
+        offAxis > BEHIND_EPSILON -> scale / MIN_RECTILINEAR_DEPTH / offAxis
+        else -> null
     }
 
     /** The direction (horizontal frame) shown at screen point [screenX], [screenY]. */
     fun unproject(screenX: Float, screenY: Float): SkyVector {
         val px = (screenX - centerX) / scale
         val py = (centerY - screenY) / scale
+        if (isRectilinear) return (view.right * px + view.up * py + view.forward).normalized()
         val norm = 1.0 + px * px + py * py
         val cameraX = 2.0 * px / norm
         val cameraY = 2.0 * py / norm
@@ -156,6 +191,10 @@ class SkyProjection(
         val nx = view.right.z
         val ny = view.up.z
         val nz = view.forward.z
+        return if (isRectilinear) rectilinearHorizon(nx, ny, nz) else stereographicHorizon(nx, ny, nz)
+    }
+
+    private fun stereographicHorizon(nx: Double, ny: Double, nz: Double): HorizonShape {
         val radius = scale / abs(nz)
         if (abs(nz) < LINE_EPSILON || radius > max(width, height) * LINE_RADIUS_FACTOR) {
             return HorizonShape.Line(centerX, centerY, normalX = nx.toFloat(), normalY = (-ny).toFloat())
@@ -168,7 +207,30 @@ class SkyProjection(
         )
     }
 
+    /**
+     * Through a flat lens the horizon is always a straight line: the points where the zenith
+     * ([nx], [ny], [nz] in camera coordinates) is square to the direction. Looking straight up or
+     * down it is out of sight, drawn as a line beyond the screen's bottom or top.
+     */
+    private fun rectilinearHorizon(nx: Double, ny: Double, nz: Double): HorizonShape.Line {
+        val tilt = nx * nx + ny * ny
+        if (tilt < LINE_EPSILON) {
+            val reach = width + height
+            return HorizonShape.Line(centerX, if (nz > 0.0) centerY + reach else centerY - reach, 0f, -1f)
+        }
+        val length = sqrt(tilt)
+        return HorizonShape.Line(
+            pointX = (centerX - scale * nz * nx / tilt).toFloat(),
+            pointY = (centerY + scale * nz * ny / tilt).toFloat(),
+            normalX = (nx / length).toFloat(),
+            normalY = (-ny / length).toFloat(),
+        )
+    }
+
     private companion object {
+        /** Cosine of the widest angle from the centre a rectilinear projection still places, 87 degrees. */
+        const val MIN_RECTILINEAR_DEPTH = 0.05
+
         /** About two degrees, so a star's dot and label do not pop at the edge. */
         const val EDGE_MARGIN = 0.035
         const val BEHIND_EPSILON = 1e-9

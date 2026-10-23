@@ -6,7 +6,10 @@ import androidx.compose.ui.graphics.lerp
 import com.radustavila.nasaexplorer.core.model.SolarSystemBody
 import com.radustavila.nasaexplorer.core.skymap.StarStyle
 
-/** Colours of the map. [NIGHT] keeps to dim reds, which leave eyes adapted to the dark. */
+/**
+ * Colours of the map. [NIGHT] keeps to dim reds, which leave eyes adapted to the dark; [AR] draws
+ * over the camera's picture.
+ */
 @Immutable
 internal data class SkyPalette(
     val night: Color,
@@ -103,6 +106,16 @@ internal data class SkyPalette(
             sun = RED,
             starColour = RED,
             planetColours = emptyMap(),
+        )
+
+        /**
+         * Over the camera (F22): no sky colour, as the camera shows the real one (a scrim under the
+         * map keeps lines readable), and a light ground that leaves the real horizon visible.
+         */
+        val AR = REGULAR.copy(
+            night = Color.Transparent,
+            day = Color.Transparent,
+            ground = Color(0x4D101A12),
         )
     }
 }

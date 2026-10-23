@@ -8,6 +8,7 @@ import com.radustavila.nasaexplorer.core.model.SolarSystemBody
 import com.radustavila.nasaexplorer.core.model.SolarSystemPosition
 import com.radustavila.nasaexplorer.core.skymap.HorizontalSky
 import com.radustavila.nasaexplorer.core.skymap.SkyChart
+import com.radustavila.nasaexplorer.core.skymap.SkyLens
 import com.radustavila.nasaexplorer.core.skymap.SkyVector
 import com.radustavila.nasaexplorer.core.skymap.SkyView
 import com.radustavila.nasaexplorer.feature.skymap.SkyTarget
@@ -21,6 +22,7 @@ internal class SkyFrame(
     val selected: SkyTarget?,
     val palette: SkyPalette,
     val names: SkyNames,
+    val lens: SkyLens = SkyLens.STEREOGRAPHIC,
 )
 
 /** The words the map draws that are not in the catalogue, resolved from string resources. */
