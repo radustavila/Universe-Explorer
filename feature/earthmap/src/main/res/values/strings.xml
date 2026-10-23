@@ -13,4 +13,6 @@
     <string name="earth_map_mosaic_gaps">Each day is stitched from satellite passes; gaps between them show the relief map.</string>
     <string name="earth_map_tiles_failed">Can\'t load imagery right now. Showing cached tiles where available.</string>
     <string name="earth_map_imagery_unavailable">No imagery for this day yet. Try an earlier date.</string>
+    <!-- Earthquake layer (F19): magnitude 4.5 and up of the past week, from USGS. -->
+    <string name="earth_map_quakes">Quakes M4.5+ · %1$d</string>
 </resources>

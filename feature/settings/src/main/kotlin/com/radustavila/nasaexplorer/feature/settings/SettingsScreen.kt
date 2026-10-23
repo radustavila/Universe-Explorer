@@ -66,6 +66,7 @@ import com.radustavila.nasaexplorer.core.designsystem.notification.rememberNotif
 import com.radustavila.nasaexplorer.core.designsystem.units.LocalUnitPreferences
 import com.radustavila.nasaexplorer.core.designsystem.units.rememberUnitFormatter
 import com.radustavila.nasaexplorer.core.domain.storage.StorageKind
+import com.radustavila.nasaexplorer.core.domain.usecase.CheckEarthquakeAlertUseCase
 import com.radustavila.nasaexplorer.core.model.AuroraAlertSettings
 import com.radustavila.nasaexplorer.core.model.GeomagneticStorm
 import com.radustavila.nasaexplorer.core.model.MeasurementSystem
@@ -80,6 +81,7 @@ const val SETTINGS_NEW_APOD_SWITCH_TEST_TAG = "settings-new-apod"
 const val SETTINGS_AURORA_SWITCH_TEST_TAG = "settings-aurora"
 const val SETTINGS_ISS_SWITCH_TEST_TAG = "settings-iss"
 const val SETTINGS_STARGAZING_SWITCH_TEST_TAG = "settings-stargazing"
+const val SETTINGS_EARTHQUAKE_SWITCH_TEST_TAG = "settings-earthquake"
 const val SETTINGS_WALLPAPER_SWITCH_TEST_TAG = "settings-wallpaper"
 const val SETTINGS_UNITS_EXAMPLE_TEST_TAG = "settings-units-example"
 const val SETTINGS_CLEAR_CACHE_TEST_TAG = "settings-clear-cache"
@@ -102,9 +104,41 @@ internal fun SettingsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    SettingsMessageEffect(uiState.message, snackbarHostState, viewModel::onMessageShown)
+    LifecycleResumeEffect(viewModel) {
+        viewModel.onScreenResumed()
+        onPauseOrDispose { }
+    }
+
+    SettingsContent(
+        uiState = uiState,
+        notifications = rememberNotificationSwitches(uiState, viewModel, snackbarHostState),
+        onBackClick = onBackClick,
+        onCustomizeTodayClick = onCustomizeTodayClick,
+        onMeasurementSystemChange = viewModel::onMeasurementSystemChange,
+        onTimeFormatChange = viewModel::onTimeFormatChange,
+        onUseSavedPlaceForAurora = viewModel::onUseSavedPlaceForAurora,
+        onDailyWallpaperChange = viewModel::onDailyWallpaperChange,
+        onClearCache = viewModel::onClearCache,
+        locationSection = locationSection,
+        snackbarHostState = snackbarHostState,
+        modifier = modifier,
+    )
+}
+
+/**
+ * Every notification switch, reading "on" only while the system lets the app notify, like the
+ * features' own.
+ */
+@Composable
+private fun rememberNotificationSwitches(
+    uiState: SettingsUiState,
+    viewModel: SettingsViewModel,
+    snackbarHostState: SnackbarHostState,
+): NotificationSwitches {
     val blocked = stringResource(R.string.settings_notifications_blocked)
 
-    // Every switch reads "on" only while the system lets the app notify, like the features' own.
     val newApod = rememberNotificationPermissionToggle(
         isEnabled = uiState.newApodNotificationsEnabled,
         onEnabledChange = viewModel::onNewApodNotificationsChange,
@@ -129,36 +163,25 @@ internal fun SettingsScreen(
         snackbarHostState = snackbarHostState,
         blockedMessage = blocked,
     )
-
-    SettingsMessageEffect(uiState.message, snackbarHostState, viewModel::onMessageShown)
-    LifecycleResumeEffect(viewModel) {
-        viewModel.onScreenResumed()
-        onPauseOrDispose { }
-    }
-
-    SettingsContent(
-        uiState = uiState,
-        notifications = NotificationSwitches(
-            newApodOn = newApod.isOn,
-            onNewApodClick = newApod.onClick,
-            auroraOn = aurora.isOn,
-            onAuroraClick = aurora.onClick,
-            issOn = iss.isOn,
-            onIssClick = iss.onClick,
-            stargazingOn = stargazing.isOn,
-            onStargazingClick = stargazing.onClick,
-            onStargazingMinimumScoreChange = viewModel::onStargazingMinimumScoreChange,
-        ),
-        onBackClick = onBackClick,
-        onCustomizeTodayClick = onCustomizeTodayClick,
-        onMeasurementSystemChange = viewModel::onMeasurementSystemChange,
-        onTimeFormatChange = viewModel::onTimeFormatChange,
-        onUseSavedPlaceForAurora = viewModel::onUseSavedPlaceForAurora,
-        onDailyWallpaperChange = viewModel::onDailyWallpaperChange,
-        onClearCache = viewModel::onClearCache,
-        locationSection = locationSection,
+    val earthquakes = rememberNotificationPermissionToggle(
+        isEnabled = uiState.earthquakeAlertsEnabled,
+        onEnabledChange = viewModel::onEarthquakeAlertsChange,
         snackbarHostState = snackbarHostState,
-        modifier = modifier,
+        blockedMessage = blocked,
+    )
+
+    return NotificationSwitches(
+        newApodOn = newApod.isOn,
+        onNewApodClick = newApod.onClick,
+        auroraOn = aurora.isOn,
+        onAuroraClick = aurora.onClick,
+        issOn = iss.isOn,
+        onIssClick = iss.onClick,
+        stargazingOn = stargazing.isOn,
+        onStargazingClick = stargazing.onClick,
+        onStargazingMinimumScoreChange = viewModel::onStargazingMinimumScoreChange,
+        earthquakeOn = earthquakes.isOn,
+        onEarthquakeClick = earthquakes.onClick,
     )
 }
 
@@ -173,6 +196,8 @@ internal data class NotificationSwitches(
     val stargazingOn: Boolean = false,
     val onStargazingClick: () -> Unit = {},
     val onStargazingMinimumScoreChange: (Int) -> Unit = {},
+    val earthquakeOn: Boolean = false,
+    val onEarthquakeClick: () -> Unit = {},
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -390,6 +415,24 @@ private fun LazyListScope.notificationsSection(
         )
     }
     stargazingAlertItem(uiState, notifications)
+    item(key = "earthquake") {
+        val units = rememberUnitFormatter()
+        SwitchRow(
+            title = stringResource(R.string.settings_earthquake_title),
+            description = if (uiState.observerLocation == null) {
+                stringResource(R.string.settings_earthquake_needs_place)
+            } else {
+                stringResource(
+                    R.string.settings_earthquake_description,
+                    units.distance(CheckEarthquakeAlertUseCase.NEARBY_RADIUS_KM),
+                    units.distance(CheckEarthquakeAlertUseCase.TSUNAMI_RADIUS_KM),
+                )
+            },
+            checked = notifications.earthquakeOn,
+            onClick = notifications.onEarthquakeClick,
+            testTag = SETTINGS_EARTHQUAKE_SWITCH_TEST_TAG,
+        )
+    }
 }
 
 private fun LazyListScope.stargazingAlertItem(uiState: SettingsUiState, notifications: NotificationSwitches) {
@@ -602,6 +645,7 @@ private fun SettingsMessageEffect(message: SettingsMessage?, snackbarHostState: 
                 SettingsMessage.CACHE_CLEAR_FAILED -> R.string.settings_cache_clear_failed
                 SettingsMessage.AURORA_NEEDS_PLACE -> R.string.settings_aurora_needs_place
                 SettingsMessage.STARGAZING_NEEDS_PLACE -> R.string.settings_stargazing_needs_place_message
+                SettingsMessage.EARTHQUAKE_NEEDS_PLACE -> R.string.settings_earthquake_needs_place_message
             },
         )
     }

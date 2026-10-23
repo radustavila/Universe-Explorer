@@ -56,7 +56,10 @@ Clean Architecture, dependencies pointing inward:
   `RoomFavoritesRepository`), `:core:datastore`, `:core:cache` (`CacheEvictor` + daily `CacheEvictionWorker`).
   `:data:launches` (Launch Library 2) keeps its own small `launches.db`, refreshed from `ApodSyncWorker` at most
   once an hour. `:data:earthevents` (NASA EONET) keeps `earth_events.db`, refreshed by its own 3-hourly
-  `EarthEventsSyncWorker` and when the events screen opens. `:core:astro` (pure Kotlin) computes the sky offline:
+  `EarthEventsSyncWorker` and when the events screen opens; the same database and worker hold the USGS
+  earthquakes (F19: `2.5_week` + `significant_month`, `If-Modified-Since`, at most every 15 min,
+  `SyncSource.EARTHQUAKES`), drawn on both Earth maps, and the opt-in strong-quake alert
+  (`CheckEarthquakeAlertUseCase`, filtered on the device against the saved place). `:core:astro` (pure Kotlin) computes the sky offline:
   `AstronomyEngineSkyCalculator`, SGP4 passes, and the sky events calendar (`EventCalendar` behind
   `SkyEventCalendar`, `MeteorShowerTable`); `:data:skyevents` holds that calendar's reminders (DataStore + one
   WorkManager job, re-armed by `NasaExplorerApplication` whenever the saved place changes). `:data:forecast`

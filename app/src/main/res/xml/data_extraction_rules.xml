@@ -20,6 +20,7 @@
         <include domain="file" path="datastore/stargazing_alerts.preferences_pb" />
         <include domain="file" path="datastore/today_cards.preferences_pb" />
         <include domain="file" path="datastore/sky_event_reminders.preferences_pb" />
+        <include domain="file" path="datastore/earthquake_alerts.preferences_pb" />
     </cloud-backup>
     <device-transfer>
         <include domain="database" path="nasa-explorer.db" />
@@ -32,5 +33,6 @@
         <include domain="file" path="datastore/stargazing_alerts.preferences_pb" />
         <include domain="file" path="datastore/today_cards.preferences_pb" />
         <include domain="file" path="datastore/sky_event_reminders.preferences_pb" />
+        <include domain="file" path="datastore/earthquake_alerts.preferences_pb" />
     </device-transfer>
 </data-extraction-rules>

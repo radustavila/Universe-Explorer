@@ -8,10 +8,14 @@ import com.radustavila.nasaexplorer.core.common.time.TimeProvider
 import com.radustavila.nasaexplorer.core.domain.sync.SourceRefreshResult
 import com.radustavila.nasaexplorer.core.domain.usecase.GetEventImageryLayerUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveDataFreshnessUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEarthquakesUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ObserveOpenEarthEventsUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEarthEventsUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEarthquakesUseCase
 import com.radustavila.nasaexplorer.core.model.EarthEvent
 import com.radustavila.nasaexplorer.core.model.EarthEventCategory
+import com.radustavila.nasaexplorer.core.model.Earthquake
+import com.radustavila.nasaexplorer.core.model.EarthquakeFilter
 import com.radustavila.nasaexplorer.core.model.EventImageryLayer
 import com.radustavila.nasaexplorer.core.model.EventRecency
 import com.radustavila.nasaexplorer.core.model.SyncSource
@@ -30,9 +34,13 @@ import kotlinx.coroutines.launch
 /**
  * The live events map. Events come from the cache only; opening the screen asks for a refresh,
  * which [RefreshEarthEventsUseCase] skips while the cache is fresh, and the refresh button forces
- * one. Filter, wildfire history toggle, selection and shown imagery survive rotation and process
- * death.
+ * one. USGS quakes ride along: refreshed on open and with the button, at most every 15 minutes
+ * ([RefreshEarthquakesUseCase]). Filters, wildfire history toggle, selection, the quake list and
+ * shown imagery survive rotation and process death. Opened with an `earthquake` argument (search,
+ * the strong-quake alert), the map starts on that quake.
  */
+// One handler per control on the screen.
+@Suppress("TooManyFunctions")
 @HiltViewModel
 class EarthEventsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
@@ -41,22 +49,39 @@ class EarthEventsViewModel @Inject constructor(
     private val getEventImageryLayer: GetEventImageryLayerUseCase,
     timeProvider: TimeProvider,
     observeDataFreshness: ObserveDataFreshnessUseCase,
+    observeEarthquakes: ObserveEarthquakesUseCase,
+    private val refreshEarthquakes: RefreshEarthquakesUseCase,
 ) : ViewModel() {
 
     private val today: LocalDate = timeProvider.today()
+    private val now = timeProvider.now()
 
     private val hidden = savedStateHandle.getStateFlow(KEY_HIDDEN, emptyList<String>())
     private val showHistory = savedStateHandle.getStateFlow(KEY_HISTORY, false)
     private val selectedId = savedStateHandle.getStateFlow<String?>(KEY_SELECTED, null)
     private val imagery = savedStateHandle.getStateFlow<List<String>?>(KEY_IMAGERY, null)
+    private val quakeFilter = savedStateHandle.getStateFlow(KEY_QUAKE_FILTER, EarthquakeFilter.DEFAULT.key)
+    private val selectedQuakeId = savedStateHandle.getStateFlow<String?>(KEY_QUAKE_SELECTED, null)
+    private val showQuakeList = savedStateHandle.getStateFlow(KEY_QUAKE_LIST, false)
     private val transient = MutableStateFlow(Transient())
+
+    private val quakes = combine(
+        observeEarthquakes(),
+        quakeFilter,
+        selectedQuakeId,
+        showQuakeList,
+    ) { quakes, filter, selected, list ->
+        val shown = selected?.takeIf { id -> quakes.any { it.id == id } }
+        QuakeSelection(quakes, EarthquakeFilter.fromKey(filter), shown, list)
+    }
 
     val uiState: StateFlow<EarthEventsUiState> = combine(
         observeOpenEvents(includeHistory = true),
         combine(hidden, showHistory, selectedId, imagery, ::Selection),
         transient,
         observeDataFreshness(SyncSource.EONET),
-    ) { events, selection, transient, freshness ->
+        quakes,
+    ) { events, selection, transient, freshness, quakes ->
         EarthEventsUiState(
             events = events,
             hiddenCategories = selection.hidden.mapNotNull(EarthEventCategory::fromKey).toSet(),
@@ -70,14 +95,26 @@ class EarthEventsViewModel @Inject constructor(
             isOffline = freshness.isOffline,
             message = transient.message,
             freshness = freshness,
+            earthquakes = quakes.quakes,
+            earthquakeFilter = quakes.filter,
+            selectedEarthquakeId = quakes.selectedId,
+            showEarthquakeList = quakes.showList,
+            focusEarthquakeId = transient.focusEarthquakeId?.takeIf { id -> quakes.quakes.any { it.id == id } },
+            now = now,
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(STATE_TIMEOUT_MILLIS),
-        initialValue = EarthEventsUiState(today = today, showWildfireHistory = showHistory.value),
+        initialValue = EarthEventsUiState(today = today, showWildfireHistory = showHistory.value, now = now),
     )
 
     init {
+        savedStateHandle.remove<String>(ARG_EARTHQUAKE)?.let { id ->
+            savedStateHandle[KEY_QUAKE_SELECTED] = id
+            savedStateHandle[KEY_SELECTED] = null
+            savedStateHandle[KEY_QUAKE_LIST] = false
+            transient.update { it.copy(focusEarthquakeId = id) }
+        }
         refresh(force = false)
     }
 
@@ -98,6 +135,39 @@ class EarthEventsViewModel @Inject constructor(
 
     fun onEventSelected(eventId: String) {
         savedStateHandle[KEY_SELECTED] = eventId
+        savedStateHandle[KEY_QUAKE_SELECTED] = null
+    }
+
+    /** One filter at a time; picking the shown one again hides the quakes. */
+    fun onEarthquakeFilterSelected(filter: EarthquakeFilter) {
+        val shown = EarthquakeFilter.fromKey(quakeFilter.value)
+        savedStateHandle[KEY_QUAKE_FILTER] = if (filter == shown) FILTER_OFF else filter.key
+        if (filter == shown) savedStateHandle[KEY_QUAKE_LIST] = false
+    }
+
+    fun onEarthquakeSelected(earthquakeId: String) {
+        savedStateHandle[KEY_QUAKE_SELECTED] = earthquakeId
+        savedStateHandle[KEY_SELECTED] = null
+    }
+
+    /** A quake picked in the list: back to the map, which flies to it. */
+    fun onEarthquakeListItemSelected(earthquakeId: String) {
+        onEarthquakeSelected(earthquakeId)
+        savedStateHandle[KEY_QUAKE_LIST] = false
+        transient.update { it.copy(focusEarthquakeId = earthquakeId) }
+    }
+
+    fun onEarthquakeDismissed() {
+        savedStateHandle[KEY_QUAKE_SELECTED] = null
+    }
+
+    fun onEarthquakeListToggled() {
+        savedStateHandle[KEY_QUAKE_LIST] = !showQuakeList.value
+    }
+
+    /** The map moved to the quake it was asked to show. */
+    fun onEarthquakeFocused() {
+        transient.update { it.copy(focusEarthquakeId = null) }
     }
 
     fun onEventDismissed() {
@@ -135,6 +205,8 @@ class EarthEventsViewModel @Inject constructor(
         if (transient.value.isRefreshing) return
         transient.update { it.copy(isRefreshing = true) }
         viewModelScope.launch {
+            // Never forced: USGS updates every minute, a revalidation every 15 is plenty.
+            launch { refreshEarthquakes() }
             val outcome = refreshEarthEvents(force = force)
             val failed = outcome is SourceRefreshResult.Completed && outcome.result is DataResult.Failure
             transient.update {
@@ -162,10 +234,18 @@ class EarthEventsViewModel @Inject constructor(
         val imagery: List<String>?,
     )
 
+    private data class QuakeSelection(
+        val quakes: List<Earthquake>,
+        val filter: EarthquakeFilter?,
+        val selectedId: String?,
+        val showList: Boolean,
+    )
+
     private data class Transient(
         val isRefreshing: Boolean = false,
         val isLoadingImagery: Boolean = false,
         val message: EarthEventsMessage? = null,
+        val focusEarthquakeId: String? = null,
     )
 
     companion object {
@@ -173,6 +253,13 @@ class EarthEventsViewModel @Inject constructor(
         private const val KEY_HISTORY = "show_wildfire_history"
         private const val KEY_SELECTED = "selected_event"
         private const val KEY_IMAGERY = "event_imagery"
+        private const val KEY_QUAKE_FILTER = "earthquake_filter"
+        private const val KEY_QUAKE_SELECTED = "selected_earthquake"
+        private const val KEY_QUAKE_LIST = "earthquake_list"
+        private const val FILTER_OFF = "off"
+
+        /** [EarthEventsRoute.earthquake]: read once, then the selection lives on its own. */
+        internal const val ARG_EARTHQUAKE = "earthquake"
         private const val STATE_TIMEOUT_MILLIS = 5_000L
 
         /** `[eventId, date, layerId, matrixSet, extension]`, the last three empty without a layer. */

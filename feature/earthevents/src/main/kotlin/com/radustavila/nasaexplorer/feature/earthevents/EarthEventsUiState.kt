@@ -7,10 +7,13 @@ import com.radustavila.nasaexplorer.core.map.gibs.GibsTileMatrixSet
 import com.radustavila.nasaexplorer.core.map.gibs.GibsTime
 import com.radustavila.nasaexplorer.core.model.DataFreshness
 import com.radustavila.nasaexplorer.core.model.EarthEvent
+import com.radustavila.nasaexplorer.core.model.Earthquake
+import com.radustavila.nasaexplorer.core.model.EarthquakeFilter
 import com.radustavila.nasaexplorer.core.model.EarthEventCategory
 import com.radustavila.nasaexplorer.core.model.EventImageryLayer
 import com.radustavila.nasaexplorer.core.model.EventRecency
 import com.radustavila.nasaexplorer.core.model.recency
+import java.time.Instant
 import java.time.LocalDate
 
 @Immutable
@@ -37,7 +40,31 @@ data class EarthEventsUiState(
     val message: EarthEventsMessage? = null,
     /** When the events last synced, for the "Updated …" line over the map. */
     val freshness: DataFreshness = DataFreshness(),
+    /** Cached USGS quakes that some filter shows, newest first. */
+    val earthquakes: List<Earthquake> = emptyList(),
+    /** Which quakes the map shows; null hides them. */
+    val earthquakeFilter: EarthquakeFilter? = EarthquakeFilter.DEFAULT,
+    val selectedEarthquakeId: String? = null,
+    /** The quakes as a list, newest first, instead of the map. */
+    val showEarthquakeList: Boolean = false,
+    /** A quake the map should move to once (opened from search, the alert or the list). */
+    val focusEarthquakeId: String? = null,
+    /** What "past week" is counted back from. */
+    val now: Instant = Instant.EPOCH,
 ) {
+    /** The quakes the filter picks, newest first. */
+    val visibleEarthquakes: List<Earthquake>
+        get() = earthquakeFilter?.let { filter -> earthquakes.filter { filter.matches(it, now) } }.orEmpty()
+
+    /** How many quakes each filter would show, for its chip. */
+    val earthquakeCounts: List<Pair<EarthquakeFilter, Int>>
+        get() = EarthquakeFilter.entries.map { filter -> filter to earthquakes.count { filter.matches(it, now) } }
+
+    /** Shown even when the filter left it out, as when search or the alert opened it. */
+    val selectedEarthquake: Earthquake? get() = earthquakes.firstOrNull { it.id == selectedEarthquakeId }
+
+    val focusEarthquake: Earthquake? get() = earthquakes.firstOrNull { it.id == focusEarthquakeId }
+
     /** The events the map draws (before the category filter): history only while switched on. */
     val shownEvents: List<EarthEvent>
         get() = if (showWildfireHistory) events else events.filter { recencyOf(it).isShownByDefault }

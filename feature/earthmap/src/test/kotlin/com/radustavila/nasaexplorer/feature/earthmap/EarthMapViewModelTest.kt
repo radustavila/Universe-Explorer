@@ -3,8 +3,18 @@ package com.radustavila.nasaexplorer.feature.earthmap
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.radustavila.nasaexplorer.core.map.gibs.GibsImagery
+import com.radustavila.nasaexplorer.core.domain.usecase.CheckEarthquakeAlertUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.ObserveEarthquakesUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RefreshEarthquakesUseCase
+import com.radustavila.nasaexplorer.core.domain.usecase.RefreshSourceUseCase
 import com.radustavila.nasaexplorer.core.map.gibs.GibsLayer
+import com.radustavila.nasaexplorer.core.testing.data.TestEarthquakes
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeAlertNotifier
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeAlertRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeEarthquakeRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeNetworkMonitor
+import com.radustavila.nasaexplorer.core.testing.fake.FakeObserverLocationRepository
+import com.radustavila.nasaexplorer.core.testing.fake.FakeSyncMetadataRepository
 import com.radustavila.nasaexplorer.core.testing.fake.FakeTimeProvider
 import com.radustavila.nasaexplorer.core.testing.rule.MainDispatcherRule
 import java.time.LocalDate
@@ -24,11 +34,25 @@ class EarthMapViewModelTest {
     private val today = LocalDate.of(2026, 10, 19)
     private val yesterday = today.minusDays(1)
     private val networkMonitor = FakeNetworkMonitor()
+    private val clock = FakeTimeProvider(currentInstant = TestEarthquakes.NOW, currentDate = today)
+    private val quakes = FakeEarthquakeRepository()
 
     private fun createViewModel(savedStateHandle: SavedStateHandle = SavedStateHandle()) = EarthMapViewModel(
         savedStateHandle = savedStateHandle,
-        timeProvider = FakeTimeProvider(currentDate = today),
+        timeProvider = clock,
         networkMonitor = networkMonitor,
+        observeEarthquakes = ObserveEarthquakesUseCase(quakes, clock),
+        refreshEarthquakes = RefreshEarthquakesUseCase(
+            quakes,
+            RefreshSourceUseCase(FakeSyncMetadataRepository(), clock),
+            CheckEarthquakeAlertUseCase(
+                FakeEarthquakeAlertRepository(),
+                FakeObserverLocationRepository(),
+                quakes,
+                FakeEarthquakeAlertNotifier(),
+                clock,
+            ),
+        ),
     )
 
     @Test
@@ -144,6 +168,32 @@ class EarthMapViewModelTest {
 
             networkMonitor.setOnline(false)
             assertTrue(awaitItem().isOffline)
+        }
+    }
+
+    @Test
+    fun `the quake layer is off until asked for, then refreshes and shows M4_5 and up`() = runTest {
+        val sicily = TestEarthquakes.earthquake()
+        quakes.setEarthquakes(listOf(sicily, TestEarthquakes.small()))
+        val viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            val off = awaitItem()
+            assertFalse(off.showEarthquakes)
+            assertEquals(listOf(sicily), off.earthquakes)
+            assertEquals(0, quakes.refreshCallCount)
+
+            viewModel.onEarthquakesToggled()
+            assertTrue(awaitItem().showEarthquakes)
+            assertEquals(1, quakes.refreshCallCount)
+
+            viewModel.onEarthquakeSelected(sicily.id)
+            assertEquals(sicily, awaitItem().selectedEarthquake)
+
+            viewModel.onEarthquakesToggled()
+            val hidden = expectMostRecentItem()
+            assertFalse(hidden.showEarthquakes)
+            assertEquals(null, hidden.selectedEarthquake)
         }
     }
 }

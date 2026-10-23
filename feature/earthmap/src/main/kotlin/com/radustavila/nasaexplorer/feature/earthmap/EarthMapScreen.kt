@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -23,6 +24,8 @@ import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.ImageNotSupported
 import androidx.compose.material.icons.outlined.SyncProblem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -54,10 +57,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.radustavila.nasaexplorer.core.designsystem.component.OfflineBanner
+import com.radustavila.nasaexplorer.core.designsystem.earthquake.EarthquakeDepthLegend
+import com.radustavila.nasaexplorer.core.designsystem.earthquake.EarthquakeSheet
+import com.radustavila.nasaexplorer.core.designsystem.util.rememberCustomTabOpener
 import com.radustavila.nasaexplorer.core.designsystem.util.formatMedium
 import com.radustavila.nasaexplorer.core.map.SpaceMap
 import com.radustavila.nasaexplorer.core.map.TileLoadStatus
 import com.radustavila.nasaexplorer.core.map.gibs.GibsImagery
+import com.radustavila.nasaexplorer.core.map.overlay.MapOverlay
 import com.radustavila.nasaexplorer.core.map.rememberSpaceMapState
 import java.time.LocalDate
 import kotlin.math.roundToInt
@@ -66,6 +73,19 @@ const val EARTH_MAP_TILE_BANNER_TEST_TAG = "earth-map-tile-banner"
 const val EARTH_MAP_DATE_SLIDER_TEST_TAG = "earth-map-date-slider"
 const val EARTH_MAP_DATE_LABEL_TEST_TAG = "earth-map-date-label"
 const val EARTH_MAP_LOADING_TEST_TAG = "earth-map-loading"
+const val EARTH_MAP_QUAKES_TOGGLE_TEST_TAG = "earth-map-quakes"
+
+/**
+ * The map's slot, so tests can render the controls without MapLibre's native renderer. A tap on a
+ * quake comes back as its id through `onEarthquakeClick`, any other tap through `onMapClick`.
+ */
+typealias EarthMapSlot = @Composable (
+    imagery: GibsImagery,
+    overlays: List<MapOverlay>,
+    onEarthquakeClick: (earthquakeId: String) -> Unit,
+    onMapClick: () -> Unit,
+    modifier: Modifier,
+) -> Unit
 
 @Composable
 internal fun EarthMapRoute(
@@ -74,6 +94,7 @@ internal fun EarthMapRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val mapState = rememberSpaceMapState()
+    val openPage = rememberCustomTabOpener()
 
     EarthMapScreen(
         uiState = uiState,
@@ -84,7 +105,20 @@ internal fun EarthMapRoute(
         onDateSelected = viewModel::onDateSelected,
         onPreviousDay = viewModel::onPreviousDay,
         onNextDay = viewModel::onNextDay,
-        map = { imagery, modifier -> SpaceMap(imagery = imagery, state = mapState, modifier = modifier) },
+        onEarthquakesToggled = viewModel::onEarthquakesToggled,
+        onEarthquakeSelected = viewModel::onEarthquakeSelected,
+        onEarthquakeDismissed = viewModel::onEarthquakeDismissed,
+        onOpenEarthquakePage = openPage,
+        map = { imagery, overlays, onEarthquakeClick, onMapClick, modifier ->
+            SpaceMap(
+                imagery = imagery,
+                state = mapState,
+                overlays = overlays,
+                onShapeClick = { click -> onEarthquakeClick(click.shapeId) },
+                onMapClick = { onMapClick() },
+                modifier = modifier,
+            )
+        },
     )
 }
 
@@ -92,6 +126,7 @@ internal fun EarthMapRoute(
  * Stateless satellite map screen. The map itself comes in through [map] so tests can render the
  * controls without MapLibre's native renderer. A thin progress bar tops the map while a new day
  * waits to be drawn or [isLoadingImagery] (the map keeps the previous day until the new one loaded).
+ * A chip over the map switches the quake layer on; a tapped quake opens its sheet.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,8 +140,14 @@ fun EarthMapScreen(
     onNextDay: () -> Unit,
     modifier: Modifier = Modifier,
     isLoadingImagery: Boolean = false,
-    map: @Composable (imagery: GibsImagery, modifier: Modifier) -> Unit,
+    onEarthquakesToggled: () -> Unit = {},
+    onEarthquakeSelected: (String) -> Unit = {},
+    onEarthquakeDismissed: () -> Unit = {},
+    onOpenEarthquakePage: (String) -> Unit = {},
+    map: EarthMapSlot,
 ) {
+    val quakeActions =
+        QuakeActions(onEarthquakesToggled, onEarthquakeSelected, onEarthquakeDismissed, onOpenEarthquakePage)
     Scaffold(
         modifier = modifier,
         // See FeedScreen: insets belong to the top bar and to the app scaffold's navigation bar.
@@ -141,6 +182,7 @@ fun EarthMapScreen(
                     tileStatus = tileStatus,
                     isLoading = uiState.isImageryPending || isLoadingImagery,
                     map = map,
+                    quakeActions = quakeActions,
                     modifier = mapModifier,
                 )
             }
@@ -165,24 +207,62 @@ fun EarthMapScreen(
     }
 }
 
+/** What the quake chip, a tapped quake and its sheet do. */
+private class QuakeActions(
+    val onToggle: () -> Unit,
+    val onSelect: (String) -> Unit,
+    val onDismiss: () -> Unit,
+    val onOpenPage: (String) -> Unit,
+)
+
 @Composable
 private fun MapWithBanner(
     uiState: EarthMapUiState,
     tileStatus: TileLoadStatus,
     isLoading: Boolean,
-    map: @Composable (imagery: GibsImagery, modifier: Modifier) -> Unit,
+    map: EarthMapSlot,
+    quakeActions: QuakeActions,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
         MapBanner(isOffline = uiState.isOffline, tileStatus = tileStatus)
         Box(Modifier.fillMaxWidth().weight(1f)) {
-            map(uiState.imagery, Modifier.fillMaxSize())
+            val selected = uiState.selectedEarthquake
+            val overlays = remember(uiState.earthquakes, uiState.showEarthquakes, selected) {
+                earthquakeOverlays(uiState.earthquakes, uiState.showEarthquakes, selected)
+            }
+            map(uiState.imagery, overlays, quakeActions.onSelect, quakeActions.onDismiss, Modifier.fillMaxSize())
             if (isLoading) {
                 LinearProgressIndicator(
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.TopCenter)
                         .testTag(EARTH_MAP_LOADING_TEST_TAG),
+                )
+            }
+            FilterChip(
+                selected = uiState.showEarthquakes,
+                onClick = quakeActions.onToggle,
+                label = { Text(stringResource(R.string.earth_map_quakes, uiState.earthquakes.size)) },
+                colors = FilterChipDefaults.filterChipColors(containerColor = MaterialTheme.colorScheme.surface),
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .testTag(EARTH_MAP_QUAKES_TOGGLE_TEST_TAG),
+            )
+            if (uiState.showEarthquakes && uiState.earthquakes.isNotEmpty()) {
+                EarthquakeDepthLegend(Modifier.align(Alignment.TopEnd))
+            }
+            selected?.let { quake ->
+                EarthquakeSheet(
+                    quake = quake,
+                    onOpenPage = quakeActions.onOpenPage,
+                    onClose = quakeActions.onDismiss,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(12.dp)
+                        .widthIn(max = SHEET_MAX_WIDTH)
+                        .fillMaxWidth(),
                 )
             }
         }
@@ -360,4 +440,5 @@ private val EarthMapMode.labelRes: Int
     }
 
 private val LANDSCAPE_PANEL_WIDTH = 360.dp
+private val SHEET_MAX_WIDTH = 420.dp
 private val DATE_AREA_MIN_HEIGHT = 128.dp

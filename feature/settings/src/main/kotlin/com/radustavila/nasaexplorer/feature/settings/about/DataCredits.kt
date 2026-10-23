@@ -38,4 +38,5 @@ internal val DATA_CREDITS: List<DataCredit> = listOf(
         "https://github.com/ofrohn/d3-celestial",
     ),
     DataCredit(R.string.credit_maplibre, R.string.credit_maplibre_description, "https://maplibre.org/"),
+    DataCredit(R.string.credit_usgs, R.string.credit_usgs_description, "https://earthquake.usgs.gov/"),
 )
