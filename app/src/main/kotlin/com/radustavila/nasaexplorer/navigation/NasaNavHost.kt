@@ -41,6 +41,8 @@ import com.radustavila.nasaexplorer.feature.mars.marsPhotosScreen
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
 import com.radustavila.nasaexplorer.feature.milkyway.milkyWayScreen
 import com.radustavila.nasaexplorer.feature.milkyway.navigateToMilkyWay
+import com.radustavila.nasaexplorer.feature.moonmap.moonMapScreen
+import com.radustavila.nasaexplorer.feature.moonmap.navigateToMoonMap
 import com.radustavila.nasaexplorer.feature.milkyway.sky.MilkyWayTonightCard
 import com.radustavila.nasaexplorer.feature.news.navigateToNewsItem
 import com.radustavila.nasaexplorer.feature.news.navigateToPodcastEpisode
@@ -160,12 +162,14 @@ fun NasaNavHost(
                         onObjectClick = { id -> navController.navigateToSkyMap(deepSkyId = id) },
                     )
                 },
+                onMoonMapClick = { navController.navigateToMoonMap() },
             )
             skyEventsScreen(
                 onBackClick = navController::popBackStack,
                 onSetLocation = { navController.navigateToSkyTonight() },
                 onCometClick = navController::navigateToCometDetails,
                 onMilkyWayClick = { navController.navigateToMilkyWay() },
+                onMoonMapClick = { navController.navigateToMoonMap() },
             )
             dsnScreen(onBackClick = navController::popBackStack)
             newsScreen(
@@ -199,6 +203,7 @@ fun NasaNavHost(
                 onBackClick = navController::popBackStack,
                 onShowOnSkyMap = { id -> navController.navigateToSkyMap(deepSkyId = id) },
             )
+            moonMapScreen(onBackClick = navController::popBackStack)
             gallerySearchScreen(
                 onMediaClick = navController::navigateToNasaMedia,
                 listDetail = listDetail(

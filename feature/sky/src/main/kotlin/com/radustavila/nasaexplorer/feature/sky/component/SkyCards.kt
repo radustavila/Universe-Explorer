@@ -16,6 +16,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +41,7 @@ import kotlin.math.roundToInt
 
 const val SKY_NIGHT_CARD_TEST_TAG = "sky-night-card"
 const val SKY_MOON_CARD_TEST_TAG = "sky-moon-card"
+const val SKY_MOON_MAP_BUTTON_TEST_TAG = "sky-moon-map"
 const val SKY_PLANETS_CARD_TEST_TAG = "sky-planets-card"
 const val SKY_PEOPLE_CARD_TEST_TAG = "sky-people-card"
 
@@ -91,7 +93,12 @@ private fun NightEvent(label: String, at: Instant?) {
 }
 
 @Composable
-internal fun MoonCard(moon: MoonTonight, southernHemisphere: Boolean, modifier: Modifier = Modifier) {
+internal fun MoonCard(
+    moon: MoonTonight,
+    southernHemisphere: Boolean,
+    modifier: Modifier = Modifier,
+    onMapClick: (() -> Unit)? = null,
+) {
     SkySection(title = stringResource(R.string.sky_moon_title), modifier = modifier.testTag(SKY_MOON_CARD_TEST_TAG)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             MoonPhaseIcon(
@@ -119,6 +126,11 @@ internal fun MoonCard(moon: MoonTonight, southernHemisphere: Boolean, modifier: 
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+        onMapClick?.let { onClick ->
+            TextButton(onClick = onClick, modifier = Modifier.testTag(SKY_MOON_MAP_BUTTON_TEST_TAG)) {
+                Text(stringResource(R.string.sky_moon_open_map))
+            }
+        }
     }
 }
 

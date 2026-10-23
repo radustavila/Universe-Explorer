@@ -58,4 +58,14 @@ internal val DATA_CREDITS: List<DataCredit> = listOf(
     ),
     DataCredit(R.string.credit_nsidc, R.string.credit_nsidc_description, "https://doi.org/10.7265/a98x-0f50"),
     DataCredit(R.string.credit_openngc, R.string.credit_openngc_description, "https://github.com/mattiaverga/OpenNGC"),
+    DataCredit(
+        R.string.credit_lroc,
+        R.string.credit_lroc_description,
+        "https://astrogeology.usgs.gov/search/map/moon_lro_lroc_wac_global_morphologic_mosaic_100m",
+    ),
+    DataCredit(
+        R.string.credit_nssdca,
+        R.string.credit_nssdca_description,
+        "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html",
+    ),
 )

@@ -200,4 +200,6 @@
     <string name="quiz_f_climate_sea_ice">Arctic sea ice covered %1$s in September %2$s, %3$s less than in September %4$s.</string>
     <!-- %1$s the rise ("102 mm"), %2$s the month of the latest value, %3$s the year compared with. -->
     <string name="quiz_f_climate_sea_level">Satellites measured the global sea level %1$s higher in %2$s than in %3$s.</string>
+    <string name="quiz_q_landing_site">Which mission landed at %1$s on the Moon in %2$s?</string>
+    <string name="quiz_e_landing_site">%1$s touched down at %2$s on %3$s. Find it on the Moon map. Data: NASA NSSDCA.</string>
 </resources>

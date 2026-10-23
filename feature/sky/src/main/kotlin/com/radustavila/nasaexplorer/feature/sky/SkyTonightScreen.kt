@@ -83,6 +83,7 @@ fun SkyTonightScreen(
     comets: (@Composable () -> Unit)? = null,
     milkyWay: (@Composable () -> Unit)? = null,
     deepSky: (@Composable () -> Unit)? = null,
+    onMoonMapClick: (() -> Unit)? = null,
     viewModel: SkyTonightViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -145,6 +146,7 @@ fun SkyTonightScreen(
         deepSky = deepSky,
         moreSatellites = { MoreSatellitesSection(snackbarHostState) },
         stargazing = { StargazingForecastCard() },
+        onMoonMapClick = onMoonMapClick,
     )
 
     if (showLocationDialog) {
@@ -186,6 +188,7 @@ fun SkyTonightContent(
     stargazing: @Composable () -> Unit = {},
     milkyWay: (@Composable () -> Unit)? = null,
     deepSky: (@Composable () -> Unit)? = null,
+    onMoonMapClick: (() -> Unit)? = null,
 ) {
     Scaffold(
         modifier = modifier,
@@ -224,6 +227,7 @@ fun SkyTonightContent(
                         stargazing = stargazing,
                         milkyWay = milkyWay,
                         deepSky = deepSky,
+                        onMoonMapClick = onMoonMapClick,
                     )
                 }
             }
@@ -245,6 +249,7 @@ private fun SkyList(
     stargazing: @Composable () -> Unit,
     milkyWay: (@Composable () -> Unit)?,
     deepSky: (@Composable () -> Unit)?,
+    onMoonMapClick: (() -> Unit)?,
 ) {
     val location = uiState.location
     // One column on a phone held upright; side by side on wider windows (a phone in landscape
@@ -285,7 +290,9 @@ private fun SkyList(
                 item(key = "computing", span = StaggeredGridItemSpan.FullLine) { Box(Modifier.padding(24.dp)) { LoadingState() } }
             } else {
                 item(key = "night") { NightCard(sky.night) }
-                item(key = "moon") { MoonCard(sky.moon, southernHemisphere = location.coordinate.latitude < 0) }
+                item(key = "moon") {
+                    MoonCard(sky.moon, location.coordinate.latitude < 0, onMapClick = onMoonMapClick)
+                }
                 item(key = "planets") { PlanetsCard(sky.planets) }
             }
             // Worked out for the place, like the night: hides itself when the core is out of season.

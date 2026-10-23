@@ -1,0 +1,35 @@
+{
+  "source": "Apollo: NSSDCA 'Apollo Landing Sites' (LRO-derived LM positions, Wagner et al. 2017, MEPA frame). Luna and Surveyor: NSSDCA Soviet Lunar Missions and Surveyor pages. Later landers: mission announcements and LROC identifications. All public domain or facts.",
+  "sites": [
+    { "id": "apollo-11", "mission": "Apollo 11", "programme": "APOLLO", "kind": "CREWED", "landed": "1969-07-20", "latitude": 0.67416, "longitude": 23.47314, "region": "Mare Tranquillitatis", "crew": ["Neil Armstrong", "Buzz Aldrin"], "nssdcaId": "1969-059C" },
+    { "id": "apollo-12", "mission": "Apollo 12", "programme": "APOLLO", "kind": "CREWED", "landed": "1969-11-19", "latitude": -3.0128, "longitude": -23.4219, "region": "Oceanus Procellarum", "crew": ["Pete Conrad", "Alan Bean"], "nssdcaId": "1969-099C" },
+    { "id": "apollo-14", "mission": "Apollo 14", "programme": "APOLLO", "kind": "CREWED", "landed": "1971-02-05", "latitude": -3.64589, "longitude": -17.47194, "region": "Fra Mauro", "crew": ["Alan Shepard", "Edgar Mitchell"], "nssdcaId": "1971-008C" },
+    { "id": "apollo-15", "mission": "Apollo 15", "programme": "APOLLO", "kind": "CREWED", "landed": "1971-07-30", "latitude": 26.13239, "longitude": 3.63330, "region": "Hadley–Apennine", "crew": ["David Scott", "James Irwin"], "nssdcaId": "1971-063C" },
+    { "id": "apollo-16", "mission": "Apollo 16", "programme": "APOLLO", "kind": "CREWED", "landed": "1972-04-21", "latitude": -8.9734, "longitude": 15.5011, "region": "Descartes Highlands", "crew": ["John Young", "Charles Duke"], "nssdcaId": "1972-031C" },
+    { "id": "apollo-17", "mission": "Apollo 17", "programme": "APOLLO", "kind": "CREWED", "landed": "1972-12-11", "latitude": 20.1911, "longitude": 30.7723, "region": "Taurus–Littrow", "crew": ["Eugene Cernan", "Harrison Schmitt"], "nssdcaId": "1972-096C" },
+
+    { "id": "luna-9", "mission": "Luna 9", "programme": "LUNA", "kind": "LANDER", "landed": "1966-02-03", "latitude": 7.08, "longitude": -64.37, "region": "Oceanus Procellarum" },
+    { "id": "luna-13", "mission": "Luna 13", "programme": "LUNA", "kind": "LANDER", "landed": "1966-12-24", "latitude": 18.87, "longitude": -62.05, "region": "Oceanus Procellarum" },
+    { "id": "luna-16", "mission": "Luna 16", "programme": "LUNA", "kind": "SAMPLE_RETURN", "landed": "1970-09-20", "latitude": -0.68, "longitude": 56.30, "region": "Mare Fecunditatis" },
+    { "id": "luna-17", "mission": "Luna 17", "programme": "LUNA", "kind": "ROVER", "landed": "1970-11-17", "latitude": 38.28, "longitude": -35.00, "region": "Mare Imbrium", "rover": "Lunokhod 1" },
+    { "id": "luna-20", "mission": "Luna 20", "programme": "LUNA", "kind": "SAMPLE_RETURN", "landed": "1972-02-21", "latitude": 3.57, "longitude": 56.50, "region": "Apollonius highlands" },
+    { "id": "luna-21", "mission": "Luna 21", "programme": "LUNA", "kind": "ROVER", "landed": "1973-01-15", "latitude": 25.85, "longitude": 30.45, "region": "Le Monnier", "rover": "Lunokhod 2" },
+    { "id": "luna-24", "mission": "Luna 24", "programme": "LUNA", "kind": "SAMPLE_RETURN", "landed": "1976-08-18", "latitude": 12.75, "longitude": 62.20, "region": "Mare Crisium" },
+
+    { "id": "surveyor-1", "mission": "Surveyor 1", "programme": "SURVEYOR", "kind": "LANDER", "landed": "1966-06-02", "latitude": -2.45, "longitude": -43.21, "region": "Flamsteed", "nssdcaId": "1966-045A" },
+    { "id": "surveyor-3", "mission": "Surveyor 3", "programme": "SURVEYOR", "kind": "LANDER", "landed": "1967-04-20", "latitude": -3.01, "longitude": -23.34, "region": "Oceanus Procellarum", "nssdcaId": "1967-035A" },
+    { "id": "surveyor-5", "mission": "Surveyor 5", "programme": "SURVEYOR", "kind": "LANDER", "landed": "1967-09-11", "latitude": 1.41, "longitude": 23.18, "region": "Mare Tranquillitatis", "nssdcaId": "1967-084A" },
+    { "id": "surveyor-6", "mission": "Surveyor 6", "programme": "SURVEYOR", "kind": "LANDER", "landed": "1967-11-10", "latitude": 0.49, "longitude": -1.40, "region": "Sinus Medii", "nssdcaId": "1967-112A" },
+    { "id": "surveyor-7", "mission": "Surveyor 7", "programme": "SURVEYOR", "kind": "LANDER", "landed": "1968-01-10", "latitude": -40.86, "longitude": -11.47, "region": "Tycho", "nssdcaId": "1968-001A" },
+
+    { "id": "change-3", "mission": "Chang'e 3", "programme": "CHANGE", "kind": "ROVER", "landed": "2013-12-14", "latitude": 44.1214, "longitude": -19.5116, "region": "Mare Imbrium", "rover": "Yutu" },
+    { "id": "change-4", "mission": "Chang'e 4", "programme": "CHANGE", "kind": "ROVER", "landed": "2019-01-03", "latitude": -45.4446, "longitude": 177.5991, "region": "Von Kármán", "rover": "Yutu-2" },
+    { "id": "change-5", "mission": "Chang'e 5", "programme": "CHANGE", "kind": "SAMPLE_RETURN", "landed": "2020-12-01", "latitude": 43.0576, "longitude": -51.9161, "region": "Mons Rümker" },
+    { "id": "change-6", "mission": "Chang'e 6", "programme": "CHANGE", "kind": "SAMPLE_RETURN", "landed": "2024-06-01", "latitude": -41.6385, "longitude": -153.9852, "region": "Apollo basin" },
+
+    { "id": "chandrayaan-3", "mission": "Chandrayaan-3", "programme": "CHANDRAYAAN", "kind": "ROVER", "landed": "2023-08-23", "latitude": -69.373, "longitude": 32.319, "region": "Statio Shiv Shakti", "rover": "Pragyan" },
+    { "id": "slim", "mission": "SLIM", "programme": "SLIM", "kind": "LANDER", "landed": "2024-01-19", "latitude": -13.316, "longitude": 25.251, "region": "Shioli" },
+    { "id": "im-1", "mission": "IM-1 Odysseus", "programme": "CLPS", "kind": "LANDER", "landed": "2024-02-22", "latitude": -80.13, "longitude": 1.44, "region": "Malapert A" },
+    { "id": "blue-ghost-1", "mission": "Blue Ghost Mission 1", "programme": "CLPS", "kind": "LANDER", "landed": "2025-03-02", "latitude": 18.56, "longitude": 61.81, "region": "Mare Crisium", "nssdcaId": "2025-010A" }
+  ]
+}

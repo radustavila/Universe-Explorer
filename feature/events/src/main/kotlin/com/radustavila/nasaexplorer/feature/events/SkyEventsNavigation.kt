@@ -25,13 +25,15 @@ fun NavController.navigateToSkyEvents(eventId: String? = null, navOptions: NavOp
  * Reminder notifications open an event through [SkyEventsDeepLink]. Without a saved place the
  * screen offers [onSetLocation], which `:app` points at Sky tonight's location picker; a comet's
  * perihelion offers [onCometClick], which opens the comet's details (F18); a Milky Way night
- * offers [onMilkyWayClick], which opens the Milky Way planner (F20).
+ * offers [onMilkyWayClick], which opens the Milky Way planner (F20); a Moon phase offers
+ * [onMoonMapClick], which opens the Moon map with today's terminator (F25).
  */
 fun NavGraphBuilder.skyEventsScreen(
     onBackClick: () -> Unit,
     onSetLocation: () -> Unit,
     onCometClick: (designation: String) -> Unit,
     onMilkyWayClick: () -> Unit = {},
+    onMoonMapClick: (() -> Unit)? = null,
 ) {
     composable<SkyEventsRoute>(
         deepLinks = listOf(
@@ -43,6 +45,7 @@ fun NavGraphBuilder.skyEventsScreen(
             onSetLocation = onSetLocation,
             onCometClick = onCometClick,
             onMilkyWayClick = onMilkyWayClick,
+            onMoonMapClick = onMoonMapClick,
         )
     }
 }

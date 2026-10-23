@@ -22,6 +22,9 @@ android {
         buildConfig = true
     }
 
+    // Moon map zoom 5–6 tiles (F25), downloaded from Play only when the user asks for them.
+    assetPacks += listOf(":moontiles")
+
     buildTypes {
         getByName("release") {
             // No release keystore yet: release builds are signed with the debug key so they can be
@@ -83,6 +86,7 @@ dependencies {
     implementation(projects.data.webb)
     implementation(projects.data.quiz)
     implementation(projects.data.climate)
+    implementation(projects.data.moonmap)
 
     implementation(projects.feature.feed)
     implementation(projects.feature.details)
@@ -109,6 +113,7 @@ dependencies {
     implementation(projects.feature.webb)
     implementation(projects.feature.quiz)
     implementation(projects.feature.climate)
+    implementation(projects.feature.moonmap)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.BlurOn
 import androidx.compose.material.icons.outlined.Checklist
+import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Newspaper
@@ -28,6 +29,7 @@ import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhoto
 import com.radustavila.nasaexplorer.feature.mars.navigateToMarsPhotos
 import com.radustavila.nasaexplorer.feature.mars.rail.MarsRail
 import com.radustavila.nasaexplorer.feature.milkyway.navigateToMilkyWay
+import com.radustavila.nasaexplorer.feature.moonmap.navigateToMoonMap
 import com.radustavila.nasaexplorer.feature.news.navigateToNews
 import com.radustavila.nasaexplorer.feature.search.navigateToSearch
 import com.radustavila.nasaexplorer.feature.sky.navigateToSkyTonight
@@ -92,7 +94,7 @@ internal fun universeHubEntries(navController: NavHostController): List<HubEntry
 
 /**
  * The Universe entries for going out to look: the sky map (F17), comets (F18), the Milky Way (F20),
- * the observing log (F23).
+ * the observing log (F23), the Moon map (F25).
  */
 private fun observingHubEntries(navController: NavHostController): List<HubEntry> = listOf(
     HubEntry(
@@ -123,6 +125,13 @@ private fun observingHubEntries(navController: NavHostController): List<HubEntry
         descriptionRes = R.string.universe_observing_log_description,
         onClick = { navController.navigateToObservingLog() },
     ), // F23
+    HubEntry(
+        key = "moon-map",
+        icon = Icons.Outlined.DarkMode,
+        titleRes = R.string.universe_moon_map_title,
+        descriptionRes = R.string.universe_moon_map_description,
+        onClick = { navController.navigateToMoonMap() },
+    ), // F25
 )
 
 /**

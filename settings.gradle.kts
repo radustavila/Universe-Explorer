@@ -25,6 +25,7 @@ rootProject.name = "nasa-explorer"
 
 include(":app")
 include(":baselineprofile")
+include(":moontiles")
 
 include(":core:common")
 include(":core:model")
@@ -63,6 +64,7 @@ include(":data:comets")
 include(":data:webb")
 include(":data:quiz")
 include(":data:climate")
+include(":data:moonmap")
 
 include(":feature:feed")
 include(":feature:details")
@@ -89,3 +91,4 @@ include(":feature:milkyway")
 include(":feature:webb")
 include(":feature:quiz")
 include(":feature:climate")
+include(":feature:moonmap")

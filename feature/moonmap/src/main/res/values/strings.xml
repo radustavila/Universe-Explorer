@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="moon_map_title">Moon map</string>
+    <string name="moon_map_back">Back</string>
+    <string name="moon_map_zoom_in">Zoom in</string>
+    <string name="moon_map_zoom_out">Zoom out</string>
+    <string name="moon_map_lit_as_of">Sunlit side as of %1$s</string>
+    <string name="moon_map_pole_note">The map stops at 85° N and S; the poles do not fit its projection.</string>
+
+    <string name="moon_map_programme_apollo">Apollo</string>
+    <string name="moon_map_programme_luna">Luna</string>
+    <string name="moon_map_programme_surveyor">Surveyor</string>
+    <string name="moon_map_programme_change">Chang\'e</string>
+    <string name="moon_map_programme_chandrayaan">Chandrayaan</string>
+    <string name="moon_map_programme_slim">SLIM</string>
+    <string name="moon_map_programme_clps">Commercial landers</string>
+
+    <string name="moon_map_kind_crewed">Crewed landing</string>
+    <string name="moon_map_kind_lander">Robotic lander</string>
+    <string name="moon_map_kind_rover">Lander and rover</string>
+    <string name="moon_map_kind_sample_return">Sample return</string>
+
+    <string name="moon_map_site_programme_kind">%1$s · %2$s</string>
+    <string name="moon_map_site_landed">Landed on %1$s</string>
+    <string name="moon_map_site_region">Site: %1$s</string>
+    <string name="moon_map_site_position">Position: %1$s</string>
+    <string name="moon_map_site_crew">Crew on the surface: %1$s</string>
+    <string name="moon_map_site_rover">Rover: %1$s</string>
+    <string name="moon_map_site_in_daylight">In daylight now</string>
+    <string name="moon_map_site_in_night">In lunar night now</string>
+    <string name="moon_map_site_record">NSSDCA record</string>
+
+    <string name="moon_map_tiles_offer">Sharper close-ups: download the detailed Moon tiles</string>
+    <string name="moon_map_tiles_download">Download</string>
+    <string name="moon_map_tiles_download_size">Download (%1$s)</string>
+    <string name="moon_map_tiles_downloading">Downloading detailed tiles…</string>
+    <string name="moon_map_tiles_downloading_progress">Downloading detailed tiles… %1$d%%</string>
+    <string name="moon_map_tiles_waiting_for_wifi">Waiting for Wi-Fi to download the detailed tiles</string>
+    <string name="moon_map_tiles_installed">Detailed tiles on this device (%1$s)</string>
+    <string name="moon_map_tiles_remove">Remove</string>
+    <string name="moon_map_tiles_retry">Try again</string>
+    <string name="moon_map_tiles_unavailable">Detailed close-ups come with the Play Store version of the app.</string>
+    <string name="moon_map_tiles_failed_connection">The detailed tiles could not download: no connection.</string>
+    <string name="moon_map_tiles_failed_storage">The detailed tiles could not download: not enough free space.</string>
+    <string name="moon_map_tiles_failed_other">The detailed tiles could not download.</string>
+</resources>

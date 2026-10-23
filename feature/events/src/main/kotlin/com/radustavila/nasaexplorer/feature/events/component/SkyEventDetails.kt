@@ -42,6 +42,7 @@ import kotlin.math.roundToInt
 const val SKY_EVENT_REMINDER_SWITCH_TEST_TAG = "sky-event-reminder"
 const val SKY_EVENT_COMET_DETAILS_TEST_TAG = "sky-event-comet-details"
 const val SKY_EVENT_MILKY_WAY_PLANNER_TEST_TAG = "sky-event-milky-way-planner"
+const val SKY_EVENT_MOON_MAP_TEST_TAG = "sky-event-moon-map"
 
 /**
  * Everything the calendar knows about one event: when (in the user's time zone and clock format),
@@ -59,6 +60,7 @@ internal fun SkyEventDetails(
     onCometClick: (designation: String) -> Unit,
     modifier: Modifier = Modifier,
     onMilkyWayClick: () -> Unit = {},
+    onMoonMapClick: (() -> Unit)? = null,
 ) {
     val units = rememberUnitFormatter()
     Column(
@@ -83,7 +85,7 @@ internal fun SkyEventDetails(
         when (event) {
             is SolarEclipse -> SolarEclipseDetails(event, hasPlace, units)
             is LunarEclipse -> LunarEclipseDetails(event, hasPlace, units)
-            is MoonPhaseEvent -> MoonDetails(event, units)
+            is MoonPhaseEvent -> MoonDetails(event, units, onMoonMapClick)
             is PlanetOpposition -> OppositionDetails(event, units)
             is GreatestElongation -> ElongationDetails(event, units)
             is PlanetTransit -> TransitDetails(event, hasPlace, units)
@@ -196,12 +198,17 @@ private fun ColumnScope.LunarEclipseDetails(event: LunarEclipse, hasPlace: Boole
 }
 
 @Composable
-private fun ColumnScope.MoonDetails(event: MoonPhaseEvent, units: UnitFormatter) {
+private fun ColumnScope.MoonDetails(event: MoonPhaseEvent, units: UnitFormatter, onMoonMapClick: (() -> Unit)?) {
     Line(stringResource(R.string.sky_events_moon_distance, units.distance(event.distanceKm)))
     when (event.size) {
         MoonSize.SUPERMOON -> Line(stringResource(R.string.sky_events_supermoon_meaning))
         MoonSize.MICROMOON -> Line(stringResource(R.string.sky_events_micromoon_meaning))
         null -> Unit
+    }
+    onMoonMapClick?.let { onClick ->
+        TextButton(onClick = onClick, modifier = Modifier.testTag(SKY_EVENT_MOON_MAP_TEST_TAG)) {
+            Text(stringResource(R.string.sky_events_moon_map))
+        }
     }
 }
 

@@ -139,4 +139,5 @@
     <string name="sky_events_milky_way_moon">Moon %1$d%% lit</string>
     <string name="sky_events_milky_way_summary">%1$s–%2$s, core %3$d° high</string>
     <string name="sky_events_milky_way_planner">Open the Milky Way planner</string>
+    <string name="sky_events_moon_map">See the lit side on the Moon map</string>
 </resources>
