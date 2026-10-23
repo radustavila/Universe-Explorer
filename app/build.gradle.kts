@@ -81,6 +81,7 @@ dependencies {
     implementation(projects.data.news)
     implementation(projects.data.comets)
     implementation(projects.data.webb)
+    implementation(projects.data.quiz)
 
     implementation(projects.feature.feed)
     implementation(projects.feature.details)
@@ -105,6 +106,7 @@ dependencies {
     implementation(projects.feature.comets)
     implementation(projects.feature.milkyway)
     implementation(projects.feature.webb)
+    implementation(projects.feature.quiz)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

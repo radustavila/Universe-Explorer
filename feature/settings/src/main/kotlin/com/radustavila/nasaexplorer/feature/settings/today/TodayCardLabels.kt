@@ -7,10 +7,12 @@ import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.LocalFireDepartment
 import androidx.compose.material.icons.outlined.Newspaper
 import androidx.compose.material.icons.outlined.NightsStay
+import androidx.compose.material.icons.outlined.Quiz
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.RocketLaunch
 import androidx.compose.material.icons.outlined.SatelliteAlt
 import androidx.compose.material.icons.outlined.SettingsInputAntenna
+import androidx.compose.material.icons.outlined.TipsAndUpdates
 import androidx.compose.material.icons.outlined.WbSunny
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.radustavila.nasaexplorer.core.model.TodayCardId
@@ -37,6 +39,8 @@ internal val TodayCardId.titleRes: Int
         TodayCardId.SKY_EVENTS -> R.string.customize_today_card_sky_events
         TodayCardId.STARGAZING -> R.string.customize_today_card_stargazing
         TodayCardId.NASA_NEWS -> R.string.customize_today_card_news
+        TodayCardId.DAILY_QUIZ -> R.string.customize_today_card_daily_quiz
+        TodayCardId.DID_YOU_KNOW -> R.string.customize_today_card_did_you_know
     }
 
 @get:StringRes
@@ -52,6 +56,8 @@ internal val TodayCardId.descriptionRes: Int
         TodayCardId.SKY_EVENTS -> R.string.customize_today_card_sky_events_description
         TodayCardId.STARGAZING -> R.string.customize_today_card_stargazing_description
         TodayCardId.NASA_NEWS -> R.string.customize_today_card_news_description
+        TodayCardId.DAILY_QUIZ -> R.string.customize_today_card_daily_quiz_description
+        TodayCardId.DID_YOU_KNOW -> R.string.customize_today_card_did_you_know_description
     }
 
 internal val TodayCardId.icon: ImageVector
@@ -66,4 +72,6 @@ internal val TodayCardId.icon: ImageVector
         TodayCardId.SKY_EVENTS -> Icons.Outlined.Event
         TodayCardId.STARGAZING -> Icons.Outlined.AutoAwesome
         TodayCardId.NASA_NEWS -> Icons.Outlined.Newspaper
+        TodayCardId.DAILY_QUIZ -> Icons.Outlined.Quiz
+        TodayCardId.DID_YOU_KNOW -> Icons.Outlined.TipsAndUpdates
     }

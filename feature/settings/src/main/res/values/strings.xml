@@ -176,4 +176,8 @@
     <string name="customize_today_card_stargazing_description">Tonight\'s observing score and clearest hours at your place</string>
     <string name="customize_today_card_news">Latest from NASA</string>
     <string name="customize_today_card_news_description">NASA\'s newest stories, Image of the Day, videos and live streams</string>
+    <string name="customize_today_card_daily_quiz">Daily quiz</string>
+    <string name="customize_today_card_daily_quiz_description">Five new space questions a day, your score and your streak</string>
+    <string name="customize_today_card_did_you_know">Did you know?</string>
+    <string name="customize_today_card_did_you_know_description">A space fact a day, some from what the app knows right now</string>
 </resources>

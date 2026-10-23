@@ -30,6 +30,10 @@ internal object NotificationIds {
     /** Posted with the launch's id as tag, so each launch's reminder stands alone. */
     const val LAUNCH_REMINDER = 7
 
+    /** Posted with [QUIZ_TAG]: today's reminder replaces yesterday's unread one. */
+    const val QUIZ_REMINDER = 8
+    const val QUIZ_TAG = "quiz"
+
     /** One id per [SatelliteSet] from here up ([satellitePass]), clear of the ids above. */
     const val SATELLITE_PASS_BASE = 40
 
@@ -47,5 +51,6 @@ internal object NotificationIds {
         const val SATELLITE_PASS = 4
         const val STARGAZING_ALERT = 11
         const val EARTHQUAKE_ALERT = 12
+        const val QUIZ_REMINDER = 13
     }
 }

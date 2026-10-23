@@ -79,6 +79,7 @@ class NotificationIdsTest {
         SystemTrayLaunchReminderNotifier(context, preferences).notifyLiftoffSoon(
             TestLaunches.launch(net = Instant.now().plusSeconds(900)),
         )
+        SystemTrayQuizReminderNotifier(context).notifyDailyQuiz(streak = 3)
 
         assertEquals(
             setOf(
@@ -89,10 +90,11 @@ class NotificationIdsTest {
                 "stargazing_alerts",
                 "earthquake_alerts",
                 "launch_reminders",
+                "quiz_reminders",
             ),
             shadowOf(notificationManager).allNotifications.map { it.channelId }.toSet(),
         )
-        assertEquals(7, shadowOf(notificationManager).allNotifications.size)
+        assertEquals(8, shadowOf(notificationManager).allNotifications.size)
     }
 
     private fun intConstants(holder: Class<*>): Map<String, Int> =

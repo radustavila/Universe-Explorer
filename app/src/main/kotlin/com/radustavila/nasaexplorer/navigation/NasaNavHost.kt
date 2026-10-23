@@ -46,6 +46,7 @@ import com.radustavila.nasaexplorer.feature.news.navigateToPodcastEpisode
 import com.radustavila.nasaexplorer.feature.news.newsItemScreen
 import com.radustavila.nasaexplorer.feature.news.newsScreen
 import com.radustavila.nasaexplorer.feature.news.podcastEpisodeScreen
+import com.radustavila.nasaexplorer.feature.quiz.quizScreens
 import com.radustavila.nasaexplorer.feature.search.searchScreen
 import com.radustavila.nasaexplorer.feature.settings.aboutScreen
 import com.radustavila.nasaexplorer.feature.settings.customizeTodayScreen
@@ -242,6 +243,7 @@ fun NasaNavHost(
             aboutScreen(onBackClick = navController::popBackStack, onLicencesClick = navController::navigateToLicences)
             licencesScreen(onBackClick = navController::popBackStack, librariesRes = R.raw.aboutlibraries)
             debugScreen()
+            quizScreens(navController)
         }
 
         // Root level: full-screen details reached from several tabs and from deep links.

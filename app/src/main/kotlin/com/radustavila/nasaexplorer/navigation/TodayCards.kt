@@ -35,6 +35,10 @@ import com.radustavila.nasaexplorer.feature.launches.navigateToLaunches
 import com.radustavila.nasaexplorer.feature.news.navigateToNews
 import com.radustavila.nasaexplorer.feature.news.navigateToNewsItem
 import com.radustavila.nasaexplorer.feature.news.today.LatestFromNasaCard
+import com.radustavila.nasaexplorer.feature.quiz.navigateToDailyQuiz
+import com.radustavila.nasaexplorer.feature.quiz.navigateToQuiz
+import com.radustavila.nasaexplorer.feature.quiz.today.DailyQuizCard
+import com.radustavila.nasaexplorer.feature.quiz.today.DidYouKnowCard
 import com.radustavila.nasaexplorer.feature.search.SearchLauncher
 import com.radustavila.nasaexplorer.feature.search.navigateToSearch
 import com.radustavila.nasaexplorer.feature.settings.navigateToCustomizeToday
@@ -95,6 +99,13 @@ internal fun todayCards(navController: NavHostController): Map<TodayCardId, @Com
             onImageClick = navController::navigateToNewsItem,
         )
     }, // F14
+    TodayCardId.DAILY_QUIZ to {
+        DailyQuizCard(
+            onPlayClick = { navController.navigateToDailyQuiz() },
+            onOpenClick = { navController.navigateToQuiz() },
+        )
+    }, // F28
+    TodayCardId.DID_YOU_KNOW to { DidYouKnowCard() }, // F28
 )
 
 /**

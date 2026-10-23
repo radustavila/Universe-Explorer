@@ -54,4 +54,14 @@
     <string name="launch_reminder_text">Lifts off at %1$s from %2$s.</string>
     <string name="launch_reminder_text_no_pad">Lifts off at %1$s.</string>
     <string name="launch_reminder_watch">Watch live</string>
+
+    <!-- Daily quiz reminder (F28). -->
+    <string name="quiz_notification_channel_name">Daily quiz reminder</string>
+    <string name="quiz_notification_channel_description">A reminder in the evening when today\'s space quiz is still waiting.</string>
+    <string name="quiz_notification_title">Today\'s space quiz is waiting</string>
+    <string name="quiz_notification_text">Five new questions, about two minutes.</string>
+    <plurals name="quiz_notification_text_streak">
+        <item quantity="one">Five new questions. Play to keep your %d-day streak going.</item>
+        <item quantity="other">Five new questions. Play to keep your %d-day streak going.</item>
+    </plurals>
 </resources>
