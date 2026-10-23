@@ -527,6 +527,7 @@ private val StorageKind.labelRes: Int
         StorageKind.CACHED_DATA -> R.string.settings_storage_cached_data
         StorageKind.LIBRARY -> R.string.settings_storage_library
         StorageKind.OFFLINE_FAVORITES -> R.string.settings_storage_offline_favorites
+        StorageKind.PODCAST_DOWNLOADS -> R.string.settings_storage_podcast_downloads
     }
 
 @Composable

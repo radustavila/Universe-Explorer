@@ -15,7 +15,9 @@ data class FeedEntryDto(
     val description: String? = null,
     /** RSS `<content:encoded>`: the whole article as HTML, read for its first picture. */
     val contentHtml: String? = null,
-    /** RSS `<enclosure url>` (the Image of the Day's full-size picture). */
+    /** RSS `<guid>`: a podcast episode's stable id. */
+    val guid: String? = null,
+    /** RSS `<enclosure url>` (the Image of the Day's full-size picture, a podcast episode's audio). */
     val enclosureUrl: String? = null,
     val enclosureType: String? = null,
     /** YouTube `<yt:videoId>`. */
@@ -24,4 +26,16 @@ data class FeedEntryDto(
     val thumbnailUrl: String? = null,
     /** Media RSS `<media:description>`: a video's description, plain text. */
     val mediaDescription: String? = null,
+    /** iTunes `<itunes:duration>`: seconds, or `[h:]mm:ss`. */
+    val duration: String? = null,
+    /** iTunes `<itunes:image href>`: the episode's own artwork. */
+    val itunesImageUrl: String? = null,
+    /** iTunes `<itunes:episodeType>`: `full`, `trailer` or `bonus`. */
+    val episodeType: String? = null,
+)
+
+/** A whole feed: its entries and the artwork the feed gives itself (iTunes `<itunes:image>`). */
+data class FeedDocumentDto(
+    val imageUrl: String?,
+    val entries: List<FeedEntryDto>,
 )

@@ -145,4 +145,9 @@
     <string name="earthquake_open_page">USGS event page</string>
     <string name="earthquake_close">Close</string>
     <string name="earthquake_label">Earthquake</string>
+
+    <!-- NASA's podcast titles (F21), as NASA writes them. -->
+    <string name="podcast_show_houston" translatable="false">Houston We Have a Podcast</string>
+    <string name="podcast_show_curious_universe" translatable="false">NASA\'s Curious Universe</string>
+    <string name="podcast_show_small_steps" translatable="false">Small Steps, Giant Leaps</string>
 </resources>

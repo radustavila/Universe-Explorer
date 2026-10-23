@@ -8,6 +8,7 @@ import com.radustavila.nasaexplorer.feature.earthevents.navigateToEarthEvents
 import com.radustavila.nasaexplorer.feature.events.navigateToSkyEvents
 import com.radustavila.nasaexplorer.feature.exoplanets.navigateToExoplanetDetails
 import com.radustavila.nasaexplorer.feature.news.navigateToNewsItem
+import com.radustavila.nasaexplorer.feature.news.navigateToPodcastEpisode
 import com.radustavila.nasaexplorer.feature.spaceweather.navigateToSmallBody
 import com.radustavila.nasaexplorer.feature.universe.navigateToNasaMedia
 import com.radustavila.nasaexplorer.ui.navigateToTopLevel
@@ -29,6 +30,7 @@ internal fun NavHostController.openSearchTarget(target: SearchTarget) {
         is SearchTarget.NewsEntry -> navigateToNewsItem(target.id)
         is SearchTarget.CometEntry -> navigateToCometDetails(target.designation)
         is SearchTarget.EarthquakeEntry -> navigateToEarthEvents(earthquakeId = target.id)
+        is SearchTarget.PodcastEpisodeEntry -> navigateToPodcastEpisode(target.id)
         is SearchTarget.Favorite -> openFavorite(target.item)
     }
 }

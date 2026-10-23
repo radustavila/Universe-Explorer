@@ -1,6 +1,7 @@
 package com.radustavila.nasaexplorer.ui
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,6 +36,7 @@ import androidx.window.core.layout.WindowSizeClass
 import com.radustavila.nasaexplorer.core.designsystem.adaptive.LocalWindowAdaptiveInfo
 import com.radustavila.nasaexplorer.core.designsystem.adaptive.isHeightCompact
 import com.radustavila.nasaexplorer.core.designsystem.adaptive.isWidthCompact
+import com.radustavila.nasaexplorer.feature.news.podcast.player.PodcastMiniPlayer
 import com.radustavila.nasaexplorer.navigation.NasaNavHost
 import com.radustavila.nasaexplorer.navigation.TopLevelDestination
 
@@ -56,6 +58,7 @@ fun NasaApp(
             // Exposes test tags as resource ids, so UI Automator (the baseline profile generator and
             // the startup benchmark) can find composables by tag.
             modifier = modifier.semantics { testTagsAsResourceId = true },
+            bottomContent = { PodcastMiniPlayer() },
         ) {
             NasaNavHost(navController = navController)
         }
@@ -78,12 +81,16 @@ internal fun ProvideWindowAdaptiveInfo(content: @Composable () -> Unit) {
  * The tabs as a bottom bar on phones, a rail beside the content on wider windows and a permanent
  * drawer on very wide ones. Only the tabs' own screens show it: a detail screen registered at
  * the root ([currentTopLevelDestination] null) takes the whole window.
+ *
+ * [bottomContent] (the podcast mini player) sits under the tabs' screens, right above the bar, and
+ * goes with the bar on full-window screens.
  */
 @Composable
 internal fun NasaNavigationSuite(
     currentTopLevelDestination: TopLevelDestination?,
     onTopLevelDestinationClick: (TopLevelDestination) -> Unit,
     modifier: Modifier = Modifier,
+    bottomContent: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     val topLevelDestinations = remember { TopLevelDestination.entries }
@@ -136,7 +143,10 @@ internal fun NasaNavigationSuite(
                 Modifier
             },
         ) {
-            content()
+            Column {
+                Box(modifier = Modifier.weight(1f)) { content() }
+                if (navigationSuiteType != NavigationSuiteType.None) bottomContent()
+            }
         }
     }
 }

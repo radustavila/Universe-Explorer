@@ -23,6 +23,12 @@ enum class StorageKind {
 
     /** Offline copies of favourite images. Never cleared by "Clear cache"; deleted with the favourite. */
     OFFLINE_FAVORITES,
+
+    /**
+     * Podcast episodes downloaded for offline listening (F21). "Clear cache" deletes them, except
+     * those of favourite episodes.
+     */
+    PODCAST_DOWNLOADS,
 }
 
 /** One measured entry, in bytes. */
