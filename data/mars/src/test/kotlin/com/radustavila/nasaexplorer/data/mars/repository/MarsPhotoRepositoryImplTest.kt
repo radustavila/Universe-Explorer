@@ -59,9 +59,9 @@ class MarsPhotoRepositoryImplTest {
 
         val result = repository.refresh()
 
-        assertEquals(DataResult.Success(13), result)
+        assertEquals(DataResult.Success(14), result)
         assertEquals(8, repository.observeRoverPhotos(MarsRover.CURIOSITY).first().size)
-        assertEquals(5, repository.observeRoverPhotos(MarsRover.PERSEVERANCE).first().size)
+        assertEquals(6, repository.observeRoverPhotos(MarsRover.PERSEVERANCE).first().size)
     }
 
     @Test
@@ -71,7 +71,7 @@ class MarsPhotoRepositoryImplTest {
 
         val sols = repository.observeRoverPhotos(MarsRover.PERSEVERANCE).first().map { it.sol }
 
-        assertEquals(listOf(4, 4, 2, 2, 2), sols)
+        assertEquals(listOf(2013, 2013, 2013, 2013, 2012, 2012), sols)
     }
 
     @Test
@@ -104,7 +104,7 @@ class MarsPhotoRepositoryImplTest {
         perseveranceAnswered.countDown()
 
         assertEquals(8, curiosity.size)
-        assertEquals(DataResult.Success(13), refresh.await())
+        assertEquals(DataResult.Success(14), refresh.await())
     }
 
     @Test
