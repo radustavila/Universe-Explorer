@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quiz_title">Space quiz</string>
+    <string name="quiz_back">Back</string>
+    <string name="quiz_close">Close the quiz</string>
+
+    <!-- Home. -->
+    <string name="quiz_daily_title">Today\'s quiz</string>
+    <string name="quiz_daily_waiting">Five new questions every day: two from our question bank, three from what the app knows right now.</string>
+    <string name="quiz_daily_start">Start today\'s quiz</string>
+    <!-- %1$d right answers, %2$d questions. -->
+    <string name="quiz_daily_done">Today\'s score: %1$d/%2$d. A new quiz is ready tomorrow.</string>
+    <string name="quiz_share">Share</string>
+    <string name="quiz_share_chooser">Share your score</string>
+    <string name="quiz_stats_title">Your progress</string>
+    <string name="quiz_stat_streak">Day streak</string>
+    <string name="quiz_stat_longest_streak">Longest streak</string>
+    <string name="quiz_stat_quizzes">Quizzes played</string>
+    <string name="quiz_stat_correct">Right answers</string>
+    <string name="quiz_practice_title">Practice by topic</string>
+    <string name="quiz_practice_description">Ten questions at a time, the ones you haven\'t answered right yet first. Practice doesn\'t count for your streak.</string>
+    <plurals name="quiz_topic_questions">
+        <item quantity="one">%d question</item>
+        <item quantity="other">%d questions</item>
+    </plurals>
+    <string name="quiz_badges_title">Badges</string>
+    <!-- %1$d badges earned, %2$d badges in all. -->
+    <string name="quiz_badges_count">Earned: %1$d/%2$d</string>
+    <string name="quiz_badge_locked">Not earned yet</string>
+    <string name="quiz_reminder_title">Daily reminder</string>
+    <!-- %1$s: a local clock time, e.g. "18:00" or "6:00 PM". -->
+    <string name="quiz_reminder_description">A nudge at %1$s when today\'s quiz is still waiting.</string>
+    <string name="quiz_reminder_blocked">Notifications are turned off for this app, so the reminder can\'t appear.</string>
+
+    <!-- Topics. -->
+    <string name="quiz_topic_solar_system">Solar System</string>
+    <string name="quiz_topic_sun_and_stars">Sun and stars</string>
+    <string name="quiz_topic_deep_space">Galaxies and the cosmos</string>
+    <string name="quiz_topic_exoplanets">Exoplanets</string>
+    <string name="quiz_topic_human_spaceflight">Human spaceflight</string>
+    <string name="quiz_topic_missions">Missions and telescopes</string>
+    <string name="quiz_topic_earth">Earth from space</string>
+    <string name="quiz_topic_night_sky">The night sky</string>
+
+    <!-- Badges. -->
+    <string name="quiz_badge_first_quiz">First quiz</string>
+    <string name="quiz_badge_first_quiz_description">Finish your first quiz.</string>
+    <string name="quiz_badge_perfect_score">Perfect day</string>
+    <string name="quiz_badge_perfect_score_description">Answer all five daily questions right.</string>
+    <string name="quiz_badge_streak_3">On a roll</string>
+    <string name="quiz_badge_streak_3_description">Play the daily quiz three days in a row.</string>
+    <string name="quiz_badge_streak_7">Full orbit</string>
+    <string name="quiz_badge_streak_7_description">Play the daily quiz seven days in a row.</string>
+    <string name="quiz_badge_streak_30">Lunar month</string>
+    <string name="quiz_badge_streak_30_description">Play the daily quiz 30 days in a row.</string>
+    <string name="quiz_badge_quizzes_10">Cadet</string>
+    <string name="quiz_badge_quizzes_10_description">Finish 10 quizzes.</string>
+    <string name="quiz_badge_quizzes_50">Mission specialist</string>
+    <string name="quiz_badge_quizzes_50_description">Finish 50 quizzes.</string>
+    <string name="quiz_badge_correct_100">Century</string>
+    <string name="quiz_badge_correct_100_description">Give 100 right answers.</string>
+    <string name="quiz_badge_all_topics">Explorer</string>
+    <string name="quiz_badge_all_topics_description">Practise every topic at least once.</string>
+
+    <!-- Playing. -->
+    <string name="quiz_daily_heading">Daily quiz</string>
+    <!-- %1$d the current question, %2$d questions in all. -->
+    <string name="quiz_progress">Question %1$d of %2$d</string>
+    <string name="quiz_answer_right">Right!</string>
+    <string name="quiz_answer_wrong">Not quite</string>
+    <string name="quiz_answer_right_description">Right answer</string>
+    <string name="quiz_answer_wrong_description">Your answer, which is wrong</string>
+    <string name="quiz_source">Source</string>
+    <string name="quiz_next">Next question</string>
+    <string name="quiz_see_result">See your score</string>
+    <string name="quiz_image_description">The picture this question is about</string>
+    <string name="quiz_empty_title">No questions to ask</string>
+    <string name="quiz_empty_description">The question bank could not be read. Try again after restarting the app.</string>
+
+    <!-- Result. -->
+    <!-- %1$d right answers, %2$d questions. -->
+    <string name="quiz_result_score">%1$d/%2$d</string>
+    <string name="quiz_result_perfect">A perfect score!</string>
+    <string name="quiz_result_good">Well done!</string>
+    <string name="quiz_result_okay">Good effort. Every answer teaches something.</string>
+    <plurals name="quiz_result_streak">
+        <item quantity="one">%d-day streak. Come back tomorrow to keep it going.</item>
+        <item quantity="other">%d-day streak. Come back tomorrow to keep it going.</item>
+    </plurals>
+    <string name="quiz_result_new_badges">New badges</string>
+    <string name="quiz_result_done">Done</string>
+    <string name="quiz_result_practice_again">Practise again</string>
+    <!-- %1$s app name, %2$s date such as "23 Oct", %3$d right, %4$d questions, %5$s one coloured square per answer. -->
+    <string name="quiz_share_daily">%1$s daily quiz, %2$s: %3$d/%4$d\n%5$s</string>
+    <!-- %1$s app name, %2$s topic, %3$d right, %4$d questions. -->
+    <string name="quiz_share_practice">%1$s quiz, %2$s: %3$d/%4$d</string>
+
+    <!-- Today cards. -->
+    <string name="quiz_today_card_title">Daily quiz</string>
+    <string name="quiz_today_card_waiting">Five new space questions are waiting.</string>
+    <!-- %1$d right answers, %2$d questions. -->
+    <string name="quiz_today_card_done">Today: %1$d/%2$d. See you tomorrow!</string>
+    <plurals name="quiz_today_card_streak">
+        <item quantity="one">%d-day streak</item>
+        <item quantity="other">%d-day streak</item>
+    </plurals>
+    <string name="quiz_today_card_open">Open the quiz</string>
+    <string name="quiz_fact_title">Did you know?</string>
+    <string name="quiz_fact_another">Another fact</string>
+
+    <!-- Words of questions and facts made from the app's own data. -->
+    <string name="quiz_answer_hubble">Hubble</string>
+    <string name="quiz_answer_webb">Webb</string>
+    <string name="quiz_moon_phase_new_moon">New Moon</string>
+    <string name="quiz_moon_phase_waxing_crescent">Waxing crescent</string>
+    <string name="quiz_moon_phase_first_quarter">First quarter</string>
+    <string name="quiz_moon_phase_waxing_gibbous">Waxing gibbous</string>
+    <string name="quiz_moon_phase_full_moon">Full Moon</string>
+    <string name="quiz_moon_phase_waning_gibbous">Waning gibbous</string>
+    <string name="quiz_moon_phase_last_quarter">Last quarter</string>
+    <string name="quiz_moon_phase_waning_crescent">Waning crescent</string>
+    <string name="quiz_q_exoplanet_closer">Which of these planets around other stars is closest to us?</string>
+    <!-- %1$s planet, %2$s light-years. -->
+    <string name="quiz_e_exoplanet_closer">%1$s is about %2$s light-years from the Sun, the nearest of the three. Data: NASA Exoplanet Archive.</string>
+    <string name="quiz_q_exoplanet_bigger">Which of these planets around other stars is the widest?</string>
+    <!-- %1$s planet, %2$s how many times Earth's width. -->
+    <string name="quiz_e_exoplanet_bigger">%1$s is about %2$s times as wide as Earth, the largest of the three. Data: NASA Exoplanet Archive.</string>
+    <string name="quiz_q_hubble_or_webb">Which telescope took this picture?</string>
+    <!-- %1$s the picture's title. -->
+    <string name="quiz_e_hubble_or_webb_hubble">This is “%1$s”, from the Hubble Space Telescope, which has watched mostly in visible and ultraviolet light since 1990.</string>
+    <string name="quiz_e_hubble_or_webb_webb">This is “%1$s”, from the James Webb Space Telescope, which sees infrared light and often shows dusty clouds glowing in golden tones.</string>
+    <string name="quiz_q_planet_up">Which of these planets can you see from your place tonight?</string>
+    <!-- %1$s planet, %2$s day and time, %3$s constellation. -->
+    <string name="quiz_e_planet_up">%1$s is best seen around %2$s, in %3$s. The others stay below the horizon or in the Sun\'s glare.</string>
+    <string name="quiz_q_moon_phase">What phase is the Moon in tonight?</string>
+    <!-- %1$s percentage lit, %2$s a day. -->
+    <string name="quiz_e_moon_phase">%1$s of the Moon\'s face is lit tonight. The next full Moon is on %2$s.</string>
+    <string name="quiz_q_people_in_space">How many people are in space right now?</string>
+    <!-- %1$s people in space (a formatted number), %2$s one of their names. -->
+    <plurals name="quiz_e_people_in_space">
+        <item quantity="one">%1$s person is in orbit right now: %2$s.</item>
+        <item quantity="other">%1$s people are in orbit right now, %2$s among them.</item>
+    </plurals>
+    <string name="quiz_q_farthest_spacecraft">Which of these spacecraft is farthest from Earth right now?</string>
+    <!-- %1$s spacecraft, %2$s distance. -->
+    <string name="quiz_e_farthest_spacecraft">%1$s is %2$s from Earth, the farthest of these. Data: JPL Horizons.</string>
+    <string name="quiz_q_brightest_comet">Which of these comets is predicted to be the brightest this month?</string>
+    <!-- %1$s comet, %2$s magnitude. -->
+    <string name="quiz_e_brightest_comet">%1$s should reach about magnitude %2$s. The lower the number, the brighter the comet. Data: JPL.</string>
+    <string name="quiz_q_next_launch">Which rocket is scheduled to launch next?</string>
+    <!-- %1$s mission, %2$s day and time, %3$s launch pad. -->
+    <string name="quiz_e_next_launch">%1$s is scheduled for %2$s from %3$s. Launch dates often slip. Data: Launch Library 2.</string>
+    <!-- %1$s spacecraft, %2$s distance. -->
+    <string name="quiz_f_spacecraft_distance">%1$s is %2$s from Earth right now, farther than any other spacecraft.</string>
+    <!-- %1$s the number of people, already formatted. -->
+    <plurals name="quiz_f_people_in_space">
+        <item quantity="one">%1$s person is in space right now.</item>
+        <item quantity="other">%1$s people are in space right now.</item>
+    </plurals>
+    <!-- %1$s the number of planets, already formatted. -->
+    <plurals name="quiz_f_confirmed_exoplanets">
+        <item quantity="one">NASA\'s Exoplanet Archive lists %1$s confirmed planet around other stars.</item>
+        <item quantity="other">NASA\'s Exoplanet Archive lists %1$s confirmed planets around other stars.</item>
+    </plurals>
+    <!-- %1$s a day. -->
+    <string name="quiz_f_next_full_moon">The next full Moon is on %1$s.</string>
+</resources>

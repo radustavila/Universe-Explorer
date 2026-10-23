@@ -23,6 +23,8 @@
     <string name="more_about_description">Version, data sources and open-source licences</string>
     <string name="more_debug_title">Architecture</string>
     <string name="more_debug_description">Connectivity, cache, data sources and background sync</string>
+    <string name="more_quiz_title">Space quiz</string>
+    <string name="more_quiz_description">Five questions a day, practice by topic, streaks and badges</string>
     <string name="universe_mars_title">Mars photos</string>
     <string name="universe_mars_description">The newest raw photos from Curiosity and Perseverance</string>
     <string name="universe_exoplanets_title">Exoplanets</string>

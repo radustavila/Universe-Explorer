@@ -48,4 +48,14 @@
     <!-- %1$s magnitude and place ("M 5.7, 61 km WNW of Leni, Italy"), %2$s distance from the user's place, %3$s local time. -->
     <string name="earthquake_alert_text">%1$s: %2$s from your place, at %3$s. Data: U.S. Geological Survey.</string>
     <string name="earthquake_alert_text_tsunami">%1$s: %2$s from your place, at %3$s. Check official tsunami warnings. Data: U.S. Geological Survey.</string>
+
+    <!-- Daily quiz reminder (F28). -->
+    <string name="quiz_notification_channel_name">Daily quiz reminder</string>
+    <string name="quiz_notification_channel_description">A reminder in the evening when today\'s space quiz is still waiting.</string>
+    <string name="quiz_notification_title">Today\'s space quiz is waiting</string>
+    <string name="quiz_notification_text">Five new questions, about two minutes.</string>
+    <plurals name="quiz_notification_text_streak">
+        <item quantity="one">Five new questions. Play to keep your %d-day streak going.</item>
+        <item quantity="other">Five new questions. Play to keep your %d-day streak going.</item>
+    </plurals>
 </resources>

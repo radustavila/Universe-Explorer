@@ -75,6 +75,7 @@ class NotificationIdsTest {
         SystemTrayEarthquakeAlertNotifier(context, preferences).notifyEarthquake(
             EarthquakeAlert(TestEarthquakes.earthquake(), distanceKm = 331.0, isNearby = true),
         )
+        SystemTrayQuizReminderNotifier(context).notifyDailyQuiz(streak = 3)
 
         assertEquals(
             setOf(
@@ -84,10 +85,11 @@ class NotificationIdsTest {
                 "sky_events",
                 "stargazing_alerts",
                 "earthquake_alerts",
+                "quiz_reminders",
             ),
             shadowOf(notificationManager).allNotifications.map { it.channelId }.toSet(),
         )
-        assertEquals(6, shadowOf(notificationManager).allNotifications.size)
+        assertEquals(7, shadowOf(notificationManager).allNotifications.size)
     }
 
     private fun intConstants(holder: Class<*>): Map<String, Int> =

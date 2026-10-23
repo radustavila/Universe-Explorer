@@ -1,0 +1,4851 @@
+{
+ "version": 1,
+ "language": "en",
+ "questions": [
+  {
+   "id": "sol-001",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "Which planet takes the longest to spin once on its axis?",
+   "answers": [
+    "Mercury",
+    "Jupiter",
+    "Venus",
+    "Mars"
+   ],
+   "correct": 2,
+   "explanation": "Venus needs about 243 Earth days for a single rotation, which is even longer than the 225 days it takes to orbit the Sun.",
+   "source": "https://science.nasa.gov/venus/venus-facts/"
+  },
+  {
+   "id": "sol-002",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "Which is the largest planet in the Solar System?",
+   "answers": [
+    "Jupiter",
+    "Saturn",
+    "Neptune",
+    "Earth"
+   ],
+   "correct": 0,
+   "explanation": "Jupiter holds more than twice as much mass as all the other planets put together.",
+   "source": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+   "id": "sol-003",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "Which planet has the hottest surface?",
+   "answers": [
+    "Mercury",
+    "Mars",
+    "Jupiter",
+    "Venus"
+   ],
+   "correct": 3,
+   "explanation": "Venus's thick carbon dioxide atmosphere traps heat in a runaway greenhouse effect, keeping the surface around 465 °C even though Mercury is closer to the Sun.",
+   "source": "https://science.nasa.gov/venus/venus-facts/"
+  },
+  {
+   "id": "sol-004",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "What gives Mars its reddish colour?",
+   "answers": [
+    "Glowing lava flows",
+    "Iron minerals that have rusted",
+    "A thick reddish atmosphere",
+    "Clouds of red ammonia ice"
+   ],
+   "correct": 1,
+   "explanation": "Iron in the Martian soil and dust has oxidised, much like rust; up close, the surface also shows browns, golds and tans.",
+   "source": "https://science.nasa.gov/mars/facts/"
+  },
+  {
+   "id": "sol-005",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "What are Saturn's rings mainly made of?",
+   "answers": [
+    "Solid sheets of metal",
+    "Chunks of ice and rock",
+    "Glowing clouds of gas",
+    "Ash from Saturn's volcanoes"
+   ],
+   "correct": 1,
+   "explanation": "The particles range from tiny icy grains to chunks as big as a house, possibly the remains of comets, asteroids or moons torn apart by Saturn's gravity.",
+   "source": "https://science.nasa.gov/saturn/facts/"
+  },
+  {
+   "id": "sol-006",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "Which planet spins tipped over on its side, like a rolling ball?",
+   "answers": [
+    "Neptune",
+    "Saturn",
+    "Mars",
+    "Uranus"
+   ],
+   "correct": 3,
+   "explanation": "Uranus's axis is tilted about 98 degrees, perhaps because an Earth-sized object struck it long ago.",
+   "source": "https://science.nasa.gov/uranus/facts/"
+  },
+  {
+   "id": "sol-007",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "Which planet orbits farthest from the Sun?",
+   "answers": [
+    "Neptune",
+    "Uranus",
+    "Saturn",
+    "Jupiter"
+   ],
+   "correct": 0,
+   "explanation": "Neptune is more than 30 times as far from the Sun as Earth, so it is the only planet never visible to the naked eye.",
+   "source": "https://science.nasa.gov/neptune/neptune-facts/"
+  },
+  {
+   "id": "sol-008",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "In which year did the IAU reclassify Pluto as a dwarf planet?",
+   "answers": [
+    "1999",
+    "2006",
+    "2012",
+    "2015"
+   ],
+   "correct": 1,
+   "explanation": "Pluto had been counted as the ninth planet since its discovery in 1930, until the International Astronomical Union adopted a formal definition of a planet.",
+   "source": "https://science.nasa.gov/dwarf-planets/pluto/facts/"
+  },
+  {
+   "id": "sol-009",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "What is Jupiter's Great Red Spot?",
+   "answers": [
+    "A huge volcano",
+    "An enormous impact crater",
+    "A giant, long-lived storm",
+    "A sea of liquid metal"
+   ],
+   "correct": 2,
+   "explanation": "This swirling storm is wider than Earth and has been observed for more than 300 years.",
+   "source": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+   "id": "sol-010",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "Olympus Mons, the largest volcano in the Solar System, is on which world?",
+   "answers": [
+    "Venus",
+    "Io",
+    "Earth",
+    "Mars"
+   ],
+   "correct": 3,
+   "explanation": "It towers far above Mount Everest, and its base would cover an area about the size of the US state of Arizona.",
+   "source": "https://science.nasa.gov/mars/facts/"
+  },
+  {
+   "id": "sol-011",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "Where is the main asteroid belt?",
+   "answers": [
+    "Between Earth and Mars",
+    "Between Mars and Jupiter",
+    "Between Jupiter and Saturn",
+    "Just beyond Neptune"
+   ],
+   "correct": 1,
+   "explanation": "Most known asteroids orbit there, including an estimated 1.1 to 1.9 million that are more than 1 km across.",
+   "source": "https://science.nasa.gov/solar-system/asteroids/facts/"
+  },
+  {
+   "id": "sol-012",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "How many planets are there in our Solar System?",
+   "answers": [
+    "Seven",
+    "Eight",
+    "Nine",
+    "Ten"
+   ],
+   "correct": 1,
+   "explanation": "Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus and Neptune; there are also five officially recognised dwarf planets.",
+   "source": "https://science.nasa.gov/solar-system/planets/"
+  },
+  {
+   "id": "sol-013",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "Roughly how much of Earth's surface is covered by ocean?",
+   "answers": [
+    "About 30%",
+    "About 50%",
+    "About 70%",
+    "About 90%"
+   ],
+   "correct": 2,
+   "explanation": "Earth is the only planet known to have stable bodies of liquid water on its surface, and its global ocean covers about 71% of it.",
+   "source": "https://science.nasa.gov/earth/facts/"
+  },
+  {
+   "id": "sol-014",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "Which is the largest moon in the Solar System?",
+   "answers": [
+    "Titan",
+    "Earth's Moon",
+    "Ganymede",
+    "Callisto"
+   ],
+   "correct": 2,
+   "explanation": "Jupiter's moon Ganymede is wider than both the planet Mercury and the dwarf planet Pluto.",
+   "source": "https://science.nasa.gov/jupiter/jupiter-moons/ganymede/"
+  },
+  {
+   "id": "sol-015",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "Why does a comet grow a glowing head and tail as it nears the Sun?",
+   "answers": [
+    "Sunlight heats its ices into gas",
+    "It catches fire in space",
+    "It rubs against planets' air",
+    "Its core starts nuclear fusion"
+   ],
+   "correct": 0,
+   "explanation": "The escaping gas and dust form a coma that can be hundreds of thousands of kilometres wide, and sunlight and the solar wind push some of it into tails.",
+   "source": "https://science.nasa.gov/solar-system/comets/facts/"
+  },
+  {
+   "id": "sol-016",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "Which is the smallest planet in the Solar System?",
+   "answers": [
+    "Mars",
+    "Venus",
+    "Mercury",
+    "Earth"
+   ],
+   "correct": 2,
+   "explanation": "Mercury is only slightly larger than Earth's Moon, and from its surface the Sun would look more than three times as wide as it does from Earth.",
+   "source": "https://science.nasa.gov/mercury/facts/"
+  },
+  {
+   "id": "sol-017",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "Which two planets have no moons?",
+   "answers": [
+    "Mercury and Venus",
+    "Mars and Venus",
+    "Mercury and Mars",
+    "Uranus and Neptune"
+   ],
+   "correct": 0,
+   "explanation": "Venus does travel with a small asteroid called Zoozve, but it is a quasi-satellite that circles the Sun near Venus rather than orbiting the planet.",
+   "source": "https://science.nasa.gov/venus/venus-facts/"
+  },
+  {
+   "id": "sol-018",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "What are the names of Mars's two moons?",
+   "answers": [
+    "Io and Europa",
+    "Titan and Rhea",
+    "Castor and Pollux",
+    "Phobos and Deimos"
+   ],
+   "correct": 3,
+   "explanation": "They are named after Phobos and Deimos, fear and dread in Greek myth, who rode into battle with Ares, the god of war; both moons are small, potato-shaped bodies that may be captured asteroids.",
+   "source": "https://science.nasa.gov/mars/facts/"
+  },
+  {
+   "id": "sol-019",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "Which of these moons is thought to hide a salty ocean beneath its icy shell?",
+   "answers": [
+    "Io",
+    "Europa",
+    "Phobos",
+    "Earth's Moon"
+   ],
+   "correct": 1,
+   "explanation": "Europa's ocean may hold about twice as much water as all of Earth's oceans, and NASA's Europa Clipper is set to study whether it could support life.",
+   "source": "https://science.nasa.gov/jupiter/jupiter-moons/europa/"
+  },
+  {
+   "id": "sol-020",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "Which spacecraft made the first close flyby of Pluto, in 2015?",
+   "answers": [
+    "Voyager 1",
+    "New Horizons",
+    "Cassini",
+    "Juno"
+   ],
+   "correct": 1,
+   "explanation": "New Horizons reached Pluto after a journey of more than nine years and found mountains, valleys, plains and glaciers there.",
+   "source": "https://science.nasa.gov/mission/new-horizons/"
+  },
+  {
+   "id": "sol-021",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "Who first observed Jupiter's four largest moons, in 1610?",
+   "answers": [
+    "Isaac Newton",
+    "Johannes Kepler",
+    "Nicolaus Copernicus",
+    "Galileo Galilei"
+   ],
+   "correct": 3,
+   "explanation": "Io, Europa, Ganymede and Callisto are still called the Galilean moons, and seeing them circle Jupiter showed that not everything orbits Earth.",
+   "source": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+   "id": "sol-022",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "One astronomical unit (AU) is the average distance between which two bodies?",
+   "answers": [
+    "The Sun and Earth",
+    "Earth and the Moon",
+    "The Sun and Jupiter",
+    "The Sun and Neptune"
+   ],
+   "correct": 0,
+   "explanation": "That is about 150 million km; Saturn, for example, orbits about 9.5 AU from the Sun.",
+   "source": "https://science.nasa.gov/saturn/facts/"
+  },
+  {
+   "id": "sol-023",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "What do we call a space rock that survives its fall and lands on Earth?",
+   "answers": [
+    "A meteor",
+    "A meteoroid",
+    "A meteorite",
+    "A comet"
+   ],
+   "correct": 2,
+   "explanation": "In space it is a meteoroid and its streak of light in the sky is a meteor; most meteorites are between pebble and fist size.",
+   "source": "https://science.nasa.gov/solar-system/meteors-meteorites/facts/"
+  },
+  {
+   "id": "sol-024",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "EASY",
+   "question": "Which is the only moon known to have a thick atmosphere?",
+   "answers": [
+    "Europa",
+    "Earth's Moon",
+    "Phobos",
+    "Titan"
+   ],
+   "correct": 3,
+   "explanation": "Saturn's largest moon is wrapped in a dense, hazy, nitrogen-rich atmosphere that hides its surface from ordinary cameras.",
+   "source": "https://science.nasa.gov/saturn/moons/titan/"
+  },
+  {
+   "id": "sol-025",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "How long does Mercury take to orbit the Sun once?",
+   "answers": [
+    "59 Earth days",
+    "88 Earth days",
+    "225 Earth days",
+    "365 Earth days"
+   ],
+   "correct": 1,
+   "explanation": "Mercury is the fastest planet, racing along its orbit at nearly 47 km per second.",
+   "source": "https://science.nasa.gov/mercury/facts/"
+  },
+  {
+   "id": "sol-026",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "Why do we always see the same face of the Moon from Earth?",
+   "answers": [
+    "The Moon does not rotate",
+    "It spins once per orbit of Earth",
+    "Earth's shadow hides the far side",
+    "The far side is always dark"
+   ],
+   "correct": 1,
+   "explanation": "This tidal locking kept the far side hidden from humans until a Soviet spacecraft flew past and photographed it in 1959.",
+   "source": "https://science.nasa.gov/moon/facts/"
+  },
+  {
+   "id": "sol-027",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "Which condition for being a planet does Pluto fail to meet?",
+   "answers": [
+    "Orbiting the Sun",
+    "Being nearly round",
+    "Clearing its orbital neighbourhood",
+    "Having at least one moon"
+   ],
+   "correct": 2,
+   "explanation": "Pluto orbits the Sun and is round, but it shares the Kuiper Belt with many similar bodies, so the IAU classes it as a dwarf planet.",
+   "source": "https://science.nasa.gov/dwarf-planets/"
+  },
+  {
+   "id": "sol-028",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "Which planet has the fastest winds measured in the Solar System?",
+   "answers": [
+    "Neptune",
+    "Jupiter",
+    "Earth",
+    "Saturn"
+   ],
+   "correct": 0,
+   "explanation": "Neptune's winds can exceed 2,000 km/h, even though the planet receives only a tiny fraction of the sunlight Earth gets.",
+   "source": "https://science.nasa.gov/neptune/neptune-facts/"
+  },
+  {
+   "id": "sol-029",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "Which planet has an average density lower than that of water?",
+   "answers": [
+    "Jupiter",
+    "Uranus",
+    "Saturn",
+    "Neptune"
+   ],
+   "correct": 2,
+   "explanation": "Saturn is the only such planet, so in principle it would float in a bathtub big enough to hold it.",
+   "source": "https://science.nasa.gov/saturn/facts/"
+  },
+  {
+   "id": "sol-030",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "Which is the most volcanically active world in the Solar System?",
+   "answers": [
+    "Io",
+    "Venus",
+    "Earth",
+    "Mars"
+   ],
+   "correct": 0,
+   "explanation": "Jupiter's moon Io has hundreds of volcanoes, heated by the constant tidal tug-of-war between Jupiter and its neighbouring moons.",
+   "source": "https://science.nasa.gov/jupiter/jupiter-moons/io/"
+  },
+  {
+   "id": "sol-031",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "Which moon of Saturn sprays jets of water vapour and ice into space?",
+   "answers": [
+    "Titan",
+    "Mimas",
+    "Iapetus",
+    "Enceladus"
+   ],
+   "correct": 3,
+   "explanation": "The jets are fed by a salty ocean under the ice, making this small moon one of the most promising places to look for a habitat for life.",
+   "source": "https://science.nasa.gov/saturn/moons/enceladus/"
+  },
+  {
+   "id": "sol-032",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "What is unusual about the orbit of Neptune's large moon Triton?",
+   "answers": [
+    "It passes over Neptune's poles",
+    "It orbits backwards",
+    "It escapes Neptune each century",
+    "It shares an orbit with Pluto"
+   ],
+   "correct": 1,
+   "explanation": "Triton is the only large moon that circles opposite to its planet's rotation, a clue that Neptune captured it from the Kuiper Belt.",
+   "source": "https://science.nasa.gov/neptune/moons/triton/"
+  },
+  {
+   "id": "sol-033",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "The crater that makes Saturn's moon Mimas look like the Death Star is named after whom?",
+   "answers": [
+    "Galileo",
+    "Herschel",
+    "Cassini",
+    "Huygens"
+   ],
+   "correct": 1,
+   "explanation": "Herschel Crater spans about a third of Mimas's width and honours William Herschel, who discovered the moon in 1789.",
+   "source": "https://science.nasa.gov/saturn/moons/mimas/"
+  },
+  {
+   "id": "sol-034",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "What is Valles Marineris on Mars?",
+   "answers": [
+    "A dried-up ocean basin",
+    "A chain of volcanoes",
+    "A polar ice cap",
+    "A huge canyon system"
+   ],
+   "correct": 3,
+   "explanation": "At about 3,900 km long, it is the largest canyon in the Solar System, long enough to stretch from California to New York.",
+   "source": "https://science.nasa.gov/mars/facts/"
+  },
+  {
+   "id": "sol-035",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "Why does Mercury get so cold at night despite being closest to the Sun?",
+   "answers": [
+    "It has almost no atmosphere",
+    "Its core is frozen solid",
+    "It is made mostly of ice",
+    "Its nights last only minutes"
+   ],
+   "correct": 0,
+   "explanation": "With no air to hold the heat, its surface swings from about 430 °C in the day to around -180 °C at night.",
+   "source": "https://science.nasa.gov/mercury/facts/"
+  },
+  {
+   "id": "sol-036",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "Seen from the surface of Venus, where does the Sun rise?",
+   "answers": [
+    "In the east",
+    "In the west",
+    "In the north",
+    "It never rises"
+   ],
+   "correct": 1,
+   "explanation": "Venus spins in the opposite direction to most planets, and so slowly that a full day, from one sunrise to the next, lasts about 117 Earth days.",
+   "source": "https://science.nasa.gov/venus/venus-facts/"
+  },
+  {
+   "id": "sol-037",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "Which planet has the shortest day?",
+   "answers": [
+    "Earth",
+    "Mars",
+    "Jupiter",
+    "Neptune"
+   ],
+   "correct": 2,
+   "explanation": "Jupiter spins once in about 10 hours, and this fast rotation stretches its clouds into dark belts and bright zones.",
+   "source": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+   "id": "sol-038",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "Uranus was the first planet ever discovered with the help of what?",
+   "answers": [
+    "A space probe",
+    "A radio dish",
+    "Photographic plates",
+    "A telescope"
+   ],
+   "correct": 3,
+   "explanation": "William Herschel spotted it in 1781 and at first thought it was either a comet or a star.",
+   "source": "https://science.nasa.gov/uranus/facts/"
+  },
+  {
+   "id": "sol-039",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "How was Neptune first located in 1846?",
+   "answers": [
+    "By a passing space probe",
+    "Through mathematical prediction",
+    "By naked-eye stargazers",
+    "By radar from Earth"
+   ],
+   "correct": 1,
+   "explanation": "Irregularities in Uranus's orbit led mathematician Urbain Le Verrier to calculate where an unseen planet should be, and Neptune was found close to that spot.",
+   "source": "https://science.nasa.gov/neptune/neptune-facts/"
+  },
+  {
+   "id": "sol-040",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "Which moon is the most heavily cratered object in the Solar System?",
+   "answers": [
+    "Earth's Moon",
+    "Europa",
+    "Callisto",
+    "Io"
+   ],
+   "correct": 2,
+   "explanation": "Jupiter's moon Callisto has so little geological activity that almost nothing erases its craters, leaving them packed side by side.",
+   "source": "https://science.nasa.gov/jupiter/jupiter-moons/callisto/"
+  },
+  {
+   "id": "sol-041",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "Long-period comets are thought to come from which distant region?",
+   "answers": [
+    "The Oort Cloud",
+    "The asteroid belt",
+    "Saturn's rings",
+    "The Moon's far side"
+   ],
+   "correct": 0,
+   "explanation": "Jan Oort proposed this vast shell of icy bodies in 1950, partly to explain why such comets arrive from every direction rather than along the planets' plane.",
+   "source": "https://science.nasa.gov/solar-system/oort-cloud/facts/"
+  },
+  {
+   "id": "sol-042",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "About how often does Halley's Comet return to the inner Solar System?",
+   "answers": [
+    "Every 11 years",
+    "Every 76 years",
+    "Every 250 years",
+    "Every 1,000 years"
+   ],
+   "correct": 1,
+   "explanation": "It was last seen from Earth in 1986 and is due back in 2061.",
+   "source": "https://science.nasa.gov/solar-system/comets/1p-halley/"
+  },
+  {
+   "id": "sol-043",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "In 2022, NASA's DART spacecraft deliberately crashed into which asteroid?",
+   "answers": [
+    "Bennu",
+    "Vesta",
+    "Dimorphos",
+    "Eros"
+   ],
+   "correct": 2,
+   "explanation": "Dimorphos, about 160 m wide, orbits a larger asteroid called Didymos; the impact was the first test of deflecting an asteroid to protect Earth.",
+   "source": "https://science.nasa.gov/mission/dart/"
+  },
+  {
+   "id": "sol-044",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "From which asteroid did NASA's OSIRIS-REx deliver a sample to Earth in 2023?",
+   "answers": [
+    "Bennu",
+    "Ryugu",
+    "Psyche",
+    "Ceres"
+   ],
+   "correct": 0,
+   "explanation": "The capsule landed on 24 September 2023 carrying rock and dust whose material formed nearly 4.6 billion years ago.",
+   "source": "https://science.nasa.gov/solar-system/asteroids/101955-bennu/"
+  },
+  {
+   "id": "sol-045",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "What gives Uranus and Neptune their blue colours?",
+   "answers": [
+    "Oceans of liquid water",
+    "Reflected light from their rings",
+    "Blue ice crystals on their surfaces",
+    "Methane gas absorbing red light"
+   ],
+   "correct": 3,
+   "explanation": "Sunlight enters their hydrogen-helium atmospheres, methane absorbs its red part, and the light scattered back out looks blue or blue-green.",
+   "source": "https://science.nasa.gov/uranus/facts/"
+  },
+  {
+   "id": "sol-046",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "According to the leading idea, how did Earth's Moon form?",
+   "answers": [
+    "It was captured passing by",
+    "From debris of a giant impact",
+    "It split from a fast-spinning Earth",
+    "It formed separately with the Sun"
+   ],
+   "correct": 1,
+   "explanation": "A Mars-sized body is thought to have collided with the young Earth, and the debris from both gathered to form the Moon.",
+   "source": "https://science.nasa.gov/moon/facts/"
+  },
+  {
+   "id": "sol-047",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "Which is the only spacecraft to have visited Uranus and Neptune?",
+   "answers": [
+    "Voyager 1",
+    "Voyager 2",
+    "Cassini",
+    "New Horizons"
+   ],
+   "correct": 1,
+   "explanation": "Voyager 2 flew past Uranus in 1986 and Neptune in 1989, and it is now travelling through interstellar space.",
+   "source": "https://science.nasa.gov/mission/voyager/voyager-2/"
+  },
+  {
+   "id": "sol-048",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "MEDIUM",
+   "question": "Which is the only moon known to generate its own magnetic field?",
+   "answers": [
+    "Titan",
+    "Europa",
+    "Earth's Moon",
+    "Ganymede"
+   ],
+   "correct": 3,
+   "explanation": "Ganymede's magnetic field produces auroras, glowing ribbons of gas around its poles, much like Earth's northern and southern lights.",
+   "source": "https://science.nasa.gov/jupiter/jupiter-moons/ganymede/"
+  },
+  {
+   "id": "sol-049",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "HARD",
+   "question": "Mars's moon Phobos is slowly getting closer to Mars. What is its likely fate?",
+   "answers": [
+    "Crash into Mars or break into a ring",
+    "Escape into deep space",
+    "Merge with Deimos",
+    "Settle into a stable orbit"
+   ],
+   "correct": 0,
+   "explanation": "Phobos creeps about 1.8 m closer every century, so in roughly 50 million years it will either hit Mars or be torn into a ring of debris.",
+   "source": "https://science.nasa.gov/mars/moons/phobos/"
+  },
+  {
+   "id": "sol-050",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "HARD",
+   "question": "What is strange about the appearance of Saturn's moon Iapetus?",
+   "answers": [
+    "It glows faintly in the dark",
+    "It is covered in liquid lakes",
+    "One side is dark, the other bright",
+    "It is almost perfectly cubic"
+   ],
+   "correct": 2,
+   "explanation": "Its leading hemisphere is as dark as coal while the trailing side is roughly ten times more reflective, a contrast Giovanni Cassini inferred from Earth in the 1670s.",
+   "source": "https://science.nasa.gov/saturn/moons/iapetus/"
+  },
+  {
+   "id": "sol-051",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "HARD",
+   "question": "Which moon of Uranus has fault canyons up to 12 times as deep as the Grand Canyon?",
+   "answers": [
+    "Titania",
+    "Oberon",
+    "Ariel",
+    "Miranda"
+   ],
+   "correct": 3,
+   "explanation": "Miranda's patchwork surface may be the result of the moon being smashed apart by a huge collision and then reassembling, though scientists still debate it.",
+   "source": "https://science.nasa.gov/uranus/moons/miranda/"
+  },
+  {
+   "id": "sol-052",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "HARD",
+   "question": "Saturn's sponge-like moon Hyperion is unusual because it does what?",
+   "answers": [
+    "Orbits Saturn backwards",
+    "Tumbles chaotically as it orbits",
+    "Has a liquid ocean on its surface",
+    "Is the largest moon of Saturn"
+   ],
+   "correct": 1,
+   "explanation": "Its odd shape and an orbital resonance with the much larger moon Titan keep it tumbling unpredictably; its density is only about half that of water.",
+   "source": "https://science.nasa.gov/saturn/moons/hyperion/"
+  },
+  {
+   "id": "sol-053",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "HARD",
+   "question": "What is the name of the vast nitrogen-ice glacier that forms part of Pluto's 'heart'?",
+   "answers": [
+    "Hellas Planitia",
+    "Cthulhu Macula",
+    "Sputnik Planitia",
+    "Caloris Basin"
+   ],
+   "correct": 2,
+   "explanation": "About 1,000 km wide, it is the largest known glacier in the Solar System and is named after Sputnik 1, the first artificial satellite.",
+   "source": "https://science.nasa.gov/mission/new-horizons/"
+  },
+  {
+   "id": "sol-054",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "HARD",
+   "question": "Which dwarf planet spins so fast that it is stretched into an elongated, football-like shape?",
+   "answers": [
+    "Haumea",
+    "Ceres",
+    "Eris",
+    "Makemake"
+   ],
+   "correct": 0,
+   "explanation": "Haumea is one of the fastest-rotating large objects in the Solar System, turning once in about four hours.",
+   "source": "https://science.nasa.gov/dwarf-planets/haumea/"
+  },
+  {
+   "id": "sol-055",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "HARD",
+   "question": "How fast is the Moon slowly drifting away from Earth?",
+   "answers": [
+    "A few millimetres a century",
+    "A few centimetres a year",
+    "A few metres a year",
+    "A few kilometres a year"
+   ],
+   "correct": 1,
+   "explanation": "Laser beams bounced off mirrors left on the Moon show it receding about 3.8 cm a year, as the tides it raises on Earth slowly hand some of Earth's spin to the Moon.",
+   "source": "https://science.nasa.gov/moon/facts/"
+  },
+  {
+   "id": "sol-056",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "HARD",
+   "question": "Neptune completed its first full orbit since its discovery in which year?",
+   "answers": [
+    "1946",
+    "1989",
+    "2011",
+    "2046"
+   ],
+   "correct": 2,
+   "explanation": "A year on Neptune lasts about 165 Earth years, so the first full lap after its 1846 discovery ended in 2011.",
+   "source": "https://science.nasa.gov/neptune/neptune-facts/"
+  },
+  {
+   "id": "sol-057",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "HARD",
+   "question": "Where might water ice survive on Mercury, the planet closest to the Sun?",
+   "answers": [
+    "In its thick cloud layer",
+    "Under its sunlit equator",
+    "Inside shadowed polar craters",
+    "Nowhere: it is far too hot"
+   ],
+   "correct": 2,
+   "explanation": "Some craters near Mercury's poles never see sunlight, so they can stay cold enough to keep ice even though the sunlit surface can reach 430 °C.",
+   "source": "https://science.nasa.gov/mercury/facts/"
+  },
+  {
+   "id": "sol-058",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "HARD",
+   "question": "Which was the first object in the asteroid belt to be discovered, in 1801?",
+   "answers": [
+    "Ceres",
+    "Vesta",
+    "Pallas",
+    "Juno"
+   ],
+   "correct": 0,
+   "explanation": "Giuseppe Piazzi spotted Ceres; long called an asteroid, it is now a dwarf planet and in 2015 became the first dwarf planet visited by a spacecraft, Dawn.",
+   "source": "https://science.nasa.gov/dwarf-planets/ceres/facts/"
+  },
+  {
+   "id": "sol-059",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "HARD",
+   "question": "Arrokoth, which New Horizons flew past in 2019, holds which record?",
+   "answers": [
+    "Largest comet ever seen",
+    "Fastest-spinning asteroid known",
+    "Closest asteroid to the Sun",
+    "Most distant object explored up close"
+   ],
+   "correct": 3,
+   "explanation": "Arrokoth is a Kuiper Belt contact binary, two lobes gently joined together, discovered in 2014 with the Hubble Space Telescope.",
+   "source": "https://science.nasa.gov/mission/new-horizons/"
+  },
+  {
+   "id": "sol-060",
+   "topic": "SOLAR_SYSTEM",
+   "difficulty": "HARD",
+   "question": "What are Jupiter's Trojan asteroids?",
+   "answers": [
+    "Fragments of Jupiter's rings",
+    "Asteroids sharing Jupiter's orbit",
+    "Moons captured by Jupiter",
+    "Asteroids that hit Jupiter"
+   ],
+   "correct": 1,
+   "explanation": "They cluster around two balance points, one ahead of and one behind Jupiter, and NASA's Lucy is the first mission sent to explore them.",
+   "source": "https://science.nasa.gov/mission/lucy/"
+  },
+  {
+   "id": "star-001",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "EASY",
+   "question": "Roughly how many Earths could fit inside the Sun?",
+   "answers": [
+    "About 1,300",
+    "About 13,000",
+    "About 1.3 million",
+    "About 1.3 billion"
+   ],
+   "correct": 2,
+   "explanation": "The Sun is about 1.4 million km across, and it also outweighs Earth by more than 330,000 times.",
+   "source": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+   "id": "star-002",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "EASY",
+   "question": "About how long does sunlight take to reach Earth?",
+   "answers": [
+    "8 seconds",
+    "8 minutes",
+    "8 hours",
+    "8 days"
+   ],
+   "correct": 1,
+   "explanation": "Light covers the roughly 150 million km in about 8.3 minutes, so we always see the Sun as it was a few minutes earlier.",
+   "source": "https://spaceplace.nasa.gov/light-year/en/"
+  },
+  {
+   "id": "star-003",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "EASY",
+   "question": "Which element makes up most of the Sun?",
+   "answers": [
+    "Oxygen",
+    "Helium",
+    "Iron",
+    "Hydrogen"
+   ],
+   "correct": 3,
+   "explanation": "About 92% of the Sun’s atoms are hydrogen and nearly all the rest are helium, while on Earth hydrogen barely makes the top ten elements.",
+   "source": "https://imagine.gsfc.nasa.gov/science/objects/sun1.html"
+  },
+  {
+   "id": "star-004",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "EASY",
+   "question": "What process produces the Sun’s energy?",
+   "answers": [
+    "Nuclear fusion",
+    "Burning gas, like a fire",
+    "Nuclear fission",
+    "Radioactive decay"
+   ],
+   "correct": 0,
+   "explanation": "In the core, at about 15 million °C, hydrogen nuclei fuse into helium and release energy that eventually escapes as sunlight.",
+   "source": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+   "id": "star-005",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "EASY",
+   "question": "Why do sunspots look dark?",
+   "answers": [
+    "They are holes in the Sun",
+    "They are shadows of planets",
+    "They are cooler than the gas around them",
+    "They are clouds of soot"
+   ],
+   "correct": 2,
+   "explanation": "Strong magnetic fields hold back the flow of heat, leaving a sunspot roughly 1,500 °C cooler than its surroundings; seen on its own it would still glow brightly.",
+   "source": "https://www.spaceweather.gov/phenomena/sunspotssolar-cycle"
+  },
+  {
+   "id": "star-006",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "EASY",
+   "question": "The number of sunspots rises and falls in a cycle that lasts about how long?",
+   "answers": [
+    "11 years",
+    "11 days",
+    "11 months",
+    "110 years"
+   ],
+   "correct": 0,
+   "explanation": "The busy peak is called solar maximum and the quiet phase solar minimum; flares and solar storms are most frequent near the peak.",
+   "source": "https://www.spaceweather.gov/phenomena/sunspotssolar-cycle"
+  },
+  {
+   "id": "star-007",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "MEDIUM",
+   "question": "Which part of the Sun appears as a pearly white halo during a total solar eclipse?",
+   "answers": [
+    "The corona",
+    "The photosphere",
+    "The core",
+    "The convection zone"
+   ],
+   "correct": 0,
+   "explanation": "The corona is the Sun’s outer atmosphere; it is normally lost in the glare of the far brighter surface, so eclipses are a rare chance to study it.",
+   "source": "https://science.nasa.gov/eclipses/"
+  },
+  {
+   "id": "star-008",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "MEDIUM",
+   "question": "The Sun’s visible surface is about 5,500 °C. How hot can its outer atmosphere, the corona, get?",
+   "answers": [
+    "About 500 °C",
+    "About 3,000 °C",
+    "About 5,500 °C, the same",
+    "Up to about 2 million °C"
+   ],
+   "correct": 3,
+   "explanation": "Why the corona is hundreds of times hotter than the surface beneath it is one of the biggest open questions in solar physics.",
+   "source": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+   "id": "star-009",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "EASY",
+   "question": "What causes the northern and southern lights (auroras)?",
+   "answers": [
+    "Sunlight reflecting off polar ice",
+    "Moonlight scattering in clouds",
+    "Gas escaping from volcanoes",
+    "Charged particles striking the upper air"
+   ],
+   "correct": 3,
+   "explanation": "Energy from the solar wind drives electrons down along Earth’s magnetic field, where they make oxygen and nitrogen high in the atmosphere glow.",
+   "source": "https://www.spaceweather.gov/phenomena/aurora"
+  },
+  {
+   "id": "star-010",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "MEDIUM",
+   "question": "What is a coronal mass ejection?",
+   "answers": [
+    "A dark, cool patch on the Sun",
+    "A comet falling into the Sun",
+    "A burst of plasma hurled from the Sun",
+    "A ring of dust around the Sun"
+   ],
+   "correct": 2,
+   "explanation": "A single one can carry billions of tons of material and its own magnetic field; when one strikes Earth it can set off a geomagnetic storm.",
+   "source": "https://www.spaceweather.gov/phenomena/coronal-mass-ejections"
+  },
+  {
+   "id": "star-011",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "MEDIUM",
+   "question": "Which NASA spacecraft became the first to fly through the Sun’s corona, in 2021?",
+   "answers": [
+    "Voyager 1",
+    "Parker Solar Probe",
+    "Juno",
+    "New Horizons"
+   ],
+   "correct": 1,
+   "explanation": "Its orbit dips well inside Mercury’s, into the region where the solar wind is born; it is named after Eugene Parker, who predicted the solar wind.",
+   "source": "https://science.nasa.gov/mission/parker-solar-probe/"
+  },
+  {
+   "id": "star-012",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "HARD",
+   "question": "Solar flares are graded A, B, C, M and X. How much more powerful is each class than the one before it?",
+   "answers": [
+    "Twice",
+    "Five times",
+    "Ten times",
+    "A hundred times"
+   ],
+   "correct": 2,
+   "explanation": "The classes are based on peak X-ray brightness measured by GOES satellites, so an X flare is about 10,000 times stronger than an A flare.",
+   "source": "https://www.spaceweather.gov/phenomena/solar-flares-radio-blackouts"
+  },
+  {
+   "id": "star-013",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "MEDIUM",
+   "question": "About how old is the Sun?",
+   "answers": [
+    "About 4.6 million years",
+    "About 460 million years",
+    "About 4.6 billion years",
+    "About 13.8 billion years"
+   ],
+   "correct": 2,
+   "explanation": "It formed from a collapsing cloud of gas and dust and is a little less than halfway through its life as a stable, hydrogen-fusing star.",
+   "source": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+   "id": "star-014",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "EASY",
+   "question": "What will the Sun become at the very end of its life?",
+   "answers": [
+    "A white dwarf",
+    "A black hole",
+    "A neutron star",
+    "A brown dwarf"
+   ],
+   "correct": 0,
+   "explanation": "In about 5 billion years it will swell into a red giant, shed its outer layers and leave behind its small, hot core.",
+   "source": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+   "id": "star-015",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "EASY",
+   "question": "What can astronomers learn by splitting a star’s light into a spectrum?",
+   "answers": [
+    "How many planets it has",
+    "Which elements it contains",
+    "Who first discovered it",
+    "Its official name"
+   ],
+   "correct": 1,
+   "explanation": "Each element leaves lines at its own set of wavelengths, and those lines also reveal a star’s temperature, motion and magnetic field.",
+   "source": "https://imagine.gsfc.nasa.gov/science/toolbox/spectra2.html"
+  },
+  {
+   "id": "star-016",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "MEDIUM",
+   "question": "Which kind of star is the most common in the Milky Way?",
+   "answers": [
+    "Yellow dwarfs like the Sun",
+    "Blue giants",
+    "Red supergiants",
+    "Red dwarfs"
+   ],
+   "correct": 3,
+   "explanation": "Red dwarfs make up around three-quarters of our galaxy’s stars, yet none of them is bright enough to see with the unaided eye.",
+   "source": "https://science.nasa.gov/universe/stars/types/"
+  },
+  {
+   "id": "star-017",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "EASY",
+   "question": "Which star system is the nearest to our solar system?",
+   "answers": [
+    "Alpha Centauri",
+    "Sirius",
+    "Betelgeuse",
+    "Polaris"
+   ],
+   "correct": 0,
+   "explanation": "It has three stars; the faintest, the red dwarf Proxima Centauri, is the closest of all at just over 4 light-years away.",
+   "source": "https://imagine.gsfc.nasa.gov/features/cosmic/nearest_star_info.html"
+  },
+  {
+   "id": "star-018",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "MEDIUM",
+   "question": "Betelgeuse, the orange-red star at Orion’s shoulder, is what kind of star?",
+   "answers": [
+    "A white dwarf",
+    "A yellow dwarf",
+    "A red supergiant",
+    "A neutron star"
+   ],
+   "correct": 2,
+   "explanation": "It is a huge, aging star near the end of its life and is expected to explode as a supernova someday, though no one can say when.",
+   "source": "https://science.nasa.gov/missions/hubble/hubble-sees-red-supergiant-star-betelgeuse-slowly-recovering-after-blowing-its-top/"
+  },
+  {
+   "id": "star-019",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "EASY",
+   "question": "Which star is the brightest in Earth’s night sky?",
+   "answers": [
+    "Polaris, the North Star",
+    "Vega",
+    "Betelgeuse",
+    "Sirius"
+   ],
+   "correct": 3,
+   "explanation": "Sirius in Canis Major outshines every other night-time star, partly because it is close, under 9 light-years away; Polaris is only moderately bright.",
+   "source": "https://science.nasa.gov/universe/stars/types/"
+  },
+  {
+   "id": "star-020",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "HARD",
+   "question": "Sirius has a faint companion star, Sirius B. What kind of object is it?",
+   "answers": [
+    "A red dwarf",
+    "A white dwarf",
+    "A brown dwarf",
+    "A black hole"
+   ],
+   "correct": 1,
+   "explanation": "Sirius B is smaller than Earth yet holds about as much mass as the Sun: the burned-out core of a star that used up its fuel long ago.",
+   "source": "https://esahubble.org/news/heic0516/"
+  },
+  {
+   "id": "star-021",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "HARD",
+   "question": "About how wide is a typical neutron star?",
+   "answers": [
+    "About 20 km",
+    "About 2,000 km",
+    "About as wide as Earth",
+    "About as wide as the Sun"
+   ],
+   "correct": 0,
+   "explanation": "That is the size of a city, yet it can hold more mass than the Sun, making neutron stars the densest objects astronomers can observe directly.",
+   "source": "https://imagine.gsfc.nasa.gov/science/objects/neutron_stars1.html"
+  },
+  {
+   "id": "star-022",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "MEDIUM",
+   "question": "A white dwarf packs roughly half the Sun’s mass into a body about the size of what?",
+   "answers": [
+    "A city",
+    "The Moon",
+    "Earth",
+    "Jupiter"
+   ],
+   "correct": 2,
+   "explanation": "That makes white dwarf material about 200,000 times denser than Earth on average.",
+   "source": "https://imagine.gsfc.nasa.gov/science/objects/dwarfs2.html"
+  },
+  {
+   "id": "star-023",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "MEDIUM",
+   "question": "What is a pulsar?",
+   "answers": [
+    "A star that swells and shrinks",
+    "A spinning neutron star sweeping beams",
+    "A jet shooting from a black hole",
+    "A flare erupting on a red dwarf"
+   ],
+   "correct": 1,
+   "explanation": "Its beams sweep past Earth like a lighthouse, so we see pulses at very regular intervals, from milliseconds to a few seconds apart.",
+   "source": "https://imagine.gsfc.nasa.gov/science/objects/neutron_stars1.html"
+  },
+  {
+   "id": "star-024",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "HARD",
+   "question": "Who detected the first pulsar in 1967, while a graduate student at Cambridge?",
+   "answers": [
+    "Vera Rubin",
+    "Henrietta Leavitt",
+    "Cecilia Payne",
+    "Jocelyn Bell Burnell"
+   ],
+   "correct": 3,
+   "explanation": "She noticed regular radio pulses in data from a new radio array; her supervisor Antony Hewish later shared a Nobel Prize for the discovery.",
+   "source": "https://imagine.gsfc.nasa.gov/science/objects/neutron_stars2.html"
+  },
+  {
+   "id": "star-025",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "HARD",
+   "question": "What is the name of the maximum mass, about 1.4 times the Sun’s, that a white dwarf can have?",
+   "answers": [
+    "Eddington limit",
+    "Roche limit",
+    "Chandrasekhar limit",
+    "Hubble limit"
+   ],
+   "correct": 2,
+   "explanation": "It is named after Subrahmanyan Chandrasekhar, who shared the 1983 Nobel Prize in Physics for his work on the structure and evolution of stars.",
+   "source": "https://imagine.gsfc.nasa.gov/science/objects/dwarfs2.html"
+  },
+  {
+   "id": "star-026",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "MEDIUM",
+   "question": "What sets off a Type Ia supernova?",
+   "answers": [
+    "A massive star’s core collapsing",
+    "A white dwarf taking on too much mass",
+    "Two planets colliding",
+    "A black hole evaporating"
+   ],
+   "correct": 1,
+   "explanation": "Pulling gas from a companion, the white dwarf nears its mass limit and blows apart in a runaway thermonuclear blast; core collapse drives other supernova types.",
+   "source": "https://imagine.gsfc.nasa.gov/science/objects/supernovae1.html"
+  },
+  {
+   "id": "star-027",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "EASY",
+   "question": "True or false: the Sun will one day explode as a supernova.",
+   "answers": [
+    "True",
+    "False"
+   ],
+   "correct": 1,
+   "explanation": "Only stars several times more massive than the Sun end with that kind of bang; the Sun will instead puff off its outer layers and fade as a white dwarf.",
+   "source": "https://spaceplace.nasa.gov/supernova/en/"
+  },
+  {
+   "id": "star-028",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "MEDIUM",
+   "question": "In 1054, Chinese astronomers saw a “guest star” bright enough to see by day. What is at that spot today?",
+   "answers": [
+    "The Orion Nebula",
+    "The Pleiades",
+    "The Crab Nebula",
+    "The Ring Nebula"
+   ],
+   "correct": 2,
+   "explanation": "The Crab Nebula is the expanding wreckage of that supernova, about 6,500 light-years away, with a rapidly spinning pulsar at its heart.",
+   "source": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-1/"
+  },
+  {
+   "id": "star-029",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "HARD",
+   "question": "Hours before supernova 1987A was first seen, detectors on Earth caught a brief burst of what?",
+   "answers": [
+    "Gravitational waves",
+    "Neutrinos",
+    "Cosmic dust",
+    "Radio pulses"
+   ],
+   "correct": 1,
+   "explanation": "The neutrinos escaped the collapsing core before the blast reached the star’s surface, confirming that a massive star’s core had imploded.",
+   "source": "https://science.nasa.gov/missions/webb/webb-finds-evidence-for-neutron-star-at-heart-of-young-supernova-remnant/"
+  },
+  {
+   "id": "star-030",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "EASY",
+   "question": "Roughly what share of the solar system’s total mass is in the Sun?",
+   "answers": [
+    "About 50%",
+    "About 75%",
+    "About 90%",
+    "About 99.8%"
+   ],
+   "correct": 3,
+   "explanation": "Everything else, from Jupiter, which holds most of the remainder, down to the smallest comet, adds up to only about 0.2%.",
+   "source": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+   "id": "star-031",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "EASY",
+   "question": "Which force pulls clumps of gas and dust together to form new stars?",
+   "answers": [
+    "Gravity",
+    "Magnetism",
+    "Static electricity",
+    "The solar wind"
+   ],
+   "correct": 0,
+   "explanation": "Stars are born in cold molecular clouds: a dense clump collapses under its own gravity, heats up into a protostar and eventually ignites fusion.",
+   "source": "https://science.nasa.gov/universe/stars/"
+  },
+  {
+   "id": "star-032",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "MEDIUM",
+   "question": "What is a brown dwarf?",
+   "answers": [
+    "An object between a planet and a star",
+    "A dying red giant",
+    "A cold, dark white dwarf",
+    "The shadow of a black hole"
+   ],
+   "correct": 0,
+   "explanation": "Brown dwarfs have roughly 13 to 80 times Jupiter’s mass, too little to sustain hydrogen fusion the way a true star does.",
+   "source": "https://science.nasa.gov/universe/stars/types/"
+  },
+  {
+   "id": "star-033",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "HARD",
+   "question": "Which thin layer just above the Sun’s visible surface gets its reddish glow from hot hydrogen?",
+   "answers": [
+    "The corona",
+    "The radiative zone",
+    "The heliosphere",
+    "The chromosphere"
+   ],
+   "correct": 3,
+   "explanation": "In the chromosphere the temperature climbs from about 6,000 °C to 20,000 °C; its red light shows best in prominences during total eclipses.",
+   "source": "https://solarscience.msfc.nasa.gov/chromos.shtml"
+  },
+  {
+   "id": "star-034",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "MEDIUM",
+   "question": "In the star classes O, B, A, F, G, K and M, where does the Sun belong?",
+   "answers": [
+    "Class O",
+    "Class A",
+    "Class G",
+    "Class M"
+   ],
+   "correct": 2,
+   "explanation": "The Sun is a G2 star; O stars are the hottest and bluest, while M stars are the coolest and reddest.",
+   "source": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+   "id": "star-035",
+   "topic": "SUN_AND_STARS",
+   "difficulty": "MEDIUM",
+   "question": "What is the solar wind?",
+   "answers": [
+    "Gusts of air on the Sun’s surface",
+    "Light pressure from distant stars",
+    "Gas leaking from Earth’s atmosphere",
+    "A steady outflow of charged particles"
+   ],
+   "correct": 3,
+   "explanation": "This plasma of mostly protons and electrons streams past the planets at hundreds of kilometres per second and inflates a bubble around the solar system, the heliosphere.",
+   "source": "https://www.spaceweather.gov/phenomena/solar-wind"
+  },
+  {
+   "id": "deep-001",
+   "topic": "DEEP_SPACE",
+   "difficulty": "EASY",
+   "question": "What does a light-year measure?",
+   "answers": [
+    "Time",
+    "Brightness",
+    "Speed",
+    "Distance"
+   ],
+   "correct": 3,
+   "explanation": "It is the distance light travels in one year, about 9.5 trillion km (6 trillion miles).",
+   "source": "https://spaceplace.nasa.gov/light-year/en/"
+  },
+  {
+   "id": "deep-002",
+   "topic": "DEEP_SPACE",
+   "difficulty": "EASY",
+   "question": "What shape is our Milky Way galaxy?",
+   "answers": [
+    "Elliptical",
+    "Irregular",
+    "Barred spiral",
+    "Ring-shaped"
+   ],
+   "correct": 2,
+   "explanation": "We can’t photograph it from outside, but maps made from within show spiral arms winding out from a central bar of stars.",
+   "source": "https://imagine.gsfc.nasa.gov/features/cosmic/milkyway_info.html"
+  },
+  {
+   "id": "deep-003",
+   "topic": "DEEP_SPACE",
+   "difficulty": "EASY",
+   "question": "True or false: the Sun sits at the centre of the Milky Way.",
+   "answers": [
+    "True",
+    "False"
+   ],
+   "correct": 1,
+   "explanation": "The solar system lies in one of the spiral arms, roughly halfway between the galaxy’s centre and its outer edge.",
+   "source": "https://science.nasa.gov/universe/galaxies/"
+  },
+  {
+   "id": "deep-004",
+   "topic": "DEEP_SPACE",
+   "difficulty": "EASY",
+   "question": "About how many stars does the Milky Way contain?",
+   "answers": [
+    "About 10 thousand",
+    "About 10 million",
+    "More than 100 billion",
+    "Over 100 trillion"
+   ],
+   "correct": 2,
+   "explanation": "Estimates run from about 100 to 400 billion, and the Sun is one fairly ordinary member of that crowd.",
+   "source": "https://science.nasa.gov/universe/stars/"
+  },
+  {
+   "id": "deep-005",
+   "topic": "DEEP_SPACE",
+   "difficulty": "MEDIUM",
+   "question": "About how long does the Sun take to complete one orbit around the Milky Way’s centre?",
+   "answers": [
+    "About 2,300 years",
+    "About 2.3 million years",
+    "About 230 million years",
+    "About 23 billion years"
+   ],
+   "correct": 2,
+   "explanation": "Estimates range from about 225 to 250 million years, so in its 4.6 billion years the Sun has made only about 20 laps.",
+   "source": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+   "id": "deep-006",
+   "topic": "DEEP_SPACE",
+   "difficulty": "MEDIUM",
+   "question": "What is the name of the supermassive black hole at the centre of the Milky Way?",
+   "answers": [
+    "Cygnus X-1",
+    "Centaurus A",
+    "M87*",
+    "Sagittarius A*"
+   ],
+   "correct": 3,
+   "explanation": "It holds about 4 million times the Sun’s mass, which is modest next to the giant black holes in some other galaxies.",
+   "source": "https://science.nasa.gov/universe/black-holes/types/"
+  },
+  {
+   "id": "deep-007",
+   "topic": "DEEP_SPACE",
+   "difficulty": "MEDIUM",
+   "question": "In 2019, the first image of a black hole was released. Which galaxy is that black hole in?",
+   "answers": [
+    "The Milky Way",
+    "The Andromeda Galaxy",
+    "Messier 87",
+    "The Large Magellanic Cloud"
+   ],
+   "correct": 2,
+   "explanation": "The Event Horizon Telescope linked radio dishes around the globe into an Earth-sized virtual telescope to see the shadow of this 6.5-billion-solar-mass giant.",
+   "source": "https://www.eso.org/public/news/eso1907/"
+  },
+  {
+   "id": "deep-008",
+   "topic": "DEEP_SPACE",
+   "difficulty": "EASY",
+   "question": "What is the boundary around a black hole beyond which nothing, not even light, can escape?",
+   "answers": [
+    "The event horizon",
+    "The accretion disc",
+    "The photon jet",
+    "The Oort cloud"
+   ],
+   "correct": 0,
+   "explanation": "It is not a solid surface but a point of no return; the glowing gas we see lies just outside it, in the swirling accretion disc.",
+   "source": "https://science.nasa.gov/universe/black-holes/"
+  },
+  {
+   "id": "deep-009",
+   "topic": "DEEP_SPACE",
+   "difficulty": "EASY",
+   "question": "Which big spiral galaxy beyond our own can be seen with the naked eye from a dark site?",
+   "answers": [
+    "The Andromeda Galaxy",
+    "The Whirlpool Galaxy",
+    "The Sombrero Galaxy",
+    "The Cigar Galaxy"
+   ],
+   "correct": 0,
+   "explanation": "About 2.5 million light-years away, it is the nearest major galaxy to ours, so the light reaching your eye left it before modern humans existed.",
+   "source": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-31/"
+  },
+  {
+   "id": "deep-010",
+   "topic": "DEEP_SPACE",
+   "difficulty": "MEDIUM",
+   "question": "What is the Large Magellanic Cloud?",
+   "answers": [
+    "A nebula in Orion",
+    "A cloud layer on Venus",
+    "A satellite galaxy of the Milky Way",
+    "A region of the Oort cloud"
+   ],
+   "correct": 2,
+   "explanation": "This small galaxy circles ours together with the Small Magellanic Cloud, and both are easy naked-eye sights from the Southern Hemisphere.",
+   "source": "https://esahubble.org/images/heic1301a/"
+  },
+  {
+   "id": "deep-011",
+   "topic": "DEEP_SPACE",
+   "difficulty": "HARD",
+   "question": "Which astronomer called the Coma Cluster’s unseen mass “dunkle Materie” (dark matter) in 1933?",
+   "answers": [
+    "Edwin Hubble",
+    "Arthur Eddington",
+    "Carl Sagan",
+    "Fritz Zwicky"
+   ],
+   "correct": 3,
+   "explanation": "Zwicky saw the cluster’s galaxies moving too fast to be held together by their visible matter alone, so he proposed invisible mass supplying extra gravity.",
+   "source": "https://science.nasa.gov/dark-matter/"
+  },
+  {
+   "id": "deep-012",
+   "topic": "DEEP_SPACE",
+   "difficulty": "EASY",
+   "question": "About how old is the universe?",
+   "answers": [
+    "About 4.6 billion years",
+    "About 13.8 billion years",
+    "About 50 billion years",
+    "About 1 trillion years"
+   ],
+   "correct": 1,
+   "explanation": "The figure comes from the cosmic microwave background and the expansion of space; the Sun and Earth are only about a third as old.",
+   "source": "https://science.nasa.gov/universe/overview/"
+  },
+  {
+   "id": "deep-013",
+   "topic": "DEEP_SPACE",
+   "difficulty": "MEDIUM",
+   "question": "What is the cosmic microwave background?",
+   "answers": [
+    "Radio noise from the Sun",
+    "Heat from Earth’s atmosphere",
+    "Light from the Milky Way’s core",
+    "The leftover glow of the early universe"
+   ],
+   "correct": 3,
+   "explanation": "It is the oldest light we can observe, and it reaches us almost equally from every direction in the sky.",
+   "source": "https://science.nasa.gov/universe/overview/"
+  },
+  {
+   "id": "deep-014",
+   "topic": "DEEP_SPACE",
+   "difficulty": "HARD",
+   "question": "About how old was the universe when the light we now see as the cosmic microwave background was set free?",
+   "answers": [
+    "About 3 minutes",
+    "About 380,000 years",
+    "About 1 billion years",
+    "About 9 billion years"
+   ],
+   "correct": 1,
+   "explanation": "Before then free electrons scattered light like a fog; once atomic nuclei captured them to form atoms, light could travel freely.",
+   "source": "https://science.nasa.gov/universe/overview/"
+  },
+  {
+   "id": "deep-015",
+   "topic": "DEEP_SPACE",
+   "difficulty": "MEDIUM",
+   "question": "Which Belgian astronomer proposed in 1927 that the universe is expanding?",
+   "answers": [
+    "Georges Lemaître",
+    "Edwin Hubble",
+    "Albert Einstein",
+    "Fred Hoyle"
+   ],
+   "correct": 0,
+   "explanation": "Lemaître showed Einstein’s equations allow a growing universe and traced it back to a single starting point, an early form of the big bang idea.",
+   "source": "https://science.nasa.gov/dark-energy/"
+  },
+  {
+   "id": "deep-016",
+   "topic": "DEEP_SPACE",
+   "difficulty": "MEDIUM",
+   "question": "Ordinary matter, the stuff of stars, planets and people, makes up roughly what share of the universe?",
+   "answers": [
+    "About 5%",
+    "About 27%",
+    "About 68%",
+    "About 95%"
+   ],
+   "correct": 0,
+   "explanation": "Dark matter accounts for about 27% and dark energy about 68%, so everything we can see is a small minority.",
+   "source": "https://science.nasa.gov/dark-matter/"
+  },
+  {
+   "id": "deep-017",
+   "topic": "DEEP_SPACE",
+   "difficulty": "HARD",
+   "question": "In 1998, two teams found that the universe’s expansion is speeding up. What were they observing?",
+   "answers": [
+    "Pulsars in our galaxy",
+    "Gravitational waves",
+    "Distant exploding stars",
+    "Radio signals from quasars"
+   ],
+   "correct": 2,
+   "explanation": "Distant Type Ia supernovae looked fainter than expected, and the finding, credited to dark energy, earned the 2011 Nobel Prize in Physics.",
+   "source": "https://www.nobelprize.org/prizes/physics/2011/summary/"
+  },
+  {
+   "id": "deep-018",
+   "topic": "DEEP_SPACE",
+   "difficulty": "MEDIUM",
+   "question": "Which astronomer used a star in Andromeda to show, in the 1920s, that it lies far beyond the Milky Way?",
+   "answers": [
+    "Galileo Galilei",
+    "Edwin Hubble",
+    "Charles Messier",
+    "Albert Einstein"
+   ],
+   "correct": 1,
+   "explanation": "By timing a Cepheid variable star there, he found Andromeda was nearly a million light-years away, far outside our galaxy, proving the universe holds many galaxies.",
+   "source": "https://imagine.gsfc.nasa.gov/features/cosmic/local_group_info.html"
+  },
+  {
+   "id": "deep-019",
+   "topic": "DEEP_SPACE",
+   "difficulty": "HARD",
+   "question": "Whose 1912 discovery let astronomers use Cepheid variable stars to measure cosmic distances?",
+   "answers": [
+    "Henrietta Swan Leavitt",
+    "Annie Jump Cannon",
+    "Vera Rubin",
+    "Cecilia Payne"
+   ],
+   "correct": 0,
+   "explanation": "Leavitt found that a Cepheid’s pulsation period reveals its true brightness, so comparing that with how bright it looks gives its distance.",
+   "source": "https://science.nasa.gov/dark-energy/"
+  },
+  {
+   "id": "deep-020",
+   "topic": "DEEP_SPACE",
+   "difficulty": "HARD",
+   "question": "In the 1970s, whose study of stars at the edges of spiral galaxies gave strong evidence for dark matter?",
+   "answers": [
+    "Jocelyn Bell Burnell",
+    "Carolyn Porco",
+    "Vera Rubin",
+    "Henrietta Leavitt"
+   ],
+   "correct": 2,
+   "explanation": "The outer stars orbited so fast that the galaxies should have flown apart unless unseen matter held them together; the Vera C. Rubin Observatory is named after her.",
+   "source": "https://science.nasa.gov/dark-matter/"
+  },
+  {
+   "id": "deep-021",
+   "topic": "DEEP_SPACE",
+   "difficulty": "EASY",
+   "question": "What is a nebula?",
+   "answers": [
+    "A small, rocky planet",
+    "A cloud of gas and dust in space",
+    "The tail of a comet",
+    "A galaxy with no stars"
+   ],
+   "correct": 1,
+   "explanation": "Some nebulae are nurseries where new stars form, while others are material thrown off by dying or exploding stars.",
+   "source": "https://spaceplace.nasa.gov/nebula/en/"
+  },
+  {
+   "id": "deep-022",
+   "topic": "DEEP_SPACE",
+   "difficulty": "EASY",
+   "question": "Hubble’s famous “Pillars of Creation” are part of which nebula?",
+   "answers": [
+    "The Orion Nebula",
+    "The Crab Nebula",
+    "The Eagle Nebula",
+    "The Ring Nebula"
+   ],
+   "correct": 2,
+   "explanation": "The pillars are columns of gas and dust about 4 to 5 light-years tall, slowly eroded by light from nearby young stars while new stars form inside.",
+   "source": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-16/"
+  },
+  {
+   "id": "deep-023",
+   "topic": "DEEP_SPACE",
+   "difficulty": "EASY",
+   "question": "The Orion Nebula, the fuzzy patch in Orion’s sword, is best described as what?",
+   "answers": [
+    "A star-forming region",
+    "A supernova remnant",
+    "A distant galaxy",
+    "A passing comet"
+   ],
+   "correct": 0,
+   "explanation": "About 1,500 light-years away, it is the closest large stellar nursery to Earth and can be seen with the naked eye under dark skies.",
+   "source": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-42/"
+  },
+  {
+   "id": "deep-024",
+   "topic": "DEEP_SPACE",
+   "difficulty": "MEDIUM",
+   "question": "Planetary nebulae, such as the Ring Nebula, have nothing to do with planets. What are they?",
+   "answers": [
+    "Clouds where planets are forming",
+    "Gas shed by dying Sun-like stars",
+    "Debris from shattered planets",
+    "Dust blown off comets"
+   ],
+   "correct": 1,
+   "explanation": "Through early telescopes their round, softly glowing discs looked a bit like planets, which is how they got the misleading name.",
+   "source": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-57/"
+  },
+  {
+   "id": "deep-025",
+   "topic": "DEEP_SPACE",
+   "difficulty": "EASY",
+   "question": "The Pleiades, or Seven Sisters, in Taurus is what kind of object?",
+   "answers": [
+    "A spiral galaxy",
+    "A supernova remnant",
+    "A family of planets",
+    "An open star cluster"
+   ],
+   "correct": 3,
+   "explanation": "Its stars formed together from the same cloud and lie roughly 445 light-years away; several are easy to see without a telescope.",
+   "source": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-45/"
+  },
+  {
+   "id": "deep-026",
+   "topic": "DEEP_SPACE",
+   "difficulty": "MEDIUM",
+   "question": "Globular clusters, dense balls of up to millions of stars, are known for holding what kind of stars?",
+   "answers": [
+    "Some of a galaxy’s oldest stars",
+    "Mostly newborn stars",
+    "Only blue supergiants",
+    "Mainly neutron stars"
+   ],
+   "correct": 0,
+   "explanation": "They sit in the outskirts of galaxies and look slightly reddish, because old stars tend to glow redder than young ones.",
+   "source": "https://science.nasa.gov/mission/hubble/science/universe-uncovered/hubble-star-clusters/"
+  },
+  {
+   "id": "deep-027",
+   "topic": "DEEP_SPACE",
+   "difficulty": "MEDIUM",
+   "question": "What are the largest structures in the universe held together by their own gravity?",
+   "answers": [
+    "Spiral galaxies",
+    "Galaxy clusters",
+    "Globular clusters",
+    "Solar systems"
+   ],
+   "correct": 1,
+   "explanation": "A cluster can hold hundreds or thousands of galaxies, wrapped in vast clouds of multimillion-degree gas and a great deal of dark matter.",
+   "source": "https://chandra.harvard.edu/xray_sources/galaxy_clusters.html"
+  },
+  {
+   "id": "deep-028",
+   "topic": "DEEP_SPACE",
+   "difficulty": "MEDIUM",
+   "question": "What powers a quasar?",
+   "answers": [
+    "A cluster of giant stars",
+    "Colliding neutron stars",
+    "A feeding supermassive black hole",
+    "Dark energy"
+   ],
+   "correct": 2,
+   "explanation": "Gas pouring into the black hole heats up and can outshine its entire host galaxy, so some quasars are visible billions of light-years away.",
+   "source": "https://chandra.harvard.edu/xray_sources/quasars.html"
+  },
+  {
+   "id": "deep-029",
+   "topic": "DEEP_SPACE",
+   "difficulty": "EASY",
+   "question": "In 2015, the LIGO observatories made the first direct detection of what?",
+   "answers": [
+    "Dark matter particles",
+    "A new planet",
+    "Neutrinos from the Sun",
+    "Gravitational waves"
+   ],
+   "correct": 3,
+   "explanation": "The ripples in spacetime came from two black holes merging in the distant universe, about a century after Einstein predicted such waves.",
+   "source": "https://www.nobelprize.org/prizes/physics/2017/summary/"
+  },
+  {
+   "id": "deep-030",
+   "topic": "DEEP_SPACE",
+   "difficulty": "HARD",
+   "question": "Why is the Bullet Cluster, a pair of colliding galaxy clusters, famous?",
+   "answers": [
+    "It offers direct evidence of dark matter",
+    "It holds the largest known star",
+    "It is the closest cluster to us",
+    "It was the first quasar found"
+   ],
+   "correct": 0,
+   "explanation": "In the crash the hot gas slowed down, but most of the mass, mapped by gravitational lensing, kept going, so it must be something other than ordinary matter.",
+   "source": "https://chandra.harvard.edu/photo/2006/1e0657/"
+  },
+  {
+   "id": "deep-031",
+   "topic": "DEEP_SPACE",
+   "difficulty": "MEDIUM",
+   "question": "Which type of galaxy is round to oval, with little gas or dust and mostly older stars?",
+   "answers": [
+    "Spiral",
+    "Elliptical",
+    "Barred spiral",
+    "Irregular"
+   ],
+   "correct": 1,
+   "explanation": "With little raw material left, these galaxies form few new stars, and many are thought to have grown through galaxy mergers.",
+   "source": "https://science.nasa.gov/universe/galaxies/types/"
+  },
+  {
+   "id": "deep-032",
+   "topic": "DEEP_SPACE",
+   "difficulty": "MEDIUM",
+   "question": "Why does the Webb telescope observe in infrared light to study the first galaxies?",
+   "answers": [
+    "Infrared is faster than visible light",
+    "Early galaxies were made of ice",
+    "Infrared passes through black holes",
+    "Their light is stretched by expansion"
+   ],
+   "correct": 3,
+   "explanation": "This cosmological redshift moves ultraviolet and visible light from very distant galaxies into longer, infrared wavelengths by the time it reaches us.",
+   "source": "https://science.nasa.gov/mission/webb/science-overview/science-explainers/infrared-astronomy/"
+  },
+  {
+   "id": "deep-033",
+   "topic": "DEEP_SPACE",
+   "difficulty": "HARD",
+   "question": "The Cigar Galaxy, M82, is a “starburst” galaxy. What does that mean?",
+   "answers": [
+    "It has stopped forming stars",
+    "It forms stars at a very high rate",
+    "Its stars are all exploding at once",
+    "It is falling into a black hole"
+   ],
+   "correct": 1,
+   "explanation": "Gravitational tugs from its neighbour M81 stir up its gas; the burst should fade within tens of millions of years as the fuel runs out.",
+   "source": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-82/"
+  },
+  {
+   "id": "deep-034",
+   "topic": "DEEP_SPACE",
+   "difficulty": "EASY",
+   "question": "Why is dark matter called “dark”?",
+   "answers": [
+    "It is coloured black",
+    "It is only found at night",
+    "It doesn’t give off or reflect light",
+    "It lives inside black holes"
+   ],
+   "correct": 2,
+   "explanation": "We know it is there only through its gravity, which shapes galaxies and bends the light passing near it.",
+   "source": "https://science.nasa.gov/dark-matter/"
+  },
+  {
+   "id": "deep-035",
+   "topic": "DEEP_SPACE",
+   "difficulty": "EASY",
+   "question": "How does a stellar-mass black hole usually form?",
+   "answers": [
+    "A massive star’s core collapses",
+    "A planet is crushed by a comet",
+    "A nebula cools and freezes",
+    "Two moons collide"
+   ],
+   "correct": 0,
+   "explanation": "When a very massive star runs out of fuel, its core collapses and it explodes as a supernova; if the leftover core is heavy enough, it becomes a black hole.",
+   "source": "https://science.nasa.gov/universe/black-holes/types/"
+  },
+  {
+   "id": "earth-001",
+   "topic": "EARTH",
+   "difficulty": "EASY",
+   "question": "In which layer of the atmosphere does nearly all of Earth's weather happen?",
+   "answers": [
+    "Stratosphere",
+    "Mesosphere",
+    "Troposphere",
+    "Thermosphere"
+   ],
+   "correct": 2,
+   "explanation": "The troposphere is the lowest layer and holds about 99% of the atmosphere's water vapour, which is why almost all clouds and storms form there.",
+   "source": "https://scied.ucar.edu/learning-zone/atmosphere/layers-earths-atmosphere"
+  },
+  {
+   "id": "earth-002",
+   "topic": "EARTH",
+   "difficulty": "EASY",
+   "question": "The ozone layer, which absorbs much of the Sun's harmful ultraviolet light, lies mainly in which layer?",
+   "answers": [
+    "Stratosphere",
+    "Troposphere",
+    "Exosphere",
+    "Mesosphere"
+   ],
+   "correct": 0,
+   "explanation": "Ozone soaking up ultraviolet light heats the stratosphere, so temperature in this layer rises with height instead of falling.",
+   "source": "https://www.noaa.gov/jetstream/atmosphere/layers-of-atmosphere"
+  },
+  {
+   "id": "earth-003",
+   "topic": "EARTH",
+   "difficulty": "EASY",
+   "question": "Which gas makes up most of the air in Earth's atmosphere?",
+   "answers": [
+    "Oxygen",
+    "Carbon dioxide",
+    "Argon",
+    "Nitrogen"
+   ],
+   "correct": 3,
+   "explanation": "Near the surface the air is about 78% nitrogen and 21% oxygen; carbon dioxide, though important for climate, is only a tiny fraction of a percent.",
+   "source": "https://science.nasa.gov/earth/facts/"
+  },
+  {
+   "id": "earth-004",
+   "topic": "EARTH",
+   "difficulty": "EASY",
+   "question": "What is the main cause of Earth's seasons?",
+   "answers": [
+    "Earth's changing distance from the Sun",
+    "The tilt of Earth's axis",
+    "Changes in the Sun's brightness",
+    "The pull of the Moon"
+   ],
+   "correct": 1,
+   "explanation": "Because the axis is tilted, each hemisphere takes turns leaning toward the Sun, getting higher sunlight and longer days during its summer.",
+   "source": "https://science.nasa.gov/earth/facts/"
+  },
+  {
+   "id": "earth-005",
+   "topic": "EARTH",
+   "difficulty": "MEDIUM",
+   "question": "Roughly how far is Earth's spin axis tilted relative to the plane of its orbit?",
+   "answers": [
+    "About 66 degrees",
+    "About 45 degrees",
+    "About 5 degrees",
+    "About 23.4 degrees"
+   ],
+   "correct": 3,
+   "explanation": "The tilt also fixes where the tropics and polar circles lie: the Arctic Circle sits about 23.4 degrees from the North Pole.",
+   "source": "https://science.nasa.gov/earth/facts/"
+  },
+  {
+   "id": "earth-006",
+   "topic": "EARTH",
+   "difficulty": "EASY",
+   "question": "True or false: Earth is closest to the Sun in early January, during northern winter.",
+   "answers": [
+    "True",
+    "False"
+   ],
+   "correct": 0,
+   "explanation": "The distance to the Sun varies by only about 3% over the year, far too little to cause the seasons, so northern winter comes at the closest point.",
+   "source": "https://spaceplace.nasa.gov/seasons/en/"
+  },
+  {
+   "id": "earth-007",
+   "topic": "EARTH",
+   "difficulty": "MEDIUM",
+   "question": "The Kármán line, often used as the boundary of space, lies at about what altitude?",
+   "answers": [
+    "10 km",
+    "100 km",
+    "400 km",
+    "1,000 km"
+   ],
+   "correct": 1,
+   "explanation": "At that height the air is so thin that a wing would need to travel at nearly orbital speed to produce enough lift to stay up.",
+   "source": "https://scied.ucar.edu/learning-zone/atmosphere/layers-earths-atmosphere"
+  },
+  {
+   "id": "earth-008",
+   "topic": "EARTH",
+   "difficulty": "MEDIUM",
+   "question": "Because it spins, Earth bulges at the equator. What is this shape called?",
+   "answers": [
+    "A perfect sphere",
+    "A prolate spheroid",
+    "An oblate spheroid",
+    "A torus"
+   ],
+   "correct": 2,
+   "explanation": "Earth's diameter across the equator is about 43 km larger than its diameter from pole to pole.",
+   "source": "https://oceanservice.noaa.gov/facts/earth-round.html"
+  },
+  {
+   "id": "earth-009",
+   "topic": "EARTH",
+   "difficulty": "EASY",
+   "question": "Why do most calendars add a leap day about every four years?",
+   "answers": [
+    "The Moon slows Earth down",
+    "A year is about 365.25 days",
+    "Earth’s orbit is shrinking",
+    "To match the Moon’s phases"
+   ],
+   "correct": 1,
+   "explanation": "The extra quarter day adds up, so one extra day every four years keeps the calendar in step with the seasons.",
+   "source": "https://science.nasa.gov/earth/facts/"
+  },
+  {
+   "id": "earth-010",
+   "topic": "EARTH",
+   "difficulty": "MEDIUM",
+   "question": "Which gas does NASA’s OCO-2 satellite measure across the globe?",
+   "answers": [
+    "Ozone",
+    "Methane",
+    "Carbon dioxide",
+    "Water vapour"
+   ],
+   "correct": 2,
+   "explanation": "Launched in 2014, the Orbiting Carbon Observatory 2 maps where carbon dioxide enters and leaves the air, and how actively plants are growing.",
+   "source": "https://science.nasa.gov/mission/oco-2/"
+  },
+  {
+   "id": "earth-011",
+   "topic": "EARTH",
+   "difficulty": "MEDIUM",
+   "question": "What generates most of Earth's magnetic field?",
+   "answers": [
+    "Magnetised rocks in the crust",
+    "The Moon's gravity",
+    "The solar wind",
+    "Molten iron moving in the outer core"
+   ],
+   "correct": 3,
+   "explanation": "Electric currents in the slowly churning liquid iron act as a self-sustaining dynamo, and rocks show the field has reversed direction many times.",
+   "source": "https://geomag.bgs.ac.uk/education/earthmag.html"
+  },
+  {
+   "id": "earth-012",
+   "topic": "EARTH",
+   "difficulty": "MEDIUM",
+   "question": "A famously intense geomagnetic storm in 1859, one of the strongest ever recorded, is known as what?",
+   "answers": [
+    "The Carrington Event",
+    "The Tunguska event",
+    "The Maunder Minimum",
+    "The Halloween storms"
+   ],
+   "correct": 0,
+   "explanation": "It is named after astronomer Richard Carrington, who saw the solar flare that preceded it; the storm disrupted telegraph lines around the world.",
+   "source": "https://www.noaa.gov/explainers/space-weather-storms-from-sun"
+  },
+  {
+   "id": "earth-013",
+   "topic": "EARTH",
+   "difficulty": "HARD",
+   "question": "In March 1989, a geomagnetic storm caused a nine-hour blackout across which region?",
+   "answers": [
+    "Ontario",
+    "Scandinavia",
+    "Quebec",
+    "California"
+   ],
+   "correct": 2,
+   "explanation": "Currents induced in long power lines by the rapidly changing magnetic field tripped the Hydro-Quebec grid, leaving millions of people without power.",
+   "source": "https://www.noaa.gov/explainers/space-weather-storms-from-sun"
+  },
+  {
+   "id": "earth-014",
+   "topic": "EARTH",
+   "difficulty": "EASY",
+   "question": "How many high tides do most coastal places see in about a day?",
+   "answers": [
+    "One",
+    "Two",
+    "Three",
+    "Four"
+   ],
+   "correct": 1,
+   "explanation": "The tidal cycle follows the Moon and repeats every 24 hours and 50 minutes, so high tide arrives roughly 50 minutes later each day.",
+   "source": "https://oceanservice.noaa.gov/education/tutorial_tides/tides05_lunarday.html"
+  },
+  {
+   "id": "earth-015",
+   "topic": "EARTH",
+   "difficulty": "MEDIUM",
+   "question": "When do spring tides, with the biggest gap between high and low water, occur?",
+   "answers": [
+    "Only in springtime",
+    "At the Moon's quarter phases",
+    "At new and full Moon",
+    "When the Moon is farthest away"
+   ],
+   "correct": 2,
+   "explanation": "The name refers to water springing up, not the season: the Sun and Moon line up, and their tidal pulls add together.",
+   "source": "https://oceanservice.noaa.gov/facts/springtide.html"
+  },
+  {
+   "id": "earth-016",
+   "topic": "EARTH",
+   "difficulty": "HARD",
+   "question": "Challenger Deep, the deepest known point in the ocean, lies about how far below the surface?",
+   "answers": [
+    "About 4 km",
+    "About 7 km",
+    "About 11 km",
+    "About 20 km"
+   ],
+   "correct": 2,
+   "explanation": "It sits at the southern end of the Mariana Trench in the western Pacific; Mount Everest would fit inside with room to spare.",
+   "source": "https://oceanservice.noaa.gov/facts/oceandepth.html"
+  },
+  {
+   "id": "earth-017",
+   "topic": "EARTH",
+   "difficulty": "EASY",
+   "question": "Landsat, imaging Earth's land since 1972, is run by NASA together with which agency?",
+   "answers": [
+    "NOAA",
+    "ESA",
+    "USGS",
+    "FEMA"
+   ],
+   "correct": 2,
+   "explanation": "Its archive is the longest continuous record of Earth's land surface from space, used to follow forests, farms, cities and glaciers over decades.",
+   "source": "https://science.nasa.gov/mission/landsat/"
+  },
+  {
+   "id": "earth-018",
+   "topic": "EARTH",
+   "difficulty": "MEDIUM",
+   "question": "What did the twin GRACE satellites measure to track melting ice and shrinking groundwater?",
+   "answers": [
+    "Sea surface temperature",
+    "Wind speeds over the ocean",
+    "Ozone in the stratosphere",
+    "Tiny changes in Earth's gravity"
+   ],
+   "correct": 3,
+   "explanation": "As the pair flew one behind the other, small changes in the distance between them revealed where mass, mostly water and ice, was moving around the planet.",
+   "source": "https://grace.jpl.nasa.gov/"
+  },
+  {
+   "id": "earth-019",
+   "topic": "EARTH",
+   "difficulty": "MEDIUM",
+   "question": "From where does DSCOVR's EPIC camera photograph the entire sunlit face of Earth?",
+   "answers": [
+    "Low Earth orbit",
+    "Geostationary orbit",
+    "Sun-Earth Lagrange point 1",
+    "The surface of the Moon"
+   ],
+   "correct": 2,
+   "explanation": "About 1.5 million km away, this spot between Earth and the Sun keeps the whole dayside in view, with a new picture roughly every two hours.",
+   "source": "https://science.nasa.gov/mission/dscovr/"
+  },
+  {
+   "id": "earth-020",
+   "topic": "EARTH",
+   "difficulty": "HARD",
+   "question": "Which imaging instrument flies on both of NASA's Terra and Aqua satellites?",
+   "answers": [
+    "MODIS",
+    "OLI",
+    "EPIC",
+    "NIRCam"
+   ],
+   "correct": 0,
+   "explanation": "Terra crosses the equator in the morning and Aqua in the afternoon, so between them their MODIS instruments view the whole surface every one to two days.",
+   "source": "https://modis.gsfc.nasa.gov/about/"
+  },
+  {
+   "id": "earth-021",
+   "topic": "EARTH",
+   "difficulty": "EASY",
+   "question": "The Ring of Fire, a horseshoe of volcanoes and earthquake zones, rims which ocean?",
+   "answers": [
+    "Atlantic",
+    "Indian",
+    "Pacific",
+    "Arctic"
+   ],
+   "correct": 2,
+   "explanation": "It follows the edges of tectonic plates for about 40,000 km and includes more than 450 volcanoes, many of them underwater.",
+   "source": "https://oceanexplorer.noaa.gov/ocean-fact/rof/"
+  },
+  {
+   "id": "earth-022",
+   "topic": "EARTH",
+   "difficulty": "MEDIUM",
+   "question": "About how fast do tectonic plates typically move?",
+   "answers": [
+    "A few millimetres per century",
+    "A few centimetres per year",
+    "A few metres per year",
+    "About a kilometre per year"
+   ],
+   "correct": 1,
+   "explanation": "That is about as fast as fingernails grow; the Mid-Atlantic Ridge spreads roughly 2.5 cm a year, which over millions of years opened the Atlantic.",
+   "source": "https://pubs.usgs.gov/gip/dynamic/understanding.html"
+  },
+  {
+   "id": "earth-023",
+   "topic": "EARTH",
+   "difficulty": "EASY",
+   "question": "What is the point on Earth's surface directly above where an earthquake begins called?",
+   "answers": [
+    "Epicentre",
+    "Hypocentre",
+    "Fault scarp",
+    "Caldera"
+   ],
+   "correct": 0,
+   "explanation": "The underground spot where the rupture starts is the focus, or hypocentre; the epicentre is that point projected straight up to the surface.",
+   "source": "https://pubs.usgs.gov/gip/earthq1/how.html"
+  },
+  {
+   "id": "earth-024",
+   "topic": "EARTH",
+   "difficulty": "HARD",
+   "question": "On the moment magnitude scale, a quake one whole number larger releases about how much more energy?",
+   "answers": [
+    "2 times",
+    "10 times",
+    "32 times",
+    "1,000 times"
+   ],
+   "correct": 2,
+   "explanation": "Ground-shaking amplitude rises tenfold per step but energy about 32-fold, so a magnitude 7 releases roughly 1,000 times the energy of a magnitude 5.",
+   "source": "https://www.iris.edu/hq/inclass/animation/magnitude_graphical_comparison_of_earthquake_energy_release"
+  },
+  {
+   "id": "earth-025",
+   "topic": "EARTH",
+   "difficulty": "EASY",
+   "question": "Seen from space, which way do hurricanes in the Northern Hemisphere spin?",
+   "answers": [
+    "Clockwise",
+    "Counterclockwise"
+   ],
+   "correct": 1,
+   "explanation": "Earth's rotation deflects the winds spiralling into the storm, so the spin reverses south of the equator, where these storms turn clockwise.",
+   "source": "https://spaceplace.nasa.gov/hurricanes/en/"
+  },
+  {
+   "id": "earth-026",
+   "topic": "EARTH",
+   "difficulty": "EASY",
+   "question": "A hurricane that forms in the northwestern Pacific Ocean is called a what?",
+   "answers": [
+    "Typhoon",
+    "Tornado",
+    "Monsoon",
+    "Derecho"
+   ],
+   "correct": 0,
+   "explanation": "Hurricanes, typhoons and cyclones are the same kind of storm; only the ocean basin where they form changes the name.",
+   "source": "https://oceanservice.noaa.gov/facts/cyclone.html"
+  },
+  {
+   "id": "earth-027",
+   "topic": "EARTH",
+   "difficulty": "MEDIUM",
+   "question": "Which is the largest active volcano on Earth?",
+   "answers": [
+    "Mount Etna",
+    "Mount Fuji",
+    "Mauna Loa",
+    "Kilimanjaro"
+   ],
+   "correct": 2,
+   "explanation": "This Hawaiian shield volcano was built by countless fluid lava flows, which gave it broad, gently sloping sides rather than a steep cone.",
+   "source": "https://www.nps.gov/havo/learn/nature/mauna-loa.htm"
+  },
+  {
+   "id": "earth-028",
+   "topic": "EARTH",
+   "difficulty": "MEDIUM",
+   "question": "Satellites show global sea level rising. What are its two main causes?",
+   "answers": [
+    "Melting sea ice and heavier rain",
+    "Land ice melt and warming seawater",
+    "Undersea volcanoes and river mud",
+    "Stronger tides and storms"
+   ],
+   "correct": 1,
+   "explanation": "Glaciers and ice sheets add meltwater to the ocean and warmer water takes up more space; floating sea ice barely changes sea level when it melts.",
+   "source": "https://science.nasa.gov/earth/explore/earth-indicators/sea-leve/"
+  },
+  {
+   "id": "earth-029",
+   "topic": "EARTH",
+   "difficulty": "HARD",
+   "question": "In which month does Arctic sea ice usually reach its smallest extent of the year?",
+   "answers": [
+    "March",
+    "June",
+    "September",
+    "December"
+   ],
+   "correct": 2,
+   "explanation": "The ice grows through the polar winter to a peak around March, then melts through summer to its yearly low in September.",
+   "source": "https://science.nasa.gov/earth/earth-observatory/world-of-change/arctic-sea-ice/"
+  },
+  {
+   "id": "earth-030",
+   "topic": "EARTH",
+   "difficulty": "HARD",
+   "question": "The Van Allen radiation belts were discovered with data from which satellite?",
+   "answers": [
+    "Explorer 1",
+    "Sputnik 1",
+    "Vanguard 1",
+    "Telstar 1"
+   ],
+   "correct": 0,
+   "explanation": "The first US satellite carried James Van Allen's cosmic-ray experiment, whose puzzling readings revealed charged particles trapped by Earth's magnetic field.",
+   "source": "https://www.nasa.gov/history/a-short-history-of-earths-radiation-belts/"
+  },
+  {
+   "id": "exo-001",
+   "topic": "EXOPLANETS",
+   "difficulty": "EASY",
+   "question": "What is an exoplanet?",
+   "answers": [
+    "A planet outside our solar system",
+    "A dwarf planet beyond Neptune",
+    "A moon that escaped its planet",
+    "A planet with no atmosphere"
+   ],
+   "correct": 0,
+   "explanation": "Most exoplanets orbit other stars, but the term also covers rogue planets that wander the galaxy with no star at all.",
+   "source": "https://science.nasa.gov/exoplanets/what-is-an-exoplanet/"
+  },
+  {
+   "id": "exo-002",
+   "topic": "EXOPLANETS",
+   "difficulty": "EASY",
+   "question": "How does the transit method reveal a planet?",
+   "answers": [
+    "Its star's light dims slightly",
+    "Its star changes colour",
+    "It sends out radio signals",
+    "It casts a shadow on a nebula"
+   ],
+   "correct": 0,
+   "explanation": "When a planet crosses in front of its star as seen from Earth it blocks a sliver of light, and repeating dips reveal its orbit and size.",
+   "source": "https://science.nasa.gov/exoplanets/how-we-find-and-characterize/"
+  },
+  {
+   "id": "exo-003",
+   "topic": "EXOPLANETS",
+   "difficulty": "MEDIUM",
+   "question": "The radial velocity method finds planets by detecting what?",
+   "answers": [
+    "Dips in a star's brightness",
+    "Heat glowing from the planet",
+    "Starlight bent by gravity",
+    "Doppler shifts in a star's light"
+   ],
+   "correct": 3,
+   "explanation": "A planet tugs its star into a small wobble, so the star's spectral lines shift slightly toward blue and then red as it moves toward and away from us.",
+   "source": "https://science.nasa.gov/exoplanets/how-we-find-and-characterize/"
+  },
+  {
+   "id": "exo-004",
+   "topic": "EXOPLANETS",
+   "difficulty": "EASY",
+   "question": "In what year was 51 Pegasi b, the first planet found orbiting a Sun-like star, announced?",
+   "answers": [
+    "1965",
+    "1985",
+    "1995",
+    "2009"
+   ],
+   "correct": 2,
+   "explanation": "It was a surprise: a gas giant circling its star in just over four days, far closer than Mercury is to the Sun.",
+   "source": "https://science.nasa.gov/exoplanet-catalog/51-pegasi-b/"
+  },
+  {
+   "id": "exo-005",
+   "topic": "EXOPLANETS",
+   "difficulty": "MEDIUM",
+   "question": "Who shared the 2019 Nobel Prize in Physics for discovering 51 Pegasi b?",
+   "answers": [
+    "Geoff Marcy and Paul Butler",
+    "Michel Mayor and Didier Queloz",
+    "Carl Sagan and Frank Drake",
+    "Aleksander Wolszczan and Dale Frail"
+   ],
+   "correct": 1,
+   "explanation": "The pair worked at the University of Geneva; cosmologist James Peebles shared the same prize for work on the history of the universe.",
+   "source": "https://www.nobelprize.org/prizes/physics/2019/summary/"
+  },
+  {
+   "id": "exo-006",
+   "topic": "EXOPLANETS",
+   "difficulty": "HARD",
+   "question": "The first confirmed planets beyond the solar system, found in 1992, orbit what kind of object?",
+   "answers": [
+    "A white dwarf",
+    "A red giant",
+    "A brown dwarf",
+    "A pulsar"
+   ],
+   "correct": 3,
+   "explanation": "Aleksander Wolszczan found them with the Arecibo radio telescope from tiny irregularities in the timing of the pulsar PSR B1257+12's radio pulses.",
+   "source": "https://www.nasa.gov/image-article/extreme-planets/"
+  },
+  {
+   "id": "exo-007",
+   "topic": "EXOPLANETS",
+   "difficulty": "MEDIUM",
+   "question": "Which planet would most likely give away our Solar System to aliens watching the Sun wobble?",
+   "answers": [
+    "Earth",
+    "Jupiter",
+    "Neptune",
+    "Mars"
+   ],
+   "correct": 1,
+   "explanation": "Jupiter has more mass than all the other planets together, so it tugs the Sun into the largest wobble, the effect the radial velocity method looks for.",
+   "source": "https://science.nasa.gov/exoplanets/how-we-find-and-characterize/"
+  },
+  {
+   "id": "exo-008",
+   "topic": "EXOPLANETS",
+   "difficulty": "MEDIUM",
+   "question": "What kind of star is TRAPPIST-1?",
+   "answers": [
+    "A hot blue giant",
+    "A Sun-like yellow star",
+    "An ultracool red dwarf",
+    "A white dwarf"
+   ],
+   "correct": 2,
+   "explanation": "It is only a little wider than Jupiter and far cooler than the Sun, so its habitable zone lies very close in, where a year lasts only days.",
+   "source": "https://science.nasa.gov/mission/webb/science-overview/science-explainers/what-is-webb-revealing-about-the-trappist-1-system/"
+  },
+  {
+   "id": "exo-009",
+   "topic": "EXOPLANETS",
+   "difficulty": "EASY",
+   "question": "Proxima Centauri b orbits the star nearest the Sun. About how far away is it?",
+   "answers": [
+    "About 0.4 light-years",
+    "About 4.2 light-years",
+    "About 42 light-years",
+    "About 420 light-years"
+   ],
+   "correct": 1,
+   "explanation": "Even so, its light takes more than four years to reach us, and today's spacecraft would need tens of thousands of years to make the trip.",
+   "source": "https://science.nasa.gov/exoplanet-catalog/proxima-centauri-b/"
+  },
+  {
+   "id": "exo-010",
+   "topic": "EXOPLANETS",
+   "difficulty": "MEDIUM",
+   "question": "Proxima Centauri b circles its star very closely. About how long is its year?",
+   "answers": [
+    "About 11 years",
+    "About 11 months",
+    "About 11 weeks",
+    "About 11 days"
+   ],
+   "correct": 3,
+   "explanation": "Its red dwarf star is so dim that even this tight orbit places the planet within the star's habitable zone.",
+   "source": "https://science.nasa.gov/exoplanet-catalog/proxima-centauri-b/"
+  },
+  {
+   "id": "exo-011",
+   "topic": "EXOPLANETS",
+   "difficulty": "EASY",
+   "question": "Kepler-186f, announced in 2014, was the first Earth-size planet found where?",
+   "answers": [
+    "Orbiting a black hole",
+    "Drifting without a star",
+    "Around Alpha Centauri",
+    "In its star's habitable zone"
+   ],
+   "correct": 3,
+   "explanation": "It orbits a red dwarf several hundred light-years away; being in the habitable zone means liquid water could exist there, not that it does.",
+   "source": "https://science.nasa.gov/exoplanet-catalog/kepler-186-f/"
+  },
+  {
+   "id": "exo-012",
+   "topic": "EXOPLANETS",
+   "difficulty": "EASY",
+   "question": "What is a star's habitable zone?",
+   "answers": [
+    "Where surface liquid water could exist",
+    "Where breathable air must exist",
+    "A region free of asteroids",
+    "The area inside a star's corona"
+   ],
+   "correct": 0,
+   "explanation": "Also called the Goldilocks zone, it lies close in for dim red dwarfs and much farther out for hot, bright stars.",
+   "source": "https://science.nasa.gov/exoplanets/habitable-zone/"
+  },
+  {
+   "id": "exo-013",
+   "topic": "EXOPLANETS",
+   "difficulty": "MEDIUM",
+   "question": "HD 209458 b was the first exoplanet in which astronomers detected what?",
+   "answers": [
+    "An atmosphere",
+    "A moon",
+    "Rings",
+    "Liquid water"
+   ],
+   "correct": 0,
+   "explanation": "In 2001 Hubble found sodium in starlight filtering through its air; in 1999 it had also become the first planet seen crossing in front of its star.",
+   "source": "https://science.nasa.gov/exoplanet-catalog/hd-209458-b/"
+  },
+  {
+   "id": "exo-014",
+   "topic": "EXOPLANETS",
+   "difficulty": "EASY",
+   "question": "What is a 'hot Jupiter'?",
+   "answers": [
+    "Jupiter during its summer",
+    "A gas giant orbiting close to its star",
+    "A rocky planet with lava seas",
+    "A star that failed to ignite"
+   ],
+   "correct": 1,
+   "explanation": "These giants circle their stars in a few days and were among the first exoplanets found, because their strong pull and big transits are easy to detect.",
+   "source": "https://science.nasa.gov/exoplanets/planet-types/"
+  },
+  {
+   "id": "exo-015",
+   "topic": "EXOPLANETS",
+   "difficulty": "HARD",
+   "question": "Super-Earths and mini-Neptunes, bigger than Earth but smaller than the ice giants, are common. How many orbit our Sun?",
+   "answers": [
+    "None",
+    "One",
+    "Two",
+    "Four"
+   ],
+   "correct": 0,
+   "explanation": "With no local example to study, it is hard to tell whether a given one is rocky, watery or wrapped in a thick envelope of gas.",
+   "source": "https://science.nasa.gov/exoplanets/planet-types/"
+  },
+  {
+   "id": "exo-016",
+   "topic": "EXOPLANETS",
+   "difficulty": "EASY",
+   "question": "Which NASA space telescope, launched in 2009, stared at one patch of sky to find thousands of planets?",
+   "answers": [
+    "Hubble",
+    "Chandra",
+    "Spitzer",
+    "Kepler"
+   ],
+   "correct": 3,
+   "explanation": "It measured the brightness of stars with great precision to catch the faint dips of transiting planets, until it ran out of fuel in 2018.",
+   "source": "https://science.nasa.gov/mission/kepler/"
+  },
+  {
+   "id": "exo-017",
+   "topic": "EXOPLANETS",
+   "difficulty": "MEDIUM",
+   "question": "What kind of stars does NASA's TESS mission mainly survey for planets?",
+   "answers": [
+    "Faint stars in one small field",
+    "Bright stars near the Sun",
+    "Stars in other galaxies",
+    "Stars at the galaxy's centre"
+   ],
+   "correct": 1,
+   "explanation": "Launched in 2018, TESS sweeps across most of the sky; planets around nearby bright stars are the easiest for other telescopes to study in detail.",
+   "source": "https://science.nasa.gov/mission/tess/"
+  },
+  {
+   "id": "exo-018",
+   "topic": "EXOPLANETS",
+   "difficulty": "MEDIUM",
+   "question": "How can Webb learn what a transiting planet's atmosphere is made of?",
+   "answers": [
+    "Photographing its surface",
+    "Analysing starlight filtered by its air",
+    "Sending a probe to sample it",
+    "Timing its orbit precisely"
+   ],
+   "correct": 1,
+   "explanation": "Each gas absorbs particular wavelengths, so spreading that light into a spectrum shows chemical fingerprints such as water vapour or carbon dioxide.",
+   "source": "https://science.nasa.gov/exoplanets/how-we-find-and-characterize/"
+  },
+  {
+   "id": "exo-019",
+   "topic": "EXOPLANETS",
+   "difficulty": "HARD",
+   "question": "In 2022, Webb made the first clear detection of carbon dioxide in an exoplanet's atmosphere. Which planet?",
+   "answers": [
+    "51 Pegasi b",
+    "Kepler-22b",
+    "WASP-39 b",
+    "TRAPPIST-1 e"
+   ],
+   "correct": 2,
+   "explanation": "WASP-39 b is a hot, puffy gas giant with about the mass of Saturn, circling its star in roughly four days.",
+   "source": "https://science.nasa.gov/missions/webb/nasas-webb-detects-carbon-dioxide-in-exoplanet-atmosphere/"
+  },
+  {
+   "id": "exo-020",
+   "topic": "EXOPLANETS",
+   "difficulty": "MEDIUM",
+   "question": "Gravitational microlensing reveals planets using what effect?",
+   "answers": [
+    "A star's gravity magnifying another star",
+    "A planet blocking starlight",
+    "A star's back-and-forth wobble",
+    "Light reflected by the planet"
+   ],
+   "correct": 0,
+   "explanation": "When a foreground star drifts in front of a distant one it briefly brightens it, and a planet around the foreground star adds a second, smaller spike.",
+   "source": "https://science.nasa.gov/exoplanets/how-we-find-and-characterize/"
+  },
+  {
+   "id": "exo-021",
+   "topic": "EXOPLANETS",
+   "difficulty": "EASY",
+   "question": "True or false: some planets drift through the galaxy without orbiting any star.",
+   "answers": [
+    "True",
+    "False"
+   ],
+   "correct": 0,
+   "explanation": "These rogue planets were probably flung out of the systems where they formed, and with no star to light them they are very hard to spot.",
+   "source": "https://science.nasa.gov/mission/roman-space-telescope/rogue-planets/"
+  },
+  {
+   "id": "exo-022",
+   "topic": "EXOPLANETS",
+   "difficulty": "MEDIUM",
+   "question": "Which device blocks a star's glare so that planets close to it can be imaged directly?",
+   "answers": [
+    "Coronagraph",
+    "Spectrograph",
+    "Seismometer",
+    "Photometer"
+   ],
+   "correct": 0,
+   "explanation": "Planets can be millions to billions of times fainter than their stars; a starshade flying far in front of a telescope is another way to block the glare.",
+   "source": "https://science.nasa.gov/exoplanets/how-we-find-and-characterize/"
+  },
+  {
+   "id": "exo-023",
+   "topic": "EXOPLANETS",
+   "difficulty": "HARD",
+   "question": "To a distant observer, about how much would Earth dim the Sun while passing in front of it?",
+   "answers": [
+    "About 10 percent",
+    "About 1 percent",
+    "About 0.01 percent",
+    "About 0.00001 percent"
+   ],
+   "correct": 2,
+   "explanation": "The dip depends on the planet's area compared with the star's disc; Jupiter, about 11 times wider than Earth, would dim the Sun by about 1 percent.",
+   "source": "https://science.nasa.gov/exoplanets/how-we-find-and-characterize/"
+  },
+  {
+   "id": "exo-024",
+   "topic": "EXOPLANETS",
+   "difficulty": "MEDIUM",
+   "question": "Kepler-16b was compared to Star Wars' Tatooine because it does what?",
+   "answers": [
+    "Orbits two stars",
+    "Is covered in desert",
+    "Has two large moons",
+    "Has bright rings"
+   ],
+   "correct": 0,
+   "explanation": "Unlike Luke Skywalker's desert home, it is a cold gas giant about the size of Saturn, with no solid ground to stand on.",
+   "source": "https://science.nasa.gov/exoplanets/other-stars-other-worlds/kepler-16-b-almost-a-real-life-tatooine/"
+  },
+  {
+   "id": "exo-025",
+   "topic": "EXOPLANETS",
+   "difficulty": "HARD",
+   "question": "Hubble measured the true visible colour of the hot Jupiter HD 189733 b. What colour is it?",
+   "answers": [
+    "Rusty red",
+    "Deep blue",
+    "Pale yellow",
+    "Bright green"
+   ],
+   "correct": 1,
+   "explanation": "The blue is not from oceans: it likely comes from silicate particles scattering light in a scorching atmosphere where it may rain glass.",
+   "source": "https://science.nasa.gov/universe/exoplanets/nasa-hubble-finds-a-true-blue-planet/"
+  },
+  {
+   "id": "human-001",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "Who was the first person to travel into space?",
+   "answers": [
+    "Alan Shepard",
+    "Yuri Gagarin",
+    "John Glenn",
+    "Gherman Titov"
+   ],
+   "correct": 1,
+   "explanation": "Soviet cosmonaut Yuri Gagarin launched on 12 April 1961 aboard Vostok 1 and circled Earth once. The date is now celebrated worldwide as Yuri's Night.",
+   "source": "https://www.esa.int/About_Us/50_years_of_ESA/50_years_of_humans_in_space/Yuri_Gagarin"
+  },
+  {
+   "id": "human-002",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "Who was the first woman to fly in space?",
+   "answers": [
+    "Sally Ride",
+    "Svetlana Savitskaya",
+    "Valentina Tereshkova",
+    "Helen Sharman"
+   ],
+   "correct": 2,
+   "explanation": "Valentina Tereshkova flew alone aboard Vostok 6 in June 1963. She had been a textile worker and keen amateur parachutist before joining the cosmonaut corps.",
+   "source": "https://www.esa.int/About_Us/50_years_of_ESA/50_years_of_humans_in_space/First_woman_in_space_Valentina"
+  },
+  {
+   "id": "human-003",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "Who was the first person to step onto the Moon?",
+   "answers": [
+    "Buzz Aldrin",
+    "Michael Collins",
+    "Pete Conrad",
+    "Neil Armstrong"
+   ],
+   "correct": 3,
+   "explanation": "Neil Armstrong stepped onto the lunar surface on 20 July 1969 during Apollo 11. Buzz Aldrin followed him about 20 minutes later.",
+   "source": "https://www.nasa.gov/mission/apollo-11/"
+  },
+  {
+   "id": "human-004",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "Who was the first American to travel into space?",
+   "answers": [
+    "Alan Shepard",
+    "John Glenn",
+    "Gus Grissom",
+    "Gordon Cooper"
+   ],
+   "correct": 0,
+   "explanation": "On 5 May 1961 Alan Shepard rode the Freedom 7 capsule on a 15-minute suborbital hop. He did not orbit Earth; that came the following year.",
+   "source": "https://www.nasa.gov/history/may-5-1961-alan-shepard-becomes-the-first-american-in-space/"
+  },
+  {
+   "id": "human-005",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "Who made the first ever spacewalk, in 1965?",
+   "answers": [
+    "Ed White",
+    "Yuri Gagarin",
+    "Gherman Titov",
+    "Alexei Leonov"
+   ],
+   "correct": 3,
+   "explanation": "Alexei Leonov floated outside Voskhod 2 on 18 March 1965 for roughly ten minutes, tethered to his spacecraft. He was also a talented painter of space scenes.",
+   "source": "https://www.nasa.gov/history/space-station-20th-spacewalking-history/"
+  },
+  {
+   "id": "human-006",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "Who was the first American woman to fly in space?",
+   "answers": [
+    "Mae Jemison",
+    "Eileen Collins",
+    "Sally Ride",
+    "Kathryn Sullivan"
+   ],
+   "correct": 2,
+   "explanation": "Sally Ride flew on the Space Shuttle Challenger during mission STS-7 in June 1983. A physicist, she helped operate the shuttle's robotic arm.",
+   "source": "https://www.nasa.gov/history/sally-ride-first-american-woman-in-space/"
+  },
+  {
+   "id": "human-007",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "About how many times does the International Space Station circle Earth each day?",
+   "answers": [
+    "About 1",
+    "About 4",
+    "About 16",
+    "About 100"
+   ],
+   "correct": 2,
+   "explanation": "One lap takes roughly 90 minutes, so the crew sees about 16 sunrises and 16 sunsets every 24 hours.",
+   "source": "https://www.nasa.gov/international-space-station/space-station-facts-and-figures/"
+  },
+  {
+   "id": "human-008",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "What is the name of NASA's program to send astronauts back to the Moon?",
+   "answers": [
+    "Gemini",
+    "Artemis",
+    "Mercury",
+    "Skylab"
+   ],
+   "correct": 1,
+   "explanation": "In Greek mythology Artemis is the twin sister of Apollo, the name of the program that first landed people on the Moon.",
+   "source": "https://www.nasa.gov/humans-in-space/artemis/"
+  },
+  {
+   "id": "human-009",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "What was the name of the Apollo 11 lunar module that landed on the Moon?",
+   "answers": [
+    "Columbia",
+    "Intrepid",
+    "Falcon",
+    "Eagle"
+   ],
+   "correct": 3,
+   "explanation": "Eagle carried Armstrong and Aldrin to the surface, while the command module Columbia stayed in lunar orbit. Its arrival was announced with the words \"The Eagle has landed.\"",
+   "source": "https://www.nasa.gov/mission/apollo-11/"
+  },
+  {
+   "id": "human-010",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "Which giant rocket launched the Apollo crews to the Moon?",
+   "answers": [
+    "Saturn V",
+    "Atlas",
+    "Titan II",
+    "Redstone"
+   ],
+   "correct": 0,
+   "explanation": "The Saturn V stood about 111 metres tall, roughly the height of a 36-storey building, and weighed about 2,800 tonnes when fully fuelled.",
+   "source": "https://www.nasa.gov/learning-resources/for-kids-and-students/what-was-the-saturn-v-grades-5-8/"
+  },
+  {
+   "id": "human-011",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "What is the name of China's crewed space station?",
+   "answers": [
+    "Mir",
+    "Tiangong",
+    "Salyut",
+    "Kibo"
+   ],
+   "correct": 1,
+   "explanation": "Tiangong means heavenly palace. Its first module, the Tianhe core, was launched in April 2021.",
+   "source": "https://en.cmse.gov.cn/news/202105/t20210528_48002.html"
+  },
+  {
+   "id": "human-012",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "Which Russian spacecraft has carried crews to the International Space Station since 2000?",
+   "answers": [
+    "Vostok",
+    "Buran",
+    "Soyuz",
+    "Shenzhou"
+   ],
+   "correct": 2,
+   "explanation": "The first long-term ISS crew arrived aboard a Soyuz in November 2000. Soyuz first flew in the 1960s and is the longest-serving crewed spacecraft design.",
+   "source": "https://www.esa.int/Science_Exploration/Human_and_Robotic_Exploration/The_Russian_Soyuz_spacecraft"
+  },
+  {
+   "id": "human-013",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "True or false: astronauts get slightly taller while living in space.",
+   "answers": [
+    "True",
+    "False"
+   ],
+   "correct": 0,
+   "explanation": "Without gravity squeezing it, the spine stretches out and a person can gain up to about 3 percent in height. They shrink back after a few months on Earth.",
+   "source": "https://www.nasa.gov/space-science-and-astrobiology-at-ames/interesting-fact-of-the-month-current/interesting-fact-of-the-month-2021/"
+  },
+  {
+   "id": "human-014",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "What does EVA stand for in spaceflight?",
+   "answers": [
+    "Exterior vacuum access",
+    "Extravehicular activity",
+    "Emergency vehicle airlock",
+    "External vessel assembly"
+   ],
+   "correct": 1,
+   "explanation": "An extravehicular activity is any time an astronaut gets out of a vehicle in space, better known as a spacewalk.",
+   "source": "https://www.nasa.gov/learning-resources/for-kids-and-students/what-is-a-spacewalk-grades-5-8/"
+  },
+  {
+   "id": "human-015",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "How did the Space Shuttle orbiter come back to Earth?",
+   "answers": [
+    "Under parachutes at sea",
+    "On a runway, like a glider",
+    "On rocket-powered landing legs",
+    "Under parachutes on land"
+   ],
+   "correct": 1,
+   "explanation": "The orbiter came home without engine power, gliding down through the atmosphere to touch down on a long runway at high speed.",
+   "source": "https://www.nasa.gov/reference/the-space-shuttle/"
+  },
+  {
+   "id": "human-016",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "Which company built the Starliner crew capsule for NASA?",
+   "answers": [
+    "SpaceX",
+    "Blue Origin",
+    "Boeing",
+    "Sierra Space"
+   ],
+   "correct": 2,
+   "explanation": "Boeing's Starliner and SpaceX's Crew Dragon were both developed under NASA's Commercial Crew Program to fly astronauts to the space station.",
+   "source": "https://www.nasa.gov/humans-in-space/commercial-space/commercial-crew-program/"
+  },
+  {
+   "id": "human-017",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "Why do astronauts often use tortillas instead of bread in orbit?",
+   "answers": [
+    "They make far fewer crumbs",
+    "Bread cannot be launched",
+    "Tortillas taste sweeter in space",
+    "Tortillas weigh nothing"
+   ],
+   "correct": 0,
+   "explanation": "Floating crumbs can get into equipment or eyes. Mexican astronaut Rodolfo Neri Vela asked for tortillas on a 1985 shuttle flight, and they became a space staple.",
+   "source": "https://www.nasa.gov/history/space-station-20th-food-on-iss/"
+  },
+  {
+   "id": "human-018",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "EASY",
+   "question": "Where do NASA astronauts rehearse spacewalks on Earth?",
+   "answers": [
+    "In a wind tunnel",
+    "In a desert",
+    "On a mountain top",
+    "In a giant pool"
+   ],
+   "correct": 3,
+   "explanation": "At the Neutral Buoyancy Laboratory in Houston, astronauts in spacesuits practise with full-size station mock-ups underwater, where floating feels a bit like weightlessness.",
+   "source": "https://www.nasa.gov/johnson/neutral-buoyancy-laboratory/"
+  },
+  {
+   "id": "human-019",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "Who was the first American to orbit Earth?",
+   "answers": [
+    "Alan Shepard",
+    "Scott Carpenter",
+    "John Glenn",
+    "Gus Grissom"
+   ],
+   "correct": 2,
+   "explanation": "John Glenn circled Earth three times in Friendship 7 on 20 February 1962, a flight lasting just under five hours.",
+   "source": "https://www.nasa.gov/mission/mercury-atlas-6-friendship-7/"
+  },
+  {
+   "id": "human-020",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "Who became the first person launched into space by China, in 2003?",
+   "answers": [
+    "Yang Liwei",
+    "Liu Yang",
+    "Jing Haipeng",
+    "Zhai Zhigang"
+   ],
+   "correct": 0,
+   "explanation": "Yang Liwei flew Shenzhou 5 for about 21 hours, making China the third nation to launch a person into space on its own rocket.",
+   "source": "https://en.cmse.gov.cn/missions/shenzhouv/"
+  },
+  {
+   "id": "human-021",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "In 1992, who became the first African American woman to fly in space?",
+   "answers": [
+    "Sally Ride",
+    "Kalpana Chawla",
+    "Ellen Ochoa",
+    "Mae Jemison"
+   ],
+   "correct": 3,
+   "explanation": "Mae Jemison, a physician and engineer, flew aboard Endeavour on STS-47, a joint US-Japanese science mission.",
+   "source": "https://www.nasa.gov/mission/sts-47/"
+  },
+  {
+   "id": "human-022",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "Who was the first Canadian to fly in space, in 1984?",
+   "answers": [
+    "Chris Hadfield",
+    "Roberta Bondar",
+    "Marc Garneau",
+    "Julie Payette"
+   ],
+   "correct": 2,
+   "explanation": "Marc Garneau flew on Challenger during STS-41G in October 1984. He later flew twice more and went on to lead the Canadian Space Agency.",
+   "source": "https://www.asc-csa.gc.ca/eng/astronauts/canadian/retired/bio-marc-garneau.asp"
+  },
+  {
+   "id": "human-023",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "Who became the first Indian citizen to travel to space, in 1984?",
+   "answers": [
+    "Kalpana Chawla",
+    "Rakesh Sharma",
+    "Sunita Williams",
+    "Shubhanshu Shukla"
+   ],
+   "correct": 1,
+   "explanation": "Indian Air Force pilot Rakesh Sharma flew a Soyuz to the Soviet Salyut 7 station and spent about eight days in orbit.",
+   "source": "https://ntrs.nasa.gov/api/citations/19850012916/downloads/19850012916.pdf"
+  },
+  {
+   "id": "human-024",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "In 1991, who became the first British person in space?",
+   "answers": [
+    "Tim Peake",
+    "Michael Foale",
+    "Samantha Cristoforetti",
+    "Helen Sharman"
+   ],
+   "correct": 3,
+   "explanation": "Chemist Helen Sharman answered a radio advert, was picked from thousands of applicants and flew to the Mir space station aboard a Soyuz.",
+   "source": "https://www.esa.int/About_Us/50_years_of_ESA/50_years_of_humans_in_space/Dr_Helen_Sharman"
+  },
+  {
+   "id": "human-025",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "Who made the first American spacewalk?",
+   "answers": [
+    "Ed White",
+    "Buzz Aldrin",
+    "Gene Cernan",
+    "Neil Armstrong"
+   ],
+   "correct": 0,
+   "explanation": "Ed White stepped outside Gemini 4 in June 1965 and moved around using a hand-held gas-powered manoeuvring gun.",
+   "source": "https://www.nasa.gov/mission/gemini-iv/"
+  },
+  {
+   "id": "human-026",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "Roughly how long do space station astronauts spend exercising each day?",
+   "answers": [
+    "About 10 minutes",
+    "About 6 hours",
+    "About 2 hours",
+    "None at all"
+   ],
+   "correct": 2,
+   "explanation": "Daily workouts on a treadmill, a bike and a weight machine help slow the bone and muscle loss caused by living without gravity.",
+   "source": "https://kids.esa.int/exercise/"
+  },
+  {
+   "id": "human-027",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "Which mission's crew took the famous Earthrise photo of Earth rising over the Moon?",
+   "answers": [
+    "Apollo 8",
+    "Apollo 11",
+    "Apollo 13",
+    "Gemini 7"
+   ],
+   "correct": 0,
+   "explanation": "Apollo 8 was the first crewed mission to orbit the Moon, and Bill Anders captured Earthrise on 24 December 1968.",
+   "source": "https://www.nasa.gov/mission/apollo-8/"
+  },
+  {
+   "id": "human-028",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "How many people walked on the Moon during the Apollo program?",
+   "answers": [
+    "6",
+    "12",
+    "18",
+    "24"
+   ],
+   "correct": 1,
+   "explanation": "Six Apollo missions landed between 1969 and 1972, each putting two astronauts on the surface while a third stayed in lunar orbit.",
+   "source": "https://www.nasa.gov/learning-resources/for-kids-and-students/what-was-the-apollo-program-grades-5-8/"
+  },
+  {
+   "id": "human-029",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "What made SpaceX's Inspiration4 mission in 2021 a first?",
+   "answers": [
+    "First crewed launch from Florida",
+    "First crew to orbit the Moon",
+    "An all-private-citizen crew in orbit",
+    "First docking with the ISS"
+   ],
+   "correct": 2,
+   "explanation": "None of its four crew members was a professional astronaut. They spent three days orbiting Earth in a Crew Dragon before splashing down.",
+   "source": "https://www.nasa.gov/people/jared-isaacman/"
+  },
+  {
+   "id": "human-030",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "Which Space Shuttle orbiter never flew in space?",
+   "answers": [
+    "Discovery",
+    "Atlantis",
+    "Enterprise",
+    "Endeavour"
+   ],
+   "correct": 2,
+   "explanation": "Enterprise was a test vehicle: in 1977 it was carried aloft on a Boeing 747 and released to glide to landings, proving how the orbiter would handle.",
+   "source": "https://www.nasa.gov/image-article/where-are-they-now-space-shuttle-prototype-enterprise/"
+  },
+  {
+   "id": "human-031",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "What was the name of the first US space station, launched in 1973?",
+   "answers": [
+    "Freedom",
+    "Mir",
+    "Salyut",
+    "Skylab"
+   ],
+   "correct": 3,
+   "explanation": "Skylab reached orbit on the last Saturn V ever flown and hosted three crews of three astronauts in 1973 and 1974.",
+   "source": "https://www.nasa.gov/mission/skylab/"
+  },
+  {
+   "id": "human-032",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "Which Apollo astronaut hit golf balls on the Moon?",
+   "answers": [
+    "Pete Conrad",
+    "Charlie Duke",
+    "Gene Cernan",
+    "Alan Shepard"
+   ],
+   "correct": 3,
+   "explanation": "During Apollo 14 in 1971, Alan Shepard attached a golf club head to a sample tool and struck two balls one-handed in his bulky suit.",
+   "source": "https://airandspace.si.edu/collection-objects/head-golf-club-apollo-14-replica/nasm_A19751468000"
+  },
+  {
+   "id": "human-033",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "Who was the first woman to command a Space Shuttle mission?",
+   "answers": [
+    "Sally Ride",
+    "Eileen Collins",
+    "Peggy Whitson",
+    "Shannon Lucid"
+   ],
+   "correct": 1,
+   "explanation": "Eileen Collins commanded STS-93 in 1999, which deployed the Chandra X-ray Observatory. Four years earlier she had been the first woman to pilot a shuttle.",
+   "source": "https://www.nasa.gov/former-astronaut-eileen-collins/"
+  },
+  {
+   "id": "human-034",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "Which space agency provides the service module that powers NASA's Orion capsule?",
+   "answers": [
+    "JAXA",
+    "Roscosmos",
+    "CSA",
+    "ESA"
+   ],
+   "correct": 3,
+   "explanation": "The European Service Module supplies Orion's main engine, electricity, water and air, making Europe a key partner in Artemis.",
+   "source": "https://www.esa.int/Science_Exploration/Human_and_Robotic_Exploration/Orion/European_Service_Module"
+  },
+  {
+   "id": "human-035",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "What is the name of Japan's laboratory module on the International Space Station?",
+   "answers": [
+    "Columbus",
+    "Destiny",
+    "Kibo",
+    "Zvezda"
+   ],
+   "correct": 2,
+   "explanation": "Kibo means hope in Japanese. Besides its pressurised lab, it has a platform where experiments sit directly exposed to space.",
+   "source": "https://iss.jaxa.jp/en/kibo/"
+  },
+  {
+   "id": "human-036",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "MEDIUM",
+   "question": "The Artemis II crew had three NASA astronauts and one from which country?",
+   "answers": [
+    "Canada",
+    "Japan",
+    "Germany",
+    "Italy"
+   ],
+   "correct": 0,
+   "explanation": "Canadian Space Agency astronaut Jeremy Hansen flew around the Moon on Artemis II, becoming the first non-American to take part in a lunar mission.",
+   "source": "https://www.asc-csa.gc.ca/eng/astronauts/canadian/retired/bio-jeremy-hansen.asp"
+  },
+  {
+   "id": "human-037",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "HARD",
+   "question": "How did Yuri Gagarin's Vostok 1 flight end?",
+   "answers": [
+    "He splashed down at sea",
+    "He ejected and parachuted down",
+    "He landed on a runway",
+    "He rode the capsule to the ground"
+   ],
+   "correct": 1,
+   "explanation": "The Vostok capsule landed too hard for a safe touchdown with a person inside, so Gagarin ejected at about 7 km altitude and came down under his own parachute, separately from the capsule.",
+   "source": "https://www.esa.int/About_Us/50_years_of_ESA/50_years_of_humans_in_space/The_flight_of_Vostok_1"
+  },
+  {
+   "id": "human-038",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "HARD",
+   "question": "Which mission made the first docking of two spacecraft in orbit, in 1966?",
+   "answers": [
+    "Vostok 6",
+    "Apollo 7",
+    "Soyuz 4",
+    "Gemini 8"
+   ],
+   "correct": 3,
+   "explanation": "Neil Armstrong and David Scott docked Gemini 8 with an uncrewed Agena target, but a stuck thruster sent them spinning and forced an early return.",
+   "source": "https://www.nasa.gov/mission/gemini-viii/"
+  },
+  {
+   "id": "human-039",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "HARD",
+   "question": "Apollo 12 landed next to which robotic probe and brought parts of it home?",
+   "answers": [
+    "Luna 9",
+    "Surveyor 3",
+    "Ranger 7",
+    "Lunokhod 1"
+   ],
+   "correct": 1,
+   "explanation": "The pinpoint landing put Pete Conrad and Alan Bean within walking distance of Surveyor 3, and they returned its TV camera so engineers could study two and a half years of lunar exposure.",
+   "source": "https://www.nasa.gov/missions/apollo/apollo-12-the-pinpoint-mission/"
+  },
+  {
+   "id": "human-040",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "HARD",
+   "question": "On which mission did astronauts first drive a Lunar Roving Vehicle on the Moon?",
+   "answers": [
+    "Apollo 12",
+    "Apollo 14",
+    "Apollo 15",
+    "Apollo 17"
+   ],
+   "correct": 2,
+   "explanation": "Apollo 15 in 1971 brought the first electric rover, letting David Scott and James Irwin travel kilometres from their lander.",
+   "source": "https://www.nasa.gov/mission/apollo-15/"
+  },
+  {
+   "id": "human-041",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "HARD",
+   "question": "Who was the first woman to perform a spacewalk?",
+   "answers": [
+    "Svetlana Savitskaya",
+    "Kathryn Sullivan",
+    "Valentina Tereshkova",
+    "Peggy Whitson"
+   ],
+   "correct": 0,
+   "explanation": "Svetlana Savitskaya worked outside the Salyut 7 station in July 1984. Kathryn Sullivan became the first American woman to spacewalk a few months later.",
+   "source": "https://www.esa.int/About_Us/50_years_of_ESA/50_years_of_humans_in_space/Timeline"
+  },
+  {
+   "id": "human-042",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "HARD",
+   "question": "What was the first module of the International Space Station to be launched?",
+   "answers": [
+    "Unity",
+    "Zvezda",
+    "Destiny",
+    "Zarya"
+   ],
+   "correct": 3,
+   "explanation": "Zarya lifted off on a Russian Proton rocket in November 1998, and the US-built Unity node was attached to it a few weeks later.",
+   "source": "https://www.nasa.gov/international-space-station/zarya-module/"
+  },
+  {
+   "id": "human-043",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "HARD",
+   "question": "Who was the first person in space who was neither Soviet nor American?",
+   "answers": [
+    "Sigmund Jahn",
+    "Vladimir Remek",
+    "Ulf Merbold",
+    "Jean-Loup Chretien"
+   ],
+   "correct": 1,
+   "explanation": "Czechoslovak pilot Vladimir Remek flew Soyuz 28 to the Salyut 6 station in 1978 under the Soviet Interkosmos programme.",
+   "source": "https://www.esa.int/About_Us/50_years_of_ESA/50_years_of_humans_in_space/Vladimir_Remek"
+  },
+  {
+   "id": "human-044",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "HARD",
+   "question": "Who became China's first woman in space, in 2012?",
+   "answers": [
+    "Wang Yaping",
+    "Wang Haoze",
+    "Liu Yang",
+    "Zhai Zhigang"
+   ],
+   "correct": 2,
+   "explanation": "Liu Yang flew on Shenzhou 9, the first Chinese crew to dock with an orbiting module, the Tiangong 1 space lab.",
+   "source": "https://en.cmse.gov.cn/constitutes/astronautsystem/Taikonauts/201504/t20150417_21586.html"
+  },
+  {
+   "id": "human-045",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "difficulty": "HARD",
+   "question": "What was the world's first space station, launched in 1971?",
+   "answers": [
+    "Salyut 1",
+    "Skylab",
+    "Mir",
+    "Tiangong 1"
+   ],
+   "correct": 0,
+   "explanation": "The Soviet Union launched Salyut 1 in April 1971; it was occupied for about three weeks and re-entered after 175 days in orbit.",
+   "source": "https://www.nasa.gov/missions/station/50-years-ago-launch-of-salyut-the-worlds-first-space-station/"
+  },
+  {
+   "id": "mission-001",
+   "topic": "MISSIONS",
+   "difficulty": "EASY",
+   "question": "Which spacecraft became the first human-made object to enter interstellar space, in 2012?",
+   "answers": [
+    "Pioneer 10",
+    "New Horizons",
+    "Voyager 2",
+    "Voyager 1"
+   ],
+   "correct": 3,
+   "explanation": "Voyager 1 crossed the heliopause, the edge of the Sun's bubble of charged particles, in August 2012. Its twin Voyager 2 followed in 2018.",
+   "source": "https://science.nasa.gov/mission/voyager/voyager-1/"
+  },
+  {
+   "id": "mission-002",
+   "topic": "MISSIONS",
+   "difficulty": "EASY",
+   "question": "What did NASA attach to each Voyager probe as a message for anyone who might find it?",
+   "answers": [
+    "A small radio beacon",
+    "A sample of human DNA",
+    "A gold-plated record",
+    "A copy of the UN charter"
+   ],
+   "correct": 2,
+   "explanation": "The record carries sounds and pictures of Earth, music from many cultures and spoken greetings in 55 languages, plus diagrams showing how to play it.",
+   "source": "https://science.nasa.gov/mission/voyager/golden-record-contents/"
+  },
+  {
+   "id": "mission-003",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "Which spacecraft took the “Pale Blue Dot” photo, showing Earth as a speck about 6 billion km from the Sun?",
+   "answers": [
+    "Voyager 2",
+    "Cassini",
+    "Voyager 1",
+    "Galileo"
+   ],
+   "correct": 2,
+   "explanation": "Voyager 1 turned its camera back towards home on 14 February 1990; the picture inspired Carl Sagan’s book of the same name.",
+   "source": "https://science.nasa.gov/mission/voyager/voyager-1s-pale-blue-dot/"
+  },
+  {
+   "id": "mission-004",
+   "topic": "MISSIONS",
+   "difficulty": "HARD",
+   "question": "True or false: Voyager 2 was launched before Voyager 1.",
+   "answers": [
+    "True",
+    "False"
+   ],
+   "correct": 0,
+   "explanation": "Voyager 2 lifted off on 20 August 1977, about two weeks before its twin. Voyager 1 got its number because its faster route brought it to Jupiter first.",
+   "source": "https://science.nasa.gov/mission/voyager/voyager-2/"
+  },
+  {
+   "id": "mission-005",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "Pioneer 10 was the first spacecraft to cross the asteroid belt and fly past which planet?",
+   "answers": [
+    "Mars",
+    "Saturn",
+    "Jupiter",
+    "Uranus"
+   ],
+   "correct": 2,
+   "explanation": "Pioneer 10 reached Jupiter in December 1973. Built for a 21-month mission, it kept sending signals home for more than 30 years.",
+   "source": "https://science.nasa.gov/mission/pioneer-10/"
+  },
+  {
+   "id": "mission-006",
+   "topic": "MISSIONS",
+   "difficulty": "EASY",
+   "question": "In what year did NASA's New Horizons make the first close flyby of Pluto?",
+   "answers": [
+    "2006",
+    "2015",
+    "2011",
+    "2019"
+   ],
+   "correct": 1,
+   "explanation": "New Horizons launched in January 2006 and swept past Pluto on 14 July 2015, after a journey of nine and a half years.",
+   "source": "https://science.nasa.gov/mission/new-horizons/"
+  },
+  {
+   "id": "mission-007",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "Which NASA spacecraft orbited both the giant asteroid Vesta and the dwarf planet Ceres?",
+   "answers": [
+    "Dawn",
+    "Lucy",
+    "Psyche",
+    "NEAR Shoemaker"
+   ],
+   "correct": 0,
+   "explanation": "Ion engines let Dawn leave orbit around one world and travel on to another, a first for a spacecraft exploring beyond the Earth–Moon system.",
+   "source": "https://science.nasa.gov/mission/dawn/"
+  },
+  {
+   "id": "mission-008",
+   "topic": "MISSIONS",
+   "difficulty": "EASY",
+   "question": "NASA's Cassini spacecraft spent 13 years orbiting which planet?",
+   "answers": [
+    "Jupiter",
+    "Saturn",
+    "Neptune",
+    "Uranus"
+   ],
+   "correct": 1,
+   "explanation": "Cassini arrived at Saturn in 2004 and studied its rings, storms and moons until 2017.",
+   "source": "https://science.nasa.gov/mission/cassini/"
+  },
+  {
+   "id": "mission-009",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "How did the Cassini mission end in September 2017?",
+   "answers": [
+    "It crashed on the moon Titan",
+    "It plunged into Saturn",
+    "It flew out of the solar system",
+    "It went silent in a parking orbit"
+   ],
+   "correct": 1,
+   "explanation": "Low on fuel, Cassini was steered into Saturn's atmosphere so it could never contaminate moons such as Enceladus and Titan that might be habitable.",
+   "source": "https://science.nasa.gov/mission/cassini/grand-finale/"
+  },
+  {
+   "id": "mission-010",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "What was the name of the ESA probe that landed on Saturn's moon Titan in 2005?",
+   "answers": [
+    "Philae",
+    "Beagle 2",
+    "Huygens",
+    "Giotto"
+   ],
+   "correct": 2,
+   "explanation": "Huygens rode to Saturn aboard Cassini, then parachuted through Titan's orange haze. It remains the most distant landing ever made.",
+   "source": "https://www.esa.int/Science_Exploration/Space_Science/Cassini-Huygens"
+  },
+  {
+   "id": "mission-011",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "Unusually for a mission to Jupiter, what powers NASA's Juno spacecraft?",
+   "answers": [
+    "Solar panels",
+    "Nuclear batteries (RTGs)",
+    "Hydrogen fuel cells",
+    "Chemical batteries only"
+   ],
+   "correct": 0,
+   "explanation": "Jupiter gets only about 4% of the sunlight Earth does, so each of Juno's three solar arrays stretches about 9 metres from the spacecraft.",
+   "source": "https://science.nasa.gov/mission/juno/"
+  },
+  {
+   "id": "mission-012",
+   "topic": "MISSIONS",
+   "difficulty": "HARD",
+   "question": "On its way to Jupiter, Galileo found the first known moon of an asteroid. Which asteroid?",
+   "answers": [
+    "Ceres",
+    "Vesta",
+    "Eros",
+    "Ida"
+   ],
+   "correct": 3,
+   "explanation": "Galileo flew past Ida in 1993, and its images revealed a tiny companion, later named Dactyl, circling the asteroid.",
+   "source": "https://science.nasa.gov/solar-system/asteroids/243-ida/"
+  },
+  {
+   "id": "mission-013",
+   "topic": "MISSIONS",
+   "difficulty": "EASY",
+   "question": "What was the name of the small helicopter that made the first powered flight on another planet?",
+   "answers": [
+    "Ingenuity",
+    "Dragonfly",
+    "Skyhawk",
+    "Sojourner"
+   ],
+   "correct": 0,
+   "explanation": "Ingenuity first lifted off on Mars in April 2021. Planned for at most five test flights, it went on to make 72.",
+   "source": "https://science.nasa.gov/mission/mars-2020-perseverance/ingenuity-mars-helicopter/"
+  },
+  {
+   "id": "mission-014",
+   "topic": "MISSIONS",
+   "difficulty": "EASY",
+   "question": "Which NASA rover landed in Mars's Jezero Crater in February 2021?",
+   "answers": [
+    "Curiosity",
+    "Spirit",
+    "Perseverance",
+    "Opportunity"
+   ],
+   "correct": 2,
+   "explanation": "Jezero once held a lake fed by a river delta. Perseverance is sealing rock cores there that a later mission could bring to Earth.",
+   "source": "https://science.nasa.gov/mission/mars-2020-perseverance/"
+  },
+  {
+   "id": "mission-015",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "In which Martian crater did NASA's Curiosity rover land in 2012?",
+   "answers": [
+    "Jezero",
+    "Gusev",
+    "Endurance",
+    "Gale"
+   ],
+   "correct": 3,
+   "explanation": "Gale Crater holds Mount Sharp, a mountain of layered rock that Curiosity has been climbing to read the history of Mars's climate.",
+   "source": "https://science.nasa.gov/mission/msl-curiosity/"
+  },
+  {
+   "id": "mission-016",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "The Opportunity rover was built to last about 90 Martian days. How long did it actually keep working?",
+   "answers": [
+    "About 9 months",
+    "About 3 years",
+    "About 25 years",
+    "Over 14 years"
+   ],
+   "correct": 3,
+   "explanation": "Opportunity landed in January 2004 and last called home in June 2018, when a planet-wide dust storm smothered its solar panels.",
+   "source": "https://science.nasa.gov/mission/mars-exploration-rovers-spirit-and-opportunity/"
+  },
+  {
+   "id": "mission-017",
+   "topic": "MISSIONS",
+   "difficulty": "EASY",
+   "question": "What was the name of the first rover to drive on Mars, delivered by Mars Pathfinder in 1997?",
+   "answers": [
+    "Sojourner",
+    "Spirit",
+    "Zhurong",
+    "Lunokhod"
+   ],
+   "correct": 0,
+   "explanation": "Sojourner weighed only about 10.6 kilograms and spent nearly three months studying rocks around its lander in Ares Vallis.",
+   "source": "https://science.nasa.gov/mission/mars-pathfinder/"
+  },
+  {
+   "id": "mission-018",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "Which spacecraft made the first Mars landing that kept working, sending back surface photos in 1976?",
+   "answers": [
+    "Viking 1",
+    "Mariner 4",
+    "Mars 3",
+    "Pathfinder"
+   ],
+   "correct": 0,
+   "explanation": "The Soviet Mars 3 touched down in 1971 but fell silent within seconds, while the Viking 1 lander kept working for more than six years.",
+   "source": "https://science.nasa.gov/mission/viking-1/"
+  },
+  {
+   "id": "mission-019",
+   "topic": "MISSIONS",
+   "difficulty": "EASY",
+   "question": "ESA's Rosetta was the first spacecraft to orbit what kind of object?",
+   "answers": [
+    "An asteroid",
+    "A dwarf planet",
+    "A comet",
+    "A moon of Mars"
+   ],
+   "correct": 2,
+   "explanation": "Rosetta reached comet 67P/Churyumov-Gerasimenko in 2014 and travelled alongside it around the Sun for two years.",
+   "source": "https://www.esa.int/Science_Exploration/Space_Science/Rosetta"
+  },
+  {
+   "id": "mission-020",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "What was the name of the lander that Rosetta dropped onto comet 67P in November 2014?",
+   "answers": [
+    "MASCOT",
+    "Huygens",
+    "Beagle 2",
+    "Philae"
+   ],
+   "correct": 3,
+   "explanation": "Philae's anchoring harpoons failed, so it bounced and settled in a shadowy spot, yet it still sent back the first pictures from a comet's surface.",
+   "source": "https://www.esa.int/Science_Exploration/Space_Science/Rosetta"
+  },
+  {
+   "id": "mission-021",
+   "topic": "MISSIONS",
+   "difficulty": "EASY",
+   "question": "NASA's Parker Solar Probe was built to fly closer to which object than any spacecraft before?",
+   "answers": [
+    "Mercury",
+    "Venus",
+    "The Sun",
+    "Jupiter"
+   ],
+   "correct": 2,
+   "explanation": "Since 2021 Parker has repeatedly flown through the corona, the Sun's outer atmosphere, protected by a thick carbon heat shield.",
+   "source": "https://science.nasa.gov/mission/parker-solar-probe/"
+  },
+  {
+   "id": "mission-022",
+   "topic": "MISSIONS",
+   "difficulty": "HARD",
+   "question": "Parker Solar Probe was the first NASA mission named after what kind of person?",
+   "answers": [
+    "A living scientist",
+    "An astronaut",
+    "A US president",
+    "A science-fiction author"
+   ],
+   "correct": 0,
+   "explanation": "Physicist Eugene Parker, who predicted the solar wind in 1958, was there to watch the probe launch in 2018.",
+   "source": "https://science.nasa.gov/mission/parker-solar-probe/"
+  },
+  {
+   "id": "mission-023",
+   "topic": "MISSIONS",
+   "difficulty": "EASY",
+   "question": "In what year was the Hubble Space Telescope launched?",
+   "answers": [
+    "1981",
+    "1990",
+    "1998",
+    "2003"
+   ],
+   "correct": 1,
+   "explanation": "Space Shuttle Discovery carried Hubble into orbit in April 1990. Astronauts later visited it on five shuttle missions to repair and upgrade it.",
+   "source": "https://science.nasa.gov/mission/hubble/overview/hubble-by-the-numbers/"
+  },
+  {
+   "id": "mission-024",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "Astronauts fixed what problem on Hubble's first servicing mission in 1993?",
+   "answers": [
+    "A failed main radio",
+    "A broken antenna",
+    "A fuel leak",
+    "A wrongly shaped main mirror"
+   ],
+   "correct": 3,
+   "explanation": "The mirror had been polished very slightly too flat, which blurred early images. Corrective optics installed in 1993 worked like glasses for the telescope.",
+   "source": "https://science.nasa.gov/mission/hubble/observatory/missions-to-hubble/servicing-mission-1/"
+  },
+  {
+   "id": "mission-025",
+   "topic": "MISSIONS",
+   "difficulty": "EASY",
+   "question": "The James Webb Space Telescope mainly observes in which kind of light?",
+   "answers": [
+    "X-rays",
+    "Ultraviolet",
+    "Radio",
+    "Infrared"
+   ],
+   "correct": 3,
+   "explanation": "Infrared slips through cosmic dust and carries the light of the earliest galaxies, which has been stretched to longer wavelengths as the universe expanded.",
+   "source": "https://science.nasa.gov/mission/webb/"
+  },
+  {
+   "id": "mission-026",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "Where does the James Webb Space Telescope operate?",
+   "answers": [
+    "In low Earth orbit",
+    "In orbit around the Moon",
+    "Near L2, 1.5 million km away",
+    "On the Moon's far side"
+   ],
+   "correct": 2,
+   "explanation": "At the second Lagrange point Webb stays lined up with Earth as both circle the Sun, so one sunshield can block the Sun, Earth and Moon together.",
+   "source": "https://science.nasa.gov/mission/webb/orbit/"
+  },
+  {
+   "id": "mission-027",
+   "topic": "MISSIONS",
+   "difficulty": "EASY",
+   "question": "Why must X-ray telescopes like Chandra work from space?",
+   "answers": [
+    "Earth's air absorbs X-rays",
+    "They need total darkness",
+    "Ground telescopes overheat",
+    "Earth's magnetism bends X-rays"
+   ],
+   "correct": 0,
+   "explanation": "Our atmosphere soaks up X-rays, which also protects life on the surface. Chandra's orbit carries it up to about 139,000 km above Earth.",
+   "source": "https://chandra.harvard.edu/about/"
+  },
+  {
+   "id": "mission-028",
+   "topic": "MISSIONS",
+   "difficulty": "HARD",
+   "question": "The Chandra X-ray Observatory honours Subrahmanyan Chandrasekhar. What is he best known for?",
+   "answers": [
+    "Discovering pulsars",
+    "The mass limit of white dwarfs",
+    "Proving the universe expands",
+    "The first black hole image"
+   ],
+   "correct": 1,
+   "explanation": "He showed that a white dwarf cannot be heavier than about 1.4 Suns, so heavier dying stars must explode or collapse. He shared the 1983 Nobel Prize in Physics.",
+   "source": "https://chandra.harvard.edu/about/chandra.html"
+  },
+  {
+   "id": "mission-029",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "Which NASA spacecraft became the first to orbit Mercury, in 2011?",
+   "answers": [
+    "Mariner 10",
+    "MESSENGER",
+    "BepiColombo",
+    "Magellan"
+   ],
+   "correct": 1,
+   "explanation": "MESSENGER orbited Mercury for more than four years, mapping the planet’s surface and finding water ice in craters near its poles.",
+   "source": "https://science.nasa.gov/mission/messenger/"
+  },
+  {
+   "id": "mission-030",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "How do the Kepler and TESS telescopes find most of their planets?",
+   "answers": [
+    "Photographing them directly",
+    "Spotting stars dim as planets pass",
+    "Listening for radio signals",
+    "Measuring the planets' heat"
+   ],
+   "correct": 1,
+   "explanation": "This is the transit method. TESS searches almost the whole sky, an area about 400 times larger than the patch Kepler watched.",
+   "source": "https://science.nasa.gov/exoplanets/whats-a-transit/"
+  },
+  {
+   "id": "mission-031",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "NASA's Spitzer telescope helped reveal how many Earth-size planets around the star TRAPPIST-1?",
+   "answers": [
+    "Three",
+    "Five",
+    "Seven",
+    "Nine"
+   ],
+   "correct": 2,
+   "explanation": "Announced in 2017, the seven rocky worlds circle a cool red dwarf about 40 light-years away, and several orbit in its habitable zone.",
+   "source": "https://science.nasa.gov/exoplanets/trappist1/"
+  },
+  {
+   "id": "mission-032",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "What is ESA's Gaia mission famous for?",
+   "answers": [
+    "Landing on a comet",
+    "Mapping nearly 2 billion stars",
+    "Photographing exoplanet surfaces",
+    "Studying the Sun's poles"
+   ],
+   "correct": 1,
+   "explanation": "From 2014 to 2025 Gaia measured its stars' positions, motions and brightness again and again, building the most precise 3D map of the Milky Way yet.",
+   "source": "https://www.esa.int/Science_Exploration/Space_Science/Gaia"
+  },
+  {
+   "id": "mission-033",
+   "topic": "MISSIONS",
+   "difficulty": "HARD",
+   "question": "Which NASA probe mapped tiny temperature ripples in the cosmic microwave background from 2001 to 2010?",
+   "answers": [
+    "COBE",
+    "Planck",
+    "WMAP",
+    "Spitzer"
+   ],
+   "correct": 2,
+   "explanation": "WMAP’s all-sky maps of the big bang’s afterglow pinned down the universe’s age and its mix of ordinary matter, dark matter and dark energy.",
+   "source": "https://science.nasa.gov/mission/wmap/"
+  },
+  {
+   "id": "mission-034",
+   "topic": "MISSIONS",
+   "difficulty": "HARD",
+   "question": "By about how much did DART's impact shorten the orbit of Dimorphos around its larger partner?",
+   "answers": [
+    "About 32 seconds",
+    "About 32 minutes",
+    "About 3 hours",
+    "About 3 days"
+   ],
+   "correct": 1,
+   "explanation": "Telescopes on Earth measured the orbit drop from 11 hours 55 minutes to 11 hours 23 minutes, far beyond the 73 seconds NASA had set as success.",
+   "source": "https://www.nasa.gov/news-release/nasa-confirms-dart-mission-impact-changed-asteroids-motion-in-space/"
+  },
+  {
+   "id": "mission-035",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "Which spacecraft was the first to orbit an asteroid and the first to land on one, Eros, in 2001?",
+   "answers": [
+    "Hayabusa",
+    "OSIRIS-REx",
+    "Rosetta",
+    "NEAR Shoemaker"
+   ],
+   "correct": 3,
+   "explanation": "NEAR Shoemaker was never built to land, yet after a year in orbit its team set it down gently on Eros in February 2001.",
+   "source": "https://science.nasa.gov/mission/near-shoemaker/"
+  },
+  {
+   "id": "mission-036",
+   "topic": "MISSIONS",
+   "difficulty": "EASY",
+   "question": "Which space agency's Hayabusa2 mission returned samples from asteroid Ryugu?",
+   "answers": [
+    "ESA",
+    "ISRO",
+    "CNSA",
+    "JAXA"
+   ],
+   "correct": 3,
+   "explanation": "Hayabusa2 touched down on Ryugu twice and even fired an impactor to expose fresh material before its capsule landed in Australia in December 2020.",
+   "source": "https://global.jaxa.jp/projects/sas/hayabusa2/"
+  },
+  {
+   "id": "mission-037",
+   "topic": "MISSIONS",
+   "difficulty": "HARD",
+   "question": "Japan's first Hayabusa probe brought back the first asteroid grains in 2010. Which asteroid were they from?",
+   "answers": [
+    "Eros",
+    "Gaspra",
+    "Itokawa",
+    "Ryugu"
+   ],
+   "correct": 2,
+   "explanation": "Despite engine failures and weeks of lost contact, Hayabusa limped home with tiny dust grains from Itokawa, a small peanut-shaped asteroid.",
+   "source": "https://science.nasa.gov/mission/hayabusa/"
+  },
+  {
+   "id": "mission-038",
+   "topic": "MISSIONS",
+   "difficulty": "EASY",
+   "question": "NASA's Europa Clipper is on its way to study a moon of which planet?",
+   "answers": [
+    "Saturn",
+    "Mars",
+    "Jupiter",
+    "Neptune"
+   ],
+   "correct": 2,
+   "explanation": "Launched in October 2024, it is designed to make dozens of close flybys of Europa to learn whether its hidden ocean could support life.",
+   "source": "https://science.nasa.gov/mission/europa-clipper/"
+  },
+  {
+   "id": "mission-039",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "NASA's Deep Space Network has antenna sites in California, Spain and which other country?",
+   "answers": [
+    "Australia",
+    "Japan",
+    "Chile",
+    "South Africa"
+   ],
+   "correct": 0,
+   "explanation": "The three sites are spread roughly evenly around the globe, so as Earth turns at least one of them can always reach a distant spacecraft.",
+   "source": "https://www.nasa.gov/communicating-with-missions/dsn/"
+  },
+  {
+   "id": "mission-040",
+   "topic": "MISSIONS",
+   "difficulty": "MEDIUM",
+   "question": "In 2023, ISRO's Chandrayaan-3 became the first mission to land near which part of the Moon?",
+   "answers": [
+    "Its far side",
+    "Its equator",
+    "Its south pole",
+    "Its north pole"
+   ],
+   "correct": 2,
+   "explanation": "The Vikram lander touched down about 600 km from the south pole, and its small Pragyan rover then studied the surrounding soil.",
+   "source": "https://www.nasa.gov/image-article/nasas-lro-observes-chandrayaan-3-landing-site/"
+  },
+  {
+   "id": "mission-041",
+   "topic": "MISSIONS",
+   "difficulty": "EASY",
+   "question": "China's Chang'e 4 made history in 2019 by landing where?",
+   "answers": [
+    "On the Moon's far side",
+    "On Mars",
+    "On a comet",
+    "On Venus"
+   ],
+   "correct": 0,
+   "explanation": "No radio signal can travel straight from the far side to Earth, so China first placed a relay satellite, Queqiao, out beyond the Moon.",
+   "source": "https://science.nasa.gov/image-article/apod-2019-january-5-yutu-2-on-the-farside/"
+  },
+  {
+   "id": "mission-042",
+   "topic": "MISSIONS",
+   "difficulty": "HARD",
+   "question": "India's Mars Orbiter Mission was designed to last six months. How long did it end up working?",
+   "answers": [
+    "About 1 year",
+    "About 3 years",
+    "More than 7 years",
+    "More than 20 years"
+   ],
+   "correct": 2,
+   "explanation": "India's first interplanetary probe reached Mars in 2014, making ISRO the fourth space agency to put a spacecraft into Mars orbit.",
+   "source": "https://www.isro.gov.in/MarsOrbiterMissionSpacecraft.html"
+  },
+  {
+   "id": "mission-043",
+   "topic": "MISSIONS",
+   "difficulty": "EASY",
+   "question": "How did NASA's Magellan map the surface of Venus through its thick clouds?",
+   "answers": [
+    "With radar",
+    "With an infrared camera",
+    "With landers",
+    "With a laser"
+   ],
+   "correct": 0,
+   "explanation": "Between 1990 and 1994 Magellan's radar imaged almost the entire planet, revealing vast lava plains and volcanoes.",
+   "source": "https://science.nasa.gov/mission/magellan/"
+  },
+  {
+   "id": "mission-044",
+   "topic": "MISSIONS",
+   "difficulty": "HARD",
+   "question": "Which spacecraft has discovered more comets than any other observer in history?",
+   "answers": [
+    "Hubble",
+    "Kepler",
+    "SOHO",
+    "Rosetta"
+   ],
+   "correct": 2,
+   "explanation": "The ESA-NASA solar observatory SOHO, launched in 1995, has found more than 5,000 comets, most of them small ones diving close to the Sun.",
+   "source": "https://science.nasa.gov/mission/soho/"
+  },
+  {
+   "id": "mission-045",
+   "topic": "MISSIONS",
+   "difficulty": "HARD",
+   "question": "Which planet was the first beyond Earth from whose surface a spacecraft sent back data, in 1970?",
+   "answers": [
+    "Mars",
+    "Venus",
+    "Mercury"
+   ],
+   "correct": 1,
+   "explanation": "The Soviet Venera 7 survived a hard landing and radioed back temperatures of around 475 degrees Celsius for about 20 minutes.",
+   "source": "https://science.nasa.gov/deep-space-exploration/"
+  },
+  {
+   "id": "sky-001",
+   "topic": "NIGHT_SKY",
+   "difficulty": "EASY",
+   "question": "Which star stays almost still in the northern sky while the other stars circle around it?",
+   "answers": [
+    "Sirius",
+    "Polaris",
+    "Vega",
+    "Betelgeuse"
+   ],
+   "correct": 1,
+   "explanation": "Polaris lies almost exactly in line with Earth's spin axis above the North Pole, so it barely moves as Earth turns, and it always marks north.",
+   "source": "https://science.nasa.gov/solar-system/what-is-the-north-star-and-how-do-you-find-it/"
+  },
+  {
+   "id": "sky-002",
+   "topic": "NIGHT_SKY",
+   "difficulty": "EASY",
+   "question": "In which month does the Quadrantid meteor shower peak?",
+   "answers": [
+    "January",
+    "April",
+    "August",
+    "October"
+   ],
+   "correct": 0,
+   "explanation": "The Quadrantids can be among the year’s best showers, but their peak is short, often only a few hours, and falls on cold northern nights.",
+   "source": "https://science.nasa.gov/solar-system/meteors-meteorites/quadrantids/"
+  },
+  {
+   "id": "sky-003",
+   "topic": "NIGHT_SKY",
+   "difficulty": "MEDIUM",
+   "question": "How many constellations does the International Astronomical Union officially recognise?",
+   "answers": [
+    "12",
+    "48",
+    "88",
+    "110"
+   ],
+   "correct": 2,
+   "explanation": "The IAU agreed on the list of 88 in 1922 and later fixed boundaries for them, so every point in the sky now belongs to exactly one constellation.",
+   "source": "https://www.iau.org/IAU/IAU/Astronomy-FAQs/Constellations.aspx"
+  },
+  {
+   "id": "sky-004",
+   "topic": "NIGHT_SKY",
+   "difficulty": "EASY",
+   "question": "The Big Dipper is a star pattern within which constellation?",
+   "answers": [
+    "Ursa Minor",
+    "Cassiopeia",
+    "Orion",
+    "Ursa Major"
+   ],
+   "correct": 3,
+   "explanation": "The Big Dipper, also called the Plough, is an asterism: a familiar pattern of stars inside the much larger Great Bear constellation.",
+   "source": "https://science.nasa.gov/solar-system/skywatching/what-are-asterisms/"
+  },
+  {
+   "id": "sky-005",
+   "topic": "NIGHT_SKY",
+   "difficulty": "EASY",
+   "question": "Which constellation has a 'belt' of three bright stars in a row?",
+   "answers": [
+    "Orion",
+    "Leo",
+    "Scorpius",
+    "Cygnus"
+   ],
+   "correct": 0,
+   "explanation": "Orion can be seen from both hemispheres. Just below its belt lies the Orion Nebula, a star-forming cloud visible to the naked eye as a fuzzy patch.",
+   "source": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-42/"
+  },
+  {
+   "id": "sky-006",
+   "topic": "NIGHT_SKY",
+   "difficulty": "MEDIUM",
+   "question": "In the Southern Hemisphere, which constellation helps observers find the south celestial pole?",
+   "answers": [
+    "Cassiopeia",
+    "Lyra",
+    "Crux (Southern Cross)",
+    "Draco"
+   ],
+   "correct": 2,
+   "explanation": "A line from the top star of the Southern Cross through its brightest star points toward the pole. No bright 'South Star' marks the spot, unlike Polaris in the north.",
+   "source": "https://science.nasa.gov/image-article/apod-2021-january-25-southern-cross-over-chilean-volcano/"
+  },
+  {
+   "id": "sky-007",
+   "topic": "NIGHT_SKY",
+   "difficulty": "EASY",
+   "question": "After the Moon, which is the brightest natural object in the night sky?",
+   "answers": [
+    "Jupiter",
+    "Mars",
+    "Venus",
+    "Sirius"
+   ],
+   "correct": 2,
+   "explanation": "Venus never strays far from the Sun in our sky, so it shines in the west after sunset or in the east before dawn: the evening star and morning star.",
+   "source": "https://science.nasa.gov/venus/venus-facts/"
+  },
+  {
+   "id": "sky-008",
+   "topic": "NIGHT_SKY",
+   "difficulty": "MEDIUM",
+   "question": "Why do planets usually twinkle less than stars?",
+   "answers": [
+    "They appear as tiny discs, not points",
+    "They make their own light",
+    "They are hotter than stars",
+    "They are above the atmosphere"
+   ],
+   "correct": 0,
+   "explanation": "Turbulent air jiggles a star's single point of light, while a planet's small disc averages the shimmer out. Stars low on the horizon twinkle the most.",
+   "source": "https://imagine.gsfc.nasa.gov/ask_astro/night_sky.html"
+  },
+  {
+   "id": "sky-009",
+   "topic": "NIGHT_SKY",
+   "difficulty": "EASY",
+   "question": "What causes the Moon's phases?",
+   "answers": [
+    "Earth's shadow falling on it",
+    "Our changing view of its sunlit half",
+    "Clouds in Earth's atmosphere",
+    "The Moon spinning on its axis"
+   ],
+   "correct": 1,
+   "explanation": "The Sun always lights half of the Moon. As the Moon orbits Earth we see more or less of that lit half; Earth's shadow only matters during a lunar eclipse.",
+   "source": "https://science.nasa.gov/moon/moon-phases/"
+  },
+  {
+   "id": "sky-010",
+   "topic": "NIGHT_SKY",
+   "difficulty": "MEDIUM",
+   "question": "Roughly how long is it from one full Moon to the next?",
+   "answers": [
+    "About 24 days",
+    "About 27.3 days",
+    "About 29.5 days",
+    "About 31 days"
+   ],
+   "correct": 2,
+   "explanation": "The Moon circles Earth in about 27.3 days, but Earth moves along its own orbit meanwhile, so the Moon needs about two more days to line up with the Sun again.",
+   "source": "https://science.nasa.gov/moon/moon-phases/"
+  },
+  {
+   "id": "sky-011",
+   "topic": "NIGHT_SKY",
+   "difficulty": "EASY",
+   "question": "During which type of eclipse can the Moon turn a coppery red?",
+   "answers": [
+    "Total solar eclipse",
+    "Total lunar eclipse",
+    "Annular solar eclipse",
+    "Partial solar eclipse"
+   ],
+   "correct": 1,
+   "explanation": "Earth's atmosphere bends reddish sunlight into its shadow, as if all of Earth's sunrises and sunsets were lighting the Moon at once.",
+   "source": "https://science.nasa.gov/moon/eclipses/"
+  },
+  {
+   "id": "sky-012",
+   "topic": "NIGHT_SKY",
+   "difficulty": "EASY",
+   "question": "True or false: it is safe to watch a total lunar eclipse with the naked eye.",
+   "answers": [
+    "True",
+    "False"
+   ],
+   "correct": 0,
+   "explanation": "A lunar eclipse is simply the Moon dimming in Earth's shadow, so no eye protection is needed, unlike a solar eclipse.",
+   "source": "https://science.nasa.gov/eclipses/"
+  },
+  {
+   "id": "sky-013",
+   "topic": "NIGHT_SKY",
+   "difficulty": "MEDIUM",
+   "question": "Why does an annular solar eclipse leave a 'ring of fire' around the Moon?",
+   "answers": [
+    "The Moon is too far to cover the Sun",
+    "Earth's shadow is too small",
+    "The Sun swells during eclipses",
+    "Clouds bend the sunlight"
+   ],
+   "correct": 0,
+   "explanation": "The Moon's orbit is slightly oval. Near its farthest point the Moon looks a little smaller than the Sun, so a bright rim of sunlight remains.",
+   "source": "https://science.nasa.gov/eclipses/types/"
+  },
+  {
+   "id": "sky-014",
+   "topic": "NIGHT_SKY",
+   "difficulty": "MEDIUM",
+   "question": "In which month does the Perseid meteor shower peak each year?",
+   "answers": [
+    "January",
+    "May",
+    "August",
+    "December"
+   ],
+   "correct": 2,
+   "explanation": "Every mid-August Earth ploughs through dust shed by comet Swift-Tuttle, which takes about 133 years to orbit the Sun. The Northern Hemisphere gets the best view.",
+   "source": "https://science.nasa.gov/solar-system/meteors-meteorites/perseids/"
+  },
+  {
+   "id": "sky-015",
+   "topic": "NIGHT_SKY",
+   "difficulty": "MEDIUM",
+   "question": "Which gas produces the most common green colour of the aurora?",
+   "answers": [
+    "Oxygen",
+    "Nitrogen",
+    "Neon",
+    "Hydrogen"
+   ],
+   "correct": 0,
+   "explanation": "Green light comes from oxygen about 100 to 200 km up, energised by particles from space; nitrogen adds blue and pink.",
+   "source": "https://science.nasa.gov/sun/auroras/"
+  },
+  {
+   "id": "sky-016",
+   "topic": "NIGHT_SKY",
+   "difficulty": "EASY",
+   "question": "What are the southern lights called?",
+   "answers": [
+    "Aurora borealis",
+    "Aurora australis",
+    "Zodiacal light",
+    "Airglow"
+   ],
+   "correct": 1,
+   "explanation": "Auroras form around both of Earth's magnetic poles, so the northern and southern lights are two sides of the same space weather.",
+   "source": "https://www.spaceweather.gov/phenomena/aurora"
+  },
+  {
+   "id": "sky-017",
+   "topic": "NIGHT_SKY",
+   "difficulty": "MEDIUM",
+   "question": "Roughly how long do your eyes need to adapt fully to the dark for stargazing?",
+   "answers": [
+    "About 30 seconds",
+    "About 3 minutes",
+    "About 30 minutes",
+    "About 3 hours"
+   ],
+   "correct": 2,
+   "explanation": "One glance at a bright white screen undoes much of that adjustment, which is why stargazers use dim red lights.",
+   "source": "https://science.nasa.gov/solar-system/skywatching/night-sky-network/may2024-night-sky-notes/"
+  },
+  {
+   "id": "sky-018",
+   "topic": "NIGHT_SKY",
+   "difficulty": "EASY",
+   "question": "How does the International Space Station usually look from the ground?",
+   "answers": [
+    "A blinking red and green light",
+    "A fuzzy glowing ring",
+    "A star that flickers but stays put",
+    "A steady bright dot gliding across"
+   ],
+   "correct": 3,
+   "explanation": "The station has no flashing lights, does not change direction mid-pass and crosses the sky faster than a typical airliner.",
+   "source": "https://www.nasa.gov/spot-the-station/"
+  },
+  {
+   "id": "sky-019",
+   "topic": "NIGHT_SKY",
+   "difficulty": "MEDIUM",
+   "question": "Why is the ISS usually seen within a few hours of sunset or sunrise?",
+   "answers": [
+    "It turns its lights on then",
+    "It is sunlit while your sky is dark",
+    "It only passes overhead then",
+    "Its solar panels glow at night"
+   ],
+   "correct": 1,
+   "explanation": "The station shines by reflecting sunlight. Late at night it is usually in Earth's shadow, and in daytime the bright sky hides it.",
+   "source": "https://www.nasa.gov/spot-the-station/"
+  },
+  {
+   "id": "sky-020",
+   "topic": "NIGHT_SKY",
+   "difficulty": "MEDIUM",
+   "question": "How wide does the Andromeda Galaxy span in our sky, compared with the full Moon?",
+   "answers": [
+    "Half as wide",
+    "About as wide",
+    "About six times as wide",
+    "About sixty times as wide"
+   ],
+   "correct": 2,
+   "explanation": "Only its bright core is easy to see with the naked eye; the faint outer disc shows up in long-exposure photos.",
+   "source": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-31/"
+  },
+  {
+   "id": "sky-021",
+   "topic": "NIGHT_SKY",
+   "difficulty": "HARD",
+   "question": "Why is the Geminid meteor shower unusual?",
+   "answers": [
+    "Its source is an asteroid",
+    "It is seen only from the equator",
+    "It returns only every 33 years",
+    "All its meteors are green"
+   ],
+   "correct": 0,
+   "explanation": "Most showers come from comet dust, but the Geminids come from debris of 3200 Phaethon, an asteroid that may be a burnt-out 'rock comet'.",
+   "source": "https://science.nasa.gov/solar-system/meteors-meteorites/geminids/"
+  },
+  {
+   "id": "sky-022",
+   "topic": "NIGHT_SKY",
+   "difficulty": "HARD",
+   "question": "Why do the meteors in a shower seem to come from one point in the sky?",
+   "answers": [
+    "They come from a single star",
+    "Perspective of parallel paths",
+    "Earth's magnetism focuses them",
+    "That point is the comet itself"
+   ],
+   "correct": 1,
+   "explanation": "The grains travel side by side, like railway tracks that seem to meet in the distance. The point is called the radiant and gives each shower its name.",
+   "source": "https://www.amsmeteors.org/faq/"
+  },
+  {
+   "id": "sky-023",
+   "topic": "NIGHT_SKY",
+   "difficulty": "EASY",
+   "question": "Which phase of the Moon comes right after a full Moon?",
+   "answers": [
+    "Waxing gibbous",
+    "Waning gibbous",
+    "First quarter",
+    "New Moon"
+   ],
+   "correct": 1,
+   "explanation": "After full Moon the lit part shrinks, or wanes, each night; gibbous means more than half of the disc is lit.",
+   "source": "https://science.nasa.gov/moon/moon-phases/"
+  },
+  {
+   "id": "sky-024",
+   "topic": "NIGHT_SKY",
+   "difficulty": "HARD",
+   "question": "From the Northern Hemisphere, how high above the horizon does Polaris appear?",
+   "answers": [
+    "Always straight overhead",
+    "At an angle equal to your latitude",
+    "Always 45 degrees up",
+    "At an angle equal to your longitude"
+   ],
+   "correct": 1,
+   "explanation": "At the equator Polaris sits on the horizon and at the North Pole it is overhead, which let navigators estimate their latitude from it.",
+   "source": "https://solar.physics.montana.edu/YPOP/Classroom/Lessons/Sundials/skydome.html"
+  },
+  {
+   "id": "sky-025",
+   "topic": "NIGHT_SKY",
+   "difficulty": "HARD",
+   "question": "Roughly what share of the world's people live under light-polluted night skies?",
+   "answers": [
+    "About 10%",
+    "About 35%",
+    "About 50%",
+    "More than 80%"
+   ],
+   "correct": 3,
+   "explanation": "A 2016 world atlas of night-sky brightness also found that the Milky Way is hidden from more than a third of humanity.",
+   "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4928945/"
+  }
+ ],
+ "facts": [
+  {
+   "id": "fact-sol-01",
+   "topic": "SOLAR_SYSTEM",
+   "text": "Saturn's ring system reaches out about 282,000 km from the planet, yet the main rings are typically only about 10 metres thick.",
+   "source": "https://science.nasa.gov/saturn/facts/"
+  },
+  {
+   "id": "fact-sol-02",
+   "topic": "SOLAR_SYSTEM",
+   "text": "For about a quarter of each 84-year orbit, the Sun shines almost straight down on one of Uranus's poles, leaving the other hemisphere in a winter darkness that lasts about 21 years.",
+   "source": "https://science.nasa.gov/uranus/facts/"
+  },
+  {
+   "id": "fact-sol-03",
+   "topic": "SOLAR_SYSTEM",
+   "text": "All the asteroids in the Solar System put together add up to less mass than Earth's Moon.",
+   "source": "https://science.nasa.gov/solar-system/asteroids/facts/"
+  },
+  {
+   "id": "fact-sol-04",
+   "topic": "SOLAR_SYSTEM",
+   "text": "Pluto's oval orbit sometimes brings it closer to the Sun than Neptune; the most recent time was from 1979 to 1999.",
+   "source": "https://science.nasa.gov/neptune/neptune-facts/"
+  },
+  {
+   "id": "fact-sol-05",
+   "topic": "SOLAR_SYSTEM",
+   "text": "On Mercury, one full cycle of day and night lasts 176 Earth days, which is two Mercury years.",
+   "source": "https://science.nasa.gov/mercury/facts/"
+  },
+  {
+   "id": "fact-sol-06",
+   "topic": "SOLAR_SYSTEM",
+   "text": "Even travelling about 1.6 million km a day, Voyager 1 will need around 300 years to reach the inner edge of the Oort Cloud, and perhaps 30,000 years to pass through it.",
+   "source": "https://science.nasa.gov/solar-system/oort-cloud/facts/"
+  },
+  {
+   "id": "fact-sol-07",
+   "topic": "SOLAR_SYSTEM",
+   "text": "On Uranus's moon Miranda, gravity is so weak and the cliffs so tall that a rock dropped from the highest one would take about 10 minutes to reach the bottom.",
+   "source": "https://science.nasa.gov/uranus/moons/miranda/"
+  },
+  {
+   "id": "fact-sol-08",
+   "topic": "SOLAR_SYSTEM",
+   "text": "Deep inside Jupiter, crushing pressure turns hydrogen gas into liquid, giving the planet the largest ocean in the Solar System, made of hydrogen instead of water.",
+   "source": "https://science.nasa.gov/jupiter/jupiter-facts/"
+  },
+  {
+   "id": "fact-star-01",
+   "topic": "SUN_AND_STARS",
+   "text": "A sugar cube of neutron star material would weigh about a billion tons on Earth, roughly as much as a mountain.",
+   "source": "https://imagine.gsfc.nasa.gov/science/objects/neutron_stars1.html"
+  },
+  {
+   "id": "fact-star-02",
+   "topic": "SUN_AND_STARS",
+   "text": "The Sun has no solid surface, so it doesn’t spin as one piece: a turn takes about 25 days at its equator but about 36 days near its poles.",
+   "source": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+   "id": "fact-star-03",
+   "topic": "SUN_AND_STARS",
+   "text": "About every 11 years the Sun’s magnetic north and south poles swap places, so its full magnetic cycle takes about 22 years.",
+   "source": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+   "id": "fact-star-04",
+   "topic": "SUN_AND_STARS",
+   "text": "The fastest coronal mass ejections aimed at Earth can cross the 150 million km gap in as little as 15 to 18 hours.",
+   "source": "https://www.spaceweather.gov/phenomena/coronal-mass-ejections"
+  },
+  {
+   "id": "fact-star-05",
+   "topic": "SUN_AND_STARS",
+   "text": "Energy made in the Sun’s core bounces around inside the star for about 170,000 years before it gets near the surface; the last leg to Earth then takes just over 8 minutes.",
+   "source": "https://science.nasa.gov/sun/facts/"
+  },
+  {
+   "id": "fact-star-06",
+   "topic": "SUN_AND_STARS",
+   "text": "Some red dwarfs with about a third of the Sun’s mass may keep shining for up to 14 trillion years, roughly a thousand times the universe’s current age.",
+   "source": "https://science.nasa.gov/universe/stars/types/"
+  },
+  {
+   "id": "fact-star-07",
+   "topic": "SUN_AND_STARS",
+   "text": "A magnetar’s magnetic field can be 10 trillion times stronger than a fridge magnet’s and up to a thousand times stronger than an ordinary neutron star’s.",
+   "source": "https://science.nasa.gov/universe/stars/types/"
+  },
+  {
+   "id": "fact-star-08",
+   "topic": "SUN_AND_STARS",
+   "text": "Betelgeuse’s surprise dimming in late 2019 came after the star blasted off a huge piece of its surface, which cooled into a dust cloud that blocked some of its light.",
+   "source": "https://science.nasa.gov/missions/hubble/hubble-sees-red-supergiant-star-betelgeuse-slowly-recovering-after-blowing-its-top/"
+  },
+  {
+   "id": "fact-deep-01",
+   "topic": "DEEP_SPACE",
+   "text": "When the cosmic microwave background was released the universe was a glowing gas at about 2,700 °C; expansion has since stretched that light to just 2.7 degrees above absolute zero.",
+   "source": "https://www.esa.int/Science_Exploration/Space_Science/Planck/Planck_reveals_an_almost_perfect_Universe"
+  },
+  {
+   "id": "fact-deep-02",
+   "topic": "DEEP_SPACE",
+   "text": "The giant elliptical galaxy M87 has roughly 15,000 globular star clusters, while our Milky Way has only about 150.",
+   "source": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-87/"
+  },
+  {
+   "id": "fact-deep-03",
+   "topic": "DEEP_SPACE",
+   "text": "Between 2014 and 2025, ESA’s Gaia spacecraft made more than three trillion observations of about two billion stars and other objects.",
+   "source": "https://www.esa.int/Science_Exploration/Space_Science/Gaia"
+  },
+  {
+   "id": "fact-deep-04",
+   "topic": "DEEP_SPACE",
+   "text": "In a galaxy cluster, the 30–100 million °C gas between the galaxies holds more mass than all of the cluster’s galaxies put together.",
+   "source": "https://chandra.harvard.edu/xray_sources/galaxy_clusters.html"
+  },
+  {
+   "id": "fact-deep-05",
+   "topic": "DEEP_SPACE",
+   "text": "Black holes are not cosmic vacuum cleaners: from far enough away, a black hole’s gravity acts just like that of any other object with the same mass.",
+   "source": "https://science.nasa.gov/universe/black-holes/"
+  },
+  {
+   "id": "fact-deep-06",
+   "topic": "DEEP_SPACE",
+   "text": "By the time the first gravitational waves LIGO caught reached Earth, the wobble they caused in spacetime was 10,000 times smaller than an atomic nucleus.",
+   "source": "https://www.ligo.caltech.edu/page/what-are-gw"
+  },
+  {
+   "id": "fact-deep-07",
+   "topic": "DEEP_SPACE",
+   "text": "The 1995 Hubble Deep Field stared for 10 days at a patch of sky about 1/13 the width of the full Moon and revealed roughly 3,000 galaxies.",
+   "source": "https://science.nasa.gov/mission/hubble/science/universe-uncovered/hubble-deep-fields/"
+  },
+  {
+   "id": "fact-deep-08",
+   "topic": "DEEP_SPACE",
+   "text": "Charles Messier once mistook the Crab Nebula for Halley’s Comet, and the mix-up inspired his famous list of fuzzy objects that comet hunters could ignore.",
+   "source": "https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-1/"
+  },
+  {
+   "id": "fact-earth-01",
+   "topic": "EARTH",
+   "text": "Because Earth bulges at the equator, the summit of Ecuador's Chimborazo is the point farthest from Earth's centre, about 2 km farther out than the top of Everest.",
+   "source": "https://oceanservice.noaa.gov/facts/highestpoint.html"
+  },
+  {
+   "id": "fact-earth-02",
+   "topic": "EARTH",
+   "text": "Earth is the densest planet in the solar system, averaging about 5.5 grams per cubic centimetre, roughly five and a half times the density of water.",
+   "source": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/"
+  },
+  {
+   "id": "fact-earth-03",
+   "topic": "EARTH",
+   "text": "The thermosphere can heat up to around 2,000 degrees Celsius when the Sun is very active, yet its air is so thin that the International Space Station orbits inside it.",
+   "source": "https://scied.ucar.edu/learning-zone/atmosphere/thermosphere"
+  },
+  {
+   "id": "fact-earth-04",
+   "topic": "EARTH",
+   "text": "Earth's north magnetic pole is on the move: it has wandered from the Canadian Arctic toward Siberia, recently at around 50 km a year.",
+   "source": "https://www.ncei.noaa.gov/products/wandering-geomagnetic-poles"
+  },
+  {
+   "id": "fact-earth-05",
+   "topic": "EARTH",
+   "text": "Earth's outermost atmosphere, a faint glow of hydrogen called the geocorona, stretches out to about 630,000 km, almost twice the distance to the Moon.",
+   "source": "https://www.esa.int/Science_Exploration/Space_Science/Earth_s_atmosphere_stretches_out_to_the_Moon_and_beyond"
+  },
+  {
+   "id": "fact-earth-06",
+   "topic": "EARTH",
+   "text": "From its post a million miles away, the DSCOVR spacecraft has photographed the Moon crossing in front of Earth, showing the fully lit lunar far side that can never be seen from the ground.",
+   "source": "https://science.nasa.gov/mission/dscovr/"
+  },
+  {
+   "id": "fact-exo-01",
+   "topic": "EXOPLANETS",
+   "text": "All seven planets of TRAPPIST-1 orbit closer to their star than Mercury does to the Sun, and their years last between about 1.5 and 19 days.",
+   "source": "https://science.nasa.gov/mission/webb/science-overview/science-explainers/what-is-webb-revealing-about-the-trappist-1-system/"
+  },
+  {
+   "id": "fact-exo-02",
+   "topic": "EXOPLANETS",
+   "text": "For its main mission, Kepler stared at about 150,000 stars in one patch of sky in the constellation Cygnus, and it left a legacy of more than 2,600 planet discoveries.",
+   "source": "https://science.nasa.gov/mission/kepler/"
+  },
+  {
+   "id": "fact-exo-03",
+   "topic": "EXOPLANETS",
+   "text": "Statistics from Kepler suggest the Milky Way has more planets than stars, which would mean more than a trillion planets in our galaxy alone.",
+   "source": "https://science.nasa.gov/exoplanets/how-we-find-and-characterize/"
+  },
+  {
+   "id": "fact-exo-04",
+   "topic": "EXOPLANETS",
+   "text": "The hot Jupiter WASP-12 b is being eaten by its star: it is stretched into a football shape, its swollen atmosphere spills onto the star, and it may have only about 10 million years left.",
+   "source": "https://science.nasa.gov/missions/hubble/hubble-finds-star-eating-a-planet/"
+  },
+  {
+   "id": "fact-exo-05",
+   "topic": "EXOPLANETS",
+   "text": "Webb's first direct image of an exoplanet, taken in 2022, showed HIP 65426 b, a young gas giant more than 10,000 times fainter than its star in near-infrared light.",
+   "source": "https://science.nasa.gov/blogs/webb/2022/09/01/nasas-webb-takes-its-first-ever-direct-image-of-distant-world/"
+  },
+  {
+   "id": "fact-exo-06",
+   "topic": "EXOPLANETS",
+   "text": "TESS flies an unusual orbit lasting 13.7 days, locked in a 2:1 rhythm with the Moon, which keeps the orbit stable for many years.",
+   "source": "https://asd.gsfc.nasa.gov/archive/tess/overview.html"
+  },
+  {
+   "id": "fact-human-01",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "text": "In 1998, aged 77, John Glenn returned to orbit aboard Space Shuttle Discovery, 36 years after his first flight, and doctors studied how spaceflight affected an older body.",
+   "source": "https://www.nasa.gov/mission/sts-95/"
+  },
+  {
+   "id": "fact-human-02",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "text": "At the end of Apollo 15, David Scott dropped a hammer and a falcon feather on the Moon on live TV, and with no air to slow the feather, both hit the ground together.",
+   "source": "https://science.nasa.gov/resource/the-apollo-15-hammer-feather-drop/"
+  },
+  {
+   "id": "fact-human-03",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "text": "The space station's life support recycles about 98 percent of the water crews use, including moisture from their breath and sweat and even urine.",
+   "source": "https://www.nasa.gov/missions/station/iss-research/nasa-achieves-water-recovery-milestone-on-international-space-station/"
+  },
+  {
+   "id": "fact-human-04",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "text": "Across six landings, Apollo astronauts brought back about 382 kilograms of Moon rocks, core samples and soil, still studied by scientists today.",
+   "source": "https://curator.jsc.nasa.gov/lunar/"
+  },
+  {
+   "id": "fact-human-05",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "text": "People have lived aboard the International Space Station without a break since November 2000, so nobody born after that date has known a time with no humans in orbit.",
+   "source": "https://www.nasa.gov/international-space-station/space-station-facts-and-figures/"
+  },
+  {
+   "id": "fact-human-06",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "text": "Valentina Tereshkova's single flight in 1963 lasted almost three days, more time in space than all American Mercury astronauts who had flown up to then combined.",
+   "source": "https://www.esa.int/About_Us/50_years_of_ESA/50_years_of_humans_in_space/First_woman_in_space_Valentina"
+  },
+  {
+   "id": "fact-human-07",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "text": "After the first spacewalk, Alexei Leonov's suit had ballooned so much that he could not fit back into the airlock until he let some of the air out of it.",
+   "source": "https://www.nasa.gov/wp-content/uploads/2023/04/sp-4507.pdf"
+  },
+  {
+   "id": "fact-human-08",
+   "topic": "HUMAN_SPACEFLIGHT",
+   "text": "The Soviet commander of the 1975 Apollo-Soyuz docking, the first joint US-Soviet crewed flight, was Alexei Leonov, who had made the first spacewalk ten years earlier.",
+   "source": "https://www.nasa.gov/apollo-soyuz-test-project/"
+  },
+  {
+   "id": "fact-mission-01",
+   "topic": "MISSIONS",
+   "text": "By late 2026 Voyager 1 is about one light-day from Earth: a command sent at the speed of light needs roughly a full day to reach it.",
+   "source": "https://science.nasa.gov/mission/voyager/voyager-1/"
+  },
+  {
+   "id": "fact-mission-02",
+   "topic": "MISSIONS",
+   "text": "A tiny swatch of muslin from the Wright brothers' 1903 Flyer was tucked under the solar panel of the Ingenuity helicopter, so a piece of the first aeroplane also flew on Mars.",
+   "source": "https://www.nasa.gov/news-release/nasa-ingenuity-mars-helicopter-prepares-for-first-flight/"
+  },
+  {
+   "id": "fact-mission-03",
+   "topic": "MISSIONS",
+   "text": "Hubble circles Earth about once every 95 minutes and has completed more than 195,000 orbits since 1990.",
+   "source": "https://science.nasa.gov/mission/hubble/overview/hubble-by-the-numbers/"
+  },
+  {
+   "id": "fact-mission-04",
+   "topic": "MISSIONS",
+   "text": "Each of the five layers of Webb's tennis-court-sized sunshield is thinner than a sheet of paper, yet together they keep the telescope side about 300 degrees Celsius colder than the Sun-facing side.",
+   "source": "https://science.nasa.gov/mission/webb/webbs-sunshield/"
+  },
+  {
+   "id": "fact-mission-05",
+   "topic": "MISSIONS",
+   "text": "The icy jets Cassini found on Saturn's small moon Enceladus feed one of the planet's rings: the wide, faint E ring is made mostly of ice from that moon.",
+   "source": "https://science.nasa.gov/saturn/moons/enceladus/"
+  },
+  {
+   "id": "fact-mission-06",
+   "topic": "MISSIONS",
+   "text": "At its closest to the Sun, Parker Solar Probe moves at about 700,000 km/h, fast enough to cross from London to New York in under 30 seconds.",
+   "source": "https://science.nasa.gov/mission/parker-solar-probe/"
+  },
+  {
+   "id": "fact-mission-07",
+   "topic": "MISSIONS",
+   "text": "New Horizons carries some of the ashes of Clyde Tombaugh, the astronomer who discovered Pluto in 1930, so he finally passed by the world he found.",
+   "source": "https://pluto.jhuapl.edu/News-Center/Fifty-Facts.php"
+  },
+  {
+   "id": "fact-mission-08",
+   "topic": "MISSIONS",
+   "text": "NEAR Shoemaker was never designed to land, yet in 2001 it touched down gently on asteroid Eros and kept sending data from the surface.",
+   "source": "https://science.nasa.gov/mission/near-shoemaker/"
+  },
+  {
+   "id": "fact-sky-01",
+   "topic": "NIGHT_SKY",
+   "text": "About 500 years ago, Leonardo da Vinci worked out that the faint glow on the dark part of a crescent Moon is sunlight reflected back from Earth.",
+   "source": "https://science.nasa.gov/image-article/apod-2018-january-20-old-moon-in-the-new-moons-arms/"
+  },
+  {
+   "id": "fact-sky-02",
+   "topic": "NIGHT_SKY",
+   "text": "If Betelgeuse, the red star at Orion’s shoulder, took the Sun’s place, its surface would reach far beyond the orbit of Mars.",
+   "source": "https://science.nasa.gov/universe/what-is-betelgeuse-inside-the-strange-volatile-star/"
+  },
+  {
+   "id": "fact-sky-03",
+   "topic": "NIGHT_SKY",
+   "text": "Polaris will not always be the North Star: Earth's axis slowly wobbles, and in about 12,000 years it will point near the bright star Vega instead.",
+   "source": "https://science.nasa.gov/solar-system/what-is-the-north-star-and-how-do-you-find-it/"
+  },
+  {
+   "id": "fact-sky-04",
+   "topic": "NIGHT_SKY",
+   "text": "Total solar eclipses are a cosmic coincidence: the Sun is about 400 times wider than the Moon but also about 400 times farther away, so both look almost the same size.",
+   "source": "https://science.nasa.gov/eclipses/geometry/"
+  },
+  {
+   "id": "fact-sky-05",
+   "topic": "NIGHT_SKY",
+   "text": "Most shooting stars are made by bits of comet dust no bigger than a grain of sand or a pea, burning up high in the atmosphere.",
+   "source": "https://science.nasa.gov/solar-system/meteors-meteorites/facts/"
+  },
+  {
+   "id": "fact-sky-06",
+   "topic": "NIGHT_SKY",
+   "text": "Perseid meteors hit the upper atmosphere at about 59 km per second, fast enough to cover the length of Great Britain in under 20 seconds.",
+   "source": "https://science.nasa.gov/solar-system/meteors-meteorites/perseids/"
+  },
+  {
+   "id": "fact-sky-07",
+   "topic": "NIGHT_SKY",
+   "text": "After the Sun and the Moon, the International Space Station can be the brightest object in the sky, and it needs no telescope to spot.",
+   "source": "https://www.nasa.gov/spot-the-station/"
+  },
+  {
+   "id": "fact-sky-08",
+   "topic": "NIGHT_SKY",
+   "text": "The planets always appear along the same narrow band of sky, the ecliptic, because they all orbit the Sun in nearly the same flat plane.",
+   "source": "https://www.nasa.gov/image-article/plane-of-ecliptic/"
+  }
+ ]
+}

@@ -17,6 +17,8 @@ enum class TodayCardId {
     SKY_EVENTS,
     STARGAZING,
     NASA_NEWS,
+    DAILY_QUIZ,
+    DID_YOU_KNOW,
     ;
 
     companion object {

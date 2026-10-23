@@ -18,6 +18,7 @@ import com.radustavila.nasaexplorer.core.domain.offline.OfflineFavoriteImages
 import com.radustavila.nasaexplorer.core.domain.sync.EpicSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.ExoplanetSyncScheduler
 import com.radustavila.nasaexplorer.core.domain.sync.SyncScheduler
+import com.radustavila.nasaexplorer.core.domain.usecase.RemindOfDailyQuizUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.RescheduleSkyEventRemindersOnLocationChangeUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ScheduleAuroraAlertRefreshUseCase
 import com.radustavila.nasaexplorer.core.domain.usecase.ScheduleStargazingAlertUseCase
@@ -76,6 +77,9 @@ class NasaExplorerApplication :
     lateinit var rescheduleSkyEventReminders: Lazy<RescheduleSkyEventRemindersOnLocationChangeUseCase>
 
     @Inject
+    lateinit var rearmQuizReminder: Lazy<RemindOfDailyQuizUseCase>
+
+    @Inject
     @ApplicationScope
     lateinit var applicationScope: CoroutineScope
 
@@ -99,6 +103,8 @@ class NasaExplorerApplication :
         applicationScope.launch(ioDispatcher) { offlineFavoriteImages.get().backfillOnce() }
         // Sky event reminders follow the saved place, whichever screen changes it.
         applicationScope.launch(ioDispatcher) { rescheduleSkyEventReminders.get().invoke() }
+        // Re-arms the daily quiz reminder (F28), e.g. one restored from a backup; posts nothing.
+        applicationScope.launch(ioDispatcher) { rearmQuizReminder.get().invoke(notify = false) }
     }
 
     /**

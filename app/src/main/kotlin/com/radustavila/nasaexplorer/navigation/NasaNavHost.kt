@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.radustavila.nasaexplorer.R
 import com.radustavila.nasaexplorer.feature.debug.debugScreen
+import com.radustavila.nasaexplorer.feature.quiz.quizScreens
 import com.radustavila.nasaexplorer.feature.details.detailsPane
 import com.radustavila.nasaexplorer.feature.details.detailsScreen
 import com.radustavila.nasaexplorer.feature.details.navigateToDetails
@@ -224,6 +225,7 @@ fun NasaNavHost(
             aboutScreen(onBackClick = navController::popBackStack, onLicencesClick = navController::navigateToLicences)
             licencesScreen(onBackClick = navController::popBackStack, librariesRes = R.raw.aboutlibraries)
             debugScreen()
+            quizScreens(navController)
         }
 
         // Root level: full-screen details reached from several tabs and from deep links.
